@@ -1,18 +1,9 @@
-#include <SFML/Graphics.hpp>
-#include <iostream>
-#include <cmath>
-#include <vector>
-#include <sstream>
-#include <string>
-#include <fstream>
-#include <SFML/Audio.hpp>
-#include <queue>
-#include <iomanip>
+#include <SFML/system.hpp>
 using namespace sf;
 
 
 
-// Helper Functions
+// CUstom Math Functions
 
 int RandomRange(int start, int end) {
 	return rand() % (end + 1 - start) + start;
@@ -88,9 +79,11 @@ float LerpAngle(float start, float end, float lerp) {
 
 	return start + difference * lerp;
 }
-float Damp(float current, float target, float smoothing, float dt)
+float Damp(float current, float target, float speed, float dt)
 {
-	return Lerp(current, target, 1 - pow(smoothing, dt));
+	if (speed <= 0) return current;
+
+	return target + (current - target) * Clamp(pow(1 / speed, dt), 0, 1);
 }
 float DampAngle(float current, float target, float smoothing, float dt) {
 	// Ensure the angles are between 0 and 360

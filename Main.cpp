@@ -11,6 +11,9 @@
 using namespace std;
 using namespace sf;
 
+// custom math functions
+#include "customMath.h"
+
 
 // SETTINGS
 
@@ -34,6 +37,7 @@ int main()
 	Texture texture;
 	texture.loadFromFile("Main/Assets/Preview.png");
 	Sprite sprite = Sprite(texture);
+	sprite.setOrigin(sprite.getLocalBounds().width / 2.0f, sprite.getLocalBounds().height / 2.0f);
 
 
 	Event event;
@@ -50,6 +54,11 @@ int main()
 		}
 
 		dt = dtClock.restart().asSeconds();
+
+		// Game logic
+		Vector2f mousePos = Vector2f(Mouse::getPosition(window));
+		sprite.setPosition(Damp(sprite.getPosition().x, mousePos.x, 1000.0f , dt), Damp(sprite.getPosition().y, mousePos.y, 1000.0f , dt));
+		//sprite.setPosition(mousePos);
 
 
 		window.clear();
