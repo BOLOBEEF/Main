@@ -140,6 +140,12 @@ int main()
 	float dt = 0.0f;
 
 
+	// load texture and sprite
+	Texture texture;
+	texture.loadFromFile("Main/Assets/Preview.png");
+	Sprite sprite = Sprite(texture);
+
+
 	Event event;
 	while (window.isOpen())
 	{
@@ -159,10 +165,9 @@ int main()
 		window.clear();
 
 		// Draw objects
+		window.draw(sprite);
 
 		window.display();
 	}
-
-	// if this shi not working am gonna jump off a balcony
 	return 0;
 }
