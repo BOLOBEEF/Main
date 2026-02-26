@@ -163,5 +163,6 @@ int main()
 		window.display();
 	}
 
+	// if this shi not working am gonna jump off a balcony
 	return 0;
 }
