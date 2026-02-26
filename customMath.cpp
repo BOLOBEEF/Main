@@ -1,9 +1,5 @@
-#include <SFML/system.hpp>
-using namespace sf;
 
-
-
-// CUstom Math Functions
+// Custom Math Functions
 
 int RandomRange(int start, int end) {
 	return rand() % (end + 1 - start) + start;

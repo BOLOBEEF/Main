@@ -12,7 +12,7 @@ using namespace std;
 using namespace sf;
 
 // custom math functions
-#include "customMath.h"
+#include "customMath.cpp"
 
 
 // SETTINGS
