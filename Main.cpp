@@ -11,33 +11,24 @@
 using namespace std;
 using namespace sf;
 
-// custom math functions
-#include "customMath.cpp"
+// Global variables that are used across multiple files and functions
+#include "Globals.cpp"
 
+// Custom Math Functions
+#include "CustomMath.cpp"
 
-// SETTINGS
+// Game Logic
+#include "GameLogic.cpp"
 
+// Menus
+#include "Menus.cpp"
 
-
-// Global runtime variables
-RenderWindow window = { VideoMode::getDesktopMode(), "SFML"};
-Vector2u windowSize = window.getSize();
-Vector2f center = Vector2f(windowSize.x / 2.0f, windowSize.y / 2.0f);
 
 
 int main()
 {
-	// Local runtime variables
-
-	Clock dtClock;
-	float dt = 0.0f;
-
-
-	// load texture and sprite
-	Texture texture;
-	texture.loadFromFile("Main/Assets/Preview.png");
-	Sprite sprite = Sprite(texture);
-	sprite.setOrigin(sprite.getLocalBounds().width / 2.0f, sprite.getLocalBounds().height / 2.0f);
+	// Initialization
+	Initialize();
 
 
 	Event event;
@@ -49,24 +40,28 @@ int main()
 			if (event.type == Event::Closed)
 				window.close();
 
+<<<<<<< Updated upstream
 			// Event loop for player input
             
+=======
+
+			else
+			{
+				HandleInput(event);
+			}
+>>>>>>> Stashed changes
 		}
 
-		dt = dtClock.restart().asSeconds();
+		// game updates 
+		UpdateGlobals();
 
-		// Game logic
-		Vector2f mousePos = Vector2f(Mouse::getPosition(window));
-		sprite.setPosition(Damp(sprite.getPosition().x, mousePos.x, 1000.0f , dt), Damp(sprite.getPosition().y, mousePos.y, 1000.0f , dt));
-		//sprite.setPosition(mousePos);
 
 		cout << "Fire and Water";
 
 
 		window.clear();
 
-		// Draw objects
-		window.draw(sprite);
+		Draw();
 
 		window.display();
 	}
