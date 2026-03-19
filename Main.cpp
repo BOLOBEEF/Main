@@ -40,23 +40,16 @@ int main()
 			if (event.type == Event::Closed)
 				window.close();
 
-<<<<<<< Updated upstream
-			// Event loop for player input
-            
-=======
 
 			else
 			{
 				HandleInput(event);
 			}
->>>>>>> Stashed changes
 		}
 
 		// game updates 
 		UpdateGlobals();
 
-
-		cout << "Fire and Water";
 
 
 		window.clear();
