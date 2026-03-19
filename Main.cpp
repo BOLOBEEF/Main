@@ -60,6 +60,8 @@ int main()
 		sprite.setPosition(Damp(sprite.getPosition().x, mousePos.x, 1000.0f , dt), Damp(sprite.getPosition().y, mousePos.y, 1000.0f , dt));
 		//sprite.setPosition(mousePos);
 
+		cout << "Fire and Water";
+
 
 		window.clear();
 
