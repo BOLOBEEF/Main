@@ -26,6 +26,10 @@ void HandleGameInput(Event event)
 	// code for handling game input that is related to game logic
 }
 
+void OnUpdatedGameStateGameLogic() {
+	// do stuff here exactly when the gameState is changed
+}
+
 
 void UpdateGame()
 {

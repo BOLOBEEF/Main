@@ -12,6 +12,33 @@ Clock dtClock;
 float dt = 0.0f;
 
 
+// Function Declarations
+
+// menu
+void InitializeMenu();
+void HandleMenuInput(Event event);
+void OnUpdatedGameStateMenu();
+void UpdateUI();
+void DrawUI();
+
+// game logic
+void InitializeGame();
+void HandleGameInput(Event event);
+void OnUpdatedGameStateGameLogic();
+void UpdateGame();
+void DrawGame();
+
+// Animations
+void InitializeAnimations();
+void HandleAnimationsInput(Event event);
+void UpdateAnimations();
+
+// Textures
+void InitializeTextures();
+
+
+// Game flow:
+
 // Main GameState 
 enum GameState
 {
@@ -20,25 +47,10 @@ enum GameState
 	GAME			// this is the in-game UI, not the game logic
 };
 
+
+// DO NOT CHANGE THIS DIRECTLY, USE UpdateGameState() INSTEAD
 GameState gameState = GAME;
 
-
-// Game flow
-
-
-// Function Declarations
-
-// menu
-void InitializeMenu();
-void HandleMenuInput(Event event);
-void UpdateUI();
-void DrawUI();
-
-// game logic
-void InitializeGame();
-void HandleGameInput(Event event);
-void UpdateGame();
-void DrawGame();
 
 
 
@@ -46,12 +58,26 @@ void Initialize()
 {
 	InitializeMenu();
 	InitializeGame();
+	InitializeAnimations();
+	InitializeTextures();
 }
 
 void HandleInput(Event event)
 {
 	HandleMenuInput(event);
 	HandleGameInput(event);
+	HandleAnimationsInput(event);
+}
+
+void UpdateGameState(GameState newState)
+{
+	// if didn't actually change gameState then skip
+	if (newState == gameState) return;
+
+	gameState = newState;
+
+	OnUpdatedGameStateMenu();
+	OnUpdatedGameStateGameLogic();
 }
 
 void UpdateGlobals() {
@@ -61,6 +87,7 @@ void UpdateGlobals() {
 
 	UpdateUI();
 	UpdateGame();
+	UpdateAnimations();
 }
 
 void Draw()

@@ -20,8 +20,23 @@ using namespace sf;
 // Game Logic
 #include "GameLogic.cpp"
 
+// Level objects
+#include "LevelObjects.cpp"
+
+// Level data
+#include "LevelData.cpp"
+
 // Menus
 #include "Menus.cpp"
+
+// Animations
+#include "Animations.cpp"
+
+// Textures
+#include "Textures.cpp"
+
+// Sounds and music
+#include "Audio.cpp"
 
 
 

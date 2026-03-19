@@ -10,20 +10,23 @@
 
 
 // Runtime variables
+// Ex: clocks and timers for animations
 
 
 
 // Functions
 
-void InitializeMenu()
+void InitializeAnimations()
 {
 	// code for initializing menu variables and objects
-	// for example load sprites, set up text objects, etc.
+	// for example initialize timers or counters
 }
 
 
-void HandleMenuInput(Event event)
+void HandleAnimationsInput(Event event)
 {
+	// if ever needed you can check for input events here
+
 	switch (gameState)
 	{
 	case MAIN_MENU:
@@ -40,12 +43,10 @@ void HandleMenuInput(Event event)
 	}
 }
 
-void OnUpdatedGameStateMenu() {
-	// do stuff here exactly when the gameState is changed
-}
-
-void UpdateUI()
+void UpdateAnimations()
 {
+	// update animations here
+
 	switch (gameState)
 	{
 	case MAIN_MENU:
@@ -56,26 +57,6 @@ void UpdateUI()
 		break;
 	case GAME:
 		// code for game UI
-		break;
-	default:
-		break;
-	}
-}
-
-void DrawUI()
-{
-	// draw only, no need for window.clear or window.display
-
-	switch (gameState)
-	{
-	case MAIN_MENU:
-		// code for drawing main menu
-		break;
-	case SETTINGS:
-		// code for drawing settings menu
-		break;
-	case GAME:
-		// code for drawing game UI
 		break;
 	default:
 		break;

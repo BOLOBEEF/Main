@@ -1,0 +1,2 @@
+
+// STRUCTS for level objects
