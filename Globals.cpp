@@ -36,6 +36,14 @@ void UpdateAnimations();
 // Textures
 void InitializeTextures();
 
+// Testing
+void InitializeTest();
+void HandleTestInput(Event event);
+void OnUpdatedGameStateTest();
+void UpdateTest();
+void DrawTest();
+
+
 
 // Game flow:
 
@@ -60,6 +68,7 @@ void Initialize()
 	InitializeGame();
 	InitializeAnimations();
 	InitializeTextures();
+	InitializeTest();
 }
 
 void HandleInput(Event event)
@@ -67,6 +76,7 @@ void HandleInput(Event event)
 	HandleMenuInput(event);
 	HandleGameInput(event);
 	HandleAnimationsInput(event);
+	HandleTestInput(event);
 }
 
 void UpdateGameState(GameState newState)
@@ -78,6 +88,7 @@ void UpdateGameState(GameState newState)
 
 	OnUpdatedGameStateMenu();
 	OnUpdatedGameStateGameLogic();
+	OnUpdatedGameStateTest();
 }
 
 void UpdateGlobals() {
@@ -88,10 +99,12 @@ void UpdateGlobals() {
 	UpdateUI();
 	UpdateGame();
 	UpdateAnimations();
+	UpdateTest();
 }
 
 void Draw()
 {
 	DrawUI();
 	DrawGame();
+	DrawTest();
 }

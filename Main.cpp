@@ -38,6 +38,9 @@ using namespace sf;
 // Sounds and music
 #include "Audio.cpp"
 
+// script for general testing
+#include "Testing.cpp"
+
 
 
 int main()

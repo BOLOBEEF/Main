@@ -29,7 +29,7 @@ void InitializeGameTextures() {
 	// load menu textures
 	// playerTexture.load......
 	// apply those textures to their corresponding sprites
-	playerTexture.loadFromFile("C:/Users/PC/Downloads/SFML Template/sfml-github/ConsoleApplication1/Main/Assets/Preview.png");
+	playerTexture.loadFromFile("Main/Assets/Preview.png");
 	player.setTexture(playerTexture);
 	player.setOrigin(player.getLocalBounds().width / 2.0f, player.getLocalBounds().height / 2.0f);
 }
