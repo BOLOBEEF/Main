@@ -52,12 +52,14 @@ enum GameState
 {
 	MAIN_MENU,
 	SETTINGS,
+	GAMEOVER,
 	GAME			// this is the in-game UI, not the game logic
 };
 
 
 // DO NOT CHANGE THIS DIRECTLY, USE UpdateGameState() INSTEAD
 GameState gameState = GAME;
+
 
 
 
