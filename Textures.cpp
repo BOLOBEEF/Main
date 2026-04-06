@@ -29,18 +29,6 @@ Texture triangleTexture;
 
 // Functions
 
-void InitializeMenuTextures() {
-	// load menu textures
-	// menuBackground.load......
-}
-
-void InitializeGameTextures() {
-	// load game textures
-	// playerTexture.load......
-	
-	triangleTexture.loadFromFile("Main/Assets/Textures/Triangle.png");
-}
-
 
 // menu and gameLogic scripts should apply their textures using this script
 // maybe divide it into a menu version and a gamelogic version for clarity
@@ -68,6 +56,21 @@ void ApplyTexture(Sprite& sprite, LoadTexture texture) {
 		cout << "Invalid texture" << endl;
 		break;
 	}
+}
+
+void InitializeMenuTextures() {
+	// load menu textures
+	// menuBackground.load......
+}
+
+void InitializeGameTextures() {
+	// load game textures
+	// playerTexture.load......
+	
+	triangleTexture.loadFromFile("Main/Assets/Textures/Triangle.png");
+	ApplyTexture(triangle, LoadTexture::TRIANGLE);
+
+	ApplyTexture(rotatedTriangle, LoadTexture::TRIANGLE_ROTATED);
 }
 
 

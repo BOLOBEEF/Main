@@ -17,8 +17,11 @@ using namespace sf;
 // Custom Math Functions
 #include "CustomMath.cpp"
 
-// Textures
-#include "Textures.cpp"
+// Level objects
+#include "LevelObjects.cpp"
+
+// Level data
+#include "LevelData.cpp"
 
 // Game Logic
 #include "GameLogic.cpp"
@@ -26,15 +29,11 @@ using namespace sf;
 // Animations
 #include "Animations.cpp"
 
-
-// Level objects
-#include "LevelObjects.cpp"
-
-// Level data
-#include "LevelData.cpp"
-
 // Menus
 #include "Menus.cpp"
+
+// Textures
+#include "Textures.cpp"
 
 // Sounds and music
 #include "Audio.cpp"

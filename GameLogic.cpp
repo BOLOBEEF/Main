@@ -14,8 +14,10 @@
 
 
 // Functions
-bool CheckRectangleCollision(RectangleShape& player, RectangleShape other) {
-	FloatRect playerBounds = player.getGlobalBounds();
+bool CheckRectangleCollision(Player& player, RectangleShape other) {
+	RectangleShape sprite = player.sprite;
+
+	FloatRect playerBounds = sprite.getGlobalBounds();
 	FloatRect otherBounds = other.getGlobalBounds();
 
 	if (playerBounds.intersects(otherBounds)) {
@@ -32,19 +34,20 @@ bool CheckRectangleCollision(RectangleShape& player, RectangleShape other) {
 
 		if (comparedTopOverlap < comparedBottomOverlap && comparedTopOverlap < leftOverlap && comparedTopOverlap < rightOverlap) {
 			// Collision from the top
-			player.move(0, -topOverlap);
+			sprite.move(0, -topOverlap);
+			player.velocity.y = Clamp(player.velocity.y, player.velocity.y, 1.0f);
 		}
 		else if (comparedBottomOverlap < comparedTopOverlap && comparedBottomOverlap < leftOverlap && comparedBottomOverlap < rightOverlap) {
 			// Collision from the bottom
-			player.move(0, bottomOverlap);
+			sprite.move(0, bottomOverlap);
 		}
 		else if (leftOverlap < rightOverlap && leftOverlap < comparedTopOverlap && leftOverlap < comparedBottomOverlap) {
 			// Collision from the left
-			player.move(-leftOverlap, 0);
+			sprite.move(-leftOverlap, 0);
 		}
 		else {
 			// Collision from the right
-			player.move(rightOverlap, 0);
+			sprite.move(rightOverlap, 0);
 		}
 
 		return true;
@@ -143,38 +146,23 @@ bool CheckTriangleCollision(RectangleShape& player, Sprite triangle, bool rotate
 }
 
 
-
-
-RectangleShape player = RectangleShape(Vector2f(100, 100));
+Player firePlayer;
 RectangleShape ground = RectangleShape(Vector2f(400, 100));
 Sprite triangle;
 Sprite rotatedTriangle;
 
-Sprite triangle2;
-Sprite rotatedTriangle2;
-
 
 void InitializeGame()
 {
-	player.setOrigin(player.getLocalBounds().width / 2.0f, player.getLocalBounds().height / 2.0f);
 
 
 	// code for initializing game variables and objects
 	ground.setOrigin(ground.getLocalBounds().width / 2.0f, ground.getLocalBounds().height / 2.0f);
 	ground.setPosition(center.x, center.y);
 	
-	ApplyTexture(triangle, LoadTexture::TRIANGLE);
-	triangle.setTexture(triangleTexture);
 	triangle.setPosition(center.x + 200, center.y - 50);
 	
-	ApplyTexture(rotatedTriangle, LoadTexture::TRIANGLE_ROTATED);
 	rotatedTriangle.setPosition(center.x -200, center.y - 50);
-
-	ApplyTexture(triangle2, LoadTexture::TRIANGLE);
-	triangle2.setPosition(center.x + 500, center.y - 50);
-
-	ApplyTexture(rotatedTriangle2, LoadTexture::TRIANGLE_ROTATED);
-	rotatedTriangle2.setPosition(center.x - 500, center.y - 50);
 }
 
 void HandleGameInput(Event event)
@@ -189,20 +177,18 @@ void OnUpdatedGameStateGameLogic() {
 
 void UpdateGame()
 {
-	// Game logic
-	Vector2f mousePos = Vector2f(Mouse::getPosition(window));
-	player.setPosition(Damp(player.getPosition().x, mousePos.x, 1000.0f, dt), Damp(player.getPosition().y, mousePos.y, 1000.0f, dt));
-
-
+	firePlayer.UpdateMotion();
 	bool collided = false;
-	collided |= CheckRectangleCollision(player, ground);
-	collided |= CheckTriangleCollision(player, triangle, false);
-	collided |= CheckTriangleCollision(player, rotatedTriangle, true);
+	collided |= CheckRectangleCollision(firePlayer, ground);
+	collided |= CheckTriangleCollision(firePlayer.sprite, triangle, false);
+	collided |= CheckTriangleCollision(firePlayer.sprite, rotatedTriangle, true);
 		
 	if (collided)
-		player.setFillColor(Color::Blue);
+		firePlayer.sprite.setFillColor(Color::Blue);
 	else
-		player.setFillColor(Color::White);
+		firePlayer.sprite.setFillColor(Color::White);
+
+	
 }
 
 void DrawGame()
@@ -210,7 +196,7 @@ void DrawGame()
 	if (gameState != GAME) return;
 
 	// no need for window.clear or window.display
-	window.draw(player);
+	window.draw(firePlayer.sprite);
 	window.draw(ground);
 	window.draw(triangle);
 	window.draw(rotatedTriangle);
