@@ -15,7 +15,7 @@
 
 // Functions
 bool CheckRectangleCollision(Player& player, RectangleShape other) {
-	RectangleShape sprite = player.sprite;
+	RectangleShape& sprite = player.sprite;
 
 	FloatRect playerBounds = sprite.getGlobalBounds();
 	FloatRect otherBounds = other.getGlobalBounds();
@@ -35,7 +35,7 @@ bool CheckRectangleCollision(Player& player, RectangleShape other) {
 		if (comparedTopOverlap < comparedBottomOverlap && comparedTopOverlap < leftOverlap && comparedTopOverlap < rightOverlap) {
 			// Collision from the top
 			sprite.move(0, -topOverlap);
-			player.velocity.y = Clamp(player.velocity.y, player.velocity.y, 1.0f);
+			player.velocity.y = Clamp(player.velocity.y, player.velocity.y, 0.0f);
 		}
 		else if (comparedBottomOverlap < comparedTopOverlap && comparedBottomOverlap < leftOverlap && comparedBottomOverlap < rightOverlap) {
 			// Collision from the bottom
@@ -178,6 +178,7 @@ void OnUpdatedGameStateGameLogic() {
 void UpdateGame()
 {
 	firePlayer.UpdateMotion();
+
 	bool collided = false;
 	collided |= CheckRectangleCollision(firePlayer, ground);
 	collided |= CheckTriangleCollision(firePlayer.sprite, triangle, false);

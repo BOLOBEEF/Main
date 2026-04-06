@@ -4,8 +4,8 @@ struct Player
 {
 	RectangleShape sprite = RectangleShape(Vector2f(100, 100));
 	Vector2f velocity = { 0,0 };
-	const float speed = 100.0f;
-	const float gravity = 200.0f;
+	const float speed = 1000.0f;
+	const float gravity = 1000.0f;
 
 	Player() {
 
