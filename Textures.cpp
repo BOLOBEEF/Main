@@ -68,9 +68,6 @@ void InitializeGameTextures() {
 	// playerTexture.load......
 	
 	triangleTexture.loadFromFile("Main/Assets/Textures/Triangle.png");
-	ApplyTexture(triangle, LoadTexture::TRIANGLE);
-
-	ApplyTexture(rotatedTriangle, LoadTexture::TRIANGLE_ROTATED);
 }
 
 

@@ -14,11 +14,10 @@ struct Player
 
 
 
-	Player(PlayerType charctertype) {
-		charctertype = Fireboy;
+	Player(PlayerType charctertype, Vector2f startPosition) {
 		playertype = charctertype;
 		sprite.setOrigin(sprite.getLocalBounds().width / 2.0f, sprite.getLocalBounds().height / 2.0f);
-		sprite.setPosition(center.x, center.y - 200);
+		sprite.setPosition(startPosition);
 	}
 
 	void UpdateMotion() {

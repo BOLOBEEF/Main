@@ -14,6 +14,17 @@
 
 
 // Functions
+struct Collider
+{
+	enum ColliderType {
+		Rectangle,
+		Triangle,
+		Triangle_Rotated
+	};
+
+	ColliderType type;
+};
+
 struct CollisionData
 {
 	// the collision direction relative to the collider not the player
@@ -206,8 +217,10 @@ bool IsOnGround(CollisionData collisionData) {
 	return collisionData.collisionDirection == CollisionData::Top || collisionData.collisionDirection == collisionData.Slope;
 }
 
-Player fireBoy = Player(Player::Fireboy);
-Player waterGirl = Player(Player::Watergirl);
+void CheckPlayerCollision(Player& player);
+
+Player fireBoy = Player(Player::Fireboy, center + Vector2f(-50, -500));
+Player waterGirl = Player(Player::Watergirl, center + Vector2f(50, -500));
 
 RectangleShape ground = RectangleShape(Vector2f(400, 100));
 Sprite triangle;
@@ -216,14 +229,14 @@ Sprite rotatedTriangle;
 
 void InitializeGame()
 {
-
-
 	// code for initializing game variables and objects
 	ground.setOrigin(ground.getLocalBounds().width / 2.0f, ground.getLocalBounds().height / 2.0f);
 	ground.setPosition(center.x, center.y);
 	
-	triangle.setPosition(center.x + 300, center.y - 200);
+	ApplyTexture(triangle, LoadTexture::TRIANGLE);
+	triangle.setPosition(center.x + 200, center.y - 50);
 	
+	ApplyTexture(rotatedTriangle, LoadTexture::TRIANGLE_ROTATED);
 	rotatedTriangle.setPosition(center.x -200, center.y - 50);
 
 	fireBoy.sprite.setFillColor(Color::Red);
@@ -232,6 +245,8 @@ void InitializeGame()
 
 void HandleGameInput(Event event)
 {
+	if (gameState != GAME) return;
+
 	// code for handling game input that is related to game logic
 	fireBoy.checkJump(event);
 	waterGirl.checkJump(event);
@@ -247,14 +262,21 @@ void UpdateGame()
 	if (gameState != GAME) return;
 
 	fireBoy.UpdateMotion();
+	waterGirl.UpdateMotion();
 	//firePlayer.sprite.setPosition(Mouse::getPosition(window).x, Mouse::getPosition(window).y);
 
-	bool isOnGround = false;
-	isOnGround |= IsOnGround(CheckRectangleCollision(fireBoy, ground.getGlobalBounds()));
-	isOnGround |= IsOnGround(CheckTriangleCollision(fireBoy, triangle, false));
-	isOnGround |= IsOnGround(CheckTriangleCollision(fireBoy, rotatedTriangle, true));
-	fireBoy.isOnGround = isOnGround;
+	CheckPlayerCollision(fireBoy);
+	CheckPlayerCollision(waterGirl);
 }
+
+void CheckPlayerCollision(Player& player) {
+	bool isOnGround = false;
+	isOnGround |= IsOnGround(CheckRectangleCollision(player, ground.getGlobalBounds()));
+	isOnGround |= IsOnGround(CheckTriangleCollision(player, triangle, false));
+	isOnGround |= IsOnGround(CheckTriangleCollision(player, rotatedTriangle, true));
+	player.isOnGround = isOnGround;
+}
+
 
 void DrawGame()
 {
@@ -262,6 +284,7 @@ void DrawGame()
 
 	// no need for window.clear or window.display
 	window.draw(fireBoy.sprite);
+	window.draw(waterGirl.sprite);
 	window.draw(ground);
 	window.draw(triangle);
 	window.draw(rotatedTriangle);

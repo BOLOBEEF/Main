@@ -17,6 +17,9 @@ using namespace sf;
 // Custom Math Functions
 #include "CustomMath.cpp"
 
+// Textures
+#include "Textures.cpp"
+
 // Level objects
 #include "LevelObjects.cpp"
 
@@ -31,9 +34,6 @@ using namespace sf;
 
 // Menus
 #include "Menus.cpp"
-
-// Textures
-#include "Textures.cpp"
 
 // Sounds and music
 #include "Audio.cpp"
