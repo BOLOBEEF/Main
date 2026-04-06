@@ -4,30 +4,15 @@ struct Player
 {
 	enum PlayerType { Fireboy, Watergirl };
 	PlayerType playertype;
-	RectangleShape sprite = RectangleShape(Vector2f(100, 100));
+	RectangleShape sprite = RectangleShape(Vector2f(60, 100));
 	Vector2f velocity = { 0,0 };
 
-	const float speed = 100.0f;
-	const float gravity = 200.0f;
-	const float jump = -100.0f;
+	const float speed = 500.0f;
+	const float gravity = 1000.0f;
+	const float jump = -500.0f;
+	bool isOnGround = false;
 
 
-	void checkJump(Event event) {
-		if (event.type == Event::KeyPressed) {
-			if (playertype == Fireboy) {
-				if (event.key.code == Keyboard::Up) {
-					velocity.y = jump;
-
-				}
-			}
-			else if (playertype == Watergirl) {
-				if (event.key.code == Keyboard::W) {
-					velocity.y = jump;
-
-				}
-			}
-		}
-	}
 
 	Player(PlayerType charctertype) {
 		charctertype = Fireboy;
@@ -62,6 +47,25 @@ struct Player
 
 			sprite.move(velocity * dt);
 
+		}
+	}
+
+	void checkJump(Event event) {
+		if (!isOnGround) return;
+
+		if (event.type == Event::KeyPressed) {
+			if (playertype == Fireboy) {
+				if (event.key.code == Keyboard::Up) {
+					velocity.y = jump;
+
+				}
+			}
+			else if (playertype == Watergirl) {
+				if (event.key.code == Keyboard::W) {
+					velocity.y = jump;
+
+				}
+			}
 		}
 	}
 };
