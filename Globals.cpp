@@ -71,6 +71,7 @@ void Initialize()
 	InitializeAnimations();
 	InitializeTextures();
 	InitializeTest();
+	
 }
 
 void HandleInput(Event event)

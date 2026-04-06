@@ -49,7 +49,7 @@ int main()
 	// Initialization
 	Initialize();
 
-
+	window.setKeyRepeatEnabled(false);
 	Event event;
 	while (window.isOpen())
 	{

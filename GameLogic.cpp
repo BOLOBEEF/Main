@@ -146,7 +146,7 @@ bool CheckTriangleCollision(RectangleShape& player, Sprite triangle, bool rotate
 }
 
 
-Player firePlayer;
+Player firePlayer=Player(Player::Fireboy);
 RectangleShape ground = RectangleShape(Vector2f(400, 100));
 Sprite triangle;
 Sprite rotatedTriangle;
@@ -168,6 +168,7 @@ void InitializeGame()
 void HandleGameInput(Event event)
 {
 	// code for handling game input that is related to game logic
+	firePlayer.checkJump(event);
 }
 
 void OnUpdatedGameStateGameLogic() {
