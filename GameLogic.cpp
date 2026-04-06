@@ -7,8 +7,18 @@
 
 
 // Structs and enums
+enum pond_state
+{
+		POISON_POND,
+		FIRE_POND,
+		WATER_POND
+};
 
-
+enum Which_player
+{
+	FIRE_PLAYER,
+	WATER_PLAYER
+};
 
 // Runtime variables
 
