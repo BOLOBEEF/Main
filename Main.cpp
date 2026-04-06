@@ -14,20 +14,17 @@ using namespace sf;
 // Global variables that are used across multiple files and functions
 #include "Globals.cpp"
 
-// script for general testing
-#include "Testing.cpp"
-
 // Custom Math Functions
 #include "CustomMath.cpp"
+
+// Textures
+#include "Textures.cpp"
 
 // Game Logic
 #include "GameLogic.cpp"
 
 // Animations
 #include "Animations.cpp"
-
-// Textures
-#include "Textures.cpp"
 
 
 // Level objects
@@ -41,6 +38,9 @@ using namespace sf;
 
 // Sounds and music
 #include "Audio.cpp"
+
+// script for general testing
+#include "Testing.cpp"
 
 
 

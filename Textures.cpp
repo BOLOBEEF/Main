@@ -12,9 +12,19 @@
 // ALL SPRITE TEXTURES MUST BE GLOBAL
 // so they are always store and never deleted
 
+
+enum LoadTexture
+{
+	PLAYER_FIRE,
+	TRIANGLE,
+	TRIANGLE_ROTATED
+};
+
+
 // only initialize one texture for every image, multiple sprites can use the same texture and setTextureRect independently
 Texture menuBackground;
 Texture playerTexture;
+Texture triangleTexture;
 
 
 // Functions
@@ -22,16 +32,42 @@ Texture playerTexture;
 void InitializeMenuTextures() {
 	// load menu textures
 	// menuBackground.load......
-	// apply those textures to their corresponding sprites
 }
 
 void InitializeGameTextures() {
-	// load menu textures
+	// load game textures
 	// playerTexture.load......
-	// apply those textures to their corresponding sprites
-	playerTexture.loadFromFile("Main/Assets/Preview.png");
-	player.setTexture(playerTexture);
-	player.setOrigin(player.getLocalBounds().width / 2.0f, player.getLocalBounds().height / 2.0f);
+	
+	triangleTexture.loadFromFile("Main/Assets/Textures/Triangle.png");
+}
+
+
+// menu and gameLogic scripts should apply their textures using this script
+// maybe divide it into a menu version and a gamelogic version for clarity
+
+void ApplyTexture(Sprite& sprite, LoadTexture texture) {
+	switch (texture)
+	{
+	case PLAYER_FIRE:
+		//
+		break;
+
+	case TRIANGLE:
+		sprite.setTexture(triangleTexture);
+		sprite.setColor(Color::White);
+		sprite.setScale(0.1f, 0.1f);
+		break;
+
+	case TRIANGLE_ROTATED:
+		sprite.setTexture(triangleTexture);
+		sprite.setColor(Color::White);
+		sprite.setScale(-0.1f, 0.1f);
+		break;
+
+	default:
+		cout << "Invalid texture" << endl;
+		break;
+	}
 }
 
 
