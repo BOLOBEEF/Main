@@ -17,7 +17,8 @@ enum LoadTexture
 {
 	PLAYER_FIRE,
 	TRIANGLE,
-	TRIANGLE_ROTATED
+	TRIANGLE_ROTATED,
+	RECTANGLE
 };
 
 
@@ -25,6 +26,7 @@ enum LoadTexture
 Texture menuBackground;
 Texture playerTexture;
 Texture triangleTexture;
+Texture cubeTexture;
 
 
 // Functions
@@ -52,6 +54,12 @@ void ApplyTexture(Sprite& sprite, LoadTexture texture) {
 		sprite.setScale(-0.1f, 0.1f);
 		break;
 
+	case RECTANGLE:
+		sprite.setTexture(cubeTexture);
+		sprite.setColor(Color::White);
+		sprite.setScale(0.35f, 0.35f);
+		break;
+
 	default:
 		cout << "Invalid texture" << endl;
 		break;
@@ -68,6 +76,7 @@ void InitializeGameTextures() {
 	// playerTexture.load......
 
 	triangleTexture.loadFromFile("Main/Assets/Textures/Triangle.png");
+	cubeTexture.loadFromFile("Main/Assets/Textures/Cube.png");
 }
 
 
