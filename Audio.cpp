@@ -22,8 +22,7 @@ enum MenuSoundEffect
 enum GameSoundEffect
 {
 	// add a type for each possible sound effect (NOT LOOPING MUSIC) we have
-	BoyDeath,
-	GirlDeath,
+	Death,
 	DoorOpen,
 	DoorClose,
 	Win
@@ -44,8 +43,24 @@ SoundBuffer menuMusicSound;
 SoundBuffer gameMusic_SlowSound;
 SoundBuffer gameMusic_FastSound;
 SoundBuffer gameMusic_DarkSound;
-SoundBuffer BoyDeathSoundSound;
-SoundBuffer GirlDeathSound;
+SoundBuffer StepsSound;
+SoundBuffer PondStepsSound;
+SoundBuffer PondFreezeSound;
+SoundBuffer PondMeltSound;
+SoundBuffer IceSteps_WgSound;
+SoundBuffer IceSteps_FbSound;
+SoundBuffer DeathSound;
+SoundBuffer BoyJumpSound;
+SoundBuffer GirlJumpSound;
+SoundBuffer WindSound;
+SoundBuffer DoorSound;
+SoundBuffer ButtonSound;
+SoundBuffer LeverSound;
+SoundBuffer PlatformSound;
+SoundBuffer LevelWinSound;
+SoundBuffer LevelGameoverSound;
+SoundBuffer ClockSound;
+SoundBuffer DiamondCollectingSound;
 // and so on
 
 // have only one Music player and 5 sound effect players
@@ -59,6 +74,28 @@ Sound soundEffectsPlayers[5];
 
 void InitializeAudio()
 {
+	menuMusicSound.loadFromFile("/Main/Assets/UsedSounds/MenuMusic.mp3");
+	gameMusic_SlowSound.loadFromFile("/Main/Assets/UsedSounds/LevelMusic_slow.mp3");
+	gameMusic_FastSound.loadFromFile("/Main/Assets/UsedSounds/LevelMusic_fast.mp3");
+	gameMusic_DarkSound.loadFromFile("/Main/Assets/UsedSounds/LevelMusic_dark.mp3");
+	StepsSound.loadFromFile("/Main/Assets/UsedSounds/Steps.mp3");
+	PondStepsSound.loadFromFile("/Main/Assets/UsedSounds/PondSteps.mp3");
+	PondFreezeSound.loadFromFile("/Main/Assets/UsedSounds/PondFreeze.mp3");
+	PondMeltSound.loadFromFile("/Main/Assets/UsedSounds/PondMelt.mp3");
+	IceSteps_WgSound.loadFromFile("/Main/Assets/UsedSounds/IceSteps_wg.mp3");//??
+
+	DeathSound.loadFromFile("/Main/Assets/UsedSounds/Death.mp3");
+	BoyJumpSound.loadFromFile("/Main/Assets/UsedSounds/Jump_fb.mp3");
+	GirlJumpSound.loadFromFile("/Main/Assets/UsedSounds/Jump_wg.mp3");
+	WindSound.loadFromFile("/Main/Assets/UsedSounds/Wind.mp3");
+	DoorSound.loadFromFile("/Main/Assets/UsedSounds/Door.mp3");
+	ButtonSound.loadFromFile("/Main/Assets/UsedSounds/Button.mp3");
+	LeverSound.loadFromFile("/Main/Assets/UsedSounds/Lever.mp3");
+	PlatformSound.loadFromFile("/Main/Assets/UsedSounds/Platform.mp3");
+	LevelWinSound.loadFromFile("/Main/Assets/UsedSounds/LevelWin.mp3");
+	LevelGameoverSound.loadFromFile("/Main/Assets/UsedSounds/LevelGameOver.mp3");
+	ClockSound.loadFromFile("/Main/Assets/UsedSounds/Clock.mp3");
+	DiamondCollectingSound.loadFromFile("/Main/Assets/UsedSounds/DiamondCollecting.mp3");
 	// load all buffers here
 }
 
@@ -114,9 +151,7 @@ void PlayMenuSoundEffect(MenuSoundEffect soundEffect) {
 void PlayGameSoundEffect(GameSoundEffect soundEffect) {
 	switch (soundEffect)
 	{
-	case BoyDeath:
-		break;
-	case GirlDeath:
+	case Death:
 		break;
 	case DoorOpen:
 		break;
