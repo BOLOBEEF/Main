@@ -7,6 +7,8 @@ struct Player
 	RectangleShape sprite = RectangleShape(Vector2f(60, 100));
 	Vector2f velocity = { 0,0 };
 
+	const float accelration = 500.0f;
+	const float deccelration = 10.0f;
 	const float speed = 500.0f;
 	const float gravity = 1000.0f;
 	const float jump = -500.0f;
@@ -23,12 +25,12 @@ struct Player
 	void UpdateMotion() {
 		if (playertype == Fireboy) {
 			if (Keyboard::isKeyPressed(Keyboard::Right)) {
-				velocity.x = speed;
+				velocity.x += accelration*dt;
 			}
 			else if (Keyboard::isKeyPressed(Keyboard::Left)) {
-				velocity.x = -speed;
+				velocity.x -= accelration * dt;
 			}
-			else velocity.x = 0;
+			else velocity.x -= velocity.x * deccelration * dt;
 			velocity.y += gravity * dt;
 
 			sprite.move(velocity * dt);
@@ -36,12 +38,12 @@ struct Player
 		}
 		else if (playertype == Watergirl) {
 			if (Keyboard::isKeyPressed(Keyboard::D)) {
-				velocity.x = speed;
+				velocity.x +=accelration* dt;
 			}
 			else if (Keyboard::isKeyPressed(Keyboard::A)) {
-				velocity.x = -speed;
+				velocity.x += -accelration * dt;
 			}
-			else velocity.x = 0;
+			else velocity.x -= velocity.x * deccelration * dt;
 			velocity.y += gravity * dt;
 
 			sprite.move(velocity * dt);
