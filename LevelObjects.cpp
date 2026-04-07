@@ -2,29 +2,69 @@
 // STRUCTS for level objects
 struct Player
 {
-	RectangleShape sprite = RectangleShape(Vector2f(100, 100));
+	enum PlayerType { Fireboy, Watergirl };
+	PlayerType playertype;
+	RectangleShape sprite = RectangleShape(Vector2f(60, 100));
 	Vector2f velocity = { 0,0 };
-	const float speed = 100.0f;
-	const float gravity = 200.0f;
 
-	Player() {
+	const float speed = 500.0f;
+	const float gravity = 1000.0f;
+	const float jump = -500.0f;
+	bool isOnGround = false;
 
+
+
+	Player(PlayerType charctertype, Vector2f startPosition) {
+		playertype = charctertype;
 		sprite.setOrigin(sprite.getLocalBounds().width / 2.0f, sprite.getLocalBounds().height / 2.0f);
-		sprite.setPosition(center.x, center.y - 200);
+		sprite.setPosition(startPosition);
 	}
 
 	void UpdateMotion() {
+		if (playertype == Fireboy) {
+			if (Keyboard::isKeyPressed(Keyboard::Right)) {
+				velocity.x = speed;
+			}
+			else if (Keyboard::isKeyPressed(Keyboard::Left)) {
+				velocity.x = -speed;
+			}
+			else velocity.x = 0;
+			velocity.y += gravity * dt;
 
-		if (Keyboard::isKeyPressed(Keyboard::Right)) {
-			velocity.x = speed;
+			sprite.move(velocity * dt);
+
 		}
-		else if (Keyboard::isKeyPressed(Keyboard::Left)) {
-			velocity.x = -speed;
+		else if (playertype == Watergirl) {
+			if (Keyboard::isKeyPressed(Keyboard::D)) {
+				velocity.x = speed;
+			}
+			else if (Keyboard::isKeyPressed(Keyboard::A)) {
+				velocity.x = -speed;
+			}
+			else velocity.x = 0;
+			velocity.y += gravity * dt;
+
+			sprite.move(velocity * dt);
+
 		}
-		else velocity.x = 0;
-		velocity.y += gravity * dt;
+	}
 
-		sprite.move(velocity * dt);
+	void checkJump(Event event) {
+		if (!isOnGround) return;
 
+		if (event.type == Event::KeyPressed) {
+			if (playertype == Fireboy) {
+				if (event.key.code == Keyboard::Up) {
+					velocity.y = jump;
+
+				}
+			}
+			else if (playertype == Watergirl) {
+				if (event.key.code == Keyboard::W) {
+					velocity.y = jump;
+
+				}
+			}
+		}
 	}
 };

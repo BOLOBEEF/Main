@@ -66,11 +66,12 @@ GameState gameState = GAME;
 
 void Initialize()
 {
+	InitializeTextures();
+	InitializeAnimations();
 	InitializeMenu();
 	InitializeGame();
-	InitializeAnimations();
-	InitializeTextures();
 	InitializeTest();
+
 }
 
 void HandleInput(Event event)
