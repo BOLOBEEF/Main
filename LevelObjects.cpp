@@ -31,24 +31,22 @@ struct Player
 				velocity.x -= accelration * dt;
 			}
 			else velocity.x -= velocity.x * deccelration * dt;
-			velocity.y += gravity * dt;
-
-			sprite.move(velocity * dt);
-
 		}
 		else if (playertype == Watergirl) {
 			if (Keyboard::isKeyPressed(Keyboard::D)) {
-				velocity.x +=accelration* dt;
+				velocity.x += accelration* dt;
 			}
 			else if (Keyboard::isKeyPressed(Keyboard::A)) {
-				velocity.x += -accelration * dt;
+				velocity.x -= accelration * dt;
 			}
 			else velocity.x -= velocity.x * deccelration * dt;
-			velocity.y += gravity * dt;
-
-			sprite.move(velocity * dt);
-
 		}
+
+
+		velocity.y += gravity * dt;
+		velocity.x = Clamp(velocity.x, -speed, speed);
+
+		sprite.move(velocity * dt);
 	}
 
 	void checkJump(Event event) {
@@ -142,21 +140,30 @@ struct Collider
 			else if (comparedBottomOverlap < comparedTopOverlap && comparedBottomOverlap < leftOverlap && comparedBottomOverlap < rightOverlap) {
 				// Collision from the bottom
 				if (resolveCollision)
+				{
 					sprite.move(0, bottomOverlap);
+					player.velocity.y = max(player.velocity.y, 0.0f);
+				}
 
 				collisionData = { Collider::CollisionData::CollisionDirection::Bottom , bottomOverlap };
 			}
 			else if (leftOverlap < rightOverlap && leftOverlap < comparedTopOverlap && leftOverlap < comparedBottomOverlap) {
 				// Collision from the left
 				if (resolveCollision)
+				{
 					sprite.move(-leftOverlap, 0);
+					player.velocity.x = min(player.velocity.y, 0.0f);
+				}
 
 				collisionData = { Collider::CollisionData::CollisionDirection::Left , leftOverlap };
 			}
 			else {
 				// Collision from the right
 				if (resolveCollision)
+				{
 					sprite.move(rightOverlap, 0);
+					player.velocity.x = max(player.velocity.y, 0.0f);
+				}
 
 				collisionData = { Collider::CollisionData::CollisionDirection::Right , rightOverlap };
 			}
@@ -220,7 +227,7 @@ struct Collider
 				{
 					float triangleHeight = triangleBounds.height;
 					float triangleWidth = triangleBounds.width;
-					float newWidth = abs(playerDownLeftPoint.x - (triangleBounds.left + triangleBounds.width));
+					float newWidth = abs(playerDownLeftPoint.x - usedTrianglePoints[2].x);
 					float newHeight = newWidth * triangleHeight / triangleWidth;
 
 					// move up a distance till the point is no longer inside the triangle
@@ -258,7 +265,7 @@ struct Collider
 				{
 					float triangleHeight = triangleBounds.height;
 					float triangleWidth = triangleBounds.width;
-					float newWidth = abs(playerDownRightPoint.x - (rotated ? triangleBounds.left : triangleBounds.left + triangleBounds.width));
+					float newWidth = abs(playerDownRightPoint.x - usedTrianglePoints[2].x);
 					float newHeight = newWidth * triangleHeight / triangleWidth;
 
 					// move up a distance till the point is no longer inside the triangle
@@ -279,6 +286,8 @@ struct Collider
 		type = newType;
 		sprite.setPosition(position);
 	}
+
+	Collider(){}
 
 	void Initialize() {
 		switch (type)
@@ -323,7 +332,53 @@ struct Collider
 	
 };
 
+struct ColliderList {
+	int count = 0;
+	Collider* elements;
 
+	ColliderList() {
+		elements = new Collider[count];
+	}
 
+	void Add(Collider element) {
+		Collider* temp = new Collider[count];
+
+		for (int i = 0; i < count; i++)
+			temp[i] = elements[i];
+
+		count++;
+		elements = new Collider[count];
+
+		if (count - 1 >= 0)
+			for (int i = 0; i < count - 1; i++)
+				elements[i] = temp[i];
+
+		delete[] temp;
+
+		elements[count - 1] = element;
+	}
+
+	void RemoveAt(int index) {
+		Collider* temp = new Collider[count];
+
+		for (int i = 0; i < count; i++)
+			temp[i] = elements[i];
+
+		count--;
+		elements = new Collider[count];
+
+		for (int i = 0; i < count; i++)
+			if (i < index)
+				elements[i] = temp[i];
+			else
+				elements[i] = temp[i + 1];
+
+		delete[] temp;
+	}
+
+	~ColliderList() {
+		delete[] elements;
+	}
+};
 
 

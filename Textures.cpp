@@ -35,6 +35,12 @@ Texture cubeTexture;
 // menu and gameLogic scripts should apply their textures using this script
 // maybe divide it into a menu version and a gamelogic version for clarity
 
+// set size of sprite in pixels
+void SetSpriteSize(Sprite& sprite, Vector2f size, bool rotate = false) {
+	Vector2f scale = Vector2f(size.x / sprite.getGlobalBounds().width, size.y / sprite.getGlobalBounds().height);
+	sprite.setScale((rotate ? -scale.x : scale.x), scale.y);
+}
+
 void ApplyTexture(Sprite& sprite, LoadTexture texture) {
 	switch (texture)
 	{
@@ -45,19 +51,19 @@ void ApplyTexture(Sprite& sprite, LoadTexture texture) {
 	case TRIANGLE:
 		sprite.setTexture(triangleTexture);
 		sprite.setColor(Color::White);
-		sprite.setScale(0.1f, 0.1f);
+		SetSpriteSize(sprite, Vector2f(100, 100));
 		break;
 
 	case TRIANGLE_ROTATED:
 		sprite.setTexture(triangleTexture);
 		sprite.setColor(Color::White);
-		sprite.setScale(-0.1f, 0.1f);
+		SetSpriteSize(sprite, Vector2f(100, 100), true);
 		break;
 
 	case RECTANGLE:
 		sprite.setTexture(cubeTexture);
 		sprite.setColor(Color::White);
-		sprite.setScale(0.35f, 0.35f);
+		SetSpriteSize(sprite, Vector2f(100, 100));
 		break;
 
 	default:
@@ -89,3 +95,4 @@ void InitializeTextures()
 	InitializeMenuTextures();
 	InitializeGameTextures();
 }
+

@@ -71,7 +71,6 @@ void Initialize()
 	InitializeMenu();
 	InitializeGame();
 	InitializeTest();
-
 }
 
 void HandleInput(Event event)
@@ -98,6 +97,7 @@ void UpdateGlobals() {
 
 	// deltaTime
 	dt = dtClock.restart().asSeconds();
+	if (dt > 0.05f) dt = 0.05f;	// fix player stutter when moving the window around, by capping deltaTime to a maximum value
 
 	UpdateUI();
 	UpdateGame();
