@@ -47,7 +47,7 @@ struct Ponds
 				switch (who)
 				{
 				case FIRE_PLAYER:
-					
+					if()
 					break;
 				case WATER_PLAYER:
 
