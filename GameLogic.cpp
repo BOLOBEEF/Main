@@ -7,7 +7,12 @@
 
 
 // Structs and enums
-
+enum ponds_type
+{
+	FIRE_POND,
+	WATER_SURFACE,
+	POISON_POND
+};
 
 
 // Runtime variables
@@ -225,7 +230,7 @@ Player waterGirl = Player(Player::Watergirl, center + Vector2f(50, -500));
 RectangleShape ground = RectangleShape(Vector2f(400, 100));
 Sprite triangle;
 Sprite rotatedTriangle;
-
+Sprite firePond, waterPond, poisonPond;
 
 void InitializeGame()
 {
