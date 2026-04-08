@@ -80,6 +80,10 @@ struct Collider
 	Sprite sprite;
 	ColliderType type;
 
+	int precision = 60;
+	Vector2f defaultSize = Vector2f(60, 60);
+	Vector2f scale;
+
 	struct CollisionData
 	{
 		// the collision direction relative to the collider not the player
@@ -95,6 +99,14 @@ struct Collider
 
 		float overlapDistance = 0.0f;
 	};
+
+	void AllignCollider() {
+		Vector2f position = sprite.getPosition();
+		position.x = round(position.x / precision) * precision;
+		position.y = round(position.y / precision) * precision;
+
+		sprite.setPosition(position);
+	}
 
 	bool IsOnGround(Collider::CollisionData collisionData) {
 		return collisionData.collisionDirection == Collider::CollisionData::Top || collisionData.collisionDirection == collisionData.Slope;
@@ -122,8 +134,8 @@ struct Collider
 			float rightOverlap = abs((otherBounds.left + otherBounds.width) - playerBounds.left);
 
 			// on comparing overlap, slightly prefer top and bottom overlaps, to avoid getting stuck on edges
-			float comparedTopOverlap = topOverlap - 10;
-			float comparedBottomOverlap = bottomOverlap - 10;
+			float comparedTopOverlap = topOverlap - 2;
+			float comparedBottomOverlap = bottomOverlap - 2;
 
 
 			if (comparedTopOverlap < comparedBottomOverlap && comparedTopOverlap < leftOverlap && comparedTopOverlap < rightOverlap) {
@@ -152,7 +164,7 @@ struct Collider
 				if (resolveCollision)
 				{
 					sprite.move(-leftOverlap, 0);
-					player.velocity.x = min(player.velocity.y, 0.0f);
+					player.velocity.x = min(player.velocity.x, 0.0f);
 				}
 
 				collisionData = { Collider::CollisionData::CollisionDirection::Left , leftOverlap };
@@ -162,7 +174,7 @@ struct Collider
 				if (resolveCollision)
 				{
 					sprite.move(rightOverlap, 0);
-					player.velocity.x = max(player.velocity.y, 0.0f);
+					player.velocity.x = max(player.velocity.x, 0.0f);
 				}
 
 				collisionData = { Collider::CollisionData::CollisionDirection::Right , rightOverlap };
@@ -203,11 +215,13 @@ struct Collider
 				if (boxCollisionData.collisionDirection == Collider::CollisionData::CollisionDirection::Bottom)
 				{
 					player.sprite.move(0, boxCollisionData.overlapDistance);
+					player.velocity.y = max(player.velocity.y, 0.0f);
 					return boxCollisionData;
 				}
 				else if (boxCollisionData.collisionDirection == Collider::CollisionData::CollisionDirection::Left)
 				{
 					player.sprite.move(-boxCollisionData.overlapDistance, 0);
+					player.velocity.x = min(player.velocity.x, 0.0f);
 					return boxCollisionData;
 				}
 
@@ -220,8 +234,26 @@ struct Collider
 
 				else if (boxCollisionData.collisionDirection == Collider::CollisionData::CollisionDirection::Right && playerBounds.contains(usedTrianglePoints[2]))
 				{
-					player.sprite.move(boxCollisionData.overlapDistance, 0);
-					return boxCollisionData;
+					// Compare the overlap distance with the distance to move out of the triangle upwards, and move according to the smaller one
+					float triangleHeight = triangleBounds.height;
+					float triangleWidth = triangleBounds.width;
+					float newWidth = abs(playerDownLeftPoint.x - usedTrianglePoints[2].x);
+					float newHeight = newWidth * triangleHeight / triangleWidth;
+
+					// move up a distance till the point is no longer inside the triangle
+					float heightOverlap = newHeight - abs(playerDownLeftPoint.y - (triangleBounds.top + triangleBounds.height));
+
+					if (boxCollisionData.overlapDistance < abs(heightOverlap) - 2) {
+						player.sprite.move(boxCollisionData.overlapDistance, 0);
+						player.velocity.x = max(player.velocity.x, 0.0f);
+						return boxCollisionData;
+					}
+					else
+					{
+						player.sprite.move(0, -abs(heightOverlap));
+						player.velocity.y = min(player.velocity.y, 1.0f);
+						return { Collider::CollisionData::Slope, abs(heightOverlap) };
+					}
 				}
 				else if (IsPointInsideTriangle(playerDownLeftPoint + Vector2f(0, -1), usedTrianglePoints))
 				{
@@ -241,11 +273,13 @@ struct Collider
 				if (boxCollisionData.collisionDirection == Collider::CollisionData::CollisionDirection::Bottom)
 				{
 					player.sprite.move(0, boxCollisionData.overlapDistance);
+					player.velocity.y = max(player.velocity.y, 0.0f);
 					return boxCollisionData;
 				}
 				else if (boxCollisionData.collisionDirection == Collider::CollisionData::CollisionDirection::Right)
 				{
 					player.sprite.move(boxCollisionData.overlapDistance, 0);
+					player.velocity.x = max(player.velocity.x, 0.0f);
 					return boxCollisionData;
 				}
 
@@ -258,6 +292,26 @@ struct Collider
 
 				else if (boxCollisionData.collisionDirection == Collider::CollisionData::CollisionDirection::Left && playerBounds.contains(usedTrianglePoints[2]))
 				{
+					float triangleHeight = triangleBounds.height;
+					float triangleWidth = triangleBounds.width;
+					float newWidth = abs(playerDownRightPoint.x - usedTrianglePoints[2].x);
+					float newHeight = newWidth * triangleHeight / triangleWidth;
+
+					// move up a distance till the point is no longer inside the triangle
+					float heightOverlap = newHeight - abs(playerDownRightPoint.y - (triangleBounds.top + triangleBounds.height));
+
+					if (boxCollisionData.overlapDistance < abs(heightOverlap) - 2) {
+						player.sprite.move(boxCollisionData.overlapDistance, 0);
+						player.velocity.x = min(player.velocity.x, 0.0f);
+						return boxCollisionData;
+					}
+					else
+					{
+						player.sprite.move(0, -abs(heightOverlap));
+						player.velocity.y = min(player.velocity.y, 1.0f);
+						return { Collider::CollisionData::Slope, abs(heightOverlap) };
+					}
+
 					player.sprite.move(-boxCollisionData.overlapDistance, 0);
 					return boxCollisionData;
 				}
@@ -282,9 +336,10 @@ struct Collider
 	}
 
 
-	Collider(ColliderType newType, Vector2f position) {
+	Collider(ColliderType newType, Vector2f position, Vector2f newScale = Vector2f(1, 1)) {
 		type = newType;
 		sprite.setPosition(position);
+		scale = newScale;
 	}
 
 	Collider(){}
@@ -293,13 +348,13 @@ struct Collider
 		switch (type)
 		{
 		case Collider::Rectangle:
-			ApplyTexture(sprite, LoadTexture::RECTANGLE);
+			ApplyTexture(sprite, LoadTexture::RECTANGLE, Vector2f(defaultSize.x * scale.x, defaultSize.y * scale.y));
 			break;
 		case Collider::Triangle:
-			ApplyTexture(sprite, LoadTexture::TRIANGLE);
+			ApplyTexture(sprite, LoadTexture::TRIANGLE, Vector2f(defaultSize.x * scale.x, defaultSize.y * scale.y));
 			break;
 		case Collider::Triangle_Rotated:
-			ApplyTexture(sprite, LoadTexture::TRIANGLE_ROTATED);
+			ApplyTexture(sprite, LoadTexture::TRIANGLE_ROTATED, Vector2f(defaultSize.x * scale.x, defaultSize.y * scale.y));
 			break;
 		default:
 			break;
@@ -359,6 +414,8 @@ struct ColliderList {
 	}
 
 	void RemoveAt(int index) {
+		if (count <= 0 || index < 0 || index >= count) return;
+
 		Collider* temp = new Collider[count];
 
 		for (int i = 0; i < count; i++)

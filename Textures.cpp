@@ -37,11 +37,17 @@ Texture cubeTexture;
 
 // set size of sprite in pixels
 void SetSpriteSize(Sprite& sprite, Vector2f size, bool rotate = false) {
-	Vector2f scale = Vector2f(size.x / sprite.getGlobalBounds().width, size.y / sprite.getGlobalBounds().height);
+	Vector2f scale = Vector2f(size.x / sprite.getLocalBounds().width, size.y / sprite.getLocalBounds().height);
 	sprite.setScale((rotate ? -scale.x : scale.x), scale.y);
 }
 
-void ApplyTexture(Sprite& sprite, LoadTexture texture) {
+
+void FlipSprite(Sprite& sprite) {
+	Vector2f scale = sprite.getScale();
+	sprite.setScale(-scale.x, scale.y);
+}
+
+void ApplyTexture(Sprite& sprite, LoadTexture texture, Vector2f size, Vector2f scale = Vector2f(1, 1)) {
 	switch (texture)
 	{
 	case PLAYER_FIRE:
@@ -51,23 +57,24 @@ void ApplyTexture(Sprite& sprite, LoadTexture texture) {
 	case TRIANGLE:
 		sprite.setTexture(triangleTexture);
 		sprite.setColor(Color::White);
-		SetSpriteSize(sprite, Vector2f(100, 100));
+		SetSpriteSize(sprite, size);
 		break;
 
 	case TRIANGLE_ROTATED:
 		sprite.setTexture(triangleTexture);
 		sprite.setColor(Color::White);
-		SetSpriteSize(sprite, Vector2f(100, 100), true);
+		SetSpriteSize(sprite, size, true);
 		break;
 
 	case RECTANGLE:
 		sprite.setTexture(cubeTexture);
 		sprite.setColor(Color::White);
-		SetSpriteSize(sprite, Vector2f(100, 100));
+		SetSpriteSize(sprite, size);
 		break;
 
 	default:
 		cout << "Invalid texture" << endl;
+		return;
 		break;
 	}
 }

@@ -5,16 +5,17 @@
 
 
 // Runtime variables
-Player fireBoy = Player(Player::Fireboy, center + Vector2f(-50, -500));
-Player waterGirl = Player(Player::Watergirl, center + Vector2f(50, -500));
+Player fireBoy = Player(Player::Fireboy, center + Vector2f(-600, 200));
+Player waterGirl = Player(Player::Watergirl, center + Vector2f(-550, 200));
 
 const bool displayColliders = true;
 ColliderList colliders;
 
 
-
 // LEVEL EDITING TOOLS
-const bool debugMode = true;	// if true, you can place down objects by clicking, and remove them by right clicking, change object type by pressing 0 or 1 or....
+const bool editMode = true;	// if true, you can place down objects by clicking, and remove them by right clicking, change object type by pressing 0 or 1 or....
+Vector2f editScale = Vector2f(1, 1);
+
 enum EditType
 {
 	Rectangle,
@@ -33,16 +34,53 @@ void CheckPlayerCollision(Player& player) {
 	player.isOnGround = isOnGround;
 }
 
+void AllignColliders() {
+	for (int i = 0; i < colliders.count; i++)
+	{
+		colliders.elements[i].AllignCollider();
+	}
+}
+
+void LoadLevelData() {
+	colliders.Add(Collider(Collider::ColliderType::Rectangle, center + Vector2f(-900, 360), Vector2f(30, 1)));
+	colliders.Add(Collider(Collider::ColliderType::Rectangle, center + Vector2f(-1140, 60), Vector2f(23, 1)));
+	colliders.Add(Collider(Collider::ColliderType::Rectangle, center + Vector2f(-360, -240), Vector2f(23, 1)));
+	colliders.Add(Collider(Collider::ColliderType::Rectangle, center + Vector2f(-300, 300), Vector2f(8, 1)));
+	colliders.Add(Collider(Collider::ColliderType::Triangle_Rotated, center + Vector2f(-300, 300), Vector2f(2, 1)));
+	colliders.Add(Collider(Collider::ColliderType::Triangle, center + Vector2f(180, 300), Vector2f(2, 1)));
+	colliders.Add(Collider(Collider::ColliderType::Rectangle, center + Vector2f(420, 240), Vector2f(2, 2)));
+	colliders.Add(Collider(Collider::ColliderType::Rectangle, center + Vector2f(540, 120), Vector2f(2, 2)));
+	colliders.Add(Collider(Collider::ColliderType::Triangle_Rotated, center + Vector2f(540, 120), Vector2f(2, 2)));
+	colliders.Add(Collider(Collider::ColliderType::Rectangle, center + Vector2f(540, 240), Vector2f(2, 2)));
+	colliders.Add(Collider(Collider::ColliderType::Rectangle, center + Vector2f(-300, 0), Vector2f(1, 1)));
+	colliders.Add(Collider(Collider::ColliderType::Triangle_Rotated, center + Vector2f(-300, 0), Vector2f(1, 1)));
+	colliders.Add(Collider(Collider::ColliderType::Rectangle, center + Vector2f(-240, 0), Vector2f(1, 1)));
+	colliders.Add(Collider(Collider::ColliderType::Triangle, center + Vector2f(-180, 0), Vector2f(1, 1)));
+	colliders.Add(Collider(Collider::ColliderType::Rectangle, center + Vector2f(-720, 0), Vector2f(3, 1)));
+	colliders.Add(Collider(Collider::ColliderType::Rectangle, center + Vector2f(-900, -120), Vector2f(3, 1)));
+	colliders.Add(Collider(Collider::ColliderType::Triangle, center + Vector2f(-720, -120), Vector2f(1, 1)));
+	colliders.Add(Collider(Collider::ColliderType::Triangle, center + Vector2f(-540, 0), Vector2f(1, 1)));
+	colliders.Add(Collider(Collider::ColliderType::Triangle_Rotated, center + Vector2f(-720, 0), Vector2f(1, 1)));
+	colliders.Add(Collider(Collider::ColliderType::Rectangle, center + Vector2f(-480, -240), Vector2f(1, 1)));
+	colliders.Add(Collider(Collider::ColliderType::Rectangle, center + Vector2f(-420, -240), Vector2f(1, 1)));
+	colliders.Add(Collider(Collider::ColliderType::Triangle_Rotated, center + Vector2f(-480, -240), Vector2f(1, 1)));
+	colliders.Add(Collider(Collider::ColliderType::Rectangle, center + Vector2f(-960, 360), Vector2f(1, 1)));
+	colliders.Add(Collider(Collider::ColliderType::Rectangle, center + Vector2f(900, 360), Vector2f(1, 1)));
+	colliders.Add(Collider(Collider::ColliderType::Rectangle, center + Vector2f(840, 180), Vector2f(2, 1)));
+	colliders.Add(Collider(Collider::ColliderType::Triangle_Rotated, center + Vector2f(840, 180), Vector2f(1, 1)));
+}
+
+
 void InitializeGame()
 {
-	colliders.Add(Collider(Collider::ColliderType::Rectangle, center + Vector2f(-60, -40)));
-	colliders.Add(Collider(Collider::ColliderType::Triangle, center + Vector2f(40, -40)));
-	colliders.Add(Collider(Collider::ColliderType::Triangle_Rotated, center + Vector2f(-60, -40)));
+	LoadLevelData();
+
 
 	// code for initializing game variables and objects
 	for (int i = 0; i < colliders.count; i++)
 		colliders.elements[i].Initialize();
 
+	AllignColliders();
 
 	fireBoy.sprite.setFillColor(Color::Red);
 	waterGirl.sprite.setFillColor(Color::Blue);
@@ -52,7 +90,8 @@ void PrintCollidersCode() {
 	for (int i = 0; i < colliders.count; i++) {
 		string type = (colliders.elements[i].type == Collider::ColliderType::Rectangle ? "Rectangle" : colliders.elements[i].type == Collider::ColliderType::Triangle ? "Triangle" : "Triangle_Rotated");
 		string position = "Vector2f(" + to_string((int)(colliders.elements[i].sprite.getPosition().x - center.x)) + ", " + to_string((int)(colliders.elements[i].sprite.getPosition().y - center.y)) + ")";
-		cout << "colliders.Add(Collider(Collider::ColliderType::" << type << ", center + " << position << "));" << endl;
+		string scale = "Vector2f(" + to_string((int)colliders.elements[i].scale.x) + ", " + to_string((int)colliders.elements[i].scale.y) + ")";
+		cout << "colliders.Add(Collider(Collider::ColliderType::" << type << ", center + " << position << ", " << scale << "));" << endl;
 	}
 		
 }
@@ -63,19 +102,7 @@ void PrintObjectsCode() {
 	cout << "END" << endl;
 }
 
-void AllignColliders() {
-	int precision = 100;	// the smaller, the more precise, but also the more objects you will have to place to fill the same area
 
-
-	for (int i = 0; i < colliders.count; i++)
-	{
-		Vector2f position = colliders.elements[i].sprite.getPosition();
-		position.x = round(position.x / precision) * precision;
-		position.y = round(position.y / precision) * precision;
-
-		colliders.elements[i].sprite.setPosition(position);
-	}
-}
 
 
 void HandleGameInput(Event event)
@@ -88,36 +115,47 @@ void HandleGameInput(Event event)
 
 
 	// in debug mode, when you press
-	if (!debugMode) return;
+	if (!editMode) return;
 
 	if (event.type == Event::MouseButtonPressed) {
 		if (event.mouseButton.button == Mouse::Left) {
 			// add object
 
+			Collider collider;
+
 			switch (currentEditType)
 			{
 			case Rectangle:
-				colliders.Add(Collider(Collider::ColliderType::Rectangle, Vector2f(event.mouseButton.x, event.mouseButton.y)));
-				colliders.elements[colliders.count - 1].Initialize();
-				colliders.elements[colliders.count - 1].sprite.move(-colliders.elements[colliders.count - 1].sprite.getGlobalBounds().width / 2.0f, -colliders.elements[colliders.count - 1].sprite.getGlobalBounds().height / 2.0f);
-				AllignColliders();
+				collider = Collider(Collider::ColliderType::Rectangle, Vector2f(event.mouseButton.x, event.mouseButton.y), editScale);
+				collider.Initialize();
+				collider.sprite.move(-collider.sprite.getGlobalBounds().width / 2.0f, -collider.sprite.getGlobalBounds().height / 2.0f);
 				break;
 			case Triangle:
-				colliders.Add(Collider(Collider::ColliderType::Triangle, Vector2f(event.mouseButton.x, event.mouseButton.y)));
-				colliders.elements[colliders.count - 1].Initialize();
-				colliders.elements[colliders.count - 1].sprite.move(-colliders.elements[colliders.count - 1].sprite.getGlobalBounds().width / 2.0f, -colliders.elements[colliders.count - 1].sprite.getGlobalBounds().height / 2.0f);
-				AllignColliders();
+				collider = Collider(Collider::ColliderType::Triangle, Vector2f(event.mouseButton.x, event.mouseButton.y), editScale);
+				collider.Initialize();
+				collider.sprite.move(-collider.sprite.getGlobalBounds().width / 2.0f, -collider.sprite.getGlobalBounds().height / 2.0f);
 				break;
 			case Triangle_Rotated:
-				colliders.Add(Collider(Collider::ColliderType::Triangle_Rotated, Vector2f(event.mouseButton.x, event.mouseButton.y)));
-				colliders.elements[colliders.count - 1].Initialize();
-				colliders.elements[colliders.count - 1].sprite.move(colliders.elements[colliders.count - 1].sprite.getGlobalBounds().width / 2.0f, -colliders.elements[colliders.count - 1].sprite.getGlobalBounds().height / 2.0f);
-				AllignColliders();
+				collider = Collider(Collider::ColliderType::Triangle_Rotated, Vector2f(event.mouseButton.x, event.mouseButton.y), editScale);
+				collider.Initialize();
+				collider.sprite.move(collider.sprite.getGlobalBounds().width / 2.0f, -collider.sprite.getGlobalBounds().height / 2.0f);
 				break;
 			default:
 				break;
 			}
+
+			collider.AllignCollider();
+
+			/*bool isColliding = false;
+			for (int i = 0; i < colliders.count; i++)
+				if (colliders.elements[i].sprite.getGlobalBounds().intersects(collider.sprite.getGlobalBounds())) {
+					isColliding = true;
+					break;
+				}*/
 			
+			//if (!isColliding) {
+				colliders.Add(collider);
+			//}
 		}
 		
 		
@@ -126,7 +164,6 @@ void HandleGameInput(Event event)
 			for (int i = 0; i < colliders.count; i++) {
 				if (colliders.elements[i].sprite.getGlobalBounds().contains(Vector2f(event.mouseButton.x, event.mouseButton.y))) {
 					colliders.RemoveAt(i);
-					break;
 				}
 			}
 		}
@@ -142,6 +179,20 @@ void HandleGameInput(Event event)
 			// undo last object placement
 			colliders.RemoveAt(colliders.count - 1);
 		}
+
+		if (event.key.code == Keyboard::Numpad4)
+			// undo last object placement
+			editScale.x--;
+		if (event.key.code == Keyboard::Numpad6)
+			// undo last object placement
+			editScale.x++;
+		if (event.key.code == Keyboard::Numpad2)
+			// undo last object placement
+			editScale.y--;
+		if (event.key.code == Keyboard::Numpad8)
+			// undo last object placement
+			editScale.y++;
+
 
 		if (event.key.code == Keyboard::Num1) {
 			// undo last object placement
