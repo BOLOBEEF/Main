@@ -437,5 +437,25 @@ struct ColliderList {
 		delete[] elements;
 	}
 };
+struct Gem 
+{
+	Sprite sprite;
+	bool isCollected = false;
+	void start() {
+		ApplyTexture(sprite, LoadTexture::RECTANGLE, Vector2f(30, 30));
+		sprite.setColor(Color::Green);
+	}
+	Gem (Vector2f position) {
+		sprite.setPosition(position);
+	}
+	void checkintersect(Player hamada) {
+		if (sprite.getGlobalBounds().intersects(hamada.sprite.getGlobalBounds())) {
+			isCollected = true;
+			sprite.setScale(0, 0);
+		}
+	
+		
+	}
+};
 
 
