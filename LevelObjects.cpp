@@ -13,6 +13,7 @@ struct Player
 	const float gravity = 1000.0f;
 	const float jump = -500.0f;
 	bool isOnGround = false;
+	bool Player_dead = false;
 
 
 
@@ -67,6 +68,52 @@ struct Player
 
 				}
 			}
+		}
+	}
+};
+struct Ponds
+{
+	RectangleShape ponds_sprite = RectangleShape(Vector2f(150, 100));
+	Ponds() {
+		ponds_sprite.setOrigin(ponds_sprite.getLocalBounds().width / 2.0f, ponds_sprite.getLocalBounds().height / 2.0f);
+		ponds_sprite.setPosition(center.x + 200, center.y + 200);
+	}
+	void PondsEffect(Player& player, ponds_type pond) {
+		// 
+		switch (pond)
+		{
+		case POISON_POND:
+			//statment
+			switch (player.playertype)
+			{
+			case player.Fireboy:
+
+			case player.Watergirl:
+				fireBoy.Player_dead= true;
+				waterGirl.Player_dead = true;
+				break;
+			}
+			break;
+		case FIRE_POND:
+			//statment
+			switch (player.playertype)
+			{
+			case player.Watergirl:
+				waterGirl.Player_dead = true;
+
+				break;
+			}
+			break;
+		case WATER_SURFACE:
+			//statment
+			switch (player.playertype)
+			{
+			case player.Fireboy:
+				fireBoy.Player_dead = true;
+
+				break;
+			}
+			break;
 		}
 	}
 };
