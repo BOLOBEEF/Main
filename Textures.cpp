@@ -18,9 +18,13 @@ enum LoadTexture
 	PLAYER_FIRE,
 	TRIANGLE,
 	TRIANGLE_ROTATED,
+
 	FLAME_POND,
 	WATER_POND,
-	TOXIC_POND
+	TOXIC_POND,
+
+	RECTANGLE
+
 };
 
 
@@ -28,7 +32,12 @@ enum LoadTexture
 Texture menuBackground;
 Texture playerTexture;
 Texture triangleTexture;
+
 Texture firePondTexture, waterPondTexture, toxicPondTexture;
+
+Texture cubeTexture;
+
+
 
 // Functions
 
@@ -36,7 +45,19 @@ Texture firePondTexture, waterPondTexture, toxicPondTexture;
 // menu and gameLogic scripts should apply their textures using this script
 // maybe divide it into a menu version and a gamelogic version for clarity
 
-void ApplyTexture(Sprite& sprite, LoadTexture texture) {
+// set size of sprite in pixels
+void SetSpriteSize(Sprite& sprite, Vector2f size, bool rotate = false) {
+	Vector2f scale = Vector2f(size.x / sprite.getLocalBounds().width, size.y / sprite.getLocalBounds().height);
+	sprite.setScale((rotate ? -scale.x : scale.x), scale.y);
+}
+
+
+void FlipSprite(Sprite& sprite) {
+	Vector2f scale = sprite.getScale();
+	sprite.setScale(-scale.x, scale.y);
+}
+
+void ApplyTexture(Sprite& sprite, LoadTexture texture, Vector2f size, Vector2f scale = Vector2f(1, 1)) {
 	switch (texture)
 	{
 	case PLAYER_FIRE:
@@ -46,13 +67,19 @@ void ApplyTexture(Sprite& sprite, LoadTexture texture) {
 	case TRIANGLE:
 		sprite.setTexture(triangleTexture);
 		sprite.setColor(Color::White);
-		sprite.setScale(0.1f, 0.1f);
+		SetSpriteSize(sprite, size);
 		break;
 
 	case TRIANGLE_ROTATED:
 		sprite.setTexture(triangleTexture);
 		sprite.setColor(Color::White);
-		sprite.setScale(-0.1f, 0.1f);
+		SetSpriteSize(sprite, size, true);
+		break;
+
+	case RECTANGLE:
+		sprite.setTexture(cubeTexture);
+		sprite.setColor(Color::White);
+		SetSpriteSize(sprite, size);
 		break;
 	case FLAME_POND:
 		sprite.setTexture(firePondTexture);
@@ -72,6 +99,7 @@ void ApplyTexture(Sprite& sprite, LoadTexture texture) {
 
 	default:
 		cout << "Invalid texture" << endl;
+		return;
 		break;
 	}
 }
@@ -86,6 +114,7 @@ void InitializeGameTextures() {
 	// playerTexture.load......
 
 	triangleTexture.loadFromFile("Main/Assets/Textures/Triangle.png");
+	cubeTexture.loadFromFile("Main/Assets/Textures/Cube.png");
 }
 
 
@@ -98,3 +127,4 @@ void InitializeTextures()
 	InitializeMenuTextures();
 	InitializeGameTextures();
 }
+

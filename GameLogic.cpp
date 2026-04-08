@@ -2,6 +2,7 @@
 // GAME LOGIC
 
 
+
 // Settings :
 
 
@@ -15,99 +16,74 @@ enum ponds_type
 };
 
 
+
+
 // Runtime variables
+Player fireBoy = Player(Player::Fireboy, center + Vector2f(-600, 200));
+Player waterGirl = Player(Player::Watergirl, center + Vector2f(-550, 200));
+Gem gem = Gem(Vector2f(650, 800));
+const bool displayColliders = true;
+ColliderList colliders;
 
 
-// Functions
-struct Collider
+// LEVEL EDITING TOOLS
+const bool editMode = true;	// if true, you can place down objects by clicking, and remove them by right clicking, change object type by pressing 0 or 1 or....
+Vector2f editScale = Vector2f(1, 1);
+
+enum EditType
 {
-	enum ColliderType {
-		Rectangle,
-		Triangle,
-		Triangle_Rotated
-	};
-
-	ColliderType type;
+	Rectangle,
+	Triangle,
+	Triangle_Rotated,
 };
-
-struct CollisionData
-{
-	// the collision direction relative to the collider not the player
-	enum CollisionDirection {
-		None,
-		Top,
-		Bottom,
-		Left,
-		Right,
-		Slope
-	};
-	CollisionDirection collisionDirection = CollisionData::None;
-
-	float overlapDistance = 0.0f;
-};
-
-CollisionData CheckRectangleCollision(Player& player, FloatRect otherBounds, bool resolveCollision = true) {
-	RectangleShape& sprite = player.sprite;
-	CollisionData collisionData;
-
-	FloatRect playerBounds = sprite.getGlobalBounds();
-
-	if (playerBounds.intersects(otherBounds)) {
-
-		float topOverlap = abs(otherBounds.top - (playerBounds.top + playerBounds.height));
-		float bottomOverlap = abs((otherBounds.top + otherBounds.height) - playerBounds.top);
-		float leftOverlap = abs(otherBounds.left - (playerBounds.left + playerBounds.width));
-		float rightOverlap = abs((otherBounds.left + otherBounds.width) - playerBounds.left);
-
-		// on comparing overlap, slightly prefer top and bottom overlaps, to avoid getting stuck on edges
-		float comparedTopOverlap = topOverlap - 10;
-		float comparedBottomOverlap = bottomOverlap - 10;
+EditType currentEditType = EditType::Rectangle;
 
 
-		if (comparedTopOverlap < comparedBottomOverlap && comparedTopOverlap < leftOverlap && comparedTopOverlap < rightOverlap) {
-			// Collision from the top
-			if (resolveCollision)
-			{
-				sprite.move(0, -topOverlap);
-				player.velocity.y = min(player.velocity.y, 1.0f);
-			}
+void CheckPlayerCollision(Player& player) {
+	bool isOnGround = false;
+	
+	for (int i = 0; i < colliders.count; i++)
+		isOnGround |= colliders.elements[i].CheckCollision(player);
+	
+	player.isOnGround = isOnGround;
+}
 
-			collisionData = { CollisionData::CollisionDirection::Top , topOverlap };
-
-		}
-		else if (comparedBottomOverlap < comparedTopOverlap && comparedBottomOverlap < leftOverlap && comparedBottomOverlap < rightOverlap) {
-			// Collision from the bottom
-			if (resolveCollision)
-				sprite.move(0, bottomOverlap);
-
-			collisionData = { CollisionData::CollisionDirection::Bottom , bottomOverlap };
-		}
-		else if (leftOverlap < rightOverlap && leftOverlap < comparedTopOverlap && leftOverlap < comparedBottomOverlap) {
-			// Collision from the left
-			if (resolveCollision)
-				sprite.move(-leftOverlap, 0);
-
-			collisionData = { CollisionData::CollisionDirection::Left , leftOverlap };
-		}
-		else {
-			// Collision from the right
-			if (resolveCollision)
-				sprite.move(rightOverlap, 0);
-
-			collisionData = { CollisionData::CollisionDirection::Right , rightOverlap };
-		}
+void AllignColliders() {
+	for (int i = 0; i < colliders.count; i++)
+	{
+		colliders.elements[i].AllignCollider();
 	}
-
-	return collisionData;
 }
 
-bool IsPointInsideTriangle(Vector2f point, Vector2f trianglePoints[3]) {
-	bool isPositive = Cross(point - trianglePoints[1], trianglePoints[1] - trianglePoints[0]) > 0;
-	if (Cross(point - trianglePoints[2], trianglePoints[2] - trianglePoints[1]) > 0 != isPositive) return false;
-	if (Cross(point - trianglePoints[0], trianglePoints[0] - trianglePoints[2]) > 0 != isPositive) return false;
-
-	return true;
+void LoadLevelData() {
+	colliders.Add(Collider(Collider::ColliderType::Rectangle, center + Vector2f(-900, 360), Vector2f(30, 1)));
+	colliders.Add(Collider(Collider::ColliderType::Rectangle, center + Vector2f(-1140, 60), Vector2f(23, 1)));
+	colliders.Add(Collider(Collider::ColliderType::Rectangle, center + Vector2f(-360, -240), Vector2f(23, 1)));
+	colliders.Add(Collider(Collider::ColliderType::Rectangle, center + Vector2f(-300, 300), Vector2f(8, 1)));
+	colliders.Add(Collider(Collider::ColliderType::Triangle_Rotated, center + Vector2f(-300, 300), Vector2f(2, 1)));
+	colliders.Add(Collider(Collider::ColliderType::Triangle, center + Vector2f(180, 300), Vector2f(2, 1)));
+	colliders.Add(Collider(Collider::ColliderType::Rectangle, center + Vector2f(420, 240), Vector2f(2, 2)));
+	colliders.Add(Collider(Collider::ColliderType::Rectangle, center + Vector2f(540, 120), Vector2f(2, 2)));
+	colliders.Add(Collider(Collider::ColliderType::Triangle_Rotated, center + Vector2f(540, 120), Vector2f(2, 2)));
+	colliders.Add(Collider(Collider::ColliderType::Rectangle, center + Vector2f(540, 240), Vector2f(2, 2)));
+	colliders.Add(Collider(Collider::ColliderType::Rectangle, center + Vector2f(-300, 0), Vector2f(1, 1)));
+	colliders.Add(Collider(Collider::ColliderType::Triangle_Rotated, center + Vector2f(-300, 0), Vector2f(1, 1)));
+	colliders.Add(Collider(Collider::ColliderType::Rectangle, center + Vector2f(-240, 0), Vector2f(1, 1)));
+	colliders.Add(Collider(Collider::ColliderType::Triangle, center + Vector2f(-180, 0), Vector2f(1, 1)));
+	colliders.Add(Collider(Collider::ColliderType::Rectangle, center + Vector2f(-720, 0), Vector2f(3, 1)));
+	colliders.Add(Collider(Collider::ColliderType::Rectangle, center + Vector2f(-900, -120), Vector2f(3, 1)));
+	colliders.Add(Collider(Collider::ColliderType::Triangle, center + Vector2f(-720, -120), Vector2f(1, 1)));
+	colliders.Add(Collider(Collider::ColliderType::Triangle, center + Vector2f(-540, 0), Vector2f(1, 1)));
+	colliders.Add(Collider(Collider::ColliderType::Triangle_Rotated, center + Vector2f(-720, 0), Vector2f(1, 1)));
+	colliders.Add(Collider(Collider::ColliderType::Rectangle, center + Vector2f(-480, -240), Vector2f(1, 1)));
+	colliders.Add(Collider(Collider::ColliderType::Rectangle, center + Vector2f(-420, -240), Vector2f(1, 1)));
+	colliders.Add(Collider(Collider::ColliderType::Triangle_Rotated, center + Vector2f(-480, -240), Vector2f(1, 1)));
+	colliders.Add(Collider(Collider::ColliderType::Rectangle, center + Vector2f(-960, 360), Vector2f(1, 1)));
+	colliders.Add(Collider(Collider::ColliderType::Rectangle, center + Vector2f(900, 360), Vector2f(1, 1)));
+	colliders.Add(Collider(Collider::ColliderType::Rectangle, center + Vector2f(840, 180), Vector2f(2, 1)));
+	colliders.Add(Collider(Collider::ColliderType::Triangle_Rotated, center + Vector2f(840, 180), Vector2f(1, 1)));
 }
+
 
 CollisionData CheckTriangleCollision(Player& player, Sprite triangle, bool rotated) {
 
@@ -232,21 +208,41 @@ Sprite triangle;
 Sprite rotatedTriangle;
 Sprite firePond, waterPond, poisonPond;
 
+
+
 void InitializeGame()
 {
+	LoadLevelData();
+
+
 	// code for initializing game variables and objects
-	ground.setOrigin(ground.getLocalBounds().width / 2.0f, ground.getLocalBounds().height / 2.0f);
-	ground.setPosition(center.x, center.y);
+	for (int i = 0; i < colliders.count; i++)
+		colliders.elements[i].Initialize();
 
-	ApplyTexture(triangle, LoadTexture::TRIANGLE);
-	triangle.setPosition(center.x + 200, center.y - 50);
-
-	ApplyTexture(rotatedTriangle, LoadTexture::TRIANGLE_ROTATED);
-	rotatedTriangle.setPosition(center.x - 200, center.y - 50);
-
-	fireBoy.sprite.setFillColor(Color::Red);
-	waterGirl.sprite.setFillColor(Color::Blue);
+	AllignColliders();
+	fireBoy.start();
+	waterGirl.start();
+	gem.start();
 }
+
+void PrintCollidersCode() {
+	for (int i = 0; i < colliders.count; i++) {
+		string type = (colliders.elements[i].type == Collider::ColliderType::Rectangle ? "Rectangle" : colliders.elements[i].type == Collider::ColliderType::Triangle ? "Triangle" : "Triangle_Rotated");
+		string position = "Vector2f(" + to_string((int)(colliders.elements[i].sprite.getPosition().x - center.x)) + ", " + to_string((int)(colliders.elements[i].sprite.getPosition().y - center.y)) + ")";
+		string scale = "Vector2f(" + to_string((int)colliders.elements[i].scale.x) + ", " + to_string((int)colliders.elements[i].scale.y) + ")";
+		cout << "colliders.Add(Collider(Collider::ColliderType::" << type << ", center + " << position << ", " << scale << "));" << endl;
+	}
+		
+}
+
+void PrintObjectsCode() {
+	cout << "START" << endl;
+	PrintCollidersCode();
+	cout << "END" << endl;
+}
+
+
+
 
 void HandleGameInput(Event event)
 {
@@ -255,10 +251,109 @@ void HandleGameInput(Event event)
 	// code for handling game input that is related to game logic
 	fireBoy.checkJump(event);
 	waterGirl.checkJump(event);
+
+
+	// in debug mode, when you press
+	if (!editMode) return;
+
+	if (event.type == Event::MouseButtonPressed) {
+		if (event.mouseButton.button == Mouse::Left) {
+			// add object
+
+			Collider collider;
+
+			switch (currentEditType)
+			{
+			case Rectangle:
+				collider = Collider(Collider::ColliderType::Rectangle, Vector2f(event.mouseButton.x, event.mouseButton.y), editScale);
+				collider.Initialize();
+				collider.sprite.move(-collider.sprite.getGlobalBounds().width / 2.0f, -collider.sprite.getGlobalBounds().height / 2.0f);
+				break;
+			case Triangle:
+				collider = Collider(Collider::ColliderType::Triangle, Vector2f(event.mouseButton.x, event.mouseButton.y), editScale);
+				collider.Initialize();
+				collider.sprite.move(-collider.sprite.getGlobalBounds().width / 2.0f, -collider.sprite.getGlobalBounds().height / 2.0f);
+				break;
+			case Triangle_Rotated:
+				collider = Collider(Collider::ColliderType::Triangle_Rotated, Vector2f(event.mouseButton.x, event.mouseButton.y), editScale);
+				collider.Initialize();
+				collider.sprite.move(collider.sprite.getGlobalBounds().width / 2.0f, -collider.sprite.getGlobalBounds().height / 2.0f);
+				break;
+			default:
+				break;
+			}
+
+			collider.AllignCollider();
+
+			/*bool isColliding = false;
+			for (int i = 0; i < colliders.count; i++)
+				if (colliders.elements[i].sprite.getGlobalBounds().intersects(collider.sprite.getGlobalBounds())) {
+					isColliding = true;
+					break;
+				}*/
+			
+			//if (!isColliding) {
+				colliders.Add(collider);
+			//}
+		}
+		
+		
+		else if (event.mouseButton.button == Mouse::Right) {
+			// remove object
+			for (int i = 0; i < colliders.count; i++) {
+				if (colliders.elements[i].sprite.getGlobalBounds().contains(Vector2f(event.mouseButton.x, event.mouseButton.y))) {
+					colliders.RemoveAt(i);
+				}
+			}
+		}
+	}
+
+	if (event.type == Event::KeyPressed) {
+		if (event.key.code == Keyboard::P) {
+			// print objects code
+			PrintObjectsCode();
+		}
+
+		if (event.key.code == Keyboard::O) {
+			// undo last object placement
+			colliders.RemoveAt(colliders.count - 1);
+		}
+
+		if (event.key.code == Keyboard::Numpad4)
+			// undo last object placement
+			editScale.x--;
+		if (event.key.code == Keyboard::Numpad6)
+			// undo last object placement
+			editScale.x++;
+		if (event.key.code == Keyboard::Numpad2)
+			// undo last object placement
+			editScale.y--;
+		if (event.key.code == Keyboard::Numpad8)
+			// undo last object placement
+			editScale.y++;
+
+
+		if (event.key.code == Keyboard::Num1) {
+			// undo last object placement
+			currentEditType = EditType::Rectangle;
+		}
+		
+		if (event.key.code == Keyboard::Num2) {
+			// undo last object placement
+			currentEditType = EditType::Triangle;
+		}
+
+		if (event.key.code == Keyboard::Num3) {
+			// undo last object placement
+			currentEditType = EditType::Triangle_Rotated;
+		}
+	}
 }
 
 void OnUpdatedGameStateGameLogic() {
 	// do stuff here exactly when the gameState is changed
+	if (gameState != GAME) return;
+
 }
 
 
@@ -268,19 +363,14 @@ void UpdateGame()
 
 	fireBoy.UpdateMotion();
 	waterGirl.UpdateMotion();
-	//firePlayer.sprite.setPosition(Mouse::getPosition(window).x, Mouse::getPosition(window).y);
+
 
 	CheckPlayerCollision(fireBoy);
 	CheckPlayerCollision(waterGirl);
+	gem.checkintersect(fireBoy);
+	gem.checkintersect(waterGirl);
 }
 
-void CheckPlayerCollision(Player& player) {
-	bool isOnGround = false;
-	isOnGround |= IsOnGround(CheckRectangleCollision(player, ground.getGlobalBounds()));
-	isOnGround |= IsOnGround(CheckTriangleCollision(player, triangle, false));
-	isOnGround |= IsOnGround(CheckTriangleCollision(player, rotatedTriangle, true));
-	player.isOnGround = isOnGround;
-}
 
 
 void DrawGame()
@@ -290,7 +380,11 @@ void DrawGame()
 	// no need for window.clear or window.display
 	window.draw(fireBoy.sprite);
 	window.draw(waterGirl.sprite);
-	window.draw(ground);
-	window.draw(triangle);
-	window.draw(rotatedTriangle);
+
+	if (displayColliders)
+		for (int i = 0; i < colliders.count; i++)
+		{
+			window.draw(colliders.elements[i].sprite);
+		}
+	window.draw(gem.sprite);
 }

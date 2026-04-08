@@ -49,7 +49,9 @@ int main()
 	// Initialization
 	Initialize();
 
+	// input issues: key repeat is enabled by default, which causes problems with our input handling, so we disable it
 	window.setKeyRepeatEnabled(false);
+
 	Event event;
 	while (window.isOpen())
 	{
