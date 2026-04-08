@@ -81,9 +81,8 @@ void InitializeGame()
 		colliders.elements[i].Initialize();
 
 	AllignColliders();
-
-	fireBoy.sprite.setFillColor(Color::Red);
-	waterGirl.sprite.setFillColor(Color::Blue);
+	fireBoy.start();
+	waterGirl.start();
 	gem.start();
 }
 

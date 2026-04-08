@@ -4,7 +4,13 @@ struct Player
 {
 	enum PlayerType { Fireboy, Watergirl };
 	PlayerType playertype;
-	RectangleShape sprite = RectangleShape(Vector2f(60, 100));
+	Sprite sprite ;
+	void start() {
+		ApplyTexture(sprite, LoadTexture::RECTANGLE, Vector2f(60, 100));
+		if(playertype==Fireboy)
+		sprite.setColor(Color::Red);
+		else sprite.setColor(Color::Blue);
+	}
 	Vector2f velocity = { 0,0 };
 
 	const float accelration = 500.0f;
@@ -121,7 +127,7 @@ struct Collider
 	}
 
 	Collider::CollisionData CheckRectangleCollision(Player& player, FloatRect otherBounds, bool resolveCollision = true) {
-		RectangleShape& sprite = player.sprite;
+		Sprite& sprite = player.sprite;
 		Collider::CollisionData collisionData;
 
 		FloatRect playerBounds = sprite.getGlobalBounds();
