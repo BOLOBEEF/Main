@@ -17,7 +17,10 @@ enum LoadTexture
 {
 	PLAYER_FIRE,
 	TRIANGLE,
-	TRIANGLE_ROTATED
+	TRIANGLE_ROTATED,
+	FLAME_POND,
+	WATER_POND,
+	TOXIC_POND
 };
 
 
@@ -25,7 +28,7 @@ enum LoadTexture
 Texture menuBackground;
 Texture playerTexture;
 Texture triangleTexture;
-
+Texture firePondTexture, waterPondTexture, toxicPondTexture;
 
 // Functions
 
@@ -50,6 +53,21 @@ void ApplyTexture(Sprite& sprite, LoadTexture texture) {
 		sprite.setTexture(triangleTexture);
 		sprite.setColor(Color::White);
 		sprite.setScale(-0.1f, 0.1f);
+		break;
+	case FLAME_POND:
+		sprite.setTexture(firePondTexture);
+		sprite.setColor(Color::Red);
+		sprite.setScale(0.1f, 0.1f);
+		break;
+	case WATER_POND:
+		sprite.setTexture(waterPondTexture);
+		sprite.setColor(Color::Blue);
+		sprite.setScale(0.1f, 0.1f);
+		break;
+	case TOXIC_POND:
+		sprite.setTexture(toxicPondTexture);
+		sprite.setColor(Color::Green);
+		sprite.setScale(0.1f, 0.1f);
 		break;
 
 	default:
