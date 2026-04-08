@@ -223,7 +223,7 @@ struct Collider
 					player.sprite.move(boxCollisionData.overlapDistance, 0);
 					return boxCollisionData;
 				}
-				else if (IsPointInsideTriangle(playerDownLeftPoint, usedTrianglePoints))
+				else if (IsPointInsideTriangle(playerDownLeftPoint + Vector2f(0, -1), usedTrianglePoints))
 				{
 					float triangleHeight = triangleBounds.height;
 					float triangleWidth = triangleBounds.width;
@@ -261,7 +261,7 @@ struct Collider
 					player.sprite.move(-boxCollisionData.overlapDistance, 0);
 					return boxCollisionData;
 				}
-				else if (IsPointInsideTriangle(playerDownRightPoint, usedTrianglePoints))
+				else if (IsPointInsideTriangle(playerDownRightPoint + Vector2f(0, -1), usedTrianglePoints))
 				{
 					float triangleHeight = triangleBounds.height;
 					float triangleWidth = triangleBounds.width;
