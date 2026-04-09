@@ -11,11 +11,11 @@
 
 
 
+
 enum MenuSoundEffect
 {
 	// add a type for each menu sound effect
 	ButtonClick,
-	ButtonSwitch,
 	Back,
 	Enter
 	// just some tine menu sound effects
@@ -24,10 +24,34 @@ enum MenuSoundEffect
 enum GameSoundEffect
 {
 	// add a type for each possible sound effect (NOT LOOPING MUSIC) we have
+
+	//index[o]
+	GameOver,
+	Win,
+
+	//index[1]--> boy, index[2] -->girl
+	Walking_boy,
+	Walking_girl,
+	IceSteps_Fb,
+	IceSteps_Wg,
+	Pondsteps_boy,
+	Pondsteps_girl,
 	Death,
-	DoorOpen,
-	DoorClose,
-	Win
+	BoyJump,
+	GirlJump,
+	 
+	//index[3]
+	Door,
+	Lever,
+	Platform,
+
+	//index[4]
+	pondFreeze,
+	PondMelt,
+	Wind,
+
+	//index[5]
+	DiamondCollect
 	// and so on
 };
 
@@ -36,7 +60,7 @@ enum BackgroundMusic {
 	MainMenu,
 	Game_Slow,
 	Game_Fast,
-	Game_Dark
+	Game_Dark,
 };
 
 
@@ -46,13 +70,13 @@ SoundBuffer gameMusic_SlowSound;
 SoundBuffer gameMusic_FastSound;
 SoundBuffer gameMusic_DarkSound;
 
-SoundBuffer StepsSound;//->
-SoundBuffer IceSteps_WgSound;//->
-SoundBuffer IceSteps_FbSound;//->
-SoundBuffer PondStepsSound;//->
-SoundBuffer DeathSound;//->
-SoundBuffer BoyJumpSound;//->
-SoundBuffer GirlJumpSound;//->
+SoundBuffer StepsSound;
+SoundBuffer IceSteps_WgSound;
+SoundBuffer IceSteps_FbSound;
+SoundBuffer PondStepsSound;
+SoundBuffer DeathSound;
+SoundBuffer BoyJumpSound;
+SoundBuffer GirlJumpSound;
 
 SoundBuffer PondFreezeSound;
 SoundBuffer PondMeltSound;
@@ -72,19 +96,9 @@ Sound musicPlayer;
 
 int currentSoundEffectPlayer = 0;
 
-Sound soundEffectsPlayers[5];
-
-Sound PondFreeze;
-Sound PondMelt;
-Sound Wind;
-Sound Door;
-Sound Button; //
-Sound Lever;
-Sound Platform;
-Sound LevelWin;//
-Sound LevelGameover;
-Sound Clock;
-Sound DiamondCollecting;
+Sound soundEffectsPlayers[6]; 
+//Sound Clock;
+Sound Button;
 
 // loop on those sound effect players when playing sound effects, so we can play multiple sound effects at the same time without cutting each other off, but we can only play 5 sound effects at the same time
 
@@ -93,31 +107,31 @@ Sound DiamondCollecting;
 
 void InitializeAudio()
 {
-	menuMusicSound.loadFromFile("/Main/Assets/UsedSounds/MenuMusic.mp3");
+	menuMusicSound.loadFromFile("/Main/Assets/Sounds/MenuMusic.mp3");
 
-	gameMusic_SlowSound.loadFromFile("/Main/Assets/UsedSounds/LevelMusic_slow.mp3");
-	gameMusic_FastSound.loadFromFile("/Main/Assets/UsedSounds/LevelMusic_fast.mp3");
-	gameMusic_DarkSound.loadFromFile("/Main/Assets/UsedSounds/LevelMusic_dark.mp3");
+	gameMusic_SlowSound.loadFromFile("/Main/Assets/Sounds/LevelMusic_slow.mp3");
+	gameMusic_FastSound.loadFromFile("/Main/Assets/Sounds/LevelMusic_fast.mp3");
+	gameMusic_DarkSound.loadFromFile("/Main/Assets/Sounds/LevelMusic_dark.mp3");
 
-	StepsSound.loadFromFile("/Main/Assets/UsedSounds/Steps.mp3");
-	PondStepsSound.loadFromFile("/Main/Assets/UsedSounds/PondSteps.mp3");
-	IceSteps_WgSound.loadFromFile("/Main/Assets/UsedSounds/IceSteps_wg.mp3");
-	IceSteps_FbSound.loadFromFile("/Main/Assets/UsedSounds/IceSteps_fb.mp3");
-	DeathSound.loadFromFile("/Main/Assets/UsedSounds/Death.mp3");
-	BoyJumpSound.loadFromFile("/Main/Assets/UsedSounds/Jump_fb.mp3");
-	GirlJumpSound.loadFromFile("/Main/Assets/UsedSounds/Jump_wg.mp3");
+	StepsSound.loadFromFile("/Main/Assets/Sounds/Steps.mp3");
+	PondStepsSound.loadFromFile("/Main/Assets/Sounds/PondSteps.mp3");
+	IceSteps_WgSound.loadFromFile("/Main/Assets/Sounds/IceSteps_wg.mp3");
+	IceSteps_FbSound.loadFromFile("/Main/Assets/Sounds/IceSteps_fb.mp3");
+	DeathSound.loadFromFile("/Main/Assets/Sounds/Death.mp3");
+	BoyJumpSound.loadFromFile("/Main/Assets/Sounds/Jump_fb.mp3");
+	GirlJumpSound.loadFromFile("/Main/Assets/Sounds/Jump_wg.mp3");
 
-	PondFreezeSound.loadFromFile("/Main/Assets/UsedSounds/PondFreeze.mp3");
-	PondMeltSound.loadFromFile("/Main/Assets/UsedSounds/PondMelt.mp3");
-	WindSound.loadFromFile("/Main/Assets/UsedSounds/Wind.mp3");
-	DoorSound.loadFromFile("/Main/Assets/UsedSounds/Door.mp3");
-	ButtonSound.loadFromFile("/Main/Assets/UsedSounds/Button.mp3");
-	LeverSound.loadFromFile("/Main/Assets/UsedSounds/Lever.mp3");
-	PlatformSound.loadFromFile("/Main/Assets/UsedSounds/Platform.mp3");
-	LevelWinSound.loadFromFile("/Main/Assets/UsedSounds/LevelWin.mp3");
-	LevelGameoverSound.loadFromFile("/Main/Assets/UsedSounds/LevelGameOver.mp3");
-	ClockSound.loadFromFile("/Main/Assets/UsedSounds/Clock.mp3");
-	DiamondCollectingSound.loadFromFile("/Main/Assets/UsedSounds/DiamondCollecting.mp3");
+	PondFreezeSound.loadFromFile("/Main/Assets/Sounds/PondFreeze.mp3");
+	PondMeltSound.loadFromFile("/Main/Assets/Sounds/PondMelt.mp3");
+	WindSound.loadFromFile("/Main/Assets/Sounds/Wind.mp3");
+	DoorSound.loadFromFile("/Main/Assets/Sounds/Door.mp3");
+	ButtonSound.loadFromFile("/Main/Assets/Sounds/Button.mp3");
+	LeverSound.loadFromFile("/Main/Assets/Sounds/Lever.mp3");
+	PlatformSound.loadFromFile("/Main/Assets/Sounds/Platform.mp3");
+	LevelWinSound.loadFromFile("/Main/Assets/Sounds/LevelWin.mp3");
+	LevelGameoverSound.loadFromFile("/Main/Assets/Sounds/LevelGameOver.mp3");
+	ClockSound.loadFromFile("/Main/Assets/Sounds/Clock.mp3");
+	DiamondCollectingSound.loadFromFile("/Main/Assets/Sounds/DiamondCollecting.mp3");
 	// load all buffers here
 }
 
@@ -162,44 +176,110 @@ void PlayMenuSoundEffect(MenuSoundEffect soundEffect) {
 	case ButtonClick:
 		Button.setBuffer(ButtonSound);
 		Button.setVolume(100.0f);
+		Button.play();
 		break;
 	case Back:
 		Button.setBuffer(ButtonSound);
 		Button.setVolume(100.0f);
+		Button.play();
 		break;
 	case Enter:
 		Button.setBuffer(ButtonSound);
 		Button.setVolume(100.0f);
+		Button.play();
 		break;
 	default:
 		cout << "Invalid sound effect" << endl;
 		break;
 	}
 }
-
-
 
 void PlayGameSoundEffect(GameSoundEffect soundEffect) {
+	for (int i = 0; i < 6; i++)
+	{
+		soundEffectsPlayers[i].setVolume(100.0f);
+	}
+
 	switch (soundEffect)
 	{
-	case Death:
-
-		break;
-	case DoorOpen:
-		Door.setBuffer(DoorSound);
-		Door.setVolume(100.0f);
-		break;
-	case DoorClose:
-		Door.setBuffer(DoorSound);
-		Door.setVolume(100.0f);
+	case GameOver:
+		soundEffectsPlayers[0].setBuffer(LevelGameoverSound);
+		soundEffectsPlayers[0].play();
 		break;
 	case Win:
-		LevelWin.setBuffer(LevelWinSound);
-		LevelWin.setVolume(100.0f);
+		soundEffectsPlayers[0].setBuffer(LevelWinSound);
+		soundEffectsPlayers[0].play();
+		break;
+
+	case Walking_boy:
+		soundEffectsPlayers[1].setBuffer(StepsSound);
+		soundEffectsPlayers[1].play();
+		break;
+	case Walking_girl:
+		soundEffectsPlayers[2].setBuffer(StepsSound);
+		soundEffectsPlayers[2].play();
+		break;
+	case IceSteps_Fb:
+		soundEffectsPlayers[1].setBuffer(IceSteps_FbSound);
+		soundEffectsPlayers[1].play();
+		break;
+	case IceSteps_Wg:
+		soundEffectsPlayers[2].setBuffer(IceSteps_WgSound);
+		soundEffectsPlayers[2].play();
+		break;
+	case Pondsteps_boy:
+		soundEffectsPlayers[1].setBuffer(PondStepsSound);
+		soundEffectsPlayers[1].play();
+		break;
+	case Pondsteps_girl:
+		soundEffectsPlayers[2].setBuffer(PondStepsSound);
+		soundEffectsPlayers[2].play();
+		break;
+	case Death:
+		soundEffectsPlayers[1].setBuffer(DeathSound);
+		soundEffectsPlayers[2].setBuffer(DeathSound);
+		soundEffectsPlayers[1].play();
+		break;
+	case BoyJump:
+		soundEffectsPlayers[1].setBuffer(BoyJumpSound);
+		soundEffectsPlayers[1].play();
+		break;
+	case GirlJump:
+		soundEffectsPlayers[2].setBuffer(GirlJumpSound);
+		soundEffectsPlayers[2].play();
+		break;
+
+	case Door:
+		soundEffectsPlayers[3].setBuffer(DoorSound);
+		soundEffectsPlayers[3].play();
+		break;
+	case Lever:
+		soundEffectsPlayers[3].setBuffer(LeverSound);
+		soundEffectsPlayers[3].play();
+		break;
+	case Platform:
+		soundEffectsPlayers[3].setBuffer(PlatformSound);
+		soundEffectsPlayers[3].play();
+		break;
+
+	case pondFreeze:
+		soundEffectsPlayers[4].setBuffer(PondFreezeSound);
+		soundEffectsPlayers[4].play();
+		break;
+	case PondMelt:
+		soundEffectsPlayers[4].setBuffer(PondMeltSound);
+		soundEffectsPlayers[4].play();
+		break;
+	case Wind:
+		soundEffectsPlayers[4].setBuffer(WindSound);
+		soundEffectsPlayers[4].play();
+		break;
+	case DiamondCollect:
+		soundEffectsPlayers[5].setBuffer(DiamondCollectingSound);
+		soundEffectsPlayers[5].play();
 		break;
 	default:
 		cout << "Invalid sound effect" << endl;
 		break;
 	}
 }
-

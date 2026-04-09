@@ -4,13 +4,14 @@ struct Player
 {
 	enum PlayerType { Fireboy, Watergirl };
 	PlayerType playertype;
-	Sprite sprite ;
+	Sprite sprite;
 	void start() {
-		ApplyTexture(sprite, LoadTexture::RECTANGLE, Vector2f(60, 100));
-		if(playertype==Fireboy)
-		sprite.setColor(Color::Red);
+		ApplyTexture(sprite, LoadTexture::RECTANGLE, Vector2f(50, 60));
+		if (playertype == Fireboy)
+			sprite.setColor(Color::Red);
 		else sprite.setColor(Color::Blue);
 	}
+
 	Vector2f velocity = { 0,0 };
 
 	const float accelration = 500.0f;
@@ -32,7 +33,7 @@ struct Player
 	void UpdateMotion() {
 		if (playertype == Fireboy) {
 			if (Keyboard::isKeyPressed(Keyboard::Right)) {
-				velocity.x += accelration*dt;
+				velocity.x += accelration * dt;
 			}
 			else if (Keyboard::isKeyPressed(Keyboard::Left)) {
 				velocity.x -= accelration * dt;
@@ -41,7 +42,7 @@ struct Player
 		}
 		else if (playertype == Watergirl) {
 			if (Keyboard::isKeyPressed(Keyboard::D)) {
-				velocity.x += accelration* dt;
+				velocity.x += accelration * dt;
 			}
 			else if (Keyboard::isKeyPressed(Keyboard::A)) {
 				velocity.x -= accelration * dt;
@@ -134,8 +135,8 @@ struct Collider
 	Sprite sprite;
 	ColliderType type;
 
-	int precision = 60;
-	Vector2f defaultSize = Vector2f(60, 60);
+	Vector2f defaultSize = Vector2f(32, 32);
+	float groundedDistance = 20.0f;
 	Vector2f scale;
 
 	struct CollisionData
@@ -156,14 +157,10 @@ struct Collider
 
 	void AllignCollider() {
 		Vector2f position = sprite.getPosition();
-		position.x = round(position.x / precision) * precision;
-		position.y = round(position.y / precision) * precision;
+		position.x = round(position.x / defaultSize.x) * defaultSize.x;
+		position.y = round(position.y / defaultSize.y) * defaultSize.y;
 
 		sprite.setPosition(position);
-	}
-
-	bool IsOnGround(Collider::CollisionData collisionData) {
-		return collisionData.collisionDirection == Collider::CollisionData::Top || collisionData.collisionDirection == collisionData.Slope;
 	}
 
 	bool IsPointInsideTriangle(Vector2f point, Vector2f trianglePoints[3]) {
@@ -174,7 +171,7 @@ struct Collider
 		return true;
 	}
 
-	Collider::CollisionData CheckRectangleCollision(Player& player, FloatRect otherBounds, bool resolveCollision = true) {
+	Collider::CollisionData CheckRectangleCollision(Player& player, FloatRect otherBounds, bool resolveCollision = true, FloatRect bias = FloatRect(5.0f, 5.0f, 0.0f, 0.0f)) {
 		Sprite& sprite = player.sprite;
 		Collider::CollisionData collisionData;
 
@@ -188,11 +185,13 @@ struct Collider
 			float rightOverlap = abs((otherBounds.left + otherBounds.width) - playerBounds.left);
 
 			// on comparing overlap, slightly prefer top and bottom overlaps, to avoid getting stuck on edges
-			float comparedTopOverlap = topOverlap - 2;
-			float comparedBottomOverlap = bottomOverlap - 2;
+			float comparedTopOverlap = topOverlap - bias.left;
+			float comparedBottomOverlap = bottomOverlap - bias.top;
+			float comparedLeftOverlap = leftOverlap - bias.width;
+			float comparedRightOverlap = rightOverlap - bias.height;
 
 
-			if (comparedTopOverlap < comparedBottomOverlap && comparedTopOverlap < leftOverlap && comparedTopOverlap < rightOverlap) {
+			if (comparedTopOverlap < comparedBottomOverlap && comparedTopOverlap < comparedLeftOverlap && comparedTopOverlap < comparedRightOverlap) {
 				// Collision from the top
 				if (resolveCollision)
 				{
@@ -203,7 +202,7 @@ struct Collider
 				collisionData = { Collider::CollisionData::CollisionDirection::Top , topOverlap };
 
 			}
-			else if (comparedBottomOverlap < comparedTopOverlap && comparedBottomOverlap < leftOverlap && comparedBottomOverlap < rightOverlap) {
+			else if (comparedBottomOverlap < comparedTopOverlap && comparedBottomOverlap < comparedLeftOverlap && comparedBottomOverlap < comparedRightOverlap) {
 				// Collision from the bottom
 				if (resolveCollision)
 				{
@@ -213,7 +212,7 @@ struct Collider
 
 				collisionData = { Collider::CollisionData::CollisionDirection::Bottom , bottomOverlap };
 			}
-			else if (leftOverlap < rightOverlap && leftOverlap < comparedTopOverlap && leftOverlap < comparedBottomOverlap) {
+			else if (comparedLeftOverlap < comparedRightOverlap && comparedLeftOverlap < comparedTopOverlap && comparedLeftOverlap < comparedBottomOverlap) {
 				// Collision from the left
 				if (resolveCollision)
 				{
@@ -238,7 +237,42 @@ struct Collider
 		return collisionData;
 	}
 
-	Collider::CollisionData CheckTriangleCollision(Player& player, FloatRect triangleBounds, bool rotated) {
+	Collider::CollisionData CheckRectangleCollision(FloatRect checkBounds, FloatRect otherBounds) {
+		Collider::CollisionData collisionData;
+
+		FloatRect playerBounds = checkBounds;
+
+		if (playerBounds.intersects(otherBounds)) {
+
+			float topOverlap = abs(otherBounds.top - (playerBounds.top + playerBounds.height));
+			float bottomOverlap = abs((otherBounds.top + otherBounds.height) - playerBounds.top);
+			float leftOverlap = abs(otherBounds.left - (playerBounds.left + playerBounds.width));
+			float rightOverlap = abs((otherBounds.left + otherBounds.width) - playerBounds.left);
+
+			// on comparing overlap, slightly prefer top and bottom overlaps, to avoid getting stuck on edges
+			float comparedTopOverlap = topOverlap - 5;
+			float comparedBottomOverlap = bottomOverlap - 5;
+
+
+			if (comparedTopOverlap < comparedBottomOverlap && comparedTopOverlap < leftOverlap && comparedTopOverlap < rightOverlap) {
+				collisionData = { Collider::CollisionData::CollisionDirection::Top , topOverlap };
+			}
+			else if (comparedBottomOverlap < comparedTopOverlap && comparedBottomOverlap < leftOverlap && comparedBottomOverlap < rightOverlap) {
+				collisionData = { Collider::CollisionData::CollisionDirection::Bottom , bottomOverlap };
+			}
+			else if (leftOverlap < rightOverlap && leftOverlap < comparedTopOverlap && leftOverlap < comparedBottomOverlap) {
+				collisionData = { Collider::CollisionData::CollisionDirection::Left , leftOverlap };
+			}
+			else {
+				collisionData = { Collider::CollisionData::CollisionDirection::Right , rightOverlap };
+			}
+		}
+
+		return collisionData;
+	}
+
+
+	Collider::CollisionData CheckTriangleCollision(Player& player, FloatRect triangleBounds, bool rotated, bool resolveCollision = true) {
 
 		FloatRect playerBounds = player.sprite.getGlobalBounds();
 
@@ -263,17 +297,24 @@ struct Collider
 			Vector2f playerDownLeftPoint = Vector2f(playerBounds.left, playerBounds.top + playerBounds.height);
 			Vector2f playerDownRightPoint = Vector2f(playerBounds.left + playerBounds.width, playerBounds.top + playerBounds.height);
 
-			Collider::CollisionData boxCollisionData = CheckRectangleCollision(player, triangleBounds, false);
+
+			Collider::CollisionData boxCollisionData = CheckRectangleCollision(player, triangleBounds, false, (!rotated ? FloatRect(5.0f, 0.0f, 5.0f, 0.0f) : FloatRect(5.0f, 0.0f, 0.0f, 5.0f)));
 
 			if (!rotated) {
 				if (boxCollisionData.collisionDirection == Collider::CollisionData::CollisionDirection::Bottom)
 				{
+					if (!resolveCollision)
+						return boxCollisionData;
+
 					player.sprite.move(0, boxCollisionData.overlapDistance);
 					player.velocity.y = max(player.velocity.y, 0.0f);
 					return boxCollisionData;
 				}
 				else if (boxCollisionData.collisionDirection == Collider::CollisionData::CollisionDirection::Left)
 				{
+					if (!resolveCollision)
+						return boxCollisionData;
+
 					player.sprite.move(-boxCollisionData.overlapDistance, 0);
 					player.velocity.x = min(player.velocity.x, 0.0f);
 					return boxCollisionData;
@@ -281,6 +322,9 @@ struct Collider
 
 				else if (boxCollisionData.collisionDirection == Collider::CollisionData::CollisionDirection::Top && playerBounds.contains(usedTrianglePoints[0]))
 				{
+					if (!resolveCollision)
+						return boxCollisionData;
+
 					player.sprite.move(0, -boxCollisionData.overlapDistance);
 					player.velocity.y = min(player.velocity.y, 1.0f);
 					return boxCollisionData;
@@ -298,12 +342,18 @@ struct Collider
 					float heightOverlap = newHeight - abs(playerDownLeftPoint.y - (triangleBounds.top + triangleBounds.height));
 
 					if (boxCollisionData.overlapDistance < abs(heightOverlap) - 2) {
+						if (!resolveCollision)
+							return boxCollisionData;
+
 						player.sprite.move(boxCollisionData.overlapDistance, 0);
 						player.velocity.x = max(player.velocity.x, 0.0f);
 						return boxCollisionData;
 					}
 					else
 					{
+						if (!resolveCollision)
+							return { Collider::CollisionData::Slope, abs(heightOverlap) };
+
 						player.sprite.move(0, -abs(heightOverlap));
 						player.velocity.y = min(player.velocity.y, 1.0f);
 						return { Collider::CollisionData::Slope, abs(heightOverlap) };
@@ -311,6 +361,9 @@ struct Collider
 				}
 				else if (IsPointInsideTriangle(playerDownLeftPoint + Vector2f(0, -1), usedTrianglePoints))
 				{
+					if (!resolveCollision)
+						return { Collider::CollisionData::Slope, 0 };
+
 					float triangleHeight = triangleBounds.height;
 					float triangleWidth = triangleBounds.width;
 					float newWidth = abs(playerDownLeftPoint.x - usedTrianglePoints[2].x);
@@ -318,7 +371,7 @@ struct Collider
 
 					// move up a distance till the point is no longer inside the triangle
 					float heightOverlap = newHeight - abs(playerDownLeftPoint.y - (triangleBounds.top + triangleBounds.height));
-					player.sprite.move(0, -abs(heightOverlap));
+					player.sprite.move(0, -abs(heightOverlap) + 1);
 					player.velocity.y = min(player.velocity.y, 1.0f);
 					return { Collider::CollisionData::Slope, abs(heightOverlap) };
 				}
@@ -326,12 +379,18 @@ struct Collider
 			else {
 				if (boxCollisionData.collisionDirection == Collider::CollisionData::CollisionDirection::Bottom)
 				{
+					if (!resolveCollision)
+						return boxCollisionData;
+
 					player.sprite.move(0, boxCollisionData.overlapDistance);
 					player.velocity.y = max(player.velocity.y, 0.0f);
 					return boxCollisionData;
 				}
 				else if (boxCollisionData.collisionDirection == Collider::CollisionData::CollisionDirection::Right)
 				{
+					if (!resolveCollision)
+						return boxCollisionData;
+
 					player.sprite.move(boxCollisionData.overlapDistance, 0);
 					player.velocity.x = max(player.velocity.x, 0.0f);
 					return boxCollisionData;
@@ -339,6 +398,9 @@ struct Collider
 
 				else if (boxCollisionData.collisionDirection == Collider::CollisionData::CollisionDirection::Top && playerBounds.contains(usedTrianglePoints[0]))
 				{
+					if (!resolveCollision)
+						return boxCollisionData;
+
 					player.sprite.move(0, -boxCollisionData.overlapDistance);
 					player.velocity.y = min(player.velocity.y, 1.0f);
 					return boxCollisionData;
@@ -355,21 +417,128 @@ struct Collider
 					float heightOverlap = newHeight - abs(playerDownRightPoint.y - (triangleBounds.top + triangleBounds.height));
 
 					if (boxCollisionData.overlapDistance < abs(heightOverlap) - 2) {
-						player.sprite.move(boxCollisionData.overlapDistance, 0);
+						if (!resolveCollision)
+							return boxCollisionData;
+
+						player.sprite.move(-boxCollisionData.overlapDistance, 0);
 						player.velocity.x = min(player.velocity.x, 0.0f);
 						return boxCollisionData;
 					}
 					else
 					{
+						if (!resolveCollision)
+							return { Collider::CollisionData::Slope, abs(heightOverlap) };
+
 						player.sprite.move(0, -abs(heightOverlap));
 						player.velocity.y = min(player.velocity.y, 1.0f);
 						return { Collider::CollisionData::Slope, abs(heightOverlap) };
 					}
-
-					player.sprite.move(-boxCollisionData.overlapDistance, 0);
-					return boxCollisionData;
 				}
 				else if (IsPointInsideTriangle(playerDownRightPoint + Vector2f(0, -1), usedTrianglePoints))
+				{
+					if (!resolveCollision)
+						return { Collider::CollisionData::Slope, 0 };
+
+					float triangleHeight = triangleBounds.height;
+					float triangleWidth = triangleBounds.width;
+					float newWidth = abs(playerDownRightPoint.x - usedTrianglePoints[2].x);
+					float newHeight = newWidth * triangleHeight / triangleWidth;
+
+					// move up a distance till the point is no longer inside the triangle
+					float heightOverlap = newHeight - abs(playerDownRightPoint.y - (triangleBounds.top + triangleBounds.height));
+					player.sprite.move(0, -abs(heightOverlap) + 1);
+					player.velocity.y = min(player.velocity.y, 1.0f);
+					return { Collider::CollisionData::Slope, abs(heightOverlap) };
+				}
+			}
+
+		}
+
+		return { Collider::CollisionData::None, 0.0f };;	// placeholder, implement this later
+	}
+
+	Collider::CollisionData CheckTriangleCollision(FloatRect checkBounds, FloatRect triangleBounds, bool rotated) {
+
+		FloatRect playerBounds = checkBounds;
+
+		bool collided = false;
+
+		if (playerBounds.intersects(triangleBounds)) {
+			Vector2f usedTrianglePoints[3];
+
+			if (!rotated) {
+				usedTrianglePoints[0] = Vector2f(triangleBounds.left, triangleBounds.top);
+				usedTrianglePoints[1] = Vector2f(triangleBounds.left, triangleBounds.top + triangleBounds.height);
+				usedTrianglePoints[2] = Vector2f(triangleBounds.left + triangleBounds.width, triangleBounds.top + triangleBounds.height);
+			}
+			else {
+				usedTrianglePoints[0] = Vector2f(triangleBounds.left + triangleBounds.width, triangleBounds.top);
+				usedTrianglePoints[1] = Vector2f(triangleBounds.left + triangleBounds.width, triangleBounds.top + triangleBounds.height);
+				usedTrianglePoints[2] = Vector2f(triangleBounds.left, triangleBounds.top + triangleBounds.height);
+			}
+
+
+
+			Vector2f playerDownLeftPoint = Vector2f(playerBounds.left, playerBounds.top + playerBounds.height);
+			Vector2f playerDownRightPoint = Vector2f(playerBounds.left + playerBounds.width, playerBounds.top + playerBounds.height);
+
+			Collider::CollisionData boxCollisionData = CheckRectangleCollision(checkBounds, triangleBounds);
+
+			if (!rotated) {
+				if (boxCollisionData.collisionDirection == Collider::CollisionData::CollisionDirection::Bottom)
+				{
+					return boxCollisionData;
+				}
+				else if (boxCollisionData.collisionDirection == Collider::CollisionData::CollisionDirection::Left)
+				{
+					return boxCollisionData;
+				}
+
+				else if (boxCollisionData.collisionDirection == Collider::CollisionData::CollisionDirection::Top && playerBounds.contains(usedTrianglePoints[0]))
+				{
+					return boxCollisionData;
+				}
+
+				else if (boxCollisionData.collisionDirection == Collider::CollisionData::CollisionDirection::Right && playerBounds.contains(usedTrianglePoints[2]))
+				{
+					// Compare the overlap distance with the distance to move out of the triangle upwards, and move according to the smaller one
+					float triangleHeight = triangleBounds.height;
+					float triangleWidth = triangleBounds.width;
+					float newWidth = abs(playerDownLeftPoint.x - usedTrianglePoints[2].x);
+					float newHeight = newWidth * triangleHeight / triangleWidth;
+
+					// move up a distance till the point is no longer inside the triangle
+					float heightOverlap = newHeight - abs(playerDownLeftPoint.y - (triangleBounds.top + triangleBounds.height));
+
+					if (boxCollisionData.overlapDistance < abs(heightOverlap) - 2) {
+						return boxCollisionData;
+					}
+					else
+					{
+						return { Collider::CollisionData::Slope, abs(heightOverlap) };
+					}
+				}
+				else if (IsPointInsideTriangle(playerDownLeftPoint + Vector2f(0, -1), usedTrianglePoints))
+				{
+					return { Collider::CollisionData::Slope, 0 };
+				}
+			}
+			else {
+				if (boxCollisionData.collisionDirection == Collider::CollisionData::CollisionDirection::Bottom)
+				{
+					return boxCollisionData;
+				}
+				else if (boxCollisionData.collisionDirection == Collider::CollisionData::CollisionDirection::Right)
+				{
+					return boxCollisionData;
+				}
+
+				else if (boxCollisionData.collisionDirection == Collider::CollisionData::CollisionDirection::Top && playerBounds.contains(usedTrianglePoints[0]))
+				{
+					return boxCollisionData;
+				}
+
+				else if (boxCollisionData.collisionDirection == Collider::CollisionData::CollisionDirection::Left && playerBounds.contains(usedTrianglePoints[2]))
 				{
 					float triangleHeight = triangleBounds.height;
 					float triangleWidth = triangleBounds.width;
@@ -378,9 +547,18 @@ struct Collider
 
 					// move up a distance till the point is no longer inside the triangle
 					float heightOverlap = newHeight - abs(playerDownRightPoint.y - (triangleBounds.top + triangleBounds.height));
-					player.sprite.move(0, -abs(heightOverlap));
-					player.velocity.y = min(player.velocity.y, 1.0f);
-					return { Collider::CollisionData::Slope, abs(heightOverlap) };
+
+					if (boxCollisionData.overlapDistance < abs(heightOverlap) - 2) {
+						return boxCollisionData;
+					}
+					else
+					{
+						return { Collider::CollisionData::Slope, abs(heightOverlap) };
+					}
+				}
+				else if (IsPointInsideTriangle(playerDownRightPoint + Vector2f(0, -1), usedTrianglePoints))
+				{
+					return { Collider::CollisionData::Slope, 0 };
 				}
 			}
 
@@ -396,7 +574,7 @@ struct Collider
 		scale = newScale;
 	}
 
-	Collider(){}
+	Collider() {}
 
 	void Initialize() {
 		switch (type)
@@ -415,6 +593,24 @@ struct Collider
 		}
 	}
 
+
+	bool IsOnGround(Player player, FloatRect groundCheckBounds) {
+		CollisionData collisionData;
+
+		switch (type)
+		{
+		case Collider::Rectangle:
+			return groundCheckBounds.intersects(sprite.getGlobalBounds());
+		case Collider::Triangle:
+			collisionData = CheckTriangleCollision(groundCheckBounds, sprite.getGlobalBounds(), false);
+			return collisionData.collisionDirection == CollisionData::CollisionDirection::Top || collisionData.collisionDirection == CollisionData::CollisionDirection::Slope;
+		case Collider::Triangle_Rotated:
+			collisionData = CheckTriangleCollision(groundCheckBounds, sprite.getGlobalBounds(), true);
+			return collisionData.collisionDirection == CollisionData::CollisionDirection::Top || collisionData.collisionDirection == CollisionData::CollisionDirection::Slope;
+		default:
+			break;
+		}
+	}
 
 	bool CheckCollision(Player& player) {
 		CollisionData collisionData;
@@ -435,10 +631,12 @@ struct Collider
 		}
 
 
-		return IsOnGround(collisionData);
-	}
+		FloatRect playerBounds = player.sprite.getGlobalBounds();
+		FloatRect colliderBounds = FloatRect(playerBounds.left, playerBounds.top + groundedDistance, playerBounds.width, playerBounds.height);
 
-	
+
+		return IsOnGround(player, colliderBounds);
+	}
 };
 
 struct ColliderList {
@@ -491,25 +689,40 @@ struct ColliderList {
 		delete[] elements;
 	}
 };
-struct Gem 
+struct Gem
 {
+	enum Gemtype { waterGem, fireGem };
+	Gemtype gemtype;
 	Sprite sprite;
 	bool isCollected = false;
 	void start() {
 		ApplyTexture(sprite, LoadTexture::RECTANGLE, Vector2f(30, 30));
-		sprite.setColor(Color::Green);
+		if (gemtype == waterGem) {
+			sprite.setColor(Color::Blue);
+			
+		}
+		else
+		{
+			sprite.setColor(Color::Red);
+		}
+			
 	}
-	Gem (Vector2f position) {
+	Gem(Gemtype crystaltype,Vector2f position) {
+		gemtype = crystaltype;
 		sprite.setPosition(position);
 	}
 	void checkintersect(Player hamada) {
-		if (sprite.getGlobalBounds().intersects(hamada.sprite.getGlobalBounds())) {
-			isCollected = true;
-			sprite.setScale(0, 0);
+		if (gemtype == waterGem && hamada.playertype == Player::Watergirl) {
+			if (sprite.getGlobalBounds().intersects(hamada.sprite.getGlobalBounds())) {
+				isCollected = true;
+				sprite.setScale(0, 0);
+			}
 		}
-	
-		
+		if (gemtype == fireGem && hamada.playertype == Player::Fireboy) {
+			if (sprite.getGlobalBounds().intersects(hamada.sprite.getGlobalBounds())) {
+				isCollected = true;
+				sprite.setScale(0, 0);
+			}
+		}
 	}
 };
-
-
