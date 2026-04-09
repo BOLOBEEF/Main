@@ -641,22 +641,39 @@ struct ColliderList {
 };
 struct Gem
 {
+	enum Gemtype { waterGem, fireGem };
+	Gemtype gemtype;
 	Sprite sprite;
 	bool isCollected = false;
 	void start() {
 		ApplyTexture(sprite, LoadTexture::RECTANGLE, Vector2f(30, 30));
-		sprite.setColor(Color::Green);
+		if (gemtype == waterGem) {
+			sprite.setColor(Color::Blue);
+			
+		}
+		else
+		{
+			sprite.setColor(Color::Red);
+		}
+			
 	}
-	Gem(Vector2f position) {
+	Gem(Gemtype crystaltype,Vector2f position) {
+		gemtype = crystaltype;
 		sprite.setPosition(position);
 	}
 	void checkintersect(Player hamada) {
-		if (sprite.getGlobalBounds().intersects(hamada.sprite.getGlobalBounds())) {
-			isCollected = true;
-			sprite.setScale(0, 0);
+		if (gemtype == waterGem && hamada.playertype == Player::Watergirl) {
+			if (sprite.getGlobalBounds().intersects(hamada.sprite.getGlobalBounds())) {
+				isCollected = true;
+				sprite.setScale(0, 0);
+			}
 		}
-
-
+		if (gemtype == fireGem && hamada.playertype == Player::Fireboy) {
+			if (sprite.getGlobalBounds().intersects(hamada.sprite.getGlobalBounds())) {
+				isCollected = true;
+				sprite.setScale(0, 0);
+			}
+		}
 	}
 };
 

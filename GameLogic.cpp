@@ -7,7 +7,8 @@
 // Runtime variables
 Player fireBoy = Player(Player::Fireboy, center + Vector2f(-600, 200));
 Player waterGirl = Player(Player::Watergirl, center + Vector2f(-550, 200));
-Gem gem = Gem(Vector2f(650, 800));
+Gem fireGem = Gem(Gem::fireGem, Vector2f(650, 800));
+Gem waterGem = Gem(Gem::waterGem, Vector2f(800, 800));
 const bool displayColliders = true;
 ColliderList colliders;
 
@@ -83,7 +84,8 @@ void InitializeGame()
 	AllignColliders();
 	fireBoy.start();
 	waterGirl.start();
-	gem.start();
+	fireGem.start();
+	waterGem.start();
 }
 
 void PrintCollidersCode() {
@@ -248,8 +250,8 @@ void UpdateGame()
 
 	CheckPlayerCollision(fireBoy);
 	CheckPlayerCollision(waterGirl);
-	gem.checkintersect(fireBoy);
-	gem.checkintersect(waterGirl);
+	fireGem.checkintersect(fireBoy);
+	waterGem.checkintersect(waterGirl);
 }
 
 
@@ -268,5 +270,6 @@ void DrawGame()
 			window.draw(colliders.elements[i].sprite);
 		}
 
-	window.draw(gem.sprite);
+	window.draw(waterGem.sprite);
+	window.draw(fireGem.sprite);
 }
