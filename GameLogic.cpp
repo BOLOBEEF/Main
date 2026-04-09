@@ -10,7 +10,7 @@ Player waterGirl = Player(Player::Watergirl, center + Vector2f(-550, 200));
 Gem fireGem = Gem(Gem::fireGem, Vector2f(650, 800));
 Gem waterGem = Gem(Gem::waterGem, Vector2f(800, 800));
 Sprite ground;
-
+Click click = Click(Vector2f(1000, 900));
 RenderTexture maskTexture;
 RenderTexture resultTexture;
 
@@ -133,7 +133,7 @@ void InitializeGame()
 	waterGirl.start();
 	fireGem.start();
 	waterGem.start();
-
+	click.start();
 	ApplyTexture(ground, LoadTexture::GROUND, Vector2f(256, 256));
 	ground.setTextureRect(IntRect(0, 0, windowSize.x, windowSize.y));
 
@@ -310,6 +310,11 @@ void UpdateGame()
 	CheckPlayerCollision(waterGirl);
 	fireGem.checkintersect(fireBoy);
 	waterGem.checkintersect(waterGirl);
+	click.buttonpressed = false;
+	click.isPressed(fireBoy);
+	click.isPressed(waterGirl);
+	click.updateRelease();
+
 }
 
 
@@ -323,6 +328,6 @@ void DrawGame()
 
 	window.draw(waterGem.sprite);
 	window.draw(fireGem.sprite);
-
+	window.draw(click.sprite);
 	window.draw(Sprite(resultTexture.getTexture()));
 }
