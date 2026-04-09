@@ -726,3 +726,28 @@ struct Gem
 		}
 	}
 };
+struct Click
+{
+	Sprite sprite;
+	bool buttonpressed = false;
+	void start() {
+		ApplyTexture(sprite, LoadTexture::RECTANGLE, Vector2f(30, 30));
+		sprite.setColor(Color::Yellow);
+	}
+	Click(Vector2f postion) {
+		sprite.setPosition(postion);
+	}
+	void isPressed(Player anteel) {
+		if (sprite.getGlobalBounds().intersects(anteel.sprite.getGlobalBounds())) {
+			buttonpressed = true;
+			sprite.setColor(Color::Magenta);
+			
+		}
+	}
+	void updateRelease() {
+		if (!buttonpressed) {
+			sprite.setColor(Color::Yellow);
+		}
+	}
+
+};
