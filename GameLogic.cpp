@@ -27,10 +27,10 @@ EditType currentEditType = EditType::Rectangle;
 
 void CheckPlayerCollision(Player& player) {
 	bool isOnGround = false;
-	
+
 	for (int i = 0; i < colliders.count; i++)
 		isOnGround |= colliders.elements[i].CheckCollision(player);
-	
+
 	player.isOnGround = isOnGround;
 }
 
@@ -93,7 +93,7 @@ void PrintCollidersCode() {
 		string scale = "Vector2f(" + to_string((int)colliders.elements[i].scale.x) + ", " + to_string((int)colliders.elements[i].scale.y) + ")";
 		cout << "colliders.Add(Collider(Collider::ColliderType::" << type << ", center + " << position << ", " << scale << "));" << endl;
 	}
-		
+
 }
 
 void PrintObjectsCode() {
@@ -105,9 +105,20 @@ void PrintObjectsCode() {
 
 void EditMode(Event event) {
 
+	// EDITING MANUAL:
+	// left click to add object, right click to remove object
+	// numpad 4 and 6 to change x scale, numpad 2 and 8 to change y scale
+	// 1, 2 and 3 to change object type
+	// P to print code for all objects, O to undo last object placement
+	// when placing objects, they will be alligned to a grid which is positioned relative to the center of the screen
+	// Can't place objects on top of each other
+
+
 	if (event.type == Event::MouseButtonPressed) {
 		if (event.mouseButton.button == Mouse::Left) {
 			// add object
+			if (editScale.x <= 0) editScale.x = 1;
+			if (editScale.y <= 0) editScale.y = 1;
 
 			Collider collider;
 
@@ -134,16 +145,16 @@ void EditMode(Event event) {
 
 			collider.AllignCollider();
 
-			/*bool isColliding = false;
+			bool isColliding = false;
 			for (int i = 0; i < colliders.count; i++)
 				if (colliders.elements[i].sprite.getGlobalBounds().intersects(collider.sprite.getGlobalBounds())) {
 					isColliding = true;
 					break;
-				}*/
+				}
 
-				//if (!isColliding) {
-			colliders.Add(collider);
-			//}
+			if (!isColliding) {
+				colliders.Add(collider);
+			}
 		}
 
 
@@ -256,5 +267,6 @@ void DrawGame()
 		{
 			window.draw(colliders.elements[i].sprite);
 		}
+
 	window.draw(gem.sprite);
 }

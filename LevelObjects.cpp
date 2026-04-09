@@ -32,7 +32,7 @@ struct Player
 	void UpdateMotion() {
 		if (playertype == Fireboy) {
 			if (Keyboard::isKeyPressed(Keyboard::Right)) {
-				velocity.x += accelration*dt;
+				velocity.x += accelration * dt;
 			}
 			else if (Keyboard::isKeyPressed(Keyboard::Left)) {
 				velocity.x -= accelration * dt;
@@ -41,7 +41,7 @@ struct Player
 		}
 		else if (playertype == Watergirl) {
 			if (Keyboard::isKeyPressed(Keyboard::D)) {
-				velocity.x += accelration* dt;
+				velocity.x += accelration * dt;
 			}
 			else if (Keyboard::isKeyPressed(Keyboard::A)) {
 				velocity.x -= accelration * dt;
@@ -406,7 +406,7 @@ struct Collider
 
 		return { Collider::CollisionData::None, 0.0f };;	// placeholder, implement this later
 	}
-	
+
 	Collider::CollisionData CheckTriangleCollision(FloatRect checkBounds, FloatRect triangleBounds, bool rotated) {
 
 		FloatRect playerBounds = checkBounds;
@@ -437,16 +437,16 @@ struct Collider
 			if (!rotated) {
 				if (boxCollisionData.collisionDirection == Collider::CollisionData::CollisionDirection::Bottom)
 				{
-						return boxCollisionData;
+					return boxCollisionData;
 				}
 				else if (boxCollisionData.collisionDirection == Collider::CollisionData::CollisionDirection::Left)
 				{
-						return boxCollisionData;
+					return boxCollisionData;
 				}
 
 				else if (boxCollisionData.collisionDirection == Collider::CollisionData::CollisionDirection::Top && playerBounds.contains(usedTrianglePoints[0]))
 				{
-						return boxCollisionData;
+					return boxCollisionData;
 				}
 
 				else if (boxCollisionData.collisionDirection == Collider::CollisionData::CollisionDirection::Right && playerBounds.contains(usedTrianglePoints[2]))
@@ -465,7 +465,7 @@ struct Collider
 					}
 					else
 					{
-							return { Collider::CollisionData::Slope, abs(heightOverlap) };
+						return { Collider::CollisionData::Slope, abs(heightOverlap) };
 					}
 				}
 				else if (IsPointInsideTriangle(playerDownLeftPoint + Vector2f(0, -1), usedTrianglePoints))
@@ -508,7 +508,7 @@ struct Collider
 				}
 				else if (IsPointInsideTriangle(playerDownRightPoint + Vector2f(0, -1), usedTrianglePoints))
 				{
-						return { Collider::CollisionData::Slope, 0 };
+					return { Collider::CollisionData::Slope, 0 };
 				}
 			}
 
@@ -524,7 +524,7 @@ struct Collider
 		scale = newScale;
 	}
 
-	Collider(){}
+	Collider() {}
 
 	void Initialize() {
 		switch (type)
@@ -580,10 +580,10 @@ struct Collider
 			break;
 		}
 
-		
+
 		FloatRect playerBounds = player.sprite.getGlobalBounds();
 		FloatRect colliderBounds = FloatRect(playerBounds.left, playerBounds.top + groundedDistance, playerBounds.width, playerBounds.height);
-		
+
 
 		return IsOnGround(player, colliderBounds);
 	}
