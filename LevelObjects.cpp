@@ -20,7 +20,7 @@ struct Player
 	const float gravity = 1000.0f;
 	const float jump = -500.0f;
 	bool isOnGround = false;
-	bool Player_dead = false;
+	bool isDead = false;
 
 
 
@@ -76,53 +76,14 @@ struct Player
 		}
 	}
 };
-struct Ponds
-{
-	RectangleShape ponds_sprite = RectangleShape(Vector2f(150, 100));
-	Ponds() {
-		ponds_sprite.setOrigin(ponds_sprite.getLocalBounds().width / 2.0f, ponds_sprite.getLocalBounds().height / 2.0f);
-		ponds_sprite.setPosition(center.x + 200, center.y + 200);
-	}
-	void PondsEffect(Player& player, ponds_type pond) {
-		// 
-		switch (pond)
-		{
-		case POISON_POND:
-			//statment
-			switch (player.playertype)
-			{
-			case player.Fireboy:
 
-			case player.Watergirl:
-				fireBoy.Player_dead= true;
-				waterGirl.Player_dead = true;
-				break;
-			}
-			break;
-		case FIRE_POND:
-			//statment
-			switch (player.playertype)
-			{
-			case player.Watergirl:
-				waterGirl.Player_dead = true;
+void AllignSprite(Sprite& sprite, Vector2f defaultSize = Vector2f(32, 32)) {
+	Vector2f position = sprite.getPosition();
+	position.x = round(position.x / defaultSize.x) * defaultSize.x;
+	position.y = round(position.y / defaultSize.y) * defaultSize.y;
 
-				break;
-			}
-			break;
-		case WATER_SURFACE:
-			//statment
-			switch (player.playertype)
-			{
-			case player.Fireboy:
-				fireBoy.Player_dead = true;
-
-				break;
-			}
-			break;
-		}
-	}
-};
-
+	sprite.setPosition(position);
+}
 
 struct Collider
 {
@@ -155,13 +116,6 @@ struct Collider
 		float overlapDistance = 0.0f;
 	};
 
-	void AllignCollider() {
-		Vector2f position = sprite.getPosition();
-		position.x = round(position.x / defaultSize.x) * defaultSize.x;
-		position.y = round(position.y / defaultSize.y) * defaultSize.y;
-
-		sprite.setPosition(position);
-	}
 
 	bool IsPointInsideTriangle(Vector2f point, Vector2f trianglePoints[3]) {
 		bool isPositive = Cross(point - trianglePoints[1], trianglePoints[1] - trianglePoints[0]) > 0;
@@ -750,4 +704,68 @@ struct Click
 		}
 	}
 
+};
+
+
+
+struct Pond
+{
+	Sprite sprite;
+
+	enum ponds_type
+	{
+		POISON_POND,
+		FIRE_POND,
+		WATER_POND
+	} type;
+
+	Pond(ponds_type startType, Vector2f position) {
+		type = startType;
+		sprite.setPosition(position);
+	}
+
+	void Initialilze() {
+		ApplyTexture(sprite, LoadTexture::RECTANGLE, Vector2f(32 * 5, 32));
+		AllignSprite(sprite);
+	}
+
+	void Update(Player& player) {
+		// if no collision return
+		if (!player.sprite.getGlobalBounds().intersects(sprite.getGlobalBounds())) return;
+
+		switch (type)
+		{
+		case POISON_POND:
+			//statment
+			switch (player.playertype)
+			{
+			case player.Fireboy:
+
+			case player.Watergirl:
+				player.isDead = true;
+				break;
+			}
+			break;
+		case FIRE_POND:
+			//statment
+			switch (player.playertype)
+			{
+			case player.Watergirl:
+				player.isDead = true;
+
+				break;
+			}
+			break;
+		case WATER_POND:
+			//statment
+			switch (player.playertype)
+			{
+			case player.Fireboy:
+				player.isDead = true;
+
+				break;
+			}
+			break;
+		}
+	}
 };

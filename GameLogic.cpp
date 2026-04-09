@@ -20,9 +20,14 @@ enum ponds_type
 
 // Runtime variables
 Player fireBoy = Player(Player::Fireboy, center + Vector2f(-600, 200));
-Player waterGirl = Player(Player::Watergirl, center + Vector2f(-550, 200));
+Player waterGirl = Player(Player::Watergirl, center + Vector2f(-550, 300));
 Gem fireGem = Gem(Gem::fireGem, Vector2f(650, 800));
 Gem waterGem = Gem(Gem::waterGem, Vector2f(800, 800));
+Pond firePond = Pond(Pond::FIRE_POND, Vector2f(920, 950));
+Pond waterPond = Pond(Pond::WATER_POND, Vector2f(800, 600));
+Pond poisonPond = Pond(Pond::POISON_POND, Vector2f(800, 500));
+
+
 Sprite ground;
 Click click = Click(Vector2f(1000, 900));
 RenderTexture maskTexture;
@@ -57,18 +62,16 @@ void CheckPlayerCollision(Player& player) {
 void AllignColliders() {
 	for (int i = 0; i < colliders.count; i++)
 	{
-		colliders.elements[i].AllignCollider();
+		AllignSprite(colliders.elements[i].sprite);
 	}
 }
 
 void LoadLevelData() {
-	colliders.Add(Collider(Collider::ColliderType::Rectangle, center + Vector2f(-704, 420), Vector2f(44, 1)));
 	colliders.Add(Collider(Collider::ColliderType::Rectangle, center + Vector2f(-704, -540), Vector2f(44, 1)));
 	colliders.Add(Collider(Collider::ColliderType::Rectangle, center + Vector2f(-704, -508), Vector2f(1, 29)));
 	colliders.Add(Collider(Collider::ColliderType::Rectangle, center + Vector2f(672, -508), Vector2f(1, 29)));
 	colliders.Add(Collider(Collider::ColliderType::Rectangle, center + Vector2f(-672, 292), Vector2f(11, 1)));
 	colliders.Add(Collider(Collider::ColliderType::Rectangle, center + Vector2f(-672, 164), Vector2f(17, 1)));
-	colliders.Add(Collider(Collider::ColliderType::Rectangle, center + Vector2f(-128, 228), Vector2f(19, 1)));
 	colliders.Add(Collider(Collider::ColliderType::Rectangle, center + Vector2f(-64, 4), Vector2f(23, 1)));
 	colliders.Add(Collider(Collider::ColliderType::Rectangle, center + Vector2f(-512, -28), Vector2f(16, 1)));
 	colliders.Add(Collider(Collider::ColliderType::Rectangle, center + Vector2f(-672, -156), Vector2f(37, 1)));
@@ -91,6 +94,18 @@ void LoadLevelData() {
 	colliders.Add(Collider(Collider::ColliderType::Rectangle, center + Vector2f(-320, -380), Vector2f(2, 1)));
 	colliders.Add(Collider(Collider::ColliderType::Triangle_Rotated, center + Vector2f(-320, -380), Vector2f(1, 1)));
 	colliders.Add(Collider(Collider::ColliderType::Rectangle, center + Vector2f(-672, -316), Vector2f(5, 5)));
+	colliders.Add(Collider(Collider::ColliderType::Rectangle, center + Vector2f(-704, 420), Vector2f(21, 1)));
+	colliders.Add(Collider(Collider::ColliderType::Rectangle, center + Vector2f(384, 420), Vector2f(10, 1)));
+	colliders.Add(Collider(Collider::ColliderType::Triangle, center + Vector2f(-32, 420), Vector2f(1, 1)));
+	colliders.Add(Collider(Collider::ColliderType::Triangle_Rotated, center + Vector2f(128, 420), Vector2f(1, 1)));
+	colliders.Add(Collider(Collider::ColliderType::Triangle, center + Vector2f(224, 420), Vector2f(1, 1)));
+	colliders.Add(Collider(Collider::ColliderType::Triangle_Rotated, center + Vector2f(384, 420), Vector2f(1, 1)));
+	colliders.Add(Collider(Collider::ColliderType::Rectangle, center + Vector2f(128, 420), Vector2f(3, 1)));
+	colliders.Add(Collider(Collider::ColliderType::Rectangle, center + Vector2f(-128, 228), Vector2f(8, 1)));
+	colliders.Add(Collider(Collider::ColliderType::Triangle, center + Vector2f(448, 228), Vector2f(1, 1)));
+	colliders.Add(Collider(Collider::ColliderType::Triangle, center + Vector2f(128, 228), Vector2f(1, 1)));
+	colliders.Add(Collider(Collider::ColliderType::Triangle_Rotated, center + Vector2f(288, 228), Vector2f(1, 1)));
+	colliders.Add(Collider(Collider::ColliderType::Rectangle, center + Vector2f(288, 228), Vector2f(5, 1)));
 }
 
 void UpdateGroundTexture() {
@@ -133,129 +148,6 @@ void UpdateGroundTexture() {
 }
 
 
-CollisionData CheckTriangleCollision(Player& player, Sprite triangle, bool rotated) {
-
-	FloatRect playerBounds = player.sprite.getGlobalBounds();
-	FloatRect triangleBounds = triangle.getGlobalBounds();
-	bool collided = false;
-
-	if (playerBounds.intersects(triangleBounds)) {
-		Vector2f usedTrianglePoints[3];
-
-		if (!rotated) {
-			usedTrianglePoints[0] = Vector2f(triangleBounds.left, triangleBounds.top);
-			usedTrianglePoints[1] = Vector2f(triangleBounds.left, triangleBounds.top + triangleBounds.height);
-			usedTrianglePoints[2] = Vector2f(triangleBounds.left + triangleBounds.width, triangleBounds.top + triangleBounds.height);
-		}
-		else {
-			usedTrianglePoints[0] = Vector2f(triangleBounds.left + triangleBounds.width, triangleBounds.top);
-			usedTrianglePoints[1] = Vector2f(triangleBounds.left + triangleBounds.width, triangleBounds.top + triangleBounds.height);
-			usedTrianglePoints[2] = Vector2f(triangleBounds.left, triangleBounds.top + triangleBounds.height);
-		}
-
-
-
-		Vector2f playerDownLeftPoint = Vector2f(playerBounds.left, playerBounds.top + playerBounds.height);
-		Vector2f playerDownRightPoint = Vector2f(playerBounds.left + playerBounds.width, playerBounds.top + playerBounds.height);
-
-		CollisionData boxCollisionData = CheckRectangleCollision(player, triangleBounds, false);
-
-		if (!rotated) {
-			if (boxCollisionData.collisionDirection == CollisionData::CollisionDirection::Bottom)
-			{
-				player.sprite.move(0, boxCollisionData.overlapDistance);
-				return boxCollisionData;
-			}
-			else if (boxCollisionData.collisionDirection == CollisionData::CollisionDirection::Left)
-			{
-				player.sprite.move(-boxCollisionData.overlapDistance, 0);
-				return boxCollisionData;
-			}
-
-			else if (boxCollisionData.collisionDirection == CollisionData::CollisionDirection::Top && playerBounds.contains(usedTrianglePoints[0]))
-			{
-				player.sprite.move(0, -boxCollisionData.overlapDistance);
-				player.velocity.y = min(player.velocity.y, 1.0f);
-				return boxCollisionData;
-			}
-
-			else if (boxCollisionData.collisionDirection == CollisionData::CollisionDirection::Right && playerBounds.contains(usedTrianglePoints[2]))
-			{
-				player.sprite.move(boxCollisionData.overlapDistance, 0);
-				return boxCollisionData;
-			}
-			else if (IsPointInsideTriangle(playerDownLeftPoint, usedTrianglePoints))
-			{
-				float triangleHeight = triangleBounds.height;
-				float triangleWidth = triangleBounds.width;
-				float newWidth = abs(playerDownLeftPoint.x - (triangleBounds.left + triangleBounds.width));
-				float newHeight = newWidth * triangleHeight / triangleWidth;
-
-				// move up a distance till the point is no longer inside the triangle
-				float heightOverlap = newHeight - abs(playerDownLeftPoint.y - (triangleBounds.top + triangleBounds.height));
-				player.sprite.move(0, -abs(heightOverlap));
-				player.velocity.y = min(player.velocity.y, 1.0f);
-				return { CollisionData::Slope, abs(heightOverlap) };
-			}
-		}
-		else {
-			if (boxCollisionData.collisionDirection == CollisionData::CollisionDirection::Bottom)
-			{
-				player.sprite.move(0, boxCollisionData.overlapDistance);
-				return boxCollisionData;
-			}
-			else if (boxCollisionData.collisionDirection == CollisionData::CollisionDirection::Right)
-			{
-				player.sprite.move(boxCollisionData.overlapDistance, 0);
-				return boxCollisionData;
-			}
-
-			else if (boxCollisionData.collisionDirection == CollisionData::CollisionDirection::Top && playerBounds.contains(usedTrianglePoints[0]))
-			{
-				player.sprite.move(0, -boxCollisionData.overlapDistance);
-				player.velocity.y = min(player.velocity.y, 1.0f);
-				return boxCollisionData;
-			}
-
-			else if (boxCollisionData.collisionDirection == CollisionData::CollisionDirection::Left && playerBounds.contains(usedTrianglePoints[2]))
-			{
-				player.sprite.move(-boxCollisionData.overlapDistance, 0);
-				return boxCollisionData;
-			}
-			else if (IsPointInsideTriangle(playerDownRightPoint, usedTrianglePoints))
-			{
-				float triangleHeight = triangleBounds.height;
-				float triangleWidth = triangleBounds.width;
-				float newWidth = abs(playerDownRightPoint.x - (rotated ? triangleBounds.left : triangleBounds.left + triangleBounds.width));
-				float newHeight = newWidth * triangleHeight / triangleWidth;
-
-				// move up a distance till the point is no longer inside the triangle
-				float heightOverlap = newHeight - abs(playerDownRightPoint.y - (triangleBounds.top + triangleBounds.height));
-				player.sprite.move(0, -abs(heightOverlap));
-				player.velocity.y = min(player.velocity.y, 1.0f);
-				return { CollisionData::Slope, abs(heightOverlap) };
-			}
-		}
-
-	}
-
-	return { CollisionData::None, 0.0f };;	// placeholder, implement this later
-}
-
-bool IsOnGround(CollisionData collisionData) {
-	return collisionData.collisionDirection == CollisionData::Top || collisionData.collisionDirection == collisionData.Slope;
-}
-
-void CheckPlayerCollision(Player& player);
-
-Player fireBoy = Player(Player::Fireboy, center + Vector2f(-50, -500));
-Player waterGirl = Player(Player::Watergirl, center + Vector2f(50, -500));
-
-RectangleShape ground = RectangleShape(Vector2f(400, 100));
-Sprite triangle;
-Sprite rotatedTriangle;
-Sprite firePond, waterPond, poisonPond;
-
 
 
 void InitializeGame()
@@ -275,6 +167,13 @@ void InitializeGame()
 	click.start();
 	ApplyTexture(ground, LoadTexture::GROUND, Vector2f(256, 256));
 	ground.setTextureRect(IntRect(0, 0, windowSize.x, windowSize.y));
+	
+	firePond.Initialilze();
+	waterPond.Initialilze();
+	poisonPond.Initialilze();
+	firePond.sprite.setColor(Color::Red);
+	waterPond.sprite.setColor(Color::Blue);
+	poisonPond.sprite.setColor(Color::Green);
 
 
 	maskTexture.create(windowSize.x, windowSize.y);
@@ -340,7 +239,7 @@ void EditMode(Event event) {
 				break;
 			}
 
-			collider.AllignCollider();
+			AllignSprite(collider.sprite);
 
 			bool isColliding = false;
 			for (int i = 0; i < colliders.count; i++)
@@ -449,11 +348,24 @@ void UpdateGame()
 	CheckPlayerCollision(waterGirl);
 	fireGem.checkintersect(fireBoy);
 	waterGem.checkintersect(waterGirl);
+
 	click.buttonpressed = false;
 	click.isPressed(fireBoy);
 	click.isPressed(waterGirl);
 	click.updateRelease();
 
+	firePond.Update(fireBoy);
+	waterPond.Update(fireBoy);
+	poisonPond.Update(fireBoy);
+
+	firePond.Update(waterGirl);
+	waterPond.Update(waterGirl);
+	poisonPond.Update(waterGirl);
+
+	if (fireBoy.isDead)
+		fireBoy.sprite.setColor(Color::Yellow);
+	if (waterGirl.isDead) 
+		waterGirl.sprite.setColor(Color::Yellow);
 }
 
 
@@ -468,5 +380,9 @@ void DrawGame()
 	window.draw(waterGem.sprite);
 	window.draw(fireGem.sprite);
 	window.draw(click.sprite);
+	
+	window.draw(firePond.sprite);
+	window.draw(waterPond.sprite);
+	window.draw(poisonPond.sprite);
 	window.draw(Sprite(resultTexture.getTexture()));
 }
