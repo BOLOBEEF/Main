@@ -69,7 +69,7 @@ Texture bar_cap_right;
 Texture bar_cap_left;
 Texture ramp_1;
 Texture water_block_right;
-Texture fire_block_left;
+
 Texture water_block;
 Texture slider_dot;
 Texture slider_light_on;
