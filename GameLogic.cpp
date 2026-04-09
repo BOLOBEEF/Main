@@ -103,19 +103,7 @@ void PrintObjectsCode() {
 }
 
 
-
-
-void HandleGameInput(Event event)
-{
-	if (gameState != GAME) return;
-
-	// code for handling game input that is related to game logic
-	fireBoy.checkJump(event);
-	waterGirl.checkJump(event);
-
-
-	// in debug mode, when you press
-	if (!editMode) return;
+void EditMode(Event event) {
 
 	if (event.type == Event::MouseButtonPressed) {
 		if (event.mouseButton.button == Mouse::Left) {
@@ -152,13 +140,13 @@ void HandleGameInput(Event event)
 					isColliding = true;
 					break;
 				}*/
-			
-			//if (!isColliding) {
-				colliders.Add(collider);
+
+				//if (!isColliding) {
+			colliders.Add(collider);
 			//}
 		}
-		
-		
+
+
 		else if (event.mouseButton.button == Mouse::Right) {
 			// remove object
 			for (int i = 0; i < colliders.count; i++) {
@@ -198,7 +186,7 @@ void HandleGameInput(Event event)
 			// undo last object placement
 			currentEditType = EditType::Rectangle;
 		}
-		
+
 		if (event.key.code == Keyboard::Num2) {
 			// undo last object placement
 			currentEditType = EditType::Triangle;
@@ -209,6 +197,22 @@ void HandleGameInput(Event event)
 			currentEditType = EditType::Triangle_Rotated;
 		}
 	}
+
+}
+
+
+void HandleGameInput(Event event)
+{
+	if (gameState != GAME) return;
+
+	// code for handling game input that is related to game logic
+	fireBoy.checkJump(event);
+	waterGirl.checkJump(event);
+
+
+	// in debug mode, when you press
+	if (!editMode) return;
+	EditMode(event);
 }
 
 void OnUpdatedGameStateGameLogic() {
@@ -224,6 +228,11 @@ void UpdateGame()
 
 	fireBoy.UpdateMotion();
 	waterGirl.UpdateMotion();
+
+	if (fireBoy.isOnGround) fireBoy.sprite.setColor(Color::Red);
+	else fireBoy.sprite.setColor(Color(255, 100, 100));
+	if (waterGirl.isOnGround) waterGirl.sprite.setColor(Color::Blue);
+	else waterGirl.sprite.setColor(Color(100, 100, 255));
 
 
 	CheckPlayerCollision(fireBoy);
