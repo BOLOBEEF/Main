@@ -6,7 +6,7 @@ struct Player
 	PlayerType playertype;
 	Sprite sprite;
 	void start() {
-		ApplyTexture(sprite, LoadTexture::RECTANGLE, Vector2f(60, 100));
+		ApplyTexture(sprite, LoadTexture::RECTANGLE, Vector2f(50, 60));
 		if (playertype == Fireboy)
 			sprite.setColor(Color::Red);
 		else sprite.setColor(Color::Blue);
@@ -87,8 +87,7 @@ struct Collider
 	Sprite sprite;
 	ColliderType type;
 
-	int precision = 60;
-	Vector2f defaultSize = Vector2f(60, 60);
+	Vector2f defaultSize = Vector2f(32, 32);
 	float groundedDistance = 20.0f;
 	Vector2f scale;
 
@@ -110,8 +109,8 @@ struct Collider
 
 	void AllignCollider() {
 		Vector2f position = sprite.getPosition();
-		position.x = round(position.x / precision) * precision;
-		position.y = round(position.y / precision) * precision;
+		position.x = round(position.x / defaultSize.x) * defaultSize.x;
+		position.y = round(position.y / defaultSize.y) * defaultSize.y;
 
 		sprite.setPosition(position);
 	}
@@ -124,7 +123,7 @@ struct Collider
 		return true;
 	}
 
-	Collider::CollisionData CheckRectangleCollision(Player& player, FloatRect otherBounds, bool resolveCollision = true) {
+	Collider::CollisionData CheckRectangleCollision(Player& player, FloatRect otherBounds, bool resolveCollision = true, FloatRect bias = FloatRect(5.0f, 5.0f, 0.0f, 0.0f)) {
 		Sprite& sprite = player.sprite;
 		Collider::CollisionData collisionData;
 
@@ -138,11 +137,13 @@ struct Collider
 			float rightOverlap = abs((otherBounds.left + otherBounds.width) - playerBounds.left);
 
 			// on comparing overlap, slightly prefer top and bottom overlaps, to avoid getting stuck on edges
-			float comparedTopOverlap = topOverlap - 5;
-			float comparedBottomOverlap = bottomOverlap - 5;
+			float comparedTopOverlap = topOverlap - bias.left;
+			float comparedBottomOverlap = bottomOverlap - bias.top;
+			float comparedLeftOverlap = leftOverlap - bias.width;
+			float comparedRightOverlap = rightOverlap - bias.height;
 
 
-			if (comparedTopOverlap < comparedBottomOverlap && comparedTopOverlap < leftOverlap && comparedTopOverlap < rightOverlap) {
+			if (comparedTopOverlap < comparedBottomOverlap && comparedTopOverlap < comparedLeftOverlap && comparedTopOverlap < comparedRightOverlap) {
 				// Collision from the top
 				if (resolveCollision)
 				{
@@ -153,7 +154,7 @@ struct Collider
 				collisionData = { Collider::CollisionData::CollisionDirection::Top , topOverlap };
 
 			}
-			else if (comparedBottomOverlap < comparedTopOverlap && comparedBottomOverlap < leftOverlap && comparedBottomOverlap < rightOverlap) {
+			else if (comparedBottomOverlap < comparedTopOverlap && comparedBottomOverlap < comparedLeftOverlap && comparedBottomOverlap < comparedRightOverlap) {
 				// Collision from the bottom
 				if (resolveCollision)
 				{
@@ -163,7 +164,7 @@ struct Collider
 
 				collisionData = { Collider::CollisionData::CollisionDirection::Bottom , bottomOverlap };
 			}
-			else if (leftOverlap < rightOverlap && leftOverlap < comparedTopOverlap && leftOverlap < comparedBottomOverlap) {
+			else if (comparedLeftOverlap < comparedRightOverlap && comparedLeftOverlap < comparedTopOverlap && comparedLeftOverlap < comparedBottomOverlap) {
 				// Collision from the left
 				if (resolveCollision)
 				{
@@ -248,7 +249,8 @@ struct Collider
 			Vector2f playerDownLeftPoint = Vector2f(playerBounds.left, playerBounds.top + playerBounds.height);
 			Vector2f playerDownRightPoint = Vector2f(playerBounds.left + playerBounds.width, playerBounds.top + playerBounds.height);
 
-			Collider::CollisionData boxCollisionData = CheckRectangleCollision(player, triangleBounds, false);
+
+			Collider::CollisionData boxCollisionData = CheckRectangleCollision(player, triangleBounds, false, (!rotated ? FloatRect(5.0f, 0.0f, 5.0f, 0.0f) : FloatRect(5.0f, 0.0f, 0.0f, 5.0f)));
 
 			if (!rotated) {
 				if (boxCollisionData.collisionDirection == Collider::CollisionData::CollisionDirection::Bottom)
@@ -676,5 +678,3 @@ struct Gem
 		}
 	}
 };
-
-

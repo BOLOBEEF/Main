@@ -9,6 +9,11 @@ Player fireBoy = Player(Player::Fireboy, center + Vector2f(-600, 200));
 Player waterGirl = Player(Player::Watergirl, center + Vector2f(-550, 200));
 Gem fireGem = Gem(Gem::fireGem, Vector2f(650, 800));
 Gem waterGem = Gem(Gem::waterGem, Vector2f(800, 800));
+Sprite ground;
+
+RenderTexture maskTexture;
+RenderTexture resultTexture;
+
 const bool displayColliders = true;
 ColliderList colliders;
 
@@ -43,32 +48,74 @@ void AllignColliders() {
 }
 
 void LoadLevelData() {
-	colliders.Add(Collider(Collider::ColliderType::Rectangle, center + Vector2f(-900, 360), Vector2f(30, 1)));
-	colliders.Add(Collider(Collider::ColliderType::Rectangle, center + Vector2f(-1140, 60), Vector2f(23, 1)));
-	colliders.Add(Collider(Collider::ColliderType::Rectangle, center + Vector2f(-360, -240), Vector2f(23, 1)));
-	colliders.Add(Collider(Collider::ColliderType::Rectangle, center + Vector2f(-300, 300), Vector2f(8, 1)));
-	colliders.Add(Collider(Collider::ColliderType::Triangle_Rotated, center + Vector2f(-300, 300), Vector2f(2, 1)));
-	colliders.Add(Collider(Collider::ColliderType::Triangle, center + Vector2f(180, 300), Vector2f(2, 1)));
-	colliders.Add(Collider(Collider::ColliderType::Rectangle, center + Vector2f(420, 240), Vector2f(2, 2)));
-	colliders.Add(Collider(Collider::ColliderType::Rectangle, center + Vector2f(540, 120), Vector2f(2, 2)));
-	colliders.Add(Collider(Collider::ColliderType::Triangle_Rotated, center + Vector2f(540, 120), Vector2f(2, 2)));
-	colliders.Add(Collider(Collider::ColliderType::Rectangle, center + Vector2f(540, 240), Vector2f(2, 2)));
-	colliders.Add(Collider(Collider::ColliderType::Rectangle, center + Vector2f(-300, 0), Vector2f(1, 1)));
-	colliders.Add(Collider(Collider::ColliderType::Triangle_Rotated, center + Vector2f(-300, 0), Vector2f(1, 1)));
-	colliders.Add(Collider(Collider::ColliderType::Rectangle, center + Vector2f(-240, 0), Vector2f(1, 1)));
-	colliders.Add(Collider(Collider::ColliderType::Triangle, center + Vector2f(-180, 0), Vector2f(1, 1)));
-	colliders.Add(Collider(Collider::ColliderType::Rectangle, center + Vector2f(-720, 0), Vector2f(3, 1)));
-	colliders.Add(Collider(Collider::ColliderType::Rectangle, center + Vector2f(-900, -120), Vector2f(3, 1)));
-	colliders.Add(Collider(Collider::ColliderType::Triangle, center + Vector2f(-720, -120), Vector2f(1, 1)));
-	colliders.Add(Collider(Collider::ColliderType::Triangle, center + Vector2f(-540, 0), Vector2f(1, 1)));
-	colliders.Add(Collider(Collider::ColliderType::Triangle_Rotated, center + Vector2f(-720, 0), Vector2f(1, 1)));
-	colliders.Add(Collider(Collider::ColliderType::Rectangle, center + Vector2f(-480, -240), Vector2f(1, 1)));
-	colliders.Add(Collider(Collider::ColliderType::Rectangle, center + Vector2f(-420, -240), Vector2f(1, 1)));
-	colliders.Add(Collider(Collider::ColliderType::Triangle_Rotated, center + Vector2f(-480, -240), Vector2f(1, 1)));
-	colliders.Add(Collider(Collider::ColliderType::Rectangle, center + Vector2f(-960, 360), Vector2f(1, 1)));
-	colliders.Add(Collider(Collider::ColliderType::Rectangle, center + Vector2f(900, 360), Vector2f(1, 1)));
-	colliders.Add(Collider(Collider::ColliderType::Rectangle, center + Vector2f(840, 180), Vector2f(2, 1)));
-	colliders.Add(Collider(Collider::ColliderType::Triangle_Rotated, center + Vector2f(840, 180), Vector2f(1, 1)));
+	colliders.Add(Collider(Collider::ColliderType::Rectangle, center + Vector2f(-704, 420), Vector2f(44, 1)));
+	colliders.Add(Collider(Collider::ColliderType::Rectangle, center + Vector2f(-704, -540), Vector2f(44, 1)));
+	colliders.Add(Collider(Collider::ColliderType::Rectangle, center + Vector2f(-704, -508), Vector2f(1, 29)));
+	colliders.Add(Collider(Collider::ColliderType::Rectangle, center + Vector2f(672, -508), Vector2f(1, 29)));
+	colliders.Add(Collider(Collider::ColliderType::Rectangle, center + Vector2f(-672, 292), Vector2f(11, 1)));
+	colliders.Add(Collider(Collider::ColliderType::Rectangle, center + Vector2f(-672, 164), Vector2f(17, 1)));
+	colliders.Add(Collider(Collider::ColliderType::Rectangle, center + Vector2f(-128, 228), Vector2f(19, 1)));
+	colliders.Add(Collider(Collider::ColliderType::Rectangle, center + Vector2f(-64, 4), Vector2f(23, 1)));
+	colliders.Add(Collider(Collider::ColliderType::Rectangle, center + Vector2f(-512, -28), Vector2f(16, 1)));
+	colliders.Add(Collider(Collider::ColliderType::Rectangle, center + Vector2f(-672, -156), Vector2f(37, 1)));
+	colliders.Add(Collider(Collider::ColliderType::Rectangle, center + Vector2f(-288, -316), Vector2f(30, 1)));
+	colliders.Add(Collider(Collider::ColliderType::Triangle, center + Vector2f(-128, 164), Vector2f(3, 2)));
+	colliders.Add(Collider(Collider::ColliderType::Triangle, center + Vector2f(0, -28), Vector2f(1, 1)));
+	colliders.Add(Collider(Collider::ColliderType::Rectangle, center + Vector2f(352, 36), Vector2f(10, 1)));
+	colliders.Add(Collider(Collider::ColliderType::Rectangle, center + Vector2f(448, 68), Vector2f(7, 1)));
+	colliders.Add(Collider(Collider::ColliderType::Rectangle, center + Vector2f(576, 100), Vector2f(3, 1)));
+	colliders.Add(Collider(Collider::ColliderType::Triangle_Rotated, center + Vector2f(576, 324), Vector2f(1, 1)));
+	colliders.Add(Collider(Collider::ColliderType::Rectangle, center + Vector2f(576, 324), Vector2f(3, 3)));
+	colliders.Add(Collider(Collider::ColliderType::Rectangle, center + Vector2f(544, 356), Vector2f(1, 2)));
+	colliders.Add(Collider(Collider::ColliderType::Rectangle, center + Vector2f(352, -124), Vector2f(5, 1)));
+	colliders.Add(Collider(Collider::ColliderType::Rectangle, center + Vector2f(32, -220), Vector2f(8, 2)));
+	colliders.Add(Collider(Collider::ColliderType::Triangle, center + Vector2f(288, -220), Vector2f(2, 2)));
+	colliders.Add(Collider(Collider::ColliderType::Rectangle, center + Vector2f(-288, -284), Vector2f(5, 2)));
+	colliders.Add(Collider(Collider::ColliderType::Rectangle, center + Vector2f(-288, -348), Vector2f(3, 1)));
+	colliders.Add(Collider(Collider::ColliderType::Triangle, center + Vector2f(-192, -348), Vector2f(1, 1)));
+	colliders.Add(Collider(Collider::ColliderType::Triangle, center + Vector2f(-256, -380), Vector2f(1, 1)));
+	colliders.Add(Collider(Collider::ColliderType::Rectangle, center + Vector2f(-320, -380), Vector2f(2, 1)));
+	colliders.Add(Collider(Collider::ColliderType::Triangle_Rotated, center + Vector2f(-320, -380), Vector2f(1, 1)));
+	colliders.Add(Collider(Collider::ColliderType::Rectangle, center + Vector2f(-672, -316), Vector2f(5, 5)));
+}
+
+void UpdateGroundTexture() {
+	// --- Step 1: Draw mask (small sprites) ---
+	maskTexture.clear(Color::Transparent);
+
+	if (displayColliders)
+		for (int i = 0; i < colliders.count; i++)
+		{
+			maskTexture.draw(colliders.elements[i].sprite);
+		}
+	maskTexture.display();
+
+
+	// --- Step 2: Apply mask to background ---
+	resultTexture.clear(Color::Transparent);
+	resultTexture.draw(ground);
+
+	// Draw mask using alpha blending to reveal background
+	// general formula :
+	// finalColor = (srcColor * srcFactor) + (dstColor * dstFactor)
+	// finalAlpha = (srcAlpha * srcFactor) + (dstAlpha * dstFactor)
+	// we want to take the color from the background (dst) only
+	// and multiply it by the alpha of the mask (src) to make it only visible where the mask is drawn, and invisible where the mask is not drawn
+	// finalColor = (srcColor * 0) + (dstColor * srcAlpha)
+	// finalAlpha = (srcAlpha * 0) + (dstAlpha * srcAlpha)
+
+	Sprite mask(maskTexture.getTexture());
+	RenderStates maskStates;
+	maskStates.blendMode = BlendMode(
+		BlendMode::Factor::Zero,       // colorSrcFactor
+		BlendMode::Factor::SrcAlpha,   // colorDstFactor
+		BlendMode::Equation::Add,      // colorEquation
+		BlendMode::Factor::Zero,       // alphaSrcFactor
+		BlendMode::Factor::SrcAlpha,   // alphaDstFactor
+		BlendMode::Equation::Add       // alphaEquation
+	);
+	resultTexture.draw(mask, maskStates);
+	resultTexture.display();
 }
 
 
@@ -86,6 +133,15 @@ void InitializeGame()
 	waterGirl.start();
 	fireGem.start();
 	waterGem.start();
+
+	ApplyTexture(ground, LoadTexture::GROUND, Vector2f(256, 256));
+	ground.setTextureRect(IntRect(0, 0, windowSize.x, windowSize.y));
+
+
+	maskTexture.create(windowSize.x, windowSize.y);
+	resultTexture.create(windowSize.x, windowSize.y);
+
+	UpdateGroundTexture();
 }
 
 void PrintCollidersCode() {
@@ -156,6 +212,7 @@ void EditMode(Event event) {
 
 			if (!isColliding) {
 				colliders.Add(collider);
+				UpdateGroundTexture();
 			}
 		}
 
@@ -165,6 +222,7 @@ void EditMode(Event event) {
 			for (int i = 0; i < colliders.count; i++) {
 				if (colliders.elements[i].sprite.getGlobalBounds().contains(Vector2f(event.mouseButton.x, event.mouseButton.y))) {
 					colliders.RemoveAt(i);
+					UpdateGroundTexture();
 				}
 			}
 		}
@@ -255,7 +313,6 @@ void UpdateGame()
 }
 
 
-
 void DrawGame()
 {
 	if (gameState != GAME) return;
@@ -264,12 +321,8 @@ void DrawGame()
 	window.draw(fireBoy.sprite);
 	window.draw(waterGirl.sprite);
 
-	if (displayColliders)
-		for (int i = 0; i < colliders.count; i++)
-		{
-			window.draw(colliders.elements[i].sprite);
-		}
-
 	window.draw(waterGem.sprite);
 	window.draw(fireGem.sprite);
+
+	window.draw(Sprite(resultTexture.getTexture()));
 }
