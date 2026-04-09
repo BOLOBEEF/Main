@@ -70,13 +70,13 @@ SoundBuffer gameMusic_SlowSound;
 SoundBuffer gameMusic_FastSound;
 SoundBuffer gameMusic_DarkSound;
 
-SoundBuffer StepsSound;//->
-SoundBuffer IceSteps_WgSound;//->
-SoundBuffer IceSteps_FbSound;//->
-SoundBuffer PondStepsSound;//->
-SoundBuffer DeathSound;//->
-SoundBuffer BoyJumpSound;//->
-SoundBuffer GirlJumpSound;//->
+SoundBuffer StepsSound;
+SoundBuffer IceSteps_WgSound;
+SoundBuffer IceSteps_FbSound;
+SoundBuffer PondStepsSound;
+SoundBuffer DeathSound;
+SoundBuffer BoyJumpSound;
+SoundBuffer GirlJumpSound;
 
 SoundBuffer PondFreezeSound;
 SoundBuffer PondMeltSound;
@@ -97,7 +97,7 @@ Sound musicPlayer;
 int currentSoundEffectPlayer = 0;
 
 Sound soundEffectsPlayers[6]; 
-Sound Clock;
+//Sound Clock;
 Sound Button;
 
 // loop on those sound effect players when playing sound effects, so we can play multiple sound effects at the same time without cutting each other off, but we can only play 5 sound effects at the same time
@@ -175,12 +175,18 @@ void PlayMenuSoundEffect(MenuSoundEffect soundEffect) {
 	{
 	case ButtonClick:
 		Button.setBuffer(ButtonSound);
+		Button.setVolume(100.0f);
+		Button.play();
 		break;
 	case Back:
 		Button.setBuffer(ButtonSound);
+		Button.setVolume(100.0f);
+		Button.play();
 		break;
 	case Enter:
 		Button.setBuffer(ButtonSound);
+		Button.setVolume(100.0f);
+		Button.play();
 		break;
 	default:
 		cout << "Invalid sound effect" << endl;
@@ -198,62 +204,79 @@ void PlayGameSoundEffect(GameSoundEffect soundEffect) {
 	{
 	case GameOver:
 		soundEffectsPlayers[0].setBuffer(LevelGameoverSound);
-
+		soundEffectsPlayers[0].play();
 		break;
 	case Win:
 		soundEffectsPlayers[0].setBuffer(LevelWinSound);
+		soundEffectsPlayers[0].play();
 		break;
 
 	case Walking_boy:
 		soundEffectsPlayers[1].setBuffer(StepsSound);
+		soundEffectsPlayers[1].play();
 		break;
 	case Walking_girl:
 		soundEffectsPlayers[2].setBuffer(StepsSound);
+		soundEffectsPlayers[2].play();
 		break;
 	case IceSteps_Fb:
 		soundEffectsPlayers[1].setBuffer(IceSteps_FbSound);
+		soundEffectsPlayers[1].play();
 		break;
 	case IceSteps_Wg:
 		soundEffectsPlayers[2].setBuffer(IceSteps_WgSound);
+		soundEffectsPlayers[2].play();
 		break;
 	case Pondsteps_boy:
 		soundEffectsPlayers[1].setBuffer(PondStepsSound);
+		soundEffectsPlayers[1].play();
 		break;
 	case Pondsteps_girl:
 		soundEffectsPlayers[2].setBuffer(PondStepsSound);
+		soundEffectsPlayers[2].play();
 		break;
 	case Death:
 		soundEffectsPlayers[1].setBuffer(DeathSound);
 		soundEffectsPlayers[2].setBuffer(DeathSound);
+		soundEffectsPlayers[1].play();
 		break;
 	case BoyJump:
 		soundEffectsPlayers[1].setBuffer(BoyJumpSound);
+		soundEffectsPlayers[1].play();
 		break;
 	case GirlJump:
 		soundEffectsPlayers[2].setBuffer(GirlJumpSound);
+		soundEffectsPlayers[2].play();
 		break;
 
 	case Door:
 		soundEffectsPlayers[3].setBuffer(DoorSound);
+		soundEffectsPlayers[3].play();
 		break;
 	case Lever:
 		soundEffectsPlayers[3].setBuffer(LeverSound);
+		soundEffectsPlayers[3].play();
 		break;
 	case Platform:
 		soundEffectsPlayers[3].setBuffer(PlatformSound);
+		soundEffectsPlayers[3].play();
 		break;
 
 	case pondFreeze:
 		soundEffectsPlayers[4].setBuffer(PondFreezeSound);
+		soundEffectsPlayers[4].play();
 		break;
 	case PondMelt:
 		soundEffectsPlayers[4].setBuffer(PondMeltSound);
+		soundEffectsPlayers[4].play();
 		break;
 	case Wind:
 		soundEffectsPlayers[4].setBuffer(WindSound);
+		soundEffectsPlayers[4].play();
 		break;
 	case DiamondCollect:
 		soundEffectsPlayers[5].setBuffer(DiamondCollectingSound);
+		soundEffectsPlayers[5].play();
 		break;
 	default:
 		cout << "Invalid sound effect" << endl;
