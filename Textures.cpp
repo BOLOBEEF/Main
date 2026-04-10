@@ -220,6 +220,7 @@ void SetSpriteOriginToCenter(Sprite& sprite, bool dontMove = false) {
 void ApplyTexture(Sprite& sprite, LoadTexture texture, Vector2f size, Vector2f scale = Vector2f(1, 1)) {
 	bool isValid = true;
 	bool centerOrigin = true;
+	bool flip = false;
 	
 	switch (texture)
 	{
@@ -230,19 +231,17 @@ void ApplyTexture(Sprite& sprite, LoadTexture texture, Vector2f size, Vector2f s
 	case TRIANGLE:
 		sprite.setTexture(triangleTexture);
 		sprite.setColor(Color::White);
-		SetSpriteSize(sprite, size);
 		break;
 
 	case TRIANGLE_ROTATED:
 		sprite.setTexture(triangleTexture);
 		sprite.setColor(Color::White);
-		SetSpriteSize(sprite, size, true);
+		flip = true;
 		break;
 
 	case RECTANGLE:
 		sprite.setTexture(cubeTexture);
 		sprite.setColor(Color::White);
-		SetSpriteSize(sprite, size);
 		break;
 	case FLAME_POND:
 		sprite.setTexture(firePondTexture);
@@ -261,7 +260,6 @@ void ApplyTexture(Sprite& sprite, LoadTexture texture, Vector2f size, Vector2f s
 
 	case GROUND:
 		sprite.setTexture(groundTexture);
-		SetSpriteSize(sprite, size);
 		centerOrigin = false;
 		break;
 
@@ -272,7 +270,12 @@ void ApplyTexture(Sprite& sprite, LoadTexture texture, Vector2f size, Vector2f s
 		break;
 	}
 
-	if (isValid && centerOrigin) SetSpriteOriginToCenter(sprite, true);
+	if (!isValid) return;
+	if (centerOrigin) SetSpriteOriginToCenter(sprite, true);
+	if (flip)
+		SetSpriteSize(sprite, size, true);
+	else
+		SetSpriteSize(sprite, size);
 }
 
 
