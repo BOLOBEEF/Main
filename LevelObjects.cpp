@@ -78,11 +78,12 @@ struct Player
 };
 
 void AllignSprite(Sprite& sprite, Vector2f defaultSize = Vector2f(32, 32)) {
-	Vector2f position = sprite.getPosition();
+	FloatRect bounds = sprite.getGlobalBounds();
+	Vector2f position = Vector2f(bounds.left, bounds.top);
 	position.x = round(position.x / defaultSize.x) * defaultSize.x;
 	position.y = round(position.y / defaultSize.y) * defaultSize.y;
 
-	sprite.setPosition(position);
+	sprite.setPosition(position + Vector2f(bounds.width / 2.0f, bounds.height / 2.0f));
 }
 
 struct Collider
@@ -98,6 +99,7 @@ struct Collider
 
 	Vector2f defaultSize = Vector2f(32, 32);
 	float groundedDistance = 20.0f;
+	Vector2f startPosition;
 	Vector2f scale;
 
 	struct CollisionData
@@ -524,8 +526,8 @@ struct Collider
 
 	Collider(ColliderType newType, Vector2f position, Vector2f newScale = Vector2f(1, 1)) {
 		type = newType;
-		sprite.setPosition(position);
 		scale = newScale;
+		startPosition = position;
 	}
 
 	Collider() {}
@@ -545,6 +547,8 @@ struct Collider
 		default:
 			break;
 		}
+
+		sprite.setPosition(startPosition);
 	}
 
 

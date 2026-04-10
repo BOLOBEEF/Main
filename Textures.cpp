@@ -209,7 +209,18 @@ void FlipSprite(Sprite& sprite) {
 	sprite.setScale(-scale.x, scale.y);
 }
 
+void SetSpriteOriginToCenter(Sprite& sprite, bool dontMove = false) {
+	FloatRect bounds = sprite.getLocalBounds();
+	Vector2f oldOrigin = sprite.getOrigin();
+	sprite.setOrigin(bounds.width / 2.0f, bounds.height / 2.0f);
+	if (dontMove) sprite.move(-Vector2f((oldOrigin.x - bounds.width / 2.0f) * sprite.getScale().x, (oldOrigin.y - bounds.height / 2.0f) * sprite.getScale().y));
+}
+
+
 void ApplyTexture(Sprite& sprite, LoadTexture texture, Vector2f size, Vector2f scale = Vector2f(1, 1)) {
+	bool isValid = true;
+	bool centerOrigin = true;
+	
 	switch (texture)
 	{
 	case PLAYER_FIRE:
@@ -251,13 +262,17 @@ void ApplyTexture(Sprite& sprite, LoadTexture texture, Vector2f size, Vector2f s
 	case GROUND:
 		sprite.setTexture(groundTexture);
 		SetSpriteSize(sprite, size);
+		centerOrigin = false;
 		break;
 
 	default:
 		cout << "Invalid texture" << endl;
+		isValid = false;
 		return;
 		break;
 	}
+
+	if (isValid && centerOrigin) SetSpriteOriginToCenter(sprite, true);
 }
 
 

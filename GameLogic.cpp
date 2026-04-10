@@ -67,45 +67,78 @@ void AllignColliders() {
 }
 
 void LoadLevelData() {
-	colliders.Add(Collider(Collider::ColliderType::Rectangle, center + Vector2f(-704, -540), Vector2f(44, 1)));
-	colliders.Add(Collider(Collider::ColliderType::Rectangle, center + Vector2f(-704, -508), Vector2f(1, 29)));
-	colliders.Add(Collider(Collider::ColliderType::Rectangle, center + Vector2f(672, -508), Vector2f(1, 29)));
-	colliders.Add(Collider(Collider::ColliderType::Rectangle, center + Vector2f(-672, 292), Vector2f(11, 1)));
-	colliders.Add(Collider(Collider::ColliderType::Rectangle, center + Vector2f(-672, 164), Vector2f(17, 1)));
-	colliders.Add(Collider(Collider::ColliderType::Rectangle, center + Vector2f(-64, 4), Vector2f(23, 1)));
-	colliders.Add(Collider(Collider::ColliderType::Rectangle, center + Vector2f(-512, -28), Vector2f(16, 1)));
-	colliders.Add(Collider(Collider::ColliderType::Rectangle, center + Vector2f(-672, -156), Vector2f(37, 1)));
-	colliders.Add(Collider(Collider::ColliderType::Rectangle, center + Vector2f(-288, -316), Vector2f(30, 1)));
-	colliders.Add(Collider(Collider::ColliderType::Triangle, center + Vector2f(-128, 164), Vector2f(3, 2)));
-	colliders.Add(Collider(Collider::ColliderType::Triangle, center + Vector2f(0, -28), Vector2f(1, 1)));
-	colliders.Add(Collider(Collider::ColliderType::Rectangle, center + Vector2f(352, 36), Vector2f(10, 1)));
-	colliders.Add(Collider(Collider::ColliderType::Rectangle, center + Vector2f(448, 68), Vector2f(7, 1)));
-	colliders.Add(Collider(Collider::ColliderType::Rectangle, center + Vector2f(576, 100), Vector2f(3, 1)));
-	colliders.Add(Collider(Collider::ColliderType::Triangle_Rotated, center + Vector2f(576, 324), Vector2f(1, 1)));
-	colliders.Add(Collider(Collider::ColliderType::Rectangle, center + Vector2f(576, 324), Vector2f(3, 3)));
-	colliders.Add(Collider(Collider::ColliderType::Rectangle, center + Vector2f(544, 356), Vector2f(1, 2)));
-	colliders.Add(Collider(Collider::ColliderType::Rectangle, center + Vector2f(352, -124), Vector2f(5, 1)));
-	colliders.Add(Collider(Collider::ColliderType::Rectangle, center + Vector2f(32, -220), Vector2f(8, 2)));
-	colliders.Add(Collider(Collider::ColliderType::Triangle, center + Vector2f(288, -220), Vector2f(2, 2)));
-	colliders.Add(Collider(Collider::ColliderType::Rectangle, center + Vector2f(-288, -284), Vector2f(5, 2)));
-	colliders.Add(Collider(Collider::ColliderType::Rectangle, center + Vector2f(-288, -348), Vector2f(3, 1)));
-	colliders.Add(Collider(Collider::ColliderType::Triangle, center + Vector2f(-192, -348), Vector2f(1, 1)));
-	colliders.Add(Collider(Collider::ColliderType::Triangle, center + Vector2f(-256, -380), Vector2f(1, 1)));
-	colliders.Add(Collider(Collider::ColliderType::Rectangle, center + Vector2f(-320, -380), Vector2f(2, 1)));
-	colliders.Add(Collider(Collider::ColliderType::Triangle_Rotated, center + Vector2f(-320, -380), Vector2f(1, 1)));
-	colliders.Add(Collider(Collider::ColliderType::Rectangle, center + Vector2f(-672, -316), Vector2f(5, 5)));
-	colliders.Add(Collider(Collider::ColliderType::Rectangle, center + Vector2f(-704, 420), Vector2f(21, 1)));
-	colliders.Add(Collider(Collider::ColliderType::Rectangle, center + Vector2f(384, 420), Vector2f(10, 1)));
-	colliders.Add(Collider(Collider::ColliderType::Triangle, center + Vector2f(-32, 420), Vector2f(1, 1)));
-	colliders.Add(Collider(Collider::ColliderType::Triangle_Rotated, center + Vector2f(128, 420), Vector2f(1, 1)));
-	colliders.Add(Collider(Collider::ColliderType::Triangle, center + Vector2f(224, 420), Vector2f(1, 1)));
-	colliders.Add(Collider(Collider::ColliderType::Triangle_Rotated, center + Vector2f(384, 420), Vector2f(1, 1)));
-	colliders.Add(Collider(Collider::ColliderType::Rectangle, center + Vector2f(128, 420), Vector2f(3, 1)));
-	colliders.Add(Collider(Collider::ColliderType::Rectangle, center + Vector2f(-128, 228), Vector2f(8, 1)));
-	colliders.Add(Collider(Collider::ColliderType::Triangle, center + Vector2f(448, 228), Vector2f(1, 1)));
-	colliders.Add(Collider(Collider::ColliderType::Triangle, center + Vector2f(128, 228), Vector2f(1, 1)));
-	colliders.Add(Collider(Collider::ColliderType::Triangle_Rotated, center + Vector2f(288, 228), Vector2f(1, 1)));
-	colliders.Add(Collider(Collider::ColliderType::Rectangle, center + Vector2f(288, 228), Vector2f(5, 1)));
+	colliders.Add(Collider(Collider::ColliderType::Rectangle, center + Vector2f(-432, 436), Vector2f(25, 1)));
+	colliders.Add(Collider(Collider::ColliderType::Rectangle, center + Vector2f(16, -524), Vector2f(53, 1)));
+	colliders.Add(Collider(Collider::ColliderType::Rectangle, center + Vector2f(480, 436), Vector2f(22, 1)));
+	colliders.Add(Collider(Collider::ColliderType::Rectangle, center + Vector2f(-448, -236), Vector2f(22, 1)));
+	colliders.Add(Collider(Collider::ColliderType::Rectangle, center + Vector2f(-576, 308), Vector2f(14, 1)));
+	colliders.Add(Collider(Collider::ColliderType::Rectangle, center + Vector2f(-464, 180), Vector2f(21, 1)));
+	colliders.Add(Collider(Collider::ColliderType::Rectangle, center + Vector2f(256, 244), Vector2f(18, 1)));
+	colliders.Add(Collider(Collider::ColliderType::Rectangle, center + Vector2f(-320, -44), Vector2f(18, 1)));
+	colliders.Add(Collider(Collider::ColliderType::Rectangle, center + Vector2f(336, -12), Vector2f(29, 1)));
+	colliders.Add(Collider(Collider::ColliderType::Rectangle, center + Vector2f(592, 20), Vector2f(13, 1)));
+	colliders.Add(Collider(Collider::ColliderType::Rectangle, center + Vector2f(752, 84), Vector2f(3, 1)));
+	colliders.Add(Collider(Collider::ColliderType::Rectangle, center + Vector2f(688, 52), Vector2f(7, 1)));
+	colliders.Add(Collider(Collider::ColliderType::Rectangle, center + Vector2f(176, -236), Vector2f(17, 1)));
+	colliders.Add(Collider(Collider::ColliderType::Rectangle, center + Vector2f(432, -204), Vector2f(11, 1)));
+	colliders.Add(Collider(Collider::ColliderType::Rectangle, center + Vector2f(272, -268), Vector2f(11, 1)));
+	colliders.Add(Collider(Collider::ColliderType::Rectangle, center + Vector2f(-224, -364), Vector2f(6, 1)));
+	colliders.Add(Collider(Collider::ColliderType::Rectangle, center + Vector2f(-704, -316), Vector2f(6, 4)));
+	colliders.Add(Collider(Collider::ColliderType::Triangle_Rotated, center + Vector2f(-336, -428), Vector2f(1, 1)));
+	colliders.Add(Collider(Collider::ColliderType::Rectangle, center + Vector2f(-304, -428), Vector2f(1, 1)));
+	colliders.Add(Collider(Collider::ColliderType::Triangle, center + Vector2f(-272, -428), Vector2f(1, 1)));
+	colliders.Add(Collider(Collider::ColliderType::Rectangle, center + Vector2f(-256, -396), Vector2f(4, 1)));
+	colliders.Add(Collider(Collider::ColliderType::Triangle, center + Vector2f(-176, -396), Vector2f(1, 1)));
+	colliders.Add(Collider(Collider::ColliderType::Rectangle, center + Vector2f(352, -364), Vector2f(30, 1)));
+	colliders.Add(Collider(Collider::ColliderType::Rectangle, center + Vector2f(848, 36), Vector2f(1, 34)));
+	colliders.Add(Collider(Collider::ColliderType::Rectangle, center + Vector2f(-816, -44), Vector2f(1, 29)));
+	colliders.Add(Collider(Collider::ColliderType::Rectangle, center + Vector2f(768, 372), Vector2f(4, 3)));
+	colliders.Add(Collider(Collider::ColliderType::Rectangle, center + Vector2f(688, 372), Vector2f(1, 3)));
+	colliders.Add(Collider(Collider::ColliderType::Rectangle, center + Vector2f(768, 308), Vector2f(4, 1)));
+	colliders.Add(Collider(Collider::ColliderType::Triangle_Rotated, center + Vector2f(688, 308), Vector2f(1, 1)));
+	colliders.Add(Collider(Collider::ColliderType::Triangle_Rotated, center + Vector2f(784, -76), Vector2f(3, 3)));
+	colliders.Add(Collider(Collider::ColliderType::Triangle, center + Vector2f(-656, 116), Vector2f(3, 3)));
+	colliders.Add(Collider(Collider::ColliderType::Rectangle, center + Vector2f(-752, 52), Vector2f(3, 3)));
+	colliders.Add(Collider(Collider::ColliderType::Rectangle, center + Vector2f(784, -140), Vector2f(3, 1)));
+	colliders.Add(Collider(Collider::ColliderType::Rectangle, center + Vector2f(-560, -332), Vector2f(3, 1)));
+}
+
+void DrawOutline(Sprite sprite, Collider::ColliderType type)
+{
+	Vector2f rectangleOutline = {10.0f, 10.0f};
+	Vector2f triangleOutline = {10.0f, 10.0f};
+	float triangleBottomOutline = 5.0f;
+
+
+	FloatRect localBounds = sprite.getLocalBounds();
+	FloatRect globalBounds = sprite.getGlobalBounds();
+	Vector2f pos = sprite.getPosition();
+
+	
+	if (type == Collider::ColliderType::Rectangle) {
+		SetSpriteSize(sprite, Vector2f(globalBounds.width + rectangleOutline.x, globalBounds.height + rectangleOutline.y), (type == Collider::ColliderType::Triangle_Rotated));
+		window.draw(sprite);
+	}
+	else if (type == Collider::ColliderType::Triangle || type == Collider::ColliderType::Triangle_Rotated)
+	{
+		float hypotenues = sqrt(pow(localBounds.width, 2) + pow(localBounds.height, 2));
+		Vector2f oldOrigin = sprite.getOrigin();
+		Vector2f newOrigin = Vector2f(localBounds.width / 2.0f, (hypotenues + localBounds.height) / 2.0f);
+		sprite.setOrigin(newOrigin);
+
+		// appear unmoved
+		sprite.move(-Vector2f((oldOrigin.x - newOrigin.x) * sprite.getScale().x, (oldOrigin.y - newOrigin.y) * sprite.getScale().y));
+		SetSpriteSize(sprite, Vector2f(globalBounds.width + triangleOutline.x, globalBounds.height + triangleOutline.y), (type == Collider::ColliderType::Triangle_Rotated));
+		window.draw(sprite);
+
+		FloatRect updatedOutline = sprite.getGlobalBounds();
+
+		RectangleShape bottmOutline;
+		bottmOutline.setPosition(updatedOutline.left, updatedOutline.top + updatedOutline.height);
+		bottmOutline.setSize(Vector2f(updatedOutline.width, triangleBottomOutline));
+		bottmOutline.setFillColor(Color::White);
+		window.draw(bottmOutline);
+	}
 }
 
 void UpdateGroundTexture() {
@@ -223,17 +256,14 @@ void EditMode(Event event) {
 			case Rectangle:
 				collider = Collider(Collider::ColliderType::Rectangle, Vector2f(event.mouseButton.x, event.mouseButton.y), editScale);
 				collider.Initialize();
-				collider.sprite.move(-collider.sprite.getGlobalBounds().width / 2.0f, -collider.sprite.getGlobalBounds().height / 2.0f);
 				break;
 			case Triangle:
 				collider = Collider(Collider::ColliderType::Triangle, Vector2f(event.mouseButton.x, event.mouseButton.y), editScale);
 				collider.Initialize();
-				collider.sprite.move(-collider.sprite.getGlobalBounds().width / 2.0f, -collider.sprite.getGlobalBounds().height / 2.0f);
 				break;
 			case Triangle_Rotated:
 				collider = Collider(Collider::ColliderType::Triangle_Rotated, Vector2f(event.mouseButton.x, event.mouseButton.y), editScale);
 				collider.Initialize();
-				collider.sprite.move(collider.sprite.getGlobalBounds().width / 2.0f, -collider.sprite.getGlobalBounds().height / 2.0f);
 				break;
 			default:
 				break;
@@ -275,6 +305,7 @@ void EditMode(Event event) {
 		if (event.key.code == Keyboard::O) {
 			// undo last object placement
 			colliders.RemoveAt(colliders.count - 1);
+			UpdateGroundTexture();
 		}
 
 		if (event.key.code == Keyboard::Numpad4)
@@ -384,5 +415,14 @@ void DrawGame()
 	window.draw(firePond.sprite);
 	window.draw(waterPond.sprite);
 	window.draw(poisonPond.sprite);
+
+	
+
+
+	
+	for (int i = 0; i < colliders.count; i++)
+	{
+		DrawOutline(colliders.elements[i].sprite, colliders.elements[i].type);
+	}
 	window.draw(Sprite(resultTexture.getTexture()));
 }
