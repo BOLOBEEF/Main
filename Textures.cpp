@@ -1,5 +1,5 @@
 
-// TEXTURES
+// S
 
 
 // Settings :
@@ -9,7 +9,7 @@
 // Structs and enums
 
 
-// ALL SPRITE TEXTURES MUST BE GLOBAL
+// ALL SPRITE S MUST BE GLOBAL
 // so they are always store and never deleted
 
 
@@ -25,7 +25,82 @@ enum LoadTexture
 	TOXIC_POND,
 
 	RECTANGLE,
-	GROUND
+	GROUND,
+
+	// char assets s
+	death_smoke_texture,
+	diamondsh_texture,
+	fire_glow_texture,
+	fire_head_jumping_texture,
+	fire_head_rising_texture,
+	fire_ice_steps_texture,
+	fire_idle_body_texture,
+	fire_idle_head_texture,
+	fire_running_texture,
+	fire_stairs_texture,
+	fire_head_falling_texture,
+	water_body_idle_texture,
+	water_glow_texture,
+	water_head_falling_texture,
+	water_head_idle_texture,
+	water_head_jump_texture,
+	water_head_rising_texture,
+	water_ice_steps_texture,
+	water_running_texture,
+	water_stairs_texture,
+
+	// map objects s
+	movingbox_texture,
+	snow_flat_texture,
+	snow_slope_right_side_down_texture,
+	snow_slope_left_side_down_texture,
+	pusher_block_texture,
+	fire_door_open_texture,
+	water_door_open_texture,
+	fire_pond_texture,
+	fire_pond_right_texture,
+	fire_pond_left_texture,
+	lever_stick_texture,
+	bar_texture,
+	bar_cap_right_texture,
+	bar_cap_left_texture,
+	ramp_1_texture,
+	water_pond_right_texture,
+	water_pond_texture,
+	water_pond_left_texture,
+	slider_dot_texture,
+	slider_light_on_texture,
+
+	//menu assets s
+	BackButton0_texture,
+	BackButtonFull0_texture,
+	Diamond0_texture,
+	Diamond1_texture,
+	Diamond2_texture,
+	Diamond3_texture,
+	DiamondDark0_texture,
+	DiamondDar1_texture,
+	DiamondDark2_texture,
+	DiamondDark3_texture,
+	DiamondPuzzle0_texture,
+	DiamondPuzzle1_texture,
+	DiamondPuzzle2_texture,
+	DiamondPuzzle3_texture,
+	DiamondSpeed0_texture,
+	DiamondSpeed1_texture,
+	DiamondSpeed2_texture,
+	DiamondSpeed3_texture,
+	FxButton0_texture,
+	FxButton1_texture,
+	GoldLock0_texture,
+	Lock0_texture,
+	MusicButton0_texture,
+	MusicButton1_texture,
+	MuteButton0_texture,
+	MuteButton1_texture,
+	SettingsButton0_texture,
+	sound_icon_texture,
+
 };
 
 
