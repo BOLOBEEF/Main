@@ -4,6 +4,15 @@ struct Player
 {
 	enum PlayerType { Fireboy, Watergirl };
 	PlayerType playertype;
+
+	// Body:
+	// Idle, walk if moving left or right
+	// Head:
+	// Right, Left, Idle, headRising, headMid = Idle, headFalling
+
+	enum PlayerState { Walk, Jump_Rise, Fall, Idle };
+	PlayerState playerState;
+
 	Sprite sprite;
 	void start() {
 		ApplyTexture(sprite, LoadTexture::RECTANGLE, Vector2f(50, 60));

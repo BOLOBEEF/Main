@@ -278,7 +278,6 @@ void ApplyTexture(Sprite& sprite, LoadTexture texture, Vector2f size, Vector2f s
 		SetSpriteSize(sprite, size);
 }
 
-
 void InitializeMenuTextures() {
 	// load menu textures
 	// menuBackground.load......

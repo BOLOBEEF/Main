@@ -20,6 +20,9 @@ using namespace sf;
 // Textures
 #include "Textures.cpp"
 
+// Animations
+#include "Animations.cpp"
+
 // Level objects
 #include "LevelObjects.cpp"
 
@@ -28,9 +31,6 @@ using namespace sf;
 
 // Game Logic
 #include "GameLogic.cpp"
-
-// Animations
-#include "Animations.cpp"
 
 // Menus
 #include "Menus.cpp"

@@ -101,7 +101,6 @@ void UpdateGlobals() {
 
 	UpdateUI();
 	UpdateGame();
-	UpdateAnimations();
 	UpdateTest();
 }
 
