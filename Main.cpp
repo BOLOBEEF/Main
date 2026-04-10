@@ -20,11 +20,11 @@ using namespace sf;
 // Textures
 #include "Textures.cpp"
 
-// Animations
-#include "Animations.cpp"
-
 // Level objects
 #include "LevelObjects.cpp"
+
+// Animations
+#include "Animations.cpp"
 
 // Level data
 #include "LevelData.cpp"
