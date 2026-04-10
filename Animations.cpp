@@ -161,7 +161,7 @@ void UpdateAnimation(Sprite& sprite, LoadTexture texture) {
 		break;
 	case DiamondDark0_texture:
 		break;
-	case DiamondDar1_texture:
+	case DiamondDark1_texture:
 		break;
 	case DiamondDark2_texture:
 		break;

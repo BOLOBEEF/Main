@@ -79,7 +79,7 @@ enum LoadTexture
 	Diamond2_texture,
 	Diamond3_texture,
 	DiamondDark0_texture,
-	DiamondDar1_texture,
+	DiamondDark1_texture,
 	DiamondDark2_texture,
 	DiamondDark3_texture,
 	DiamondPuzzle0_texture,
@@ -227,6 +227,94 @@ void ApplyTexture(Sprite& sprite, LoadTexture texture, Vector2f size, Vector2f s
 	case PLAYER_FIRE:
 		//
 		break;
+
+
+	case BackButton0_texture:
+		sprite.setTexture(BackButton0);
+		break;
+	case BackButtonFull0_texture:
+		sprite.setTexture(BackButtonFull0);
+		break;
+	case Diamond0_texture:
+		sprite.setTexture(Diamond0);
+		break;
+	case Diamond1_texture:
+		sprite.setTexture(Diamond1);
+		break;
+	case Diamond2_texture:
+		sprite.setTexture(Diamond2);
+		break;
+	case Diamond3_texture:
+		sprite.setTexture(Diamond3);
+		break;
+	case DiamondDark0_texture:
+		sprite.setTexture(DiamondDark0);
+		break;
+	case DiamondDark1_texture:
+		sprite.setTexture(DiamondDar1);
+		break;
+	case DiamondDark2_texture:
+		sprite.setTexture(DiamondDark2);
+		break;
+	case DiamondDark3_texture:
+		sprite.setTexture(DiamondDark3);
+		break;
+	case DiamondPuzzle0_texture:
+		sprite.setTexture(DiamondPuzzle0);
+		break;
+	case DiamondPuzzle1_texture:
+		sprite.setTexture(DiamondPuzzle1);
+		break;
+	case DiamondPuzzle2_texture:
+		sprite.setTexture(DiamondPuzzle2);
+		break;
+	case DiamondPuzzle3_texture:
+		sprite.setTexture(DiamondPuzzle3);
+		break;
+	case DiamondSpeed0_texture:
+		sprite.setTexture(DiamondSpeed0);
+		break;
+	case DiamondSpeed1_texture:
+		sprite.setTexture(DiamondSpeed1);
+		break;
+	case DiamondSpeed2_texture:
+		sprite.setTexture(DiamondSpeed2);
+		break;
+	case DiamondSpeed3_texture:
+		sprite.setTexture(DiamondSpeed3);
+		break;
+	case FxButton0_texture:
+		sprite.setTexture(FxButton0);
+		break;
+	case FxButton1_texture:
+		sprite.setTexture(FxButton1);
+		break;
+	case GoldLock0_texture:
+		sprite.setTexture(GoldLock0);
+		break;
+	case Lock0_texture:
+		sprite.setTexture(Lock0);
+		break;
+	case MusicButton0_texture:
+		sprite.setTexture(MusicButton0);
+		break;
+	case MusicButton1_texture:
+		sprite.setTexture(MusicButton1);
+		break;
+	case MuteButton0_texture:
+		sprite.setTexture(MuteButton0);
+		break;
+	case MuteButton1_texture:
+		sprite.setTexture(MuteButton1);
+		break;
+	case SettingsButton0_texture:
+		sprite.setTexture(SettingsButton0);
+		break;
+	case sound_icon_texture:
+		sprite.setTexture(sound_icon);
+		break;
+
+
 
 	case TRIANGLE:
 		sprite.setTexture(triangleTexture);
