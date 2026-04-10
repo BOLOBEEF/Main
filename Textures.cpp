@@ -64,22 +64,22 @@ Texture water_stairs;
 // map objects textures
 Texture movingbox;
 Texture snow_flat;
-Texture snow_slope_right_slide_down;
-Texture snow_slope_left_slide_down;
+Texture snow_slope_right_side_down;
+Texture snow_slope_left_side_down;
 Texture pusher_block;
 Texture fire_door_open;
 Texture water_door_open;
-Texture fire_block;
-Texture fire_block_right;
-Texture fire_block_left;
+Texture fire_pond;
+Texture fire_pond_right;
+Texture fire_pond_left;
 Texture lever_stick;
 Texture bar;
 Texture bar_cap_right;
 Texture bar_cap_left;
 Texture ramp_1;
-Texture water_block_right;
-
-Texture water_block;
+Texture water_pond_right;
+Texture water_pond;
+Texture water_pond_left;
 Texture slider_dot;
 Texture slider_light_on;
 
@@ -255,8 +255,26 @@ void InitializeTextures()
 	  MuteButton1.loadFromFile("Main\\Assets\\Animations\\menu assets\\MuteButton0001.png");
 	  SettingsButton0.loadFromFile("Main\\Assets\\Animations\\menu assets\\SettingsButton0000.png");
 	  sound_icon.loadFromFile("Main\\Assets\\Animations\\menu assets\\sound icon.png");
-
-
+	  movingbox.loadFromFile("Main\\Assets\\Animations\\map objects assets\\movingbox.png");
+	  snow_flat.loadFromFile("Main\\Assets\\Animations\\map objects assets\\snow flat.png");
+      snow_slope_right_side_down.loadFromFile("Main\\Assets\\Animations\\map objects assets\\snow slope right side down.png");
+		  snow_slope_left_side_down.loadFromFile("Main\\Assets\\Animations\\map objects assets\\snow slope left side down.png");
+		  pusher_block.loadFromFile("Main\\Assets\\Animations\\map objects assets\\pusher_block.png");
+		  fire_door_open.loadFromFile("Main\\Assets\\Animations\\map objects assets\\fire door open.png");
+		  water_door_open.loadFromFile("Main\\Assets\\Animations\\map objects assets\\water door open.png");
+		 fire_pond.loadFromFile("Main\\Assets\\Animations\\map objects assets\\fire box.png");
+		  fire_pond_right.loadFromFile("Main\\Assets\\Animations\\map objects assets\\fire box right.png");
+		  fire_pond_left.loadFromFile("Main\\Assets\\Animations\\map objects assets\\fire box left.png");
+		  lever_stick.loadFromFile("Main\\Assets\\Animations\\map objects assets\\lever stick.png");
+		  bar.loadFromFile("Main\\Assets\\Animations\\map objects assets\\bar center.png");
+		  bar_cap_right.loadFromFile("Main\\Assets\\Animations\\map objects assets\\bar cap right.png");
+		  bar_cap_left.loadFromFile("Main\\Assets\\Animations\\map objects assets\\bar cap left.png");
+		  ramp_1.loadFromFile("Main\\Assets\\Animations\\map objects assets\\ramp_1.png");
+		  water_pond_right.loadFromFile("Main\\Assets\\Animations\\map objects assets\\water box right.png");
+		   water_pond.loadFromFile("Main\\Assets\\Animations\\map objects assets\\water box.png");
+		   water_pond_left.loadFromFile("Main\\Assets\\Animations\\map objects assets\\water box left.png");
+		   slider_dot.loadFromFile("Main\\Assets\\Animations\\map objects assets\\sliderdot.png");
+		  slider_light_on.loadFromFile("Main\\Assets\\Animations\\map objects assets\\slider_light_on.png");
 
 
 
