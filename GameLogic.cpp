@@ -26,10 +26,10 @@ Gem waterGem = Gem(Gem::waterGem, Vector2f(800, 800));
 Pond firePond = Pond(Pond::FIRE_POND, Vector2f(920, 950));
 Pond waterPond = Pond(Pond::WATER_POND, Vector2f(800, 600));
 Pond poisonPond = Pond(Pond::POISON_POND, Vector2f(800, 500));
-
+Switch lever = Switch(Vector2f(900, 800));
 
 Sprite ground;
-Click click = Click(Vector2f(1000, 900));
+Click click = Click(Vector2f(1000, 800));
 RenderTexture maskTexture;
 RenderTexture resultTexture;
 
@@ -198,6 +198,7 @@ void InitializeGame()
 	fireGem.start();
 	waterGem.start();
 	click.start();
+	lever.start();
 	ApplyTexture(ground, LoadTexture::GROUND, Vector2f(256, 256));
 	ground.setTextureRect(IntRect(0, 0, windowSize.x, windowSize.y));
 	
@@ -348,7 +349,7 @@ void HandleGameInput(Event event)
 	// code for handling game input that is related to game logic
 	fireBoy.checkJump(event);
 	waterGirl.checkJump(event);
-
+	lever.leverMove(fireBoy,waterGirl,event);
 
 	// in debug mode, when you press
 	if (!editMode) return;
@@ -392,6 +393,7 @@ void UpdateGame()
 	firePond.Update(waterGirl);
 	waterPond.Update(waterGirl);
 	poisonPond.Update(waterGirl);
+	
 
 	if (fireBoy.isDead)
 		fireBoy.sprite.setColor(Color::Yellow);
@@ -415,6 +417,7 @@ void DrawGame()
 	window.draw(firePond.sprite);
 	window.draw(waterPond.sprite);
 	window.draw(poisonPond.sprite);
+	window.draw(lever.sprite);
 
 	
 

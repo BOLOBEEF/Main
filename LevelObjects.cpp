@@ -4,6 +4,8 @@ struct Player
 {
 	enum PlayerType { Fireboy, Watergirl };
 	PlayerType playertype;
+	const int idleRange_x = 5;
+	const int idleRange_y = 5;
 
 	// Body:
 	// Idle, walk if moving left or right
@@ -58,6 +60,12 @@ struct Player
 			}
 			else velocity.x -= velocity.x * deccelration * dt;
 		}
+		if (velocity.x > idleRange_x || velocity.x < -idleRange_x) {
+			playerState = Walk;
+		}
+		else if (velocity.y > idleRange_y)playerState = Fall;
+		else if (velocity.y < -idleRange_y)playerState = Jump_Rise;
+		else playerState = Idle;
 
 
 		velocity.y += gravity * dt;
@@ -666,15 +674,15 @@ struct Gem
 		ApplyTexture(sprite, LoadTexture::RECTANGLE, Vector2f(30, 30));
 		if (gemtype == waterGem) {
 			sprite.setColor(Color::Blue);
-			
+
 		}
 		else
 		{
 			sprite.setColor(Color::Red);
 		}
-			
+
 	}
-	Gem(Gemtype crystaltype,Vector2f position) {
+	Gem(Gemtype crystaltype, Vector2f position) {
 		gemtype = crystaltype;
 		sprite.setPosition(position);
 	}
@@ -708,7 +716,7 @@ struct Click
 		if (sprite.getGlobalBounds().intersects(anteel.sprite.getGlobalBounds())) {
 			buttonpressed = true;
 			sprite.setColor(Color::Magenta);
-			
+
 		}
 	}
 	void updateRelease() {
@@ -779,6 +787,30 @@ struct Pond
 				break;
 			}
 			break;
+		}
+	}
+};
+struct Switch {
+	Sprite sprite;
+	bool moved = false;
+	void start() {
+		ApplyTexture(sprite, LoadTexture::RECTANGLE, Vector2f(20, 50));
+		sprite.setColor(Color::Cyan);
+	}
+	Switch(Vector2f postion) {
+		sprite.setPosition(postion);
+	}
+	void leverMove(Player moroo,Player mora,Event event) {
+		
+		if (event.type == Event::KeyPressed) {
+			if (event.key.code == Keyboard::Space) {
+				if (sprite.getGlobalBounds().intersects(moroo.sprite.getGlobalBounds()) || sprite.getGlobalBounds().intersects(mora.sprite.getGlobalBounds())) {
+				
+					moved = !moved;
+					if(moved)	sprite.setColor(Color::Green);
+					else	sprite.setColor(Color::Cyan);
+				}
+			}
 		}
 	}
 };
