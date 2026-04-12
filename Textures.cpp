@@ -102,7 +102,7 @@ enum LoadTexture
 	MuteButton1_texture,
 	SettingsButton0_texture,
 	sound_icon_texture,
-
+	loading_icon_texture,
 };
 
 
@@ -159,7 +159,9 @@ Texture water_pond;
 Texture water_pond_left;
 Texture slider_dot;
 Texture slider_light_on;
-
+Texture green_pond;
+Texture green_pond_right;
+Texture green_pond_left;
 //menu assets textures
 Texture BackButton0;
 Texture BackButtonFull0;
@@ -189,7 +191,7 @@ Texture MuteButton0;
 Texture MuteButton1;
 Texture SettingsButton0;
 Texture sound_icon;
-
+Texture loading_icon;
 
 
 
@@ -315,8 +317,9 @@ void ApplyTexture(Sprite& sprite, LoadTexture texture, Vector2f size, Vector2f s
 	case sound_icon_texture:
 		sprite.setTexture(sound_icon);
 		break;
-
-
+	case loading_icon_texture:
+			sprite.setTexture(loading_icon);
+			break;
 
 	case TRIANGLE:
 		sprite.setTexture(triangleTexture);
@@ -465,9 +468,10 @@ void InitializeTextures()
 		   water_pond_left.loadFromFile("Main\\Assets\\Animations\\map objects assets\\water box left.png");
 		   slider_dot.loadFromFile("Main\\Assets\\Animations\\map objects assets\\sliderdot.png");
 		  slider_light_on.loadFromFile("Main\\Assets\\Animations\\map objects assets\\slider_light_on.png");
-
-
-
+		  green_pond.loadFromFile("Main\\Assets\\Animations\\map objects assets\\green box.png");
+		  green_pond_left.loadFromFile("Main\\Assets\\Animations\\map objects assets\\green box left.png");
+		  green_pond_right.loadFromFile("Main\\Assets\\Animations\\map objects assets\\green box right.png");
+		  loading_icon.loadFromFile("Main\\Assets\\Animations\\menu assets\\loading_icon.png");
 	// divide the process into functions
 	InitializeMenuTextures();
 	InitializeGameTextures();
