@@ -118,6 +118,7 @@ struct Collider
 	float groundedDistance = 20.0f;
 	Vector2f startPosition;
 	Vector2f scale;
+	float moveRatio = 0.0f; // a value from zero to one to determine who gets pushedand how much (player pushing box)
 
 	struct CollisionData
 	{
@@ -145,10 +146,10 @@ struct Collider
 	}
 
 	Collider::CollisionData CheckRectangleCollision(Player& player, FloatRect otherBounds, bool resolveCollision = true, FloatRect bias = FloatRect(5.0f, 5.0f, 0.0f, 0.0f)) {
-		Sprite& sprite = player.sprite;
+		Sprite& playerSprite = player.sprite;
 		Collider::CollisionData collisionData;
 
-		FloatRect playerBounds = sprite.getGlobalBounds();
+		FloatRect playerBounds = playerSprite.getGlobalBounds();
 
 		if (playerBounds.intersects(otherBounds)) {
 
@@ -168,8 +169,9 @@ struct Collider
 				// Collision from the top
 				if (resolveCollision)
 				{
-					sprite.move(0, -topOverlap);
-					player.velocity.y = min(player.velocity.y, 1.0f);
+					playerSprite.move(0, -topOverlap * (1 - moveRatio));					
+					if (moveRatio != 0.0f)	sprite.move(0, topOverlap * moveRatio);
+					else player.velocity.y = min(player.velocity.y, 1.0f);
 				}
 
 				collisionData = { Collider::CollisionData::CollisionDirection::Top , topOverlap };
@@ -179,8 +181,9 @@ struct Collider
 				// Collision from the bottom
 				if (resolveCollision)
 				{
-					sprite.move(0, bottomOverlap);
-					player.velocity.y = max(player.velocity.y, 0.0f);
+					playerSprite.move(0, bottomOverlap * (1 - moveRatio));
+					if (moveRatio != 0.0f)	sprite.move(0, -bottomOverlap * moveRatio);
+					else player.velocity.y = max(player.velocity.y, 0.0f);
 				}
 
 				collisionData = { Collider::CollisionData::CollisionDirection::Bottom , bottomOverlap };
@@ -189,8 +192,9 @@ struct Collider
 				// Collision from the left
 				if (resolveCollision)
 				{
-					sprite.move(-leftOverlap, 0);
-					player.velocity.x = min(player.velocity.x, 0.0f);
+					playerSprite.move(-leftOverlap * (1 - moveRatio), 0);
+					if (moveRatio != 0.0f)	sprite.move(leftOverlap * moveRatio, 0);
+					else player.velocity.x = min(player.velocity.x, 0.0f);
 				}
 
 				collisionData = { Collider::CollisionData::CollisionDirection::Left , leftOverlap };
@@ -199,8 +203,9 @@ struct Collider
 				// Collision from the right
 				if (resolveCollision)
 				{
-					sprite.move(rightOverlap, 0);
-					player.velocity.x = max(player.velocity.x, 0.0f);
+					playerSprite.move(rightOverlap * (1 - moveRatio), 0);
+					if (moveRatio != 0.0f)	sprite.move(-rightOverlap * moveRatio, 0);
+					else player.velocity.x = max(player.velocity.x, 0.0f);
 				}
 
 				collisionData = { Collider::CollisionData::CollisionDirection::Right , rightOverlap };
@@ -243,7 +248,24 @@ struct Collider
 
 		return collisionData;
 	}
+	Collider::CollisionData CheckRectangleCollision(Sprite& other, FloatRect otherBounds) {
+		Collider::CollisionData collisionData = CheckRectangleCollision(other.getGlobalBounds(), otherBounds);
 
+			if (collisionData.collisionDirection == Collider::CollisionData::CollisionDirection::Top) {
+				other.move(0, -collisionData.overlapDistance);
+			}
+			else if (collisionData.collisionDirection == Collider::CollisionData::CollisionDirection::Bottom) {
+				other.move(0, collisionData.overlapDistance);
+			}
+			else if (collisionData.collisionDirection == Collider::CollisionData::CollisionDirection::Left) {
+				other.move(-collisionData.overlapDistance, 0);
+			}
+			else if (collisionData.collisionDirection == Collider::CollisionData::CollisionDirection::Right) {
+				other.move(collisionData.overlapDistance, 0);
+			}
+
+		return collisionData;
+	}
 
 	Collider::CollisionData CheckTriangleCollision(Player& player, FloatRect triangleBounds, bool rotated, bool resolveCollision = true) {
 
@@ -614,6 +636,28 @@ struct Collider
 	}
 };
 
+void ResolveCollisionVelocity(Collider::CollisionData::CollisionDirection collisionDirection, Player& player) {
+	// basic velocity resolve for rectangle collision
+	switch (collisionDirection)
+	{
+	case Collider::CollisionData::Top:
+		player.velocity.y = min(player.velocity.y, 1.0f);
+		break;
+	case Collider::CollisionData::Bottom:
+		player.velocity.y = max(player.velocity.y, 0.0f);
+		break;
+	case Collider::CollisionData::Left:
+		player.velocity.x = min(player.velocity.x, 0.0f);
+
+		break;
+	case Collider::CollisionData::Right:
+		player.velocity.x = max(player.velocity.x, 0.0f);
+		break;
+	default:
+		break;
+	}
+}
+
 struct ColliderList {
 	int count = 0;
 	Collider* elements;
@@ -861,5 +905,32 @@ struct Final_door
 				break;
 			}
 		}
+	}
+};
+struct Box {
+	Collider collider;
+	Vector2f startPosition;
+	Vector2f velocity = Vector2f(0, 0);
+	const float gravity = 100.0f;
+	
+	Box(Vector2f position) {
+		startPosition = position;
+	}
+	
+	void Initialize() {
+		collider = Collider(Collider::ColliderType::Rectangle, startPosition);
+		collider.moveRatio = 0.5f;
+		ApplyTexture(collider.sprite, LoadTexture::RECTANGLE, Vector2f(48, 48));
+		collider.sprite.setPosition(startPosition);
+	}
+
+	void Update(Player& player) {
+		velocity.y += gravity * dt;
+		collider.sprite.move(velocity * dt);
+		collider.CheckCollision(player);
+	}
+
+	void Draw(RenderTarget& renderTarget) {
+		renderTarget.draw(collider.sprite);
 	}
 };
