@@ -416,6 +416,11 @@ void UpdateGame()
 		fireBoy.sprite.setColor(Color::Yellow);
 	if (waterGirl.isDead) 
 		waterGirl.sprite.setColor(Color::Yellow);
+	if(water_door.player_on_door&&fire_door.player_on_door)
+	{
+		water_door.sprite1.setColor(Color(128, 0, 128));
+		fire_door.sprite1.setColor(Color(128,0,128));
+	}
 }
 
 
