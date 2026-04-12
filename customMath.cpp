@@ -1,6 +1,10 @@
 
 // Custom Math Functions
 
+#define DEGTORAD 3.14159265f / 180.0f
+#define RADTODEG 180.0f / 3.14159265f
+
+
 int RandomRange(int start, int end) {
 	return rand() % (end + 1 - start) + start;
 }

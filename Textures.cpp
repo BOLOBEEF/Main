@@ -207,6 +207,19 @@ void SetSpriteSize(Sprite& sprite, Vector2f size, bool rotate = false) {
 	sprite.setScale((rotate ? -scale.x : scale.x), scale.y);
 }
 
+// set sprite bounds start from point to point
+void StrechSprite(Sprite& sprite, Vector2f startPoint, Vector2f endPoint, bool rotate = false) {
+	Vector2f origin = sprite.getOrigin();
+	sprite.setOrigin(Vector2f(0, 0));
+	sprite.setPosition(startPoint);
+	SetSpriteSize(sprite, Vector2f(abs(endPoint.x - startPoint.x), abs(endPoint.y - startPoint.y)), rotate);
+	sprite.setOrigin(origin);
+}
+
+void DrawSpriteWithOffset(Sprite sprite, Vector2f offset, RenderTarget& renderTarget) {
+	sprite.move(offset);
+	renderTarget.draw(sprite);
+}
 
 void FlipSprite(Sprite& sprite) {
 	Vector2f scale = sprite.getScale();
@@ -217,22 +230,19 @@ void SetSpriteOriginToCenter(Sprite& sprite, bool dontMove = false) {
 	FloatRect bounds = sprite.getLocalBounds();
 	Vector2f oldOrigin = sprite.getOrigin();
 	sprite.setOrigin(bounds.width / 2.0f, bounds.height / 2.0f);
+	// instead accept any origin
 	if (dontMove) sprite.move(-Vector2f((oldOrigin.x - bounds.width / 2.0f) * sprite.getScale().x, (oldOrigin.y - bounds.height / 2.0f) * sprite.getScale().y));
 }
 
 
-void ApplyTexture(Sprite& sprite, LoadTexture texture, Vector2f size, Vector2f scale = Vector2f(1, 1)) {
+void ApplyTexture(Sprite& sprite, LoadTexture texture, Vector2f size = Vector2f(1.0f, 1.0f), Vector2f scale = Vector2f(1.0f, 1.0f), bool centerOrigin = true) {
 	bool isValid = true;
-	bool centerOrigin = true;
 	bool flip = false;
 	
 	switch (texture)
 	{
-	case PLAYER_FIRE:
-		//
-		break;
-
-
+	case movingbox_texture:
+		sprite.setTexture(movingbox);
 	case BackButton0_texture:
 		sprite.setTexture(BackButton0);
 		break;
