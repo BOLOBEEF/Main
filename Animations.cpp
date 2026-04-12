@@ -148,8 +148,10 @@ void UpdateAnimation(Sprite& sprite, LoadTexture texture) {
 	case slider_light_on_texture:
 		break;
 	case BackButton0_texture:
+		sprite.setTextureRect(IntRect(0, 0, 64, 109));
 		break;
 	case BackButtonFull0_texture:
+		sprite.setTextureRect(IntRect(0, 0, 209, 89));
 		break;
 	case Diamond0_texture:
 		break;
@@ -184,24 +186,32 @@ void UpdateAnimation(Sprite& sprite, LoadTexture texture) {
 	case DiamondSpeed3_texture:
 		break;
 	case FxButton0_texture:
+		sprite.setTextureRect(IntRect(0, 0, 98, 82));
 		break;
 	case FxButton1_texture:
+		sprite.setTextureRect(IntRect(0, 0, 98, 82));
 		break;
 	case GoldLock0_texture:
 		break;
 	case Lock0_texture:
 		break;
 	case MusicButton0_texture:
+		sprite.setTextureRect(IntRect(0, 0, 113, 109));
 		break;
 	case MusicButton1_texture:
+		sprite.setTextureRect(IntRect(0, 0, 113, 109));
 		break;
 	case MuteButton0_texture:
+		sprite.setTextureRect(IntRect(0, 0, 49, 47));
 		break;
 	case MuteButton1_texture:
+		sprite.setTextureRect(IntRect(0, 0, 49, 47));
 		break;
 	case SettingsButton0_texture:
+		sprite.setTextureRect(IntRect(0, 0, 102, 102));
 		break;
-	case sound_icon_texture:
+	case loading_icon_texture:
+		sprite.setTextureRect(IntRect(0, 0, 469, 103));
 		break;
 	default:
 		break;
