@@ -26,7 +26,11 @@ Gem waterGem = Gem(Gem::waterGem, Vector2f(800, 800));
 Pond firePond = Pond(Pond::FIRE_POND, Vector2f(920, 950));
 Pond waterPond = Pond(Pond::WATER_POND, Vector2f(800, 600));
 Pond poisonPond = Pond(Pond::POISON_POND, Vector2f(800, 500));
+
 Switch lever = Switch(Vector2f(900, 800));
+Final_door water_door = Final_door(Final_door::WATER_DOOR, Vector2f(800, 700));
+Final_door fire_door = Final_door(Final_door::FIRE_DOOR, Vector2f(800, 800));
+
 
 Sprite ground;
 Click click = Click(Vector2f(1000, 800));
@@ -180,8 +184,15 @@ void UpdateGroundTexture() {
 	resultTexture.display();
 }
 
+//final door opening condition
 
-
+//void check_end_game()
+//{
+//	if (water_door.door_open && fire_door.door_open)
+//	{
+//		// end game
+//	}
+//}
 
 void InitializeGame()
 {
@@ -209,6 +220,10 @@ void InitializeGame()
 	waterPond.sprite.setColor(Color::Blue);
 	poisonPond.sprite.setColor(Color::Green);
 
+	water_door.Initialilze();
+	water_door.sprite1.setColor(Color::Blue);
+	fire_door.Initialilze();
+	fire_door.sprite1.setColor(Color::Red);
 
 	maskTexture.create(windowSize.x, windowSize.y);
 	resultTexture.create(windowSize.x, windowSize.y);
@@ -394,6 +409,8 @@ void UpdateGame()
 	waterPond.Update(waterGirl);
 	poisonPond.Update(waterGirl);
 	
+	water_door.openenig_door(waterGirl, water_door);
+	fire_door.openenig_door(fireBoy, fire_door);
 
 	if (fireBoy.isDead)
 		fireBoy.sprite.setColor(Color::Yellow);
@@ -419,7 +436,8 @@ void DrawGame()
 	window.draw(poisonPond.sprite);
 	window.draw(lever.sprite);
 
-	
+	window.draw(water_door.sprite1);
+	window.draw(fire_door.sprite1);
 
 
 	

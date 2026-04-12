@@ -70,6 +70,8 @@ enum LoadTexture
 	water_pond_left_texture,
 	slider_dot_texture,
 	slider_light_on_texture,
+	DOOR_WATER,
+	DOOR_FIRE,
 
 	//menu assets s
 	BackButton0_texture,
@@ -110,7 +112,7 @@ Texture playerTexture;
 Texture triangleTexture;
 
 Texture firePondTexture, waterPondTexture, toxicPondTexture;
-
+Texture firedoor, waterdoor;
 Texture cubeTexture;
 Texture groundTexture;
 
@@ -350,7 +352,15 @@ void ApplyTexture(Sprite& sprite, LoadTexture texture, Vector2f size, Vector2f s
 		sprite.setTexture(groundTexture);
 		centerOrigin = false;
 		break;
+	case DOOR_FIRE:
+		sprite.setTexture(firedoor);
+		sprite.setColor(Color::Red);
+		break;
+	case DOOR_WATER:
+		sprite.setTexture(waterdoor);
+		sprite.setColor(Color::Blue);
 
+		break;
 	default:
 		cout << "Invalid texture" << endl;
 		isValid = false;

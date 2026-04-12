@@ -800,16 +800,65 @@ struct Switch {
 	Switch(Vector2f postion) {
 		sprite.setPosition(postion);
 	}
-	void leverMove(Player moroo,Player mora,Event event) {
-		
+	void leverMove(Player moroo, Player mora, Event event) {
+
 		if (event.type == Event::KeyPressed) {
 			if (event.key.code == Keyboard::Space) {
 				if (sprite.getGlobalBounds().intersects(moroo.sprite.getGlobalBounds()) || sprite.getGlobalBounds().intersects(mora.sprite.getGlobalBounds())) {
-				
+
 					moved = !moved;
-					if(moved)	sprite.setColor(Color::Green);
+					if (moved)	sprite.setColor(Color::Green);
 					else	sprite.setColor(Color::Cyan);
 				}
+			}
+		}
+	}
+};
+struct Final_door
+{
+	Sprite sprite1;
+	enum door_type
+	{
+		WATER_DOOR,
+		FIRE_DOOR
+	}type;
+
+	bool player_on_door = false;
+
+	void Initialilze() {
+		ApplyTexture(sprite1, LoadTexture::RECTANGLE, Vector2f(32, 32*2));
+		AllignSprite(sprite1);
+	}
+	Final_door(door_type startType, Vector2f position) {
+		type = startType;
+		sprite1.setPosition(position);
+	}
+
+	void openenig_door(Player player, Final_door &door)
+	{
+		if ((player.playertype == Player::PlayerType::Watergirl) && player.sprite.getGlobalBounds().intersects(sprite1.getGlobalBounds()) && (type == WATER_DOOR))
+		{
+			door.player_on_door = true;
+			door.sprite1.setColor(Color::Green);
+		}
+		else if ((player.playertype == Player::PlayerType::Fireboy) && player.sprite.getGlobalBounds().intersects(sprite1.getGlobalBounds()) && (type == FIRE_DOOR))
+		{
+			door.player_on_door = true;
+			door.sprite1.setColor(Color::Green);
+		}
+		else
+		{
+			door.player_on_door = false;
+			switch (type)
+			{
+			case Final_door::WATER_DOOR:
+				door.sprite1.setColor(Color::Blue);
+				break;
+			case Final_door::FIRE_DOOR:
+				door.sprite1.setColor(Color::Red);
+				break;
+			default:
+				break;
 			}
 		}
 	}
