@@ -1,11 +1,15 @@
 
 // Custom Math Functions
 
+#define DEGTORAD 3.14159265f / 180.0f
+#define RADTODEG 180.0f / 3.14159265f
+
+
 int RandomRange(int start, int end) {
 	return rand() % (end + 1 - start) + start;
 }
 float RandomRangeF(float start, float end, int decimalPoints = 1) {
-	
+
 	int multiplier = 1;
 	for (int i = 0; i < decimalPoints; i++)
 	{

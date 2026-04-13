@@ -207,6 +207,19 @@ void SetSpriteSize(Sprite& sprite, Vector2f size, bool rotate = false) {
 	sprite.setScale((rotate ? -scale.x : scale.x), scale.y);
 }
 
+// set sprite bounds start from point to point
+void StrechSprite(Sprite& sprite, Vector2f startPoint, Vector2f endPoint, bool rotate = false) {
+	Vector2f origin = sprite.getOrigin();
+	sprite.setOrigin(Vector2f(0, 0));
+	sprite.setPosition(startPoint);
+	SetSpriteSize(sprite, Vector2f(abs(endPoint.x - startPoint.x), abs(endPoint.y - startPoint.y)), rotate);
+	sprite.setOrigin(origin);
+}
+
+void DrawSpriteWithOffset(Sprite sprite, Vector2f offset, RenderTarget& renderTarget) {
+	sprite.move(offset);
+	renderTarget.draw(sprite);
+}
 
 void FlipSprite(Sprite& sprite) {
 	Vector2f scale = sprite.getScale();
@@ -217,22 +230,19 @@ void SetSpriteOriginToCenter(Sprite& sprite, bool dontMove = false) {
 	FloatRect bounds = sprite.getLocalBounds();
 	Vector2f oldOrigin = sprite.getOrigin();
 	sprite.setOrigin(bounds.width / 2.0f, bounds.height / 2.0f);
+	// instead accept any origin
 	if (dontMove) sprite.move(-Vector2f((oldOrigin.x - bounds.width / 2.0f) * sprite.getScale().x, (oldOrigin.y - bounds.height / 2.0f) * sprite.getScale().y));
 }
 
 
-void ApplyTexture(Sprite& sprite, LoadTexture texture, Vector2f size, Vector2f scale = Vector2f(1, 1)) {
+void ApplyTexture(Sprite& sprite, LoadTexture texture, Vector2f size = Vector2f(1.0f, 1.0f), Vector2f scale = Vector2f(1.0f, 1.0f), bool centerOrigin = true) {
 	bool isValid = true;
-	bool centerOrigin = true;
 	bool flip = false;
-	
+
 	switch (texture)
 	{
-	case PLAYER_FIRE:
-		//
-		break;
-
-
+	case movingbox_texture:
+		sprite.setTexture(movingbox);
 	case BackButton0_texture:
 		sprite.setTexture(BackButton0);
 		break;
@@ -318,8 +328,8 @@ void ApplyTexture(Sprite& sprite, LoadTexture texture, Vector2f size, Vector2f s
 		sprite.setTexture(sound_icon);
 		break;
 	case loading_icon_texture:
-			sprite.setTexture(loading_icon);
-			break;
+		sprite.setTexture(loading_icon);
+		break;
 
 	case TRIANGLE:
 		sprite.setTexture(triangleTexture);
@@ -400,80 +410,79 @@ void InitializeTextures()
 	// load all texture here
 	// this functions maybe called again if reloading the textures is needed
 
-	 death_smoke.loadFromFile("Main\\Assets\\Animations\\characters assets\\death smoke.png");
-	 diamonds.loadFromFile("Main\\Assets\\Animations\\characters assets\\diamonds.png");
-	 fire_glow.loadFromFile("Main\\Assets\\Animations\\characters assets\\fire glow.png");
-	 fire_head_jumping.loadFromFile("Main\\Assets\\Animations\\characters assets\\fire head jumping.png");
-	 fire_head_rising.loadFromFile("Main\\Assets\\Animations\\characters assets\\fire head rising.png"); 
-	 fire_ice_steps.loadFromFile("Main\\Assets\\Animations\\characters assets\\fire ice steps.png"); 
-    fire_idle_body.loadFromFile("Main\\Assets\\Animations\\characters assets\\fire idle body.png");
-	 fire_idle_head.loadFromFile("Main\\Assets\\Animations\\characters assets\\fire idle head.png");
-	 fire_running.loadFromFile("Main\\Assets\\Animations\\characters assets\\fire running.png");
+	death_smoke.loadFromFile("Main\\Assets\\Animations\\characters assets\\death smoke.png");
+	diamonds.loadFromFile("Main\\Assets\\Animations\\characters assets\\diamonds.png");
+	fire_glow.loadFromFile("Main\\Assets\\Animations\\characters assets\\fire glow.png");
+	fire_head_jumping.loadFromFile("Main\\Assets\\Animations\\characters assets\\fire head jumping.png");
+	fire_head_rising.loadFromFile("Main\\Assets\\Animations\\characters assets\\fire head rising.png");
+	fire_ice_steps.loadFromFile("Main\\Assets\\Animations\\characters assets\\fire ice steps.png");
+	fire_idle_body.loadFromFile("Main\\Assets\\Animations\\characters assets\\fire idle body.png");
+	fire_idle_head.loadFromFile("Main\\Assets\\Animations\\characters assets\\fire idle head.png");
+	fire_running.loadFromFile("Main\\Assets\\Animations\\characters assets\\fire running.png");
 	fire_stairs.loadFromFile("Main\\Assets\\Animations\\characters assets\\fire stairs.png");
 	fire_head_falling.loadFromFile("Main\\Assets\\Animations\\characters assets\\firehead falling.png");
-	 water_body_idle.loadFromFile("Main\\Assets\\Animations\\characters assets\\water body idle.png");
-	 water_glow.loadFromFile("Main\\Assets\\Animations\\characters assets\\water glow.png");
-	 water_head_falling.loadFromFile("Main\\Assets\\Animations\\characters assets\\water head falling.png");
-	 water_head_idle.loadFromFile("Main\\Assets\\Animations\\characters assets\\water head idle.png");
-	 water_head_jump.loadFromFile("Main\\Assets\\Animations\\characters assets\\water head jump.png");
-	 water_head_rising.loadFromFile("Main\\Assets\\Animations\\characters assets\\water head rising.png");
-	 water_ice_steps.loadFromFile("Main\\Assets\\Animations\\characters assets\\water ice steps.png");
-	 water_running.loadFromFile("Main\\Assets\\Animations\\characters assets\\water running.png");
-	 water_stairs.loadFromFile("Main\\Assets\\Animations\\characters assets\\water stairs.png");
-	  BackButton0.loadFromFile("Main\\Assets\\Animations\\menu assets\\BackButton0000.png");
-	  BackButtonFull0.loadFromFile("Main\\Assets\\Animations\\menu assets\\BackButtonFull0000.png");
-	  Diamond0.loadFromFile("Main\\Assets\\Animations\\menu assets\\Diamond0000.png");
-	  Diamond1.loadFromFile("Main\\Assets\\Animations\\menu assets\\Diamond0001.png");
-	  Diamond2.loadFromFile("Main\\Assets\\Animations\\menu assets\\Diamond0002.png");
-	  Diamond3.loadFromFile("Main\\Assets\\Animations\\menu assets\\Diamond0003.png");
-	  DiamondDark0.loadFromFile("Main\\Assets\\Animations\\menu assets\\DiamondDark0000.png");
-	  DiamondDar1.loadFromFile("Main\\Assets\\Animations\\menu assets\\DiamondDark0001.png");
-	  DiamondDark2.loadFromFile("Main\\Assets\\Animations\\menu assets\\DiamondDark0002.png");
-	  DiamondDark3.loadFromFile("Main\\Assets\\Animations\\menu assets\\DiamondDark0003.png");
-	  DiamondPuzzle0.loadFromFile("Main\\Assets\\Animations\\menu assets\\DiamondPuzzle0000.png");
-	  DiamondPuzzle1.loadFromFile("Main\\Assets\\Animations\\menu assets\\DiamondPuzzle0001.png");
-	  DiamondPuzzle2.loadFromFile("Main\\Assets\\Animations\\menu assets\\DiamondPuzzle0002.png");
-	  DiamondPuzzle3.loadFromFile("Main\\Assets\\Animations\\menu assets\\DiamondPuzzle0003.png");
-	  DiamondSpeed0.loadFromFile("Main\\Assets\\Animations\\menu assets\\DiamondSpeed0000.png");
-	  DiamondSpeed1.loadFromFile("Main\\Assets\\Animations\\menu assets\\DiamondSpeed0001.png");
-	  DiamondSpeed2.loadFromFile("Main\\Assets\\Animations\\menu assets\\DiamondSpeed0002.png");
-	  DiamondSpeed3.loadFromFile("Main\\Assets\\Animations\\menu assets\\DiamondSpeed0003.png");
-	  FxButton0.loadFromFile("Main\\Assets\\Animations\\menu assets\\FxButton0000.png");
-	  FxButton1.loadFromFile("Main\\Assets\\Animations\\menu assets\\FxButton0001.png");
-	  GoldLock0.loadFromFile("Main\\Assets\\Animations\\menu assets\\GoldLock0000.png");
-	  Lock0.loadFromFile("Main\\Assets\\Animations\\menu assets\\Lock0000.png");
-	  MusicButton0.loadFromFile("Main\\Assets\\Animations\\menu assets\\MusicButton0000.png");
-	  MusicButton1.loadFromFile("Main\\Assets\\Animations\\menu assets\\MusicButton0001.png");
-	  MuteButton0.loadFromFile("Main\\Assets\\Animations\\menu assets\\MuteButton0000.png");
-	  MuteButton1.loadFromFile("Main\\Assets\\Animations\\menu assets\\MuteButton0001.png");
-	  SettingsButton0.loadFromFile("Main\\Assets\\Animations\\menu assets\\SettingsButton0000.png");
-	  sound_icon.loadFromFile("Main\\Assets\\Animations\\menu assets\\sound icon.png");
-	  movingbox.loadFromFile("Main\\Assets\\Animations\\map objects assets\\movingbox.png");
-	  snow_flat.loadFromFile("Main\\Assets\\Animations\\map objects assets\\snow flat.png");
-      snow_slope_right_side_down.loadFromFile("Main\\Assets\\Animations\\map objects assets\\snow slope right side down.png");
-		  snow_slope_left_side_down.loadFromFile("Main\\Assets\\Animations\\map objects assets\\snow slope left side down.png");
-		  pusher_block.loadFromFile("Main\\Assets\\Animations\\map objects assets\\pusher_block.png");
-		  fire_door_open.loadFromFile("Main\\Assets\\Animations\\map objects assets\\fire door open.png");
-		  water_door_open.loadFromFile("Main\\Assets\\Animations\\map objects assets\\water door open.png");
-		 fire_pond.loadFromFile("Main\\Assets\\Animations\\map objects assets\\fire box.png");
-		  fire_pond_right.loadFromFile("Main\\Assets\\Animations\\map objects assets\\fire box right.png");
-		  fire_pond_left.loadFromFile("Main\\Assets\\Animations\\map objects assets\\fire box left.png");
-		  lever_stick.loadFromFile("Main\\Assets\\Animations\\map objects assets\\lever stick.png");
-		  bar.loadFromFile("Main\\Assets\\Animations\\map objects assets\\bar center.png");
-		  bar_cap_right.loadFromFile("Main\\Assets\\Animations\\map objects assets\\bar cap right.png");
-		  bar_cap_left.loadFromFile("Main\\Assets\\Animations\\map objects assets\\bar cap left.png");
-		  ramp_1.loadFromFile("Main\\Assets\\Animations\\map objects assets\\ramp_1.png");
-		  water_pond_right.loadFromFile("Main\\Assets\\Animations\\map objects assets\\water box right.png");
-		   water_pond.loadFromFile("Main\\Assets\\Animations\\map objects assets\\water box.png");
-		   water_pond_left.loadFromFile("Main\\Assets\\Animations\\map objects assets\\water box left.png");
-		   slider_dot.loadFromFile("Main\\Assets\\Animations\\map objects assets\\sliderdot.png");
-		  slider_light_on.loadFromFile("Main\\Assets\\Animations\\map objects assets\\slider_light_on.png");
-		  green_pond.loadFromFile("Main\\Assets\\Animations\\map objects assets\\green box.png");
-		  green_pond_left.loadFromFile("Main\\Assets\\Animations\\map objects assets\\green box left.png");
-		  green_pond_right.loadFromFile("Main\\Assets\\Animations\\map objects assets\\green box right.png");
-		  loading_icon.loadFromFile("Main\\Assets\\Animations\\menu assets\\loading_icon.png");
+	water_body_idle.loadFromFile("Main\\Assets\\Animations\\characters assets\\water body idle.png");
+	water_glow.loadFromFile("Main\\Assets\\Animations\\characters assets\\water glow.png");
+	water_head_falling.loadFromFile("Main\\Assets\\Animations\\characters assets\\water head falling.png");
+	water_head_idle.loadFromFile("Main\\Assets\\Animations\\characters assets\\water head idle.png");
+	water_head_jump.loadFromFile("Main\\Assets\\Animations\\characters assets\\water head jump.png");
+	water_head_rising.loadFromFile("Main\\Assets\\Animations\\characters assets\\water head rising.png");
+	water_ice_steps.loadFromFile("Main\\Assets\\Animations\\characters assets\\water ice steps.png");
+	water_running.loadFromFile("Main\\Assets\\Animations\\characters assets\\water running.png");
+	water_stairs.loadFromFile("Main\\Assets\\Animations\\characters assets\\water stairs.png");
+	BackButton0.loadFromFile("Main\\Assets\\Animations\\menu assets\\BackButton0000.png");
+	BackButtonFull0.loadFromFile("Main\\Assets\\Animations\\menu assets\\BackButtonFull0000.png");
+	Diamond0.loadFromFile("Main\\Assets\\Animations\\menu assets\\Diamond0000.png");
+	Diamond1.loadFromFile("Main\\Assets\\Animations\\menu assets\\Diamond0001.png");
+	Diamond2.loadFromFile("Main\\Assets\\Animations\\menu assets\\Diamond0002.png");
+	Diamond3.loadFromFile("Main\\Assets\\Animations\\menu assets\\Diamond0003.png");
+	DiamondDark0.loadFromFile("Main\\Assets\\Animations\\menu assets\\DiamondDark0000.png");
+	DiamondDar1.loadFromFile("Main\\Assets\\Animations\\menu assets\\DiamondDark0001.png");
+	DiamondDark2.loadFromFile("Main\\Assets\\Animations\\menu assets\\DiamondDark0002.png");
+	DiamondDark3.loadFromFile("Main\\Assets\\Animations\\menu assets\\DiamondDark0003.png");
+	DiamondPuzzle0.loadFromFile("Main\\Assets\\Animations\\menu assets\\DiamondPuzzle0000.png");
+	DiamondPuzzle1.loadFromFile("Main\\Assets\\Animations\\menu assets\\DiamondPuzzle0001.png");
+	DiamondPuzzle2.loadFromFile("Main\\Assets\\Animations\\menu assets\\DiamondPuzzle0002.png");
+	DiamondPuzzle3.loadFromFile("Main\\Assets\\Animations\\menu assets\\DiamondPuzzle0003.png");
+	DiamondSpeed0.loadFromFile("Main\\Assets\\Animations\\menu assets\\DiamondSpeed0000.png");
+	DiamondSpeed1.loadFromFile("Main\\Assets\\Animations\\menu assets\\DiamondSpeed0001.png");
+	DiamondSpeed2.loadFromFile("Main\\Assets\\Animations\\menu assets\\DiamondSpeed0002.png");
+	DiamondSpeed3.loadFromFile("Main\\Assets\\Animations\\menu assets\\DiamondSpeed0003.png");
+	FxButton0.loadFromFile("Main\\Assets\\Animations\\menu assets\\FxButton0000.png");
+	FxButton1.loadFromFile("Main\\Assets\\Animations\\menu assets\\FxButton0001.png");
+	GoldLock0.loadFromFile("Main\\Assets\\Animations\\menu assets\\GoldLock0000.png");
+	Lock0.loadFromFile("Main\\Assets\\Animations\\menu assets\\Lock0000.png");
+	MusicButton0.loadFromFile("Main\\Assets\\Animations\\menu assets\\MusicButton0000.png");
+	MusicButton1.loadFromFile("Main\\Assets\\Animations\\menu assets\\MusicButton0001.png");
+	MuteButton0.loadFromFile("Main\\Assets\\Animations\\menu assets\\MuteButton0000.png");
+	MuteButton1.loadFromFile("Main\\Assets\\Animations\\menu assets\\MuteButton0001.png");
+	SettingsButton0.loadFromFile("Main\\Assets\\Animations\\menu assets\\SettingsButton0000.png");
+	sound_icon.loadFromFile("Main\\Assets\\Animations\\menu assets\\sound icon.png");
+	movingbox.loadFromFile("Main\\Assets\\Animations\\map objects assets\\movingbox.png");
+	snow_flat.loadFromFile("Main\\Assets\\Animations\\map objects assets\\snow flat.png");
+	snow_slope_right_side_down.loadFromFile("Main\\Assets\\Animations\\map objects assets\\snow slope right side down.png");
+	snow_slope_left_side_down.loadFromFile("Main\\Assets\\Animations\\map objects assets\\snow slope left side down.png");
+	pusher_block.loadFromFile("Main\\Assets\\Animations\\map objects assets\\pusher_block.png");
+	fire_door_open.loadFromFile("Main\\Assets\\Animations\\map objects assets\\fire door open.png");
+	water_door_open.loadFromFile("Main\\Assets\\Animations\\map objects assets\\water door open.png");
+	fire_pond.loadFromFile("Main\\Assets\\Animations\\map objects assets\\fire box.png");
+	fire_pond_right.loadFromFile("Main\\Assets\\Animations\\map objects assets\\fire box right.png");
+	fire_pond_left.loadFromFile("Main\\Assets\\Animations\\map objects assets\\fire box left.png");
+	lever_stick.loadFromFile("Main\\Assets\\Animations\\map objects assets\\lever stick.png");
+	bar.loadFromFile("Main\\Assets\\Animations\\map objects assets\\bar center.png");
+	bar_cap_right.loadFromFile("Main\\Assets\\Animations\\map objects assets\\bar cap right.png");
+	bar_cap_left.loadFromFile("Main\\Assets\\Animations\\map objects assets\\bar cap left.png");
+	ramp_1.loadFromFile("Main\\Assets\\Animations\\map objects assets\\ramp_1.png");
+	water_pond_right.loadFromFile("Main\\Assets\\Animations\\map objects assets\\water box right.png");
+	water_pond.loadFromFile("Main\\Assets\\Animations\\map objects assets\\water box.png");
+	water_pond_left.loadFromFile("Main\\Assets\\Animations\\map objects assets\\water box left.png");
+	slider_dot.loadFromFile("Main\\Assets\\Animations\\map objects assets\\sliderdot.png");
+	slider_light_on.loadFromFile("Main\\Assets\\Animations\\map objects assets\\slider_light_on.png");
+	green_pond.loadFromFile("Main\\Assets\\Animations\\map objects assets\\green box.png");
+	green_pond_left.loadFromFile("Main\\Assets\\Animations\\map objects assets\\green box left.png");
+	green_pond_right.loadFromFile("Main\\Assets\\Animations\\map objects assets\\green box right.png");
+	loading_icon.loadFromFile("Main\\Assets\\Animations\\menu assets\\loading_icon.png");
 	// divide the process into functions
 	InitializeMenuTextures();
 	InitializeGameTextures();
 }
-

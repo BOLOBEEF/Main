@@ -23,21 +23,22 @@ Player fireBoy = Player(Player::Fireboy, center + Vector2f(-600, 200));
 Player waterGirl = Player(Player::Watergirl, center + Vector2f(-550, 300));
 Gem fireGem = Gem(Gem::fireGem, Vector2f(650, 800));
 Gem waterGem = Gem(Gem::waterGem, Vector2f(800, 800));
-Pond firePond = Pond(Pond::FIRE_POND, Vector2f(920, 950));
+Pond firePond = Pond(Pond::FIRE_POND, Vector2f(800, 850));
 Pond waterPond = Pond(Pond::WATER_POND, Vector2f(800, 600));
 Pond poisonPond = Pond(Pond::POISON_POND, Vector2f(800, 500));
 
-Switch lever = Switch(Vector2f(900, 800));
-Final_door water_door = Final_door(Final_door::WATER_DOOR, Vector2f(800, 700));
-Final_door fire_door = Final_door(Final_door::FIRE_DOOR, Vector2f(800, 800));
+Box box = Box(Vector2f(1100, 200));
 
 
 Sprite ground;
-Click click = Click(Vector2f(1000, 800));
+Click click = Click(Vector2f(1000, 900));
+
 RenderTexture maskTexture;
 RenderTexture resultTexture;
+RenderTexture outlineTexture;
+Sprite outlineSprite;
+Sprite resultSprite;
 
-const bool displayColliders = true;
 ColliderList colliders;
 
 
@@ -55,13 +56,26 @@ EditType currentEditType = EditType::Rectangle;
 
 
 void CheckPlayerCollision(Player& player) {
-	bool isOnGround = false;
-
 	for (int i = 0; i < colliders.count; i++)
-		isOnGround |= colliders.elements[i].CheckCollision(player);
-
-	player.isOnGround = isOnGround;
+	{
+		Collider::CollisionData collisionData;
+		player.isOnGround |= colliders.elements[i].CheckCollision(player, collisionData);
+		if (collisionData.collisionDirection == Collider::CollisionData::CollisionDirection::Slope)
+			player.isOnSlope = true;
+	}
 }
+
+void CheckBoxCollision(Box& box, Collider::CollisionData* colliderDatas) {
+	for (int i = 0; i < colliders.count; i++)
+	{
+		Collider::CollisionData collisionData = colliders.elements[i].CheckRectangleCollision(box.collider.sprite, colliders.elements[i].sprite.getGlobalBounds());
+		if (collisionData.collisionDirection == Collider::CollisionData::CollisionDirection::Top)
+			box.velocity.y = min(box.velocity.y, 1.0f);
+
+		colliderDatas[i] = collisionData;
+	}
+}
+
 
 void AllignColliders() {
 	for (int i = 0; i < colliders.count; i++)
@@ -100,61 +114,48 @@ void LoadLevelData() {
 	colliders.Add(Collider(Collider::ColliderType::Rectangle, center + Vector2f(688, 372), Vector2f(1, 3)));
 	colliders.Add(Collider(Collider::ColliderType::Rectangle, center + Vector2f(768, 308), Vector2f(4, 1)));
 	colliders.Add(Collider(Collider::ColliderType::Triangle_Rotated, center + Vector2f(688, 308), Vector2f(1, 1)));
-	colliders.Add(Collider(Collider::ColliderType::Triangle_Rotated, center + Vector2f(784, -76), Vector2f(3, 3)));
 	colliders.Add(Collider(Collider::ColliderType::Triangle, center + Vector2f(-656, 116), Vector2f(3, 3)));
-	colliders.Add(Collider(Collider::ColliderType::Rectangle, center + Vector2f(-752, 52), Vector2f(3, 3)));
 	colliders.Add(Collider(Collider::ColliderType::Rectangle, center + Vector2f(784, -140), Vector2f(3, 1)));
-	colliders.Add(Collider(Collider::ColliderType::Rectangle, center + Vector2f(-560, -332), Vector2f(3, 1)));
+	colliders.Add(Collider(Collider::ColliderType::Rectangle, center + Vector2f(816, 36), Vector2f(1, 4)));
+	colliders.Add(Collider(Collider::ColliderType::Triangle, center + Vector2f(-16, -44), Vector2f(1, 1)));
+	colliders.Add(Collider(Collider::ColliderType::Rectangle, center + Vector2f(-752, 84), Vector2f(3, 5)));
+	colliders.Add(Collider(Collider::ColliderType::Triangle, center + Vector2f(464, -236), Vector2f(1, 1)));
+	colliders.Add(Collider(Collider::ColliderType::Rectangle, center + Vector2f(768, -76), Vector2f(4, 3)));
+	colliders.Add(Collider(Collider::ColliderType::Triangle_Rotated, center + Vector2f(720, -140), Vector2f(1, 1)));
+	colliders.Add(Collider(Collider::ColliderType::Triangle_Rotated, center + Vector2f(688, -44), Vector2f(1, 1)));
 }
 
-void DrawOutline(Sprite sprite, Collider::ColliderType type)
-{
-	Vector2f rectangleOutline = {10.0f, 10.0f};
-	Vector2f triangleOutline = {10.0f, 10.0f};
-	float triangleBottomOutline = 5.0f;
+
+void UpdateOutlinesTexture() {
+	const float outlineThickness = 5.0f;
+	const int iterations = 8 * 4;						// number of directions
+
+	float theta = 360 / iterations;
 
 
-	FloatRect localBounds = sprite.getLocalBounds();
-	FloatRect globalBounds = sprite.getGlobalBounds();
-	Vector2f pos = sprite.getPosition();
+	outlineTexture.clear(Color::Transparent);
+	Sprite outlineTest = Sprite(maskTexture.getTexture());
+	outlineTest.setColor(Color::White);
 
-	
-	if (type == Collider::ColliderType::Rectangle) {
-		SetSpriteSize(sprite, Vector2f(globalBounds.width + rectangleOutline.x, globalBounds.height + rectangleOutline.y), (type == Collider::ColliderType::Triangle_Rotated));
-		window.draw(sprite);
-	}
-	else if (type == Collider::ColliderType::Triangle || type == Collider::ColliderType::Triangle_Rotated)
-	{
-		float hypotenues = sqrt(pow(localBounds.width, 2) + pow(localBounds.height, 2));
-		Vector2f oldOrigin = sprite.getOrigin();
-		Vector2f newOrigin = Vector2f(localBounds.width / 2.0f, (hypotenues + localBounds.height) / 2.0f);
-		sprite.setOrigin(newOrigin);
+	for (int i = 0; i < 360; i += theta)
+		DrawSpriteWithOffset(outlineTest, outlineThickness * Vector2f(sin(i * DEGTORAD), cos(i * DEGTORAD)), outlineTexture);
 
-		// appear unmoved
-		sprite.move(-Vector2f((oldOrigin.x - newOrigin.x) * sprite.getScale().x, (oldOrigin.y - newOrigin.y) * sprite.getScale().y));
-		SetSpriteSize(sprite, Vector2f(globalBounds.width + triangleOutline.x, globalBounds.height + triangleOutline.y), (type == Collider::ColliderType::Triangle_Rotated));
-		window.draw(sprite);
-
-		FloatRect updatedOutline = sprite.getGlobalBounds();
-
-		RectangleShape bottmOutline;
-		bottmOutline.setPosition(updatedOutline.left, updatedOutline.top + updatedOutline.height);
-		bottmOutline.setSize(Vector2f(updatedOutline.width, triangleBottomOutline));
-		bottmOutline.setFillColor(Color::White);
-		window.draw(bottmOutline);
-	}
+	outlineTexture.display();
 }
 
 void UpdateGroundTexture() {
+
 	// --- Step 1: Draw mask (small sprites) ---
 	maskTexture.clear(Color::Transparent);
 
-	if (displayColliders)
-		for (int i = 0; i < colliders.count; i++)
-		{
-			maskTexture.draw(colliders.elements[i].sprite);
-		}
+	for (int i = 0; i < colliders.count; i++)
+	{
+		maskTexture.draw(colliders.elements[i].sprite);
+	}
 	maskTexture.display();
+
+	// update outlines too
+	UpdateOutlinesTexture();
 
 
 	// --- Step 2: Apply mask to background ---
@@ -184,15 +185,8 @@ void UpdateGroundTexture() {
 	resultTexture.display();
 }
 
-//final door opening condition
 
-//void check_end_game()
-//{
-//	if (water_door.door_open && fire_door.door_open)
-//	{
-//		// end game
-//	}
-//}
+
 
 void InitializeGame()
 {
@@ -209,10 +203,11 @@ void InitializeGame()
 	fireGem.start();
 	waterGem.start();
 	click.start();
-	lever.start();
+	box.Initialize();
+
 	ApplyTexture(ground, LoadTexture::GROUND, Vector2f(256, 256));
 	ground.setTextureRect(IntRect(0, 0, windowSize.x, windowSize.y));
-	
+
 	firePond.Initialilze();
 	waterPond.Initialilze();
 	poisonPond.Initialilze();
@@ -220,13 +215,12 @@ void InitializeGame()
 	waterPond.sprite.setColor(Color::Blue);
 	poisonPond.sprite.setColor(Color::Green);
 
-	water_door.Initialilze();
-	water_door.sprite1.setColor(Color::Blue);
-	fire_door.Initialilze();
-	fire_door.sprite1.setColor(Color::Red);
 
 	maskTexture.create(windowSize.x, windowSize.y);
+	outlineTexture.create(windowSize.x, windowSize.y);
 	resultTexture.create(windowSize.x, windowSize.y);
+	outlineSprite.setTexture(outlineTexture.getTexture());
+	resultSprite.setTexture(resultTexture.getTexture());
 
 	UpdateGroundTexture();
 }
@@ -270,15 +264,15 @@ void EditMode(Event event) {
 			switch (currentEditType)
 			{
 			case Rectangle:
-				collider = Collider(Collider::ColliderType::Rectangle, Vector2f(event.mouseButton.x, event.mouseButton.y), editScale);
+				collider = Collider(Collider::ColliderType::Rectangle, mousePosition, editScale);
 				collider.Initialize();
 				break;
 			case Triangle:
-				collider = Collider(Collider::ColliderType::Triangle, Vector2f(event.mouseButton.x, event.mouseButton.y), editScale);
+				collider = Collider(Collider::ColliderType::Triangle, mousePosition, editScale);
 				collider.Initialize();
 				break;
 			case Triangle_Rotated:
-				collider = Collider(Collider::ColliderType::Triangle_Rotated, Vector2f(event.mouseButton.x, event.mouseButton.y), editScale);
+				collider = Collider(Collider::ColliderType::Triangle_Rotated, mousePosition, editScale);
 				collider.Initialize();
 				break;
 			default:
@@ -304,7 +298,7 @@ void EditMode(Event event) {
 		else if (event.mouseButton.button == Mouse::Right) {
 			// remove object
 			for (int i = 0; i < colliders.count; i++) {
-				if (colliders.elements[i].sprite.getGlobalBounds().contains(Vector2f(event.mouseButton.x, event.mouseButton.y))) {
+				if (colliders.elements[i].sprite.getGlobalBounds().contains(mousePosition)) {
 					colliders.RemoveAt(i);
 					UpdateGroundTexture();
 				}
@@ -364,7 +358,7 @@ void HandleGameInput(Event event)
 	// code for handling game input that is related to game logic
 	fireBoy.checkJump(event);
 	waterGirl.checkJump(event);
-	lever.leverMove(fireBoy,waterGirl,event);
+
 
 	// in debug mode, when you press
 	if (!editMode) return;
@@ -393,6 +387,17 @@ void UpdateGame()
 
 	CheckPlayerCollision(fireBoy);
 	CheckPlayerCollision(waterGirl);
+
+	box.UpdatePhysics();
+
+	Collider::CollisionData* boxCollisionDatas = new Collider::CollisionData[colliders.count];
+	CheckBoxCollision(box, boxCollisionDatas);
+
+	box.CheckPlayerCollision(fireBoy, boxCollisionDatas, colliders.count);
+	box.CheckPlayerCollision(waterGirl, boxCollisionDatas, colliders.count);
+	delete[] boxCollisionDatas;
+
+
 	fireGem.checkintersect(fireBoy);
 	waterGem.checkintersect(waterGirl);
 
@@ -408,19 +413,11 @@ void UpdateGame()
 	firePond.Update(waterGirl);
 	waterPond.Update(waterGirl);
 	poisonPond.Update(waterGirl);
-	
-	water_door.openenig_door(waterGirl, water_door);
-	fire_door.openenig_door(fireBoy, fire_door);
 
 	if (fireBoy.isDead)
 		fireBoy.sprite.setColor(Color::Yellow);
-	if (waterGirl.isDead) 
+	if (waterGirl.isDead)
 		waterGirl.sprite.setColor(Color::Yellow);
-	if(water_door.player_on_door&&fire_door.player_on_door)
-	{
-		water_door.sprite1.setColor(Color(128, 0, 128));
-		fire_door.sprite1.setColor(Color(128,0,128));
-	}
 }
 
 
@@ -429,26 +426,19 @@ void DrawGame()
 	if (gameState != GAME) return;
 
 	// no need for window.clear or window.display
-	window.draw(fireBoy.sprite);
-	window.draw(waterGirl.sprite);
+	window.draw(outlineSprite);
+	window.draw(resultSprite);
+
+	window.draw(waterPond.sprite);
+	window.draw(poisonPond.sprite);
+	window.draw(firePond.sprite);
 
 	window.draw(waterGem.sprite);
 	window.draw(fireGem.sprite);
 	window.draw(click.sprite);
-	
-	window.draw(firePond.sprite);
-	window.draw(waterPond.sprite);
-	window.draw(poisonPond.sprite);
-	window.draw(lever.sprite);
 
-	window.draw(water_door.sprite1);
-	window.draw(fire_door.sprite1);
+	box.Draw(window);
 
-
-	
-	for (int i = 0; i < colliders.count; i++)
-	{
-		DrawOutline(colliders.elements[i].sprite, colliders.elements[i].type);
-	}
-	window.draw(Sprite(resultTexture.getTexture()));
+	window.draw(fireBoy.sprite);
+	window.draw(waterGirl.sprite);
 }
