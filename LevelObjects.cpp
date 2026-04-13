@@ -960,21 +960,23 @@ struct Game_Door
 	void moving_door(Game_Door& door)
 	{
 		if (type == door_statue::OPENED) {
-			if (door.sprite.getPosition().y < door.end.y-10)
-				door.sprite.move(0, 30*dt);
+			if (door.sprite.getPosition().y < door.end.y - 10)
+				door.sprite.move(0, 30 * dt);
 			else
 				type = door_statue::CLOSED;
-				
-			
+
+
 
 		}
 		else if (type == door_statue::CLOSED) {
-			if (door.sprite.getPosition().y > door.start.y+120)
-				door.sprite.move(0, -30*dt);
+			if (door.sprite.getPosition().y > door.start.y + 120)
+				door.sprite.move(0, -30 * dt);
 			else
 				type = door_statue::OPENED;
-			
+
 		}
+	}
+};
 
 struct Box {
 	Collider collider;
