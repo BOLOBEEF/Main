@@ -25,13 +25,13 @@ struct Player
 
 	Vector2f velocity = { 0,0 };
 
-	const float accelration = 500.0f;
-	const float deccelration = 10.0f;
-	const float speed = 500.0f;
-	const float pushSpeed = 150.0f;
-	const float slopeSpeed = 350.0f;
-	const float gravity = 1000.0f;
-	const float jump = -500.0f;
+	const float accelration = 100.0f;
+	const float deccelration = 5.0f;
+	const float speed = 150.0f;
+	const float slopeSpeed = speed * 0.707f;
+	const float pushSpeed = slopeSpeed;
+	const float gravity = 250.0f;
+	const float jump = -250.0f;
 
 	float currentSpeed = speed;
 	bool isOnGround = false;
@@ -968,19 +968,19 @@ struct Box {
 			switch (collisionData.collisionDirection)
 			{
 				case Collider::CollisionData::CollisionDirection::Top:
-					player.velocity.y = min(player.velocity.y, -20.0f);
+					player.velocity.y = min(player.velocity.y, -10.0f);
 					resolvedVelocity = true;
 					break;
 				case Collider::CollisionData::CollisionDirection::Bottom:
-					player.velocity.y = max(player.velocity.y, 20.0f);
+					player.velocity.y = max(player.velocity.y, 10.0f);
 					resolvedVelocity = true;
 					break;
 				case Collider::CollisionData::CollisionDirection::Left:
-					player.velocity.x = min(player.velocity.x, -20.0f);
+					player.velocity.x = min(player.velocity.x, -10.0f);
 					resolvedVelocity = true;
 					break;
 				case Collider::CollisionData::CollisionDirection::Right:
-					player.velocity.x = max(player.velocity.x, 20.0f);
+					player.velocity.x = max(player.velocity.x, 10.0f);
 					resolvedVelocity = true;
 					break;
 			default:
