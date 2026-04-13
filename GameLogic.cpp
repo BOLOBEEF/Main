@@ -31,6 +31,7 @@ Switch lever = Switch(Vector2f(900, 800));
 Final_door water_door = Final_door(Final_door::WATER_DOOR, Vector2f(800, 700));
 Final_door fire_door = Final_door(Final_door::FIRE_DOOR, Vector2f(800, 800));
 
+Game_Door door = Game_Door(Game_Door::CLOSED, Vector2f(400.0f, 300.0f));
 
 Sprite ground;
 Click click = Click(Vector2f(1000, 800));
@@ -186,13 +187,20 @@ void UpdateGroundTexture() {
 
 //final door opening condition
 
-//void check_end_game()
-//{
-//	if (water_door.door_open && fire_door.door_open)
-//	{
-//		// end game
-//	}
-//}
+void check_game_win()
+{
+	if (water_door.player_on_door && fire_door.player_on_door)
+	{
+		// end game
+	}
+}
+void check_game_lose()
+{
+	if (waterGirl.isDead || fireBoy.isDead)
+	{
+		// end game
+	}
+}
 
 void InitializeGame()
 {
@@ -204,12 +212,12 @@ void InitializeGame()
 		colliders.elements[i].Initialize();
 
 	AllignColliders();
-	fireBoy.start();
-	waterGirl.start();
-	fireGem.start();
-	waterGem.start();
-	click.start();
-	lever.start();
+	fireBoy.Intialization();
+	waterGirl.Intialization();
+	fireGem.Intialization();
+	waterGem.Intialization();
+	click.Intialization();
+	lever.Intialization();
 	ApplyTexture(ground, LoadTexture::GROUND, Vector2f(256, 256));
 	ground.setTextureRect(IntRect(0, 0, windowSize.x, windowSize.y));
 	
@@ -224,6 +232,9 @@ void InitializeGame()
 	water_door.sprite1.setColor(Color::Blue);
 	fire_door.Initialilze();
 	fire_door.sprite1.setColor(Color::Red);
+
+	door.Intialization();
+	door.sprite.setColor(Color::Yellow);
 
 	maskTexture.create(windowSize.x, windowSize.y);
 	resultTexture.create(windowSize.x, windowSize.y);
@@ -421,6 +432,9 @@ void UpdateGame()
 		water_door.sprite1.setColor(Color(128, 0, 128));
 		fire_door.sprite1.setColor(Color(128,0,128));
 	}
+
+	door.updateDoor(click, lever, door);
+	door.moving_door(door);
 }
 
 
@@ -444,7 +458,7 @@ void DrawGame()
 	window.draw(water_door.sprite1);
 	window.draw(fire_door.sprite1);
 
-
+	window.draw(door.sprite);
 	
 	for (int i = 0; i < colliders.count; i++)
 	{

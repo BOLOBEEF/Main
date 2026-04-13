@@ -26,7 +26,7 @@ enum LoadTexture
 
 	RECTANGLE,
 	GROUND,
-
+	DOOR,
 	// char assets s
 	death_smoke_texture,
 	diamondsh_texture,
@@ -115,6 +115,8 @@ Texture firePondTexture, waterPondTexture, toxicPondTexture;
 Texture firedoor, waterdoor;
 Texture cubeTexture;
 Texture groundTexture;
+
+Texture Door_texture;
 
 // char assets textures
 Texture death_smoke;
@@ -231,7 +233,10 @@ void ApplyTexture(Sprite& sprite, LoadTexture texture, Vector2f size, Vector2f s
 	case PLAYER_FIRE:
 		//
 		break;
-
+	case DOOR:
+		sprite.setTexture(Door_texture);
+		sprite.setColor(Color::Yellow);
+		break;
 
 	case BackButton0_texture:
 		sprite.setTexture(BackButton0);
