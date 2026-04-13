@@ -27,7 +27,7 @@ Pond firePond = Pond(Pond::FIRE_POND, Vector2f(800, 850));
 Pond waterPond = Pond(Pond::WATER_POND, Vector2f(800, 600));
 Pond poisonPond = Pond(Pond::POISON_POND, Vector2f(800, 500));
 
-Box box = Box(Vector2f(800, 450));
+Box box = Box(Vector2f(1100, 200));
 
 
 Sprite ground;
@@ -56,20 +56,23 @@ EditType currentEditType = EditType::Rectangle;
 
 
 void CheckPlayerCollision(Player& player) {
-	bool isOnGround = false;
-
 	for (int i = 0; i < colliders.count; i++)
-		isOnGround |= colliders.elements[i].CheckCollision(player);
-
-	player.isOnGround = isOnGround;
+	{
+		Collider::CollisionData collisionData;
+		player.isOnGround |= colliders.elements[i].CheckCollision(player, collisionData);
+		if (collisionData.collisionDirection == Collider::CollisionData::CollisionDirection::Slope)
+			player.isOnSlope = true;
+	}
 }
 
-void CheckBoxCollision(Box& box) {
+void CheckBoxCollision(Box& box, Collider::CollisionData* colliderDatas) {
 	for (int i = 0; i < colliders.count; i++)
 	{
 		Collider::CollisionData collisionData = colliders.elements[i].CheckRectangleCollision(box.collider.sprite, colliders.elements[i].sprite.getGlobalBounds());
 		if (collisionData.collisionDirection == Collider::CollisionData::CollisionDirection::Top)
 			box.velocity.y = min(box.velocity.y, 1.0f);
+
+		colliderDatas[i] = collisionData;
 	}
 }
 
@@ -111,13 +114,15 @@ void LoadLevelData() {
 	colliders.Add(Collider(Collider::ColliderType::Rectangle, center + Vector2f(688, 372), Vector2f(1, 3)));
 	colliders.Add(Collider(Collider::ColliderType::Rectangle, center + Vector2f(768, 308), Vector2f(4, 1)));
 	colliders.Add(Collider(Collider::ColliderType::Triangle_Rotated, center + Vector2f(688, 308), Vector2f(1, 1)));
-	colliders.Add(Collider(Collider::ColliderType::Triangle_Rotated, center + Vector2f(784, -76), Vector2f(3, 3)));
 	colliders.Add(Collider(Collider::ColliderType::Triangle, center + Vector2f(-656, 116), Vector2f(3, 3)));
 	colliders.Add(Collider(Collider::ColliderType::Rectangle, center + Vector2f(784, -140), Vector2f(3, 1)));
 	colliders.Add(Collider(Collider::ColliderType::Rectangle, center + Vector2f(816, 36), Vector2f(1, 4)));
 	colliders.Add(Collider(Collider::ColliderType::Triangle, center + Vector2f(-16, -44), Vector2f(1, 1)));
 	colliders.Add(Collider(Collider::ColliderType::Rectangle, center + Vector2f(-752, 84), Vector2f(3, 5)));
 	colliders.Add(Collider(Collider::ColliderType::Triangle, center + Vector2f(464, -236), Vector2f(1, 1)));
+	colliders.Add(Collider(Collider::ColliderType::Rectangle, center + Vector2f(768, -76), Vector2f(4, 3)));
+	colliders.Add(Collider(Collider::ColliderType::Triangle_Rotated, center + Vector2f(720, -140), Vector2f(1, 1)));
+	colliders.Add(Collider(Collider::ColliderType::Triangle_Rotated, center + Vector2f(688, -44), Vector2f(1, 1)));
 }
 
 
@@ -259,15 +264,15 @@ void EditMode(Event event) {
 			switch (currentEditType)
 			{
 			case Rectangle:
-				collider = Collider(Collider::ColliderType::Rectangle, Vector2f(event.mouseButton.x, event.mouseButton.y), editScale);
+				collider = Collider(Collider::ColliderType::Rectangle, mousePosition, editScale);
 				collider.Initialize();
 				break;
 			case Triangle:
-				collider = Collider(Collider::ColliderType::Triangle, Vector2f(event.mouseButton.x, event.mouseButton.y), editScale);
+				collider = Collider(Collider::ColliderType::Triangle, mousePosition, editScale);
 				collider.Initialize();
 				break;
 			case Triangle_Rotated:
-				collider = Collider(Collider::ColliderType::Triangle_Rotated, Vector2f(event.mouseButton.x, event.mouseButton.y), editScale);
+				collider = Collider(Collider::ColliderType::Triangle_Rotated, mousePosition, editScale);
 				collider.Initialize();
 				break;
 			default:
@@ -293,7 +298,7 @@ void EditMode(Event event) {
 		else if (event.mouseButton.button == Mouse::Right) {
 			// remove object
 			for (int i = 0; i < colliders.count; i++) {
-				if (colliders.elements[i].sprite.getGlobalBounds().contains(Vector2f(event.mouseButton.x, event.mouseButton.y))) {
+				if (colliders.elements[i].sprite.getGlobalBounds().contains(mousePosition)) {
 					colliders.RemoveAt(i);
 					UpdateGroundTexture();
 				}
@@ -382,11 +387,16 @@ void UpdateGame()
 
 	CheckPlayerCollision(fireBoy);
 	CheckPlayerCollision(waterGirl);
+	
+	box.UpdatePhysics();
 
-	box.Update(fireBoy);
-	box.Update(waterGirl);
-	//box.collider.sprite.setPosition(Vector2f(Mouse::getPosition()));
-	CheckBoxCollision(box);
+	Collider::CollisionData* boxCollisionDatas = new Collider::CollisionData[colliders.count];
+	CheckBoxCollision(box, boxCollisionDatas);
+
+	box.CheckPlayerCollision(fireBoy, boxCollisionDatas, colliders.count);
+	box.CheckPlayerCollision(waterGirl, boxCollisionDatas, colliders.count);
+	delete[] boxCollisionDatas;
+
 
 	fireGem.checkintersect(fireBoy);
 	waterGem.checkintersect(waterGirl);

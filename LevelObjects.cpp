@@ -28,9 +28,15 @@ struct Player
 	const float accelration = 500.0f;
 	const float deccelration = 10.0f;
 	const float speed = 500.0f;
+	const float pushSpeed = 150.0f;
+	const float slopeSpeed = 350.0f;
 	const float gravity = 1000.0f;
 	const float jump = -500.0f;
+
+	float currentSpeed = speed;
 	bool isOnGround = false;
+	bool isOnSlope = false;
+	bool isPushing = false;
 	bool isDead = false;
 
 
@@ -69,9 +75,18 @@ struct Player
 
 
 		velocity.y += gravity * dt;
-		velocity.x = Clamp(velocity.x, -speed, speed);
+
+		if (isOnSlope) currentSpeed = slopeSpeed;
+		else if (isPushing) currentSpeed = pushSpeed;
+		else currentSpeed = speed;
+
+		velocity.x = Clamp(velocity.x, -currentSpeed, currentSpeed);
 
 		sprite.move(velocity * dt);
+
+		isOnGround = false;
+		isOnSlope = false;
+		isPushing = false;
 	}
 
 	void checkJump(Event event) {
@@ -609,13 +624,13 @@ struct Collider
 		}
 	}
 
-	bool CheckCollision(Player& player) {
-		CollisionData collisionData;
+
+	bool CheckCollision(Player& player, CollisionData&  collisionData, FloatRect bias = FloatRect(5.0f, 5.0f, 0.0f, 0.0f)) {
 
 		switch (type)
 		{
 		case Collider::Rectangle:
-			collisionData = CheckRectangleCollision(player, sprite.getGlobalBounds());
+			collisionData = CheckRectangleCollision(player, sprite.getGlobalBounds(), true, bias);
 			break;
 		case Collider::Triangle:
 			collisionData = CheckTriangleCollision(player, sprite.getGlobalBounds(), false);
@@ -633,6 +648,11 @@ struct Collider
 
 
 		return IsOnGround(player, colliderBounds);
+	}
+
+	bool CheckCollision(Player& player) {
+		CollisionData collisionData;
+		return CheckCollision(player, collisionData);
 	}
 };
 
@@ -911,7 +931,8 @@ struct Box {
 	Collider collider;
 	Vector2f startPosition;
 	Vector2f velocity = Vector2f(0, 0);
-	const float gravity = 100.0f;
+
+	const float gravity = 500.0f;
 	
 	Box(Vector2f position) {
 		startPosition = position;
@@ -919,16 +940,55 @@ struct Box {
 	
 	void Initialize() {
 		collider = Collider(Collider::ColliderType::Rectangle, startPosition);
-		collider.moveRatio = 0.5f;
+		collider.moveRatio = 1.0f;
 		ApplyTexture(collider.sprite, LoadTexture::RECTANGLE, Vector2f(48, 48));
 		collider.sprite.setPosition(startPosition);
 	}
 
-	void Update(Player& player) {
+	void CheckColliderCollision(Collider collider) {
+			Collider::CollisionData collisionData = collider.CheckRectangleCollision(collider.sprite, collider.sprite.getGlobalBounds());
+			if (collisionData.collisionDirection == Collider::CollisionData::CollisionDirection::Top)
+				velocity.y = min(velocity.y, 1.0f);
+	}
+
+	void UpdatePhysics() {
+		// update gravity and move
 		velocity.y += gravity * dt;
 		collider.sprite.move(velocity * dt);
-		collider.CheckCollision(player);
 	}
+
+	void CheckPlayerCollision(Player& player, Collider::CollisionData* boxCollisionDatas, int colliderCount) {
+		Collider::CollisionData collisionData;
+		player.isOnGround |= collider.CheckCollision(player, collisionData, FloatRect());
+		if (collisionData.collisionDirection != Collider::CollisionData::CollisionDirection::None) player.isPushing = true;
+
+		bool resolvedVelocity = false;
+		for (int i = 0; i < colliderCount && !resolvedVelocity; i++)
+			if (collisionData.collisionDirection == boxCollisionDatas[i].collisionDirection)
+			switch (collisionData.collisionDirection)
+			{
+				case Collider::CollisionData::CollisionDirection::Top:
+					player.velocity.y = min(player.velocity.y, -20.0f);
+					resolvedVelocity = true;
+					break;
+				case Collider::CollisionData::CollisionDirection::Bottom:
+					player.velocity.y = max(player.velocity.y, 20.0f);
+					resolvedVelocity = true;
+					break;
+				case Collider::CollisionData::CollisionDirection::Left:
+					player.velocity.x = min(player.velocity.x, -20.0f);
+					resolvedVelocity = true;
+					break;
+				case Collider::CollisionData::CollisionDirection::Right:
+					player.velocity.x = max(player.velocity.x, 20.0f);
+					resolvedVelocity = true;
+					break;
+			default:
+				break;
+			}
+		
+	}
+	
 
 	void Draw(RenderTarget& renderTarget) {
 		renderTarget.draw(collider.sprite);
