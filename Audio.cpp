@@ -26,32 +26,32 @@ enum GameSoundEffect
 	// add a type for each possible sound effect (NOT LOOPING MUSIC) we have
 
 	//index[o]
-	GameOver_sound,
-	Win_sound,
+	GameOver,
+	Win,
 
 	//index[1]--> boy, index[2] -->girl
-	Walking_boy_sound,
-	Walking_girl_sound,
-	IceSteps_Fb_sound,
-	IceSteps_Wg_sound,
-	Pondsteps_boy_sound,
-	Pondsteps_girl_sound,
-	Death_sound,
-	BoyJump_sound,
-	GirlJump_sound,
+	Walking_boy,
+	Walking_girl,
+	IceSteps_Fb,
+	IceSteps_Wg,
+	Pondsteps_boy,
+	Pondsteps_girl,
+	Death,
+	BoyJump,
+	GirlJump,
 	 
 	//index[3]
-	Door_sound,
-	Lever_sound,
-	Platform_sound,
+	Door,
+	Lever,
+	Platform,
 
 	//index[4]
-	pondFreeze_sound,
-	PondMelt_sound,
-	Wind_sound,
+	pondFreeze,
+	PondMelt,
+	Wind,
 
 	//index[5]
-	DiamondCollect_sound
+	DiamondCollect
 	// and so on
 };
 
@@ -202,79 +202,79 @@ void PlayGameSoundEffect(GameSoundEffect soundEffect) {
 
 	switch (soundEffect)
 	{
-	case GameOver_sound:
+	case GameOver:
 		soundEffectsPlayers[0].setBuffer(LevelGameoverSound);
 		soundEffectsPlayers[0].play();
 		break;
-	case Win_sound:
+	case Win:
 		soundEffectsPlayers[0].setBuffer(LevelWinSound);
 		soundEffectsPlayers[0].play();
 		break;
 
-	case Walking_boy_sound:
+	case Walking_boy:
 		soundEffectsPlayers[1].setBuffer(StepsSound);
 		soundEffectsPlayers[1].play();
 		break;
-	case Walking_girl_sound:
+	case Walking_girl:
 		soundEffectsPlayers[2].setBuffer(StepsSound);
 		soundEffectsPlayers[2].play();
 		break;
-	case IceSteps_Fb_sound:
+	case IceSteps_Fb:
 		soundEffectsPlayers[1].setBuffer(IceSteps_FbSound);
 		soundEffectsPlayers[1].play();
 		break;
-	case IceSteps_Wg_sound:
+	case IceSteps_Wg:
 		soundEffectsPlayers[2].setBuffer(IceSteps_WgSound);
 		soundEffectsPlayers[2].play();
 		break;
-	case Pondsteps_boy_sound:
+	case Pondsteps_boy:
 		soundEffectsPlayers[1].setBuffer(PondStepsSound);
 		soundEffectsPlayers[1].play();
 		break;
-	case Pondsteps_girl_sound:
+	case Pondsteps_girl:
 		soundEffectsPlayers[2].setBuffer(PondStepsSound);
 		soundEffectsPlayers[2].play();
 		break;
-	case Death_sound:
+	case Death:
 		soundEffectsPlayers[1].setBuffer(DeathSound);
 		soundEffectsPlayers[2].setBuffer(DeathSound);
 		soundEffectsPlayers[1].play();
 		break;
-	case BoyJump_sound:
+	case BoyJump:
 		soundEffectsPlayers[1].setBuffer(BoyJumpSound);
 		soundEffectsPlayers[1].play();
 		break;
-	case GirlJump_sound:
+	case GirlJump:
 		soundEffectsPlayers[2].setBuffer(GirlJumpSound);
 		soundEffectsPlayers[2].play();
 		break;
 
-	case Door_sound:
+	case Door:
 		soundEffectsPlayers[3].setBuffer(DoorSound);
 		soundEffectsPlayers[3].play();
 		break;
-	case Lever_sound:
+	case Lever:
 		soundEffectsPlayers[3].setBuffer(LeverSound);
 		soundEffectsPlayers[3].play();
 		break;
-	case Platform_sound:
+	case Platform:
 		soundEffectsPlayers[3].setBuffer(PlatformSound);
 		soundEffectsPlayers[3].play();
 		break;
 
-	case pondFreeze_sound:
+	case pondFreeze:
 		soundEffectsPlayers[4].setBuffer(PondFreezeSound);
 		soundEffectsPlayers[4].play();
 		break;
-	case PondMelt_sound:
+	case PondMelt:
 		soundEffectsPlayers[4].setBuffer(PondMeltSound);
 		soundEffectsPlayers[4].play();
 		break;
-	case Wind_sound:
+	case Wind:
 		soundEffectsPlayers[4].setBuffer(WindSound);
 		soundEffectsPlayers[4].play();
 		break;
-	case DiamondCollect_sound:
+	case DiamondCollect:
 		soundEffectsPlayers[5].setBuffer(DiamondCollectingSound);
 		soundEffectsPlayers[5].play();
 		break;

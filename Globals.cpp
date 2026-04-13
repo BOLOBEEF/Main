@@ -10,7 +10,6 @@ Vector2f center = Vector2f(windowSize.x / 2.0f, windowSize.y / 2.0f);
 Clock globalClock;
 Clock dtClock;
 float dt = 0.0f;
-Vector2f mousePosition;
 
 
 // Function Declarations
@@ -99,10 +98,6 @@ void UpdateGlobals() {
 	// deltaTime
 	dt = dtClock.restart().asSeconds();
 	if (dt > 0.05f) dt = 0.05f;	// fix player stutter when moving the window around, by capping deltaTime to a maximum value
-
-	Vector2i pixelPos = Mouse::getPosition(window);
-	mousePosition = window.mapPixelToCoords(pixelPos);	// fix mouse position not updating when the window is resized by using mapPixelToCoords instead of getPosition
-
 
 	UpdateUI();
 	UpdateGame();

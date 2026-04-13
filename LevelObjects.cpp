@@ -16,7 +16,7 @@ struct Player
 	PlayerState playerState;
 
 	Sprite sprite;
-	void Intialization() {
+	void start() {
 		ApplyTexture(sprite, LoadTexture::RECTANGLE, Vector2f(50, 60));
 		if (playertype == Fireboy)
 			sprite.setColor(Color::Red);
@@ -25,18 +25,12 @@ struct Player
 
 	Vector2f velocity = { 0,0 };
 
-	const float accelration = 100.0f;
-	const float deccelration = 5.0f;
-	const float speed = 150.0f;
-	const float slopeSpeed = speed * 0.707f;
-	const float pushSpeed = slopeSpeed;
-	const float gravity = 250.0f;
-	const float jump = -250.0f;
-
-	float currentSpeed = speed;
+	const float accelration = 500.0f;
+	const float deccelration = 10.0f;
+	const float speed = 500.0f;
+	const float gravity = 1000.0f;
+	const float jump = -500.0f;
 	bool isOnGround = false;
-	bool isOnSlope = false;
-	bool isPushing = false;
 	bool isDead = false;
 
 
@@ -75,18 +69,9 @@ struct Player
 
 
 		velocity.y += gravity * dt;
-
-		if (isOnSlope) currentSpeed = slopeSpeed;
-		else if (isPushing) currentSpeed = pushSpeed;
-		else currentSpeed = speed;
-
-		velocity.x = Clamp(velocity.x, -currentSpeed, currentSpeed);
+		velocity.x = Clamp(velocity.x, -speed, speed);
 
 		sprite.move(velocity * dt);
-
-		isOnGround = false;
-		isOnSlope = false;
-		isPushing = false;
 	}
 
 	void checkJump(Event event) {
@@ -133,7 +118,6 @@ struct Collider
 	float groundedDistance = 20.0f;
 	Vector2f startPosition;
 	Vector2f scale;
-	float moveRatio = 0.0f; // a value from zero to one to determine who gets pushedand how much (player pushing box)
 
 	struct CollisionData
 	{
@@ -161,10 +145,10 @@ struct Collider
 	}
 
 	Collider::CollisionData CheckRectangleCollision(Player& player, FloatRect otherBounds, bool resolveCollision = true, FloatRect bias = FloatRect(5.0f, 5.0f, 0.0f, 0.0f)) {
-		Sprite& playerSprite = player.sprite;
+		Sprite& sprite = player.sprite;
 		Collider::CollisionData collisionData;
 
-		FloatRect playerBounds = playerSprite.getGlobalBounds();
+		FloatRect playerBounds = sprite.getGlobalBounds();
 
 		if (playerBounds.intersects(otherBounds)) {
 
@@ -184,9 +168,8 @@ struct Collider
 				// Collision from the top
 				if (resolveCollision)
 				{
-					playerSprite.move(0, -topOverlap * (1 - moveRatio));					
-					if (moveRatio != 0.0f)	sprite.move(0, topOverlap * moveRatio);
-					else player.velocity.y = min(player.velocity.y, 1.0f);
+					sprite.move(0, -topOverlap);
+					player.velocity.y = min(player.velocity.y, 1.0f);
 				}
 
 				collisionData = { Collider::CollisionData::CollisionDirection::Top , topOverlap };
@@ -196,9 +179,8 @@ struct Collider
 				// Collision from the bottom
 				if (resolveCollision)
 				{
-					playerSprite.move(0, bottomOverlap * (1 - moveRatio));
-					if (moveRatio != 0.0f)	sprite.move(0, -bottomOverlap * moveRatio);
-					else player.velocity.y = max(player.velocity.y, 0.0f);
+					sprite.move(0, bottomOverlap);
+					player.velocity.y = max(player.velocity.y, 0.0f);
 				}
 
 				collisionData = { Collider::CollisionData::CollisionDirection::Bottom , bottomOverlap };
@@ -207,9 +189,8 @@ struct Collider
 				// Collision from the left
 				if (resolveCollision)
 				{
-					playerSprite.move(-leftOverlap * (1 - moveRatio), 0);
-					if (moveRatio != 0.0f)	sprite.move(leftOverlap * moveRatio, 0);
-					else player.velocity.x = min(player.velocity.x, 0.0f);
+					sprite.move(-leftOverlap, 0);
+					player.velocity.x = min(player.velocity.x, 0.0f);
 				}
 
 				collisionData = { Collider::CollisionData::CollisionDirection::Left , leftOverlap };
@@ -218,9 +199,8 @@ struct Collider
 				// Collision from the right
 				if (resolveCollision)
 				{
-					playerSprite.move(rightOverlap * (1 - moveRatio), 0);
-					if (moveRatio != 0.0f)	sprite.move(-rightOverlap * moveRatio, 0);
-					else player.velocity.x = max(player.velocity.x, 0.0f);
+					sprite.move(rightOverlap, 0);
+					player.velocity.x = max(player.velocity.x, 0.0f);
 				}
 
 				collisionData = { Collider::CollisionData::CollisionDirection::Right , rightOverlap };
@@ -263,24 +243,7 @@ struct Collider
 
 		return collisionData;
 	}
-	Collider::CollisionData CheckRectangleCollision(Sprite& other, FloatRect otherBounds) {
-		Collider::CollisionData collisionData = CheckRectangleCollision(other.getGlobalBounds(), otherBounds);
 
-			if (collisionData.collisionDirection == Collider::CollisionData::CollisionDirection::Top) {
-				other.move(0, -collisionData.overlapDistance);
-			}
-			else if (collisionData.collisionDirection == Collider::CollisionData::CollisionDirection::Bottom) {
-				other.move(0, collisionData.overlapDistance);
-			}
-			else if (collisionData.collisionDirection == Collider::CollisionData::CollisionDirection::Left) {
-				other.move(-collisionData.overlapDistance, 0);
-			}
-			else if (collisionData.collisionDirection == Collider::CollisionData::CollisionDirection::Right) {
-				other.move(collisionData.overlapDistance, 0);
-			}
-
-		return collisionData;
-	}
 
 	Collider::CollisionData CheckTriangleCollision(Player& player, FloatRect triangleBounds, bool rotated, bool resolveCollision = true) {
 
@@ -624,13 +587,13 @@ struct Collider
 		}
 	}
 
-
-	bool CheckCollision(Player& player, CollisionData&  collisionData, FloatRect bias = FloatRect(5.0f, 5.0f, 0.0f, 0.0f)) {
+	bool CheckCollision(Player& player) {
+		CollisionData collisionData;
 
 		switch (type)
 		{
 		case Collider::Rectangle:
-			collisionData = CheckRectangleCollision(player, sprite.getGlobalBounds(), true, bias);
+			collisionData = CheckRectangleCollision(player, sprite.getGlobalBounds());
 			break;
 		case Collider::Triangle:
 			collisionData = CheckTriangleCollision(player, sprite.getGlobalBounds(), false);
@@ -649,34 +612,7 @@ struct Collider
 
 		return IsOnGround(player, colliderBounds);
 	}
-
-	bool CheckCollision(Player& player) {
-		CollisionData collisionData;
-		return CheckCollision(player, collisionData);
-	}
 };
-
-void ResolveCollisionVelocity(Collider::CollisionData::CollisionDirection collisionDirection, Player& player) {
-	// basic velocity resolve for rectangle collision
-	switch (collisionDirection)
-	{
-	case Collider::CollisionData::Top:
-		player.velocity.y = min(player.velocity.y, 1.0f);
-		break;
-	case Collider::CollisionData::Bottom:
-		player.velocity.y = max(player.velocity.y, 0.0f);
-		break;
-	case Collider::CollisionData::Left:
-		player.velocity.x = min(player.velocity.x, 0.0f);
-
-		break;
-	case Collider::CollisionData::Right:
-		player.velocity.x = max(player.velocity.x, 0.0f);
-		break;
-	default:
-		break;
-	}
-}
 
 struct ColliderList {
 	int count = 0;
@@ -734,7 +670,7 @@ struct Gem
 	Gemtype gemtype;
 	Sprite sprite;
 	bool isCollected = false;
-	void Intialization() {
+	void start() {
 		ApplyTexture(sprite, LoadTexture::RECTANGLE, Vector2f(30, 30));
 		if (gemtype == waterGem) {
 			sprite.setColor(Color::Blue);
@@ -769,7 +705,7 @@ struct Click
 {
 	Sprite sprite;
 	bool buttonpressed = false;
-	void Intialization() {
+	void start() {
 		ApplyTexture(sprite, LoadTexture::RECTANGLE, Vector2f(30, 30));
 		sprite.setColor(Color::Yellow);
 	}
@@ -857,7 +793,7 @@ struct Pond
 struct Switch {
 	Sprite sprite;
 	bool moved = false;
-	void Intialization() {
+	void start() {
 		ApplyTexture(sprite, LoadTexture::RECTANGLE, Vector2f(20, 50));
 		sprite.setColor(Color::Cyan);
 	}
@@ -898,151 +834,32 @@ struct Final_door
 		sprite1.setPosition(position);
 	}
 
-	void openenig_door(Player player, Final_door &Door)
+	void openenig_door(Player player, Final_door &door)
 	{
 		if ((player.playertype == Player::PlayerType::Watergirl) && player.sprite.getGlobalBounds().intersects(sprite1.getGlobalBounds()) && (type == WATER_DOOR))
 		{
-			Door.player_on_door = true;
-			Door.sprite1.setColor(Color::Green);
+			door.player_on_door = true;
+			door.sprite1.setColor(Color::Green);
 		}
 		else if ((player.playertype == Player::PlayerType::Fireboy) && player.sprite.getGlobalBounds().intersects(sprite1.getGlobalBounds()) && (type == FIRE_DOOR))
 		{
-			Door.player_on_door = true;
-			Door.sprite1.setColor(Color::Green);
+			door.player_on_door = true;
+			door.sprite1.setColor(Color::Green);
 		}
 		else
 		{
-			Door.player_on_door = false;
+			door.player_on_door = false;
 			switch (type)
 			{
 			case Final_door::WATER_DOOR:
-				Door.sprite1.setColor(Color::Blue);
+				door.sprite1.setColor(Color::Blue);
 				break;
 			case Final_door::FIRE_DOOR:
-				Door.sprite1.setColor(Color::Red);
+				door.sprite1.setColor(Color::Red);
 				break;
 			default:
 				break;
 			}
 		}
-	}
-};
-struct Game_Door
-{
-	enum door_statue
-	{
-		OPENED,
-		CLOSED
-	}type;
-	Sprite sprite;
-	Vector2f start = Vector2f(400.0f, 300.0f);
-	Vector2f end = Vector2f(400.0f, 500.0f);
-	Vector2f door_position = Vector2f(sprite.getPosition());
-	void Intialization() {
-		ApplyTexture(sprite, LoadTexture::RECTANGLE, Vector2f(32, 32 * 2));
-		sprite.setColor(Color::Yellow);
-		sprite.rotate(90);
-	}
-	Game_Door(door_statue startType, Vector2f postion) {
-		type = startType;
-		sprite.setPosition(postion);
-	}
-	void updateDoor(Click click, Switch lever, Game_Door& door) {
-		if (lever.moved || click.buttonpressed) {
-			type = door_statue::OPENED;
-			door.sprite.setColor(Color::Magenta);
-		}
-		else {
-			type = door_statue::CLOSED;
-			door.sprite.setColor(Color::Yellow);
-		}
-	}
-	void moving_door(Game_Door& door)
-	{
-		if (type == door_statue::OPENED) {
-			if (door.sprite.getPosition().y < door.end.y - 10)
-				door.sprite.move(0, 30 * dt);
-			else
-				type = door_statue::CLOSED;
-
-
-
-		}
-		else if (type == door_statue::CLOSED) {
-			if (door.sprite.getPosition().y > door.start.y + 120)
-				door.sprite.move(0, -30 * dt);
-			else
-				type = door_statue::OPENED;
-
-		}
-	}
-};
-
-struct Box {
-	Collider collider;
-	Vector2f startPosition;
-	Vector2f velocity = Vector2f(0, 0);
-
-	const float gravity = 500.0f;
-	
-	Box(Vector2f position) {
-		startPosition = position;
-	}
-	
-	void Initialize() {
-		collider = Collider(Collider::ColliderType::Rectangle, startPosition);
-		collider.moveRatio = 1.0f;
-		ApplyTexture(collider.sprite, LoadTexture::RECTANGLE, Vector2f(48, 48));
-		collider.sprite.setPosition(startPosition);
-	}
-
-	void CheckColliderCollision(Collider collider) {
-			Collider::CollisionData collisionData = collider.CheckRectangleCollision(collider.sprite, collider.sprite.getGlobalBounds());
-			if (collisionData.collisionDirection == Collider::CollisionData::CollisionDirection::Top)
-				velocity.y = min(velocity.y, 1.0f);
-	}
-
-	void UpdatePhysics() {
-		// update gravity and move
-		velocity.y += gravity * dt;
-		collider.sprite.move(velocity * dt);
-	}
-
-	void CheckPlayerCollision(Player& player, Collider::CollisionData* boxCollisionDatas, int colliderCount) {
-		Collider::CollisionData collisionData;
-		player.isOnGround |= collider.CheckCollision(player, collisionData, FloatRect());
-		if (collisionData.collisionDirection != Collider::CollisionData::CollisionDirection::None) player.isPushing = true;
-
-		bool resolvedVelocity = false;
-		for (int i = 0; i < colliderCount && !resolvedVelocity; i++)
-			if (collisionData.collisionDirection == boxCollisionDatas[i].collisionDirection)
-			switch (collisionData.collisionDirection)
-			{
-				case Collider::CollisionData::CollisionDirection::Top:
-					player.velocity.y = min(player.velocity.y, -10.0f);
-					resolvedVelocity = true;
-					break;
-				case Collider::CollisionData::CollisionDirection::Bottom:
-					player.velocity.y = max(player.velocity.y, 10.0f);
-					resolvedVelocity = true;
-					break;
-				case Collider::CollisionData::CollisionDirection::Left:
-					player.velocity.x = min(player.velocity.x, -10.0f);
-					resolvedVelocity = true;
-					break;
-				case Collider::CollisionData::CollisionDirection::Right:
-					player.velocity.x = max(player.velocity.x, 10.0f);
-					resolvedVelocity = true;
-					break;
-			default:
-				break;
-			}
-		
-	}
-	
-
-	void Draw(RenderTarget& renderTarget) {
-		renderTarget.draw(collider.sprite);
-
 	}
 };

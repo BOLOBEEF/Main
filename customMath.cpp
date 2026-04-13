@@ -1,15 +1,10 @@
 
 // Custom Math Functions
 
-#define DEGTORAD 3.14159265f / 180.0f
-#define RADTODEG 180.0f / 3.14159265f
-
-
 int RandomRange(int start, int end) {
 	return rand() % (end + 1 - start) + start;
-
 }
-float RandomRangeF(float Intialization, float end, int decimalPoints = 1) {
+float RandomRangeF(float start, float end, int decimalPoints = 1) {
 	
 	int multiplier = 1;
 	for (int i = 0; i < decimalPoints; i++)
@@ -17,10 +12,10 @@ float RandomRangeF(float Intialization, float end, int decimalPoints = 1) {
 		multiplier *= 10;
 	}
 
-	Intialization *= multiplier;
+	start *= multiplier;
 	end *= multiplier;
 
-	float random = rand() % (int)(end + 1 - Intialization) + Intialization;
+	float random = rand() % (int)(end + 1 - start) + start;
 	return random / multiplier;
 }
 float Magnitude(Vector2f vector)
@@ -56,21 +51,21 @@ Vector2f ClampMagnitude(Vector2f vector, float maxMagnitude)
 	else
 		return vector;
 }
-float Lerp(float Intialization, float end, float lerp) {
-	return Intialization + lerp * (end - Intialization);
+float Lerp(float start, float end, float lerp) {
+	return start + lerp * (end - start);
 }
-Vector2f Lerp(Vector2f Intialization, Vector2f end, float lerp) {
-	return Vector2f(Lerp(Intialization.x, end.x, lerp), Lerp(Intialization.y, end.y, lerp));
+Vector2f Lerp(Vector2f start, Vector2f end, float lerp) {
+	return Vector2f(Lerp(start.x, end.x, lerp), Lerp(start.y, end.y, lerp));
 }
-float LerpAngle(float Intialization, float end, float lerp) {
+float LerpAngle(float start, float end, float lerp) {
 	// Ensure the angles are between 0 and 360
-	while (Intialization < 0) Intialization += 360;
-	while (Intialization >= 360) Intialization -= 360;
+	while (start < 0) start += 360;
+	while (start >= 360) start -= 360;
 	while (end < 0) end += 360;
 	while (end >= 360) end -= 360;
 
 	// Calculate the difference
-	float difference = end - Intialization;
+	float difference = end - start;
 
 	// if the difference is greater than 180, we take the shorter path
 	if (difference > 180) difference -= 360;
@@ -78,7 +73,7 @@ float LerpAngle(float Intialization, float end, float lerp) {
 	// if the difference is less than -180, we take the shorter path
 	else if (difference < -180) difference += 360;
 
-	return Intialization + difference * lerp;
+	return start + difference * lerp;
 }
 float Damp(float current, float target, float speed, float dt)
 {
