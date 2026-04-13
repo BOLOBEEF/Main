@@ -994,3 +994,53 @@ struct Box {
 		renderTarget.draw(collider.sprite);
 	}
 };
+struct Game_Door
+{
+	enum door_statue
+	{
+		OPENED,
+		CLOSED
+	}type;
+	Sprite sprite;
+	Vector2f start = Vector2f(400.0f, 300.0f);
+	Vector2f end = Vector2f(400.0f, 500.0f);
+	Vector2f door_position = Vector2f(sprite.getPosition());
+	void Intialization() {
+		ApplyTexture(sprite, LoadTexture::RECTANGLE, Vector2f(32, 32 * 2));
+		sprite.setColor(Color::Yellow);
+		sprite.rotate(90);
+	}
+	Game_Door(door_statue startType, Vector2f postion) {
+		type = startType;
+		sprite.setPosition(postion);
+	}
+	void updateDoor(Click click, Switch lever, Game_Door& door) {
+		if (lever.moved || click.buttonpressed) {
+			type = door_statue::OPENED;
+			door.sprite.setColor(Color::Magenta);
+		}
+		else {
+			type = door_statue::CLOSED;
+			door.sprite.setColor(Color::Yellow);
+		}
+	}
+	void moving_door(Game_Door& door)
+	{
+		if (type == door_statue::OPENED) {
+			if (door.sprite.getPosition().y < door.end.y - 10)
+				door.sprite.move(0, 30 * dt);
+			else
+				type = door_statue::CLOSED;
+
+
+
+		}
+		else if (type == door_statue::CLOSED) {
+			if (door.sprite.getPosition().y > door.start.y + 120)
+				door.sprite.move(0, -30 * dt);
+			else
+				type = door_statue::OPENED;
+
+		}
+	}
+};
