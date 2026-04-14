@@ -906,37 +906,7 @@ struct Pond
 		}
 	}
 };
-struct Switch {
-	Sprite sprite;
-	bool moved = false;
-	void start() {
-		ApplyTexture(sprite, LoadTexture::RECTANGLE, Vector2f(20, 50));
-		sprite.setColor(Color::Cyan);
-	}
-	Switch(Vector2f postion) {
-		sprite.setPosition(postion);
-		AllignSprite(sprite);
-	}
-	void leverMove(Player moroo, Player mora, Event event) {
 
-		if (event.type == Event::KeyPressed) {
-			if (event.key.code == Keyboard::Space) {
-				if (sprite.getGlobalBounds().intersects(moroo.sprite.getGlobalBounds()) || sprite.getGlobalBounds().intersects(mora.sprite.getGlobalBounds())) {
-
-					moved = !moved;
-					if (moved) {
-						sprite.setColor(Color::Green);
-						PlayGameSoundEffect(GameSoundEffect::Lever_sound);
-					}
-					else {
-						PlayGameSoundEffect(GameSoundEffect::Lever_sound);
-						sprite.setColor(Color::Cyan);
-					}
-				}
-			}
-		}
-	}
-};
 struct Final_door
 {
 	enum door_type
@@ -1102,20 +1072,12 @@ struct Game_Door
 		startPosition = start;
 		endPosition = end;
 	}
-	void updateDoor(Click click, Switch lever) {
-		if (lever.moved || click.buttonpressed) {
-			type = door_statue::OPENED;
-			sprite.setColor(Color::Magenta);
-		}
-		else {
-			type = door_statue::CLOSED;
-			sprite.setColor(Color::Yellow);
-		}
-	}
+
 	void moving_door()
 	{
-
 		if (type == door_statue::OPENED) {
+			sprite.setColor(Color::Magenta);
+
 			Vector2f direction = endPosition - sprite.getPosition();
 			
 			if (abs(direction.x) + abs(direction.y) < 10) return; // avoid moving and overshooting when close to the end position
@@ -1124,6 +1086,8 @@ struct Game_Door
 			sprite.move(direction * speed * dt);
 		}
 		else if (type == door_statue::CLOSED) {
+			sprite.setColor(Color::Yellow);
+
 			Vector2f direction = startPosition - sprite.getPosition();
 			
 			if (abs(direction.x) + abs(direction.y) < 10) return; // avoid moving and overshooting when close to the start position
@@ -1136,5 +1100,51 @@ struct Game_Door
 
 	void CheckCollision(Player& player) {
 		player.isOnGround |= collider.CheckCollision(player);
+	}
+};
+
+struct Switch {
+	Sprite sprite;
+	Game_Door* door;
+	bool hasDoor = false;
+
+	bool moved = false;
+	void start() {
+		ApplyTexture(sprite, LoadTexture::RECTANGLE, Vector2f(20, 50));
+		sprite.setColor(Color::Cyan);
+	}
+	Switch(Vector2f postion) {
+		sprite.setPosition(postion);
+		AllignSprite(sprite);
+	}
+
+	void SetDoor(Game_Door* newDoor) {
+		door = newDoor;
+		hasDoor = true;
+	}
+
+	void leverMove(Player moroo, Player mora, Event event) {
+		if (!hasDoor) return;
+
+		if (event.type == Event::KeyPressed) {
+			if (event.key.code == Keyboard::Space) {
+				if (sprite.getGlobalBounds().intersects(moroo.sprite.getGlobalBounds()) || sprite.getGlobalBounds().intersects(mora.sprite.getGlobalBounds())) {
+
+					moved = !moved;
+					if (moved) 
+					{ 
+						door->type = Game_Door::door_statue::OPENED; 
+						sprite.setColor(Color::Green);
+						PlayGameSoundEffect(GameSoundEffect::Lever_sound);
+					}
+					else
+					{
+						door->type = Game_Door::door_statue::CLOSED;
+						sprite.setColor(Color::Cyan);
+						PlayGameSoundEffect(GameSoundEffect::Lever_sound);
+					}
+				}
+			}
+		}
 	}
 };

@@ -221,6 +221,8 @@ void InitializeGame()
 	click.start();
 	box.Initialize();
 	lever.start();
+	lever.SetDoor(&door);
+
 	ApplyTexture(ground, LoadTexture::GROUND, Vector2f(256, 256));
 	ground.setTextureRect(IntRect(0, 0, windowSize.x, windowSize.y));
 
@@ -450,7 +452,6 @@ void UpdateGame()
 		fire_door.sprite.setColor(Color(128, 0, 128));
 	}
 
-	door.updateDoor(click, lever);
 	door.moving_door();
 	door.CheckCollision(fireBoy);
 	door.CheckCollision(waterGirl);
