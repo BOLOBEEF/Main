@@ -219,8 +219,17 @@ void UpdateAnimation(Sprite& sprite, LoadTexture texture) {
 	case pause_icon_texture:
 		sprite.setTextureRect(IntRect(0, 0, 48, 48));
 		break;
-	case stone_button_texture:
-		sprite.setTextureRect(IntRect(0, 0, 239, 117));
+	case stone_button_0_texture:
+		sprite.setTextureRect(IntRect(0, 0, 252, 117));
+		break;
+	case stone_button_1_texture:
+		sprite.setTextureRect(IntRect(252, 0, 252, 117));
+		break;
+	case main_menu_background_texture:
+		sprite.setTextureRect(IntRect(0, 0,1536, 1024));
+		break;
+	case game_name_texture:
+		sprite.setTextureRect(IntRect(0, 0, 860, 270));
 		break;
 	default:
 		break;

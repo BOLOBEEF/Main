@@ -106,7 +106,11 @@ enum LoadTexture
 	menu_box_texture,
 	pause_icon_texture,
 	clock_timer_texture,
-	stone_button_texture,
+	stone_button_0_texture,
+	stone_button_1_texture,
+	main_menu_background_texture,
+	game_name_texture,
+
 };
 
 
@@ -200,7 +204,8 @@ Texture pause_icon;
 Texture menu_box;
 Texture clock_timer;
 Texture stone_button;
-
+Texture main_menu_background;
+Texture game_name;
 
 // Functions
 
@@ -347,8 +352,18 @@ void ApplyTexture(Sprite& sprite, LoadTexture texture, Vector2f size = Vector2f(
 		sprite.setTexture(clock_timer);
 		break;
 		
-	case stone_button_texture:
+	case stone_button_0_texture:
 		sprite.setTexture(stone_button);
+		break;
+	case stone_button_1_texture:
+		sprite.setTexture(stone_button);
+		break;
+
+	case main_menu_background_texture:
+		sprite.setTexture(main_menu_background);
+		break;
+	case game_name_texture:
+		sprite.setTexture(game_name);
 		break;
 
 	case TRIANGLE:
@@ -506,6 +521,8 @@ void InitializeTextures()
 	menu_box.loadFromFile("Main\\Assets\\Animations\\menu assets\\menu box.png");
 	clock_timer.loadFromFile("Main\\Assets\\Animations\\menu assets\\clock timer.png");
 	stone_button.loadFromFile("Main\\Assets\\Animations\\menu assets\\stone button.png");
+	main_menu_background.loadFromFile("Main\\Assets\\Animations\\menu assets\\main menu background.png");
+	game_name.loadFromFile("Main\\Assets\\Animations\\menu assets\\GameNameForest.png");
 	// divide the process into functions
 	InitializeMenuTextures();
 	InitializeGameTextures();
