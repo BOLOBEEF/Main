@@ -20,6 +20,7 @@ Sprite MenuButton_GOVERmnu;
 Sprite RetryButton_GOVERmnu;
 Sprite SkipButton_GOVERmnu;
 Sprite GameOverbuttons_mnu[3];
+Sprite ContinueButton_Winmnu;
 
 
 
@@ -28,6 +29,7 @@ Font font;
 Text fpsDisplay;
 Text End_Pausetxt, Resume_Pausetxt, Retry_Pausetxt, Pause_txt;
 Text Menu_GOVERtxt, Retry_GOVERtxt, Skip_GOVERtxt, GameOver_txt;
+Text Continue_Wintxt;
 
 void InitializeMenu()
 {
@@ -67,6 +69,13 @@ void InitializeMenu()
 		x_shift_mnu -= 350;
 	}
 
+	//Win Menu 
+
+	// stone background has already set
+
+	ApplyTexture(ContinueButton_Winmnu, LoadTexture::stone_button_0_texture, Vector2f(950, 170));
+	UpdateAnimation(ContinueButton_Winmnu, stone_button_0_texture);
+	ContinueButton_Winmnu.setPosition((windowSize.x / 2) + 225, (windowSize.y / 2) + 200);
 
 	//Pause menu text
 	End_Pausetxt.setFont(font);
@@ -141,6 +150,16 @@ void InitializeMenu()
 	GameOver_txt.setOrigin(GameOver_txt.getLocalBounds().width / 2, GameOver_txt.getLocalBounds().height / 2);
 	GameOver_txt.setOutlineColor(Color::Black);
 	GameOver_txt.setOutlineThickness(5);
+
+	//Win Menu Text
+	Continue_Wintxt.setFont(font);
+	Continue_Wintxt.setCharacterSize(50);
+	Continue_Wintxt.setFillColor(Color(230, 194, 0));
+	Continue_Wintxt.setString("GAMEOVER");
+	Continue_Wintxt.setPosition((ContinueButton_Winmnu.getGlobalBounds().left + ContinueButton_Winmnu.getGlobalBounds().width / 2), (ContinueButton_Winmnu.getGlobalBounds().top + ContinueButton_Winmnu.getGlobalBounds().height / 2) - 5);
+	Continue_Wintxt.setOrigin(Continue_Wintxt.getLocalBounds().width / 2, GameOver_txt.getLocalBounds().height / 2);
+	Continue_Wintxt.setOutlineColor(Color::Black);
+	Continue_Wintxt.setOutlineThickness(5);
 
 	// code for initializing menu variables and objects
 	// for example load sprites, set up text objects, etc.
@@ -227,6 +246,8 @@ void DrawUI()
 		break;
 	case WIN_MENU:
 		window.draw(Stone_mnu);
+		window.draw(ContinueButton_Winmnu);
+		window.draw(Continue_Wintxt);
 		break;
 	case SETTINGS:
 		// code for drawing settings menu
