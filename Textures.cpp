@@ -103,6 +103,9 @@ enum LoadTexture
 	SettingsButton0_texture,
 	sound_icon_texture,
 	loading_icon_texture,
+	menu_box_texture,
+	pause_icon_texture,
+	clock_timer_texture,
 };
 
 
@@ -192,6 +195,9 @@ Texture MuteButton1;
 Texture SettingsButton0;
 Texture sound_icon;
 Texture loading_icon;
+Texture pause_icon;
+Texture menu_box;
+Texture clock_timer;
 
 
 
@@ -329,6 +335,15 @@ void ApplyTexture(Sprite& sprite, LoadTexture texture, Vector2f size = Vector2f(
 		break;
 	case loading_icon_texture:
 		sprite.setTexture(loading_icon);
+		break;
+	case pause_icon_texture:
+		sprite.setTexture(pause_icon);
+			break;
+	case menu_box_texture:
+		sprite.setTexture(menu_box);
+			break;
+	case clock_timer_texture:
+		sprite.setTexture(clock_timer);
 		break;
 
 	case TRIANGLE:
@@ -482,6 +497,10 @@ void InitializeTextures()
 	green_pond_left.loadFromFile("Main\\Assets\\Animations\\map objects assets\\green box left.png");
 	green_pond_right.loadFromFile("Main\\Assets\\Animations\\map objects assets\\green box right.png");
 	loading_icon.loadFromFile("Main\\Assets\\Animations\\menu assets\\loading_icon.png");
+	pause_icon.loadFromFile("Main\\Assets\\Animations\\menu assets\\pause icon.png");
+	menu_box.loadFromFile("Main\\Assets\\Animations\\menu assets\\menu box.png");
+	clock_timer.loadFromFile("Main\\Assets\\Animations\\menu assets\\clock timer.png");
+	
 	// divide the process into functions
 	InitializeMenuTextures();
 	InitializeGameTextures();
