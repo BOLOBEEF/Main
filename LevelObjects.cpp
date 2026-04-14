@@ -944,7 +944,7 @@ struct Final_door
 		WATER_DOOR,
 		FIRE_DOOR
 	}type;
-
+	bool touched = false;
 	bool player_on_door = false;
 
 	Sprite sprite;
@@ -962,12 +962,13 @@ struct Final_door
 
 	void Update(Player player)
 	{
+		touched = player_on_door;
 		if ((player.playertype == Player::PlayerType::Watergirl) && player.sprite.getGlobalBounds().intersects(sprite.getGlobalBounds()) && (type == WATER_DOOR))
 		{
 
 			player_on_door = true;
 			sprite.setColor(Color::Green);
-			PlayGameSoundEffect(GameSoundEffect::Door_sound);
+			
 			
 		}
 		else if ((player.playertype == Player::PlayerType::Fireboy) && player.sprite.getGlobalBounds().intersects(sprite.getGlobalBounds()) && (type == FIRE_DOOR))
@@ -975,7 +976,7 @@ struct Final_door
 
 			player_on_door = true;
 			sprite.setColor(Color::Green);
-			PlayGameSoundEffect(GameSoundEffect::Door_sound);
+		
 
 		}
 		else
@@ -992,6 +993,9 @@ struct Final_door
 			default:
 				break;
 			}
+		}
+		if (touched != player_on_door&& player_on_door==true) {
+			PlayGameSoundEffect(GameSoundEffect::Door_sound);
 		}
 	}
 };
