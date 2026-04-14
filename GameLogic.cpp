@@ -31,7 +31,7 @@ Box box = Box(Vector2f(1100, 200));
 Final_door water_door = Final_door(Final_door::WATER_DOOR, Vector2f(800, 700));
 Final_door fire_door = Final_door(Final_door::FIRE_DOOR, Vector2f(800, 800));
 Switch lever = Switch(Vector2f(900, 800));
-Game_Door door = Game_Door(Game_Door::CLOSED, Vector2f(400.0f, 300.0f));
+Game_Door door = Game_Door(Game_Door::CLOSED, Vector2f(400.0f, 300.0f), Vector2f(400.0f, 200.0f));
 
 Sprite ground;
 Click click = Click(Vector2f(900, 750));
@@ -239,12 +239,12 @@ void InitializeGame()
 	resultSprite.setTexture(resultTexture.getTexture());
 
 	water_door.Initialilze();
-	water_door.sprite1.setColor(Color::Blue);
+	water_door.sprite.setColor(Color::Blue);
 	fire_door.Initialilze();
-	fire_door.sprite1.setColor(Color::Red);
+	fire_door.sprite.setColor(Color::Red);
 
 	door.Intialization();
-	door.sprite.setColor(Color::Yellow);
+	door.collider.sprite.setColor(Color::Yellow);
 
 	UpdateGroundTexture();
 }
@@ -442,8 +442,8 @@ void UpdateGame()
 	waterPond.Update(waterGirl);
 	poisonPond.Update(waterGirl);
 
-	water_door.openenig_door(waterGirl, water_door);
-	fire_door.openenig_door(fireBoy, fire_door);
+	water_door.Update(waterGirl);
+	fire_door.Update(fireBoy);
 
 	if (fireBoy.isDead)
 		fireBoy.sprite.setColor(Color::Yellow);
@@ -451,12 +451,14 @@ void UpdateGame()
 		waterGirl.sprite.setColor(Color::Yellow);
 	if (water_door.player_on_door && fire_door.player_on_door)
 	{
-		water_door.sprite1.setColor(Color(128, 0, 128));
-		fire_door.sprite1.setColor(Color(128, 0, 128));
+		water_door.sprite.setColor(Color(128, 0, 128));
+		fire_door.sprite.setColor(Color(128, 0, 128));
 	}
 
-	door.updateDoor(click, lever, door);
-	door.moving_door(door);
+	door.updateDoor(click, lever);
+	door.moving_door();
+	door.CheckCollision(fireBoy);
+	door.CheckCollision(waterGirl);
 }
 
 
@@ -484,8 +486,8 @@ void DrawGame(bool forceDraw)
 	window.draw(poisonPond.sprite);
 	window.draw(firePond.sprite);
 
-	window.draw(water_door.sprite1);
-	window.draw(fire_door.sprite1);
+	window.draw(water_door.sprite);
+	window.draw(fire_door.sprite);
 
 	window.draw(door.sprite);
 }

@@ -885,7 +885,6 @@ struct Switch {
 };
 struct Final_door
 {
-	Sprite sprite1;
 	enum door_type
 	{
 		WATER_DOOR,
@@ -894,37 +893,41 @@ struct Final_door
 
 	bool player_on_door = false;
 
+	Sprite sprite;
+	Vector2f startPosition;
+
 	void Initialilze() {
-		ApplyTexture(sprite1, LoadTexture::RECTANGLE, Vector2f(32, 32 * 2));
-		AllignSprite(sprite1);
+		ApplyTexture(sprite, LoadTexture::RECTANGLE, Vector2f(32, 32 * 2));
+		sprite.setPosition(startPosition);
+		AllignSprite(sprite);
 	}
 	Final_door(door_type startType, Vector2f position) {
 		type = startType;
-		sprite1.setPosition(position);
+		startPosition = position;
 	}
 
-	void openenig_door(Player player, Final_door& door)
+	void Update(Player player)
 	{
-		if ((player.playertype == Player::PlayerType::Watergirl) && player.sprite.getGlobalBounds().intersects(sprite1.getGlobalBounds()) && (type == WATER_DOOR))
+		if ((player.playertype == Player::PlayerType::Watergirl) && player.sprite.getGlobalBounds().intersects(sprite.getGlobalBounds()) && (type == WATER_DOOR))
 		{
-			door.player_on_door = true;
-			door.sprite1.setColor(Color::Green);
+			player_on_door = true;
+			sprite.setColor(Color::Green);
 		}
-		else if ((player.playertype == Player::PlayerType::Fireboy) && player.sprite.getGlobalBounds().intersects(sprite1.getGlobalBounds()) && (type == FIRE_DOOR))
+		else if ((player.playertype == Player::PlayerType::Fireboy) && player.sprite.getGlobalBounds().intersects(sprite.getGlobalBounds()) && (type == FIRE_DOOR))
 		{
-			door.player_on_door = true;
-			door.sprite1.setColor(Color::Green);
+			player_on_door = true;
+			sprite.setColor(Color::Green);
 		}
 		else
 		{
-			door.player_on_door = false;
+			player_on_door = false;
 			switch (type)
 			{
 			case Final_door::WATER_DOOR:
-				door.sprite1.setColor(Color::Blue);
+				sprite.setColor(Color::Blue);
 				break;
 			case Final_door::FIRE_DOOR:
-				door.sprite1.setColor(Color::Red);
+				sprite.setColor(Color::Red);
 				break;
 			default:
 				break;
@@ -1007,46 +1010,71 @@ struct Game_Door
 		CLOSED
 	}type;
 	Sprite sprite;
-	Vector2f start = Vector2f(400.0f, 300.0f);
-	Vector2f end = Vector2f(400.0f, 500.0f);
-	Vector2f door_position = Vector2f(sprite.getPosition());
+	Collider collider;
+	Vector2f startPosition;
+	Vector2f endPosition;
+	const float speed = 100.0f;
+
+	Vector2f door_position = Vector2f(collider.sprite.getPosition());
+	bool rotated = false;
+
 	void Intialization() {
+		collider = Collider(Collider::ColliderType::Rectangle, startPosition);
+
 		ApplyTexture(sprite, LoadTexture::RECTANGLE, Vector2f(32, 32 * 2));
+		sprite.setPosition(startPosition);
+
+		if (rotated)
+		{
+			ApplyTexture(collider.sprite, LoadTexture::RECTANGLE, Vector2f(32, 32 * 2));
+		}
+		else {
+			ApplyTexture(collider.sprite, LoadTexture::RECTANGLE, Vector2f(32 * 2, 32));
+			sprite.rotate(90);
+		}
+			
+
 		sprite.setColor(Color::Yellow);
-		sprite.rotate(90);
-	}
-	Game_Door(door_statue startType, Vector2f postion) {
-		type = startType;
-		sprite.setPosition(postion);
 		AllignSprite(sprite);
 	}
-	void updateDoor(Click click, Switch lever, Game_Door& door) {
+	Game_Door(door_statue startType, Vector2f start, Vector2f end) {
+		type = startType;
+		startPosition = start;
+		endPosition = end;
+	}
+	void updateDoor(Click click, Switch lever) {
 		if (lever.moved || click.buttonpressed) {
 			type = door_statue::OPENED;
-			door.sprite.setColor(Color::Magenta);
+			sprite.setColor(Color::Magenta);
 		}
 		else {
 			type = door_statue::CLOSED;
-			door.sprite.setColor(Color::Yellow);
+			sprite.setColor(Color::Yellow);
 		}
 	}
-	void moving_door(Game_Door& door)
+	void moving_door()
 	{
+
 		if (type == door_statue::OPENED) {
-			if (door.sprite.getPosition().y < door.end.y - 10)
-				door.sprite.move(0, 30 * dt);
-			else
-				type = door_statue::CLOSED;
+			Vector2f direction = endPosition - sprite.getPosition();
+			
+			if (abs(direction.x) + abs(direction.y) < 10) return; // avoid moving and overshooting when close to the end position
 
-
-
+			direction = Normalize(direction);
+			sprite.move(direction * speed * dt);
 		}
 		else if (type == door_statue::CLOSED) {
-			if (door.sprite.getPosition().y > door.start.y + 120)
-				door.sprite.move(0, -30 * dt);
-			else
-				type = door_statue::OPENED;
+			Vector2f direction = startPosition - sprite.getPosition();
+			
+			if (abs(direction.x) + abs(direction.y) < 10) return; // avoid moving and overshooting when close to the start position
 
+			direction = Normalize(direction);
+			sprite.move(direction * speed * dt);
 		}
+		collider.sprite.setPosition(sprite.getPosition());
+	}
+
+	void CheckCollision(Player& player) {
+		player.isOnGround |= collider.CheckCollision(player);
 	}
 };
