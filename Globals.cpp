@@ -15,6 +15,9 @@ Vector2f mousePosition;
 
 // Function Declarations
 
+// Audio
+void InitializeAudio();
+
 // menu
 void InitializeMenu();
 void HandleMenuInput(Event event);
@@ -27,7 +30,7 @@ void InitializeGame();
 void HandleGameInput(Event event);
 void OnUpdatedGameStateGameLogic();
 void UpdateGame();
-void DrawGame();
+void DrawGame(bool forceDraw);
 
 // Animations
 void InitializeAnimations();
@@ -71,6 +74,7 @@ void Initialize()
 {
 	InitializeTextures();
 	InitializeAnimations();
+	InitializeAudio();
 	InitializeMenu();
 	InitializeGame();
 	InitializeTest();
@@ -114,6 +118,6 @@ void UpdateGlobals() {
 void Draw()
 {
 	DrawUI();
-	DrawGame();
+	DrawGame(false);
 	DrawTest();
 }

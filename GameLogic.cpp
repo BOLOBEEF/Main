@@ -34,7 +34,7 @@ Switch lever = Switch(Vector2f(900, 800));
 Game_Door door = Game_Door(Game_Door::CLOSED, Vector2f(400.0f, 300.0f));
 
 Sprite ground;
-Click click = Click(Vector2f(1000, 900));
+Click click = Click(Vector2f(900, 750));
 
 RenderTexture maskTexture;
 RenderTexture resultTexture;
@@ -46,7 +46,7 @@ ColliderList colliders;
 
 
 // LEVEL EDITING TOOLS
-const bool editMode = true;	// if true, you can place down objects by clicking, and remove them by right clicking, change object type by pressing 0 or 1 or....
+const bool enableEditMode = true;	// if true, you can place down objects by clicking, and remove them by right clicking, change object type by pressing 0 or 1 or....
 Vector2f editScale = Vector2f(1, 1);
 
 enum EditType
@@ -265,6 +265,10 @@ void PrintObjectsCode() {
 	cout << "END" << endl;
 }
 
+void Print(string message) {
+	cout << message << endl;
+}
+
 
 void EditMode(Event event) {
 
@@ -385,7 +389,7 @@ void HandleGameInput(Event event)
 	lever.leverMove(fireBoy, waterGirl, event);
 
 	// in debug mode, when you press
-	if (!editMode) return;
+	if (!enableEditMode) return;
 	EditMode(event);
 }
 
@@ -456,26 +460,29 @@ void UpdateGame()
 }
 
 
-void DrawGame()
+void DrawGame(bool forceDraw)
 {
-	if (gameState != GAME) return;
+	if (!forceDraw && gameState != GAME) return;
 
 	// no need for window.clear or window.display
 	window.draw(outlineSprite);
 	window.draw(resultSprite);
 
-	window.draw(waterPond.sprite);
-	window.draw(poisonPond.sprite);
-	window.draw(firePond.sprite);
 
 	window.draw(waterGem.sprite);
 	window.draw(fireGem.sprite);
-	window.draw(click.sprite);
 
-	box.Draw(window);
-	window.draw(lever.sprite);
+
 	window.draw(fireBoy.sprite);
 	window.draw(waterGirl.sprite);
+
+	box.Draw(window);
+	window.draw(click.sprite);
+	window.draw(lever.sprite);
+
+	window.draw(waterPond.sprite);
+	window.draw(poisonPond.sprite);
+	window.draw(firePond.sprite);
 
 	window.draw(water_door.sprite1);
 	window.draw(fire_door.sprite1);

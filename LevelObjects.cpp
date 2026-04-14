@@ -1,5 +1,14 @@
 
 // STRUCTS for level objects
+void AllignSprite(Sprite& sprite, Vector2f defaultSize = Vector2f(32, 32)) {
+	FloatRect bounds = sprite.getGlobalBounds();
+	Vector2f position = Vector2f(bounds.left, bounds.top);
+	position.x = round(position.x / defaultSize.x) * defaultSize.x;
+	position.y = round(position.y / defaultSize.y) * defaultSize.y;
+
+	sprite.setPosition(position + Vector2f(bounds.width / 2.0f, bounds.height / 2.0f));
+}
+
 struct Player
 {
 	enum PlayerType { Fireboy, Watergirl };
@@ -96,27 +105,18 @@ struct Player
 			if (playertype == Fireboy) {
 				if (event.key.code == Keyboard::Up) {
 					velocity.y = jump;
-
+					PlayGameSoundEffect(GameSoundEffect::BoyJump_sound);
 				}
 			}
 			else if (playertype == Watergirl) {
 				if (event.key.code == Keyboard::W) {
 					velocity.y = jump;
-
+					PlayGameSoundEffect(GameSoundEffect::GirlJump_sound);
 				}
 			}
 		}
 	}
 };
-
-void AllignSprite(Sprite& sprite, Vector2f defaultSize = Vector2f(32, 32)) {
-	FloatRect bounds = sprite.getGlobalBounds();
-	Vector2f position = Vector2f(bounds.left, bounds.top);
-	position.x = round(position.x / defaultSize.x) * defaultSize.x;
-	position.y = round(position.y / defaultSize.y) * defaultSize.y;
-
-	sprite.setPosition(position + Vector2f(bounds.width / 2.0f, bounds.height / 2.0f));
-}
 
 struct Collider
 {
@@ -622,6 +622,7 @@ struct Collider
 		default:
 			break;
 		}
+		return false;
 	}
 
 
@@ -728,6 +729,7 @@ struct ColliderList {
 		delete[] elements;
 	}
 };
+
 struct Gem
 {
 	enum Gemtype { waterGem, fireGem };
@@ -749,6 +751,7 @@ struct Gem
 	Gem(Gemtype crystaltype, Vector2f position) {
 		gemtype = crystaltype;
 		sprite.setPosition(position);
+		AllignSprite(sprite);
 	}
 	void checkintersect(Player hamada) {
 		if (gemtype == waterGem && hamada.playertype == Player::Watergirl) {
@@ -775,6 +778,7 @@ struct Click
 	}
 	Click(Vector2f postion) {
 		sprite.setPosition(postion);
+		AllignSprite(sprite);
 	}
 	void isPressed(Player anteel) {
 		if (sprite.getGlobalBounds().intersects(anteel.sprite.getGlobalBounds())) {
@@ -863,6 +867,7 @@ struct Switch {
 	}
 	Switch(Vector2f postion) {
 		sprite.setPosition(postion);
+		AllignSprite(sprite);
 	}
 	void leverMove(Player moroo, Player mora, Event event) {
 
@@ -1013,6 +1018,7 @@ struct Game_Door
 	Game_Door(door_statue startType, Vector2f postion) {
 		type = startType;
 		sprite.setPosition(postion);
+		AllignSprite(sprite);
 	}
 	void updateDoor(Click click, Switch lever, Game_Door& door) {
 		if (lever.moved || click.buttonpressed) {

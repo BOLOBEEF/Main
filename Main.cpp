@@ -20,6 +20,9 @@ using namespace sf;
 // Textures
 #include "Textures.cpp"
 
+// Sounds and music
+#include "Audio.cpp"
+
 // Level objects
 #include "LevelObjects.cpp"
 
@@ -34,9 +37,6 @@ using namespace sf;
 
 // Menus
 #include "Menus.cpp"
-
-// Sounds and music
-#include "Audio.cpp"
 
 // script for general testing
 #include "Testing.cpp"
