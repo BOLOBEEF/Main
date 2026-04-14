@@ -107,31 +107,31 @@ Sound Button;
 
 void InitializeAudio()
 {
-	menuMusicSound.loadFromFile("/Main/Assets/Sounds/MenuMusic.mp3");
+	menuMusicSound.loadFromFile("Main/Assets/Sounds/MenuMusic.mp3");
 
-	gameMusic_SlowSound.loadFromFile("/Main/Assets/Sounds/LevelMusic_slow.mp3");
-	gameMusic_FastSound.loadFromFile("/Main/Assets/Sounds/LevelMusic_fast.mp3");
-	gameMusic_DarkSound.loadFromFile("/Main/Assets/Sounds/LevelMusic_dark.mp3");
+	gameMusic_SlowSound.loadFromFile("Main/Assets/Sounds/LevelMusic_slow.mp3");
+	gameMusic_FastSound.loadFromFile("Main/Assets/Sounds/LevelMusic_fast.mp3");
+	gameMusic_DarkSound.loadFromFile("Main/Assets/Sounds/LevelMusic_dark.mp3");
 
-	StepsSound.loadFromFile("/Main/Assets/Sounds/Steps.mp3");
-	PondStepsSound.loadFromFile("/Main/Assets/Sounds/PondSteps.mp3");
-	IceSteps_WgSound.loadFromFile("/Main/Assets/Sounds/IceSteps_wg.mp3");
-	IceSteps_FbSound.loadFromFile("/Main/Assets/Sounds/IceSteps_fb.mp3");
-	DeathSound.loadFromFile("/Main/Assets/Sounds/Death.mp3");
-	BoyJumpSound.loadFromFile("/Main/Assets/Sounds/Jump_fb.mp3");
-	GirlJumpSound.loadFromFile("/Main/Assets/Sounds/Jump_wg.mp3");
+	StepsSound.loadFromFile("Main/Assets/Sounds/Steps.mp3");
+	PondStepsSound.loadFromFile("Main/Assets/Sounds/PondSteps.mp3");
+	IceSteps_WgSound.loadFromFile("Main/Assets/Sounds/IceSteps_wg.mp3");
+	IceSteps_FbSound.loadFromFile("Main/Assets/Sounds/IceSteps_fb.mp3");
+	DeathSound.loadFromFile("Main/Assets/Sounds/Death.mp3");
+	BoyJumpSound.loadFromFile("Main/Assets/Sounds/Jump_fb.mp3");
+	GirlJumpSound.loadFromFile("Main/Assets/Sounds/Jump_wg.mp3");
 
-	PondFreezeSound.loadFromFile("/Main/Assets/Sounds/PondFreeze.mp3");
-	PondMeltSound.loadFromFile("/Main/Assets/Sounds/PondMelt.mp3");
-	WindSound.loadFromFile("/Main/Assets/Sounds/Wind.mp3");
-	DoorSound.loadFromFile("/Main/Assets/Sounds/Door.mp3");
-	ButtonSound.loadFromFile("/Main/Assets/Sounds/Button.mp3");
-	LeverSound.loadFromFile("/Main/Assets/Sounds/Lever.mp3");
-	PlatformSound.loadFromFile("/Main/Assets/Sounds/Platform.mp3");
-	LevelWinSound.loadFromFile("/Main/Assets/Sounds/LevelWin.mp3");
-	LevelGameoverSound.loadFromFile("/Main/Assets/Sounds/LevelGameOver.mp3");
-	ClockSound.loadFromFile("/Main/Assets/Sounds/Clock.mp3");
-	DiamondCollectingSound.loadFromFile("/Main/Assets/Sounds/DiamondCollecting.mp3");
+	PondFreezeSound.loadFromFile("Main/Assets/Sounds/PondFreeze.mp3");
+	PondMeltSound.loadFromFile("Main/Assets/Sounds/PondMelt.mp3");
+	WindSound.loadFromFile("Main/Assets/Sounds/Wind.mp3");
+	DoorSound.loadFromFile("Main/Assets/Sounds/Door.mp3");
+	ButtonSound.loadFromFile("Main/Assets/Sounds/Button.mp3");
+	LeverSound.loadFromFile("Main/Assets/Sounds/Lever.mp3");
+	PlatformSound.loadFromFile("Main/Assets/Sounds/Platform.mp3");
+	LevelWinSound.loadFromFile("Main/Assets/Sounds/LevelWin.mp3");
+	LevelGameoverSound.loadFromFile("Main/Assets/Sounds/LevelGameOver.mp3");
+	ClockSound.loadFromFile("Main/Assets/Sounds/Clock.mp3");
+	DiamondCollectingSound.loadFromFile("Main/Assets/Sounds/DiamondCollecting.mp3");
 	// load all buffers here
 }
 
