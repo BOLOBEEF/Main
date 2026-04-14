@@ -106,6 +106,7 @@ enum LoadTexture
 	menu_box_texture,
 	pause_icon_texture,
 	clock_timer_texture,
+	stone_button_texture,
 };
 
 
@@ -198,7 +199,7 @@ Texture loading_icon;
 Texture pause_icon;
 Texture menu_box;
 Texture clock_timer;
-
+Texture stone_button;
 
 
 // Functions
@@ -344,6 +345,10 @@ void ApplyTexture(Sprite& sprite, LoadTexture texture, Vector2f size = Vector2f(
 			break;
 	case clock_timer_texture:
 		sprite.setTexture(clock_timer);
+		break;
+		
+	case stone_button_texture:
+		sprite.setTexture(stone_button);
 		break;
 
 	case TRIANGLE:
@@ -500,7 +505,7 @@ void InitializeTextures()
 	pause_icon.loadFromFile("Main\\Assets\\Animations\\menu assets\\pause icon.png");
 	menu_box.loadFromFile("Main\\Assets\\Animations\\menu assets\\menu box.png");
 	clock_timer.loadFromFile("Main\\Assets\\Animations\\menu assets\\clock timer.png");
-	
+	stone_button.loadFromFile("Main\\Assets\\Animations\\menu assets\\stone button.png");
 	// divide the process into functions
 	InitializeMenuTextures();
 	InitializeGameTextures();

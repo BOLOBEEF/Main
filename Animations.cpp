@@ -213,6 +213,15 @@ void UpdateAnimation(Sprite& sprite, LoadTexture texture) {
 	case loading_icon_texture:
 		sprite.setTextureRect(IntRect(0, 0, 469, 103));
 		break;
+	case menu_box_texture:
+		sprite.setTextureRect(IntRect(0, 0, 1082, 642));
+		break;
+	case pause_icon_texture:
+		sprite.setTextureRect(IntRect(0, 0, 48, 48));
+		break;
+	case stone_button_texture:
+		sprite.setTextureRect(IntRect(0, 0, 239, 117));
+		break;
 	default:
 		break;
 	}
