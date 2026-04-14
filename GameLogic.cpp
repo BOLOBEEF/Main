@@ -23,18 +23,18 @@ Player fireBoy = Player(Player::Fireboy, center + Vector2f(-600, 200));
 Player waterGirl = Player(Player::Watergirl, center + Vector2f(-550, 300));
 Gem fireGem = Gem(Gem::fireGem, Vector2f(650, 800));
 Gem waterGem = Gem(Gem::waterGem, Vector2f(800, 800));
-Pond firePond = Pond(Pond::FIRE_POND, Vector2f(800, 850));
-Pond waterPond = Pond(Pond::WATER_POND, Vector2f(800, 600));
-Pond poisonPond = Pond(Pond::POISON_POND, Vector2f(800, 500));
+Pond firePond = Pond(Pond::FIRE_POND, Vector2f(600, 550));
+Pond waterPond = Pond(Pond::WATER_POND, Vector2f(1000, 650));
+Pond poisonPond = Pond(Pond::POISON_POND, Vector2f(800, 600));
 
 Box box = Box(Vector2f(1100, 200));
-Final_door water_door = Final_door(Final_door::WATER_DOOR, Vector2f(800, 700));
-Final_door fire_door = Final_door(Final_door::FIRE_DOOR, Vector2f(800, 800));
+Final_door water_door = Final_door(Final_door::WATER_DOOR, Vector2f(1200, 25));
+Final_door fire_door = Final_door(Final_door::FIRE_DOOR, Vector2f(1300, 25));
 Switch lever = Switch(Vector2f(900, 800));
 Game_Door door = Game_Door(Game_Door::CLOSED, Vector2f(400.0f, 300.0f), Vector2f(400.0f, 200.0f));
 
 Sprite ground;
-Click click = Click(Vector2f(900, 750));
+Click click = Click(Vector2f(1200, 800));
 
 RenderTexture maskTexture;
 RenderTexture resultTexture;
@@ -429,18 +429,13 @@ void UpdateGame()
 	fireGem.checkintersect(fireBoy);
 	waterGem.checkintersect(waterGirl);
 
-	click.buttonpressed = false;
-	click.isPressed(fireBoy);
-	click.isPressed(waterGirl);
-	click.updateRelease();
+	
+	click.isPressed(fireBoy,waterGirl);
+	
 
-	firePond.Update(fireBoy);
-	waterPond.Update(fireBoy);
-	poisonPond.Update(fireBoy);
-
-	firePond.Update(waterGirl);
-	waterPond.Update(waterGirl);
-	poisonPond.Update(waterGirl);
+	firePond.Update(fireBoy,waterGirl);
+	waterPond.Update(fireBoy,waterGirl);
+	poisonPond.Update(fireBoy,waterGirl);
 
 	water_door.Update(waterGirl);
 	fire_door.Update(fireBoy);

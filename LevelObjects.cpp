@@ -58,20 +58,25 @@ struct Player
 
 	void UpdateMotion() {
 		if (playertype == Fireboy) {
+			
 			if (Keyboard::isKeyPressed(Keyboard::Right)) {
 				velocity.x += accelration * dt;
+				//PlayGameSoundEffect(GameSoundEffect::Walking_boy_sound);
 			}
 			else if (Keyboard::isKeyPressed(Keyboard::Left)) {
 				velocity.x -= accelration * dt;
+				//PlayGameSoundEffect(GameSoundEffect::Walking_boy_sound);
 			}
 			else velocity.x -= velocity.x * deccelration * dt;
 		}
 		else if (playertype == Watergirl) {
 			if (Keyboard::isKeyPressed(Keyboard::D)) {
 				velocity.x += accelration * dt;
+				//PlayGameSoundEffect(GameSoundEffect::Walking_girl_sound);
 			}
 			else if (Keyboard::isKeyPressed(Keyboard::A)) {
 				velocity.x -= accelration * dt;
+				//PlayGameSoundEffect(GameSoundEffect::Walking_girl_sound);
 			}
 			else velocity.x -= velocity.x * deccelration * dt;
 		}
@@ -756,12 +761,14 @@ struct Gem
 	void checkintersect(Player hamada) {
 		if (gemtype == waterGem && hamada.playertype == Player::Watergirl) {
 			if (sprite.getGlobalBounds().intersects(hamada.sprite.getGlobalBounds())) {
+				PlayGameSoundEffect(GameSoundEffect::DiamondCollect_sound);
 				isCollected = true;
 				sprite.setScale(0, 0);
 			}
 		}
 		if (gemtype == fireGem && hamada.playertype == Player::Fireboy) {
 			if (sprite.getGlobalBounds().intersects(hamada.sprite.getGlobalBounds())) {
+				PlayGameSoundEffect(GameSoundEffect::DiamondCollect_sound);
 				isCollected = true;
 				sprite.setScale(0, 0);
 			}
@@ -780,18 +787,25 @@ struct Click
 		sprite.setPosition(postion);
 		AllignSprite(sprite);
 	}
-	void isPressed(Player anteel) {
-		if (sprite.getGlobalBounds().intersects(anteel.sprite.getGlobalBounds())) {
+	void isPressed(Player anteel,Player anteela) {
+		bool lastState = buttonpressed;
+		if (sprite.getGlobalBounds().intersects(anteel.sprite.getGlobalBounds())|| sprite.getGlobalBounds().intersects(anteela.sprite.getGlobalBounds())) {
+		
 			buttonpressed = true;
+			
 			sprite.setColor(Color::Magenta);
 
 		}
-	}
-	void updateRelease() {
-		if (!buttonpressed) {
+		else {
+			buttonpressed = false;
 			sprite.setColor(Color::Yellow);
 		}
+		if (buttonpressed!=lastState) {
+			PlayGameSoundEffect(GameSoundEffect::Platform_sound);
+		}
+		
 	}
+	
 
 };
 
@@ -807,7 +821,7 @@ struct Pond
 		FIRE_POND,
 		WATER_POND
 	} type;
-
+	bool player_collided=false;
 	Pond(ponds_type startType, Vector2f position) {
 		type = startType;
 		sprite.setPosition(position);
@@ -818,10 +832,20 @@ struct Pond
 		AllignSprite(sprite);
 	}
 
-	void Update(Player& player) {
+	void Update(Player& player,Player player2) {
 		// if no collision return
-		if (!player.sprite.getGlobalBounds().intersects(sprite.getGlobalBounds())) return;
+		bool lastchance = player_collided;
+		if (player.sprite.getGlobalBounds().intersects(sprite.getGlobalBounds())|| player2.sprite.getGlobalBounds().intersects(sprite.getGlobalBounds())) {
+			player_collided = true;
+			return;
+		}
+		else {
+			player_collided = false;
 
+		}
+		if (lastchance != player_collided && player_collided == true) {
+			PlayGameSoundEffect(GameSoundEffect::Death_sound);
+		}
 		switch (type)
 		{
 		case POISON_POND:
@@ -832,6 +856,16 @@ struct Pond
 
 			case player.Watergirl:
 				player.isDead = true;
+				
+				break;
+			}
+			switch (player2.playertype)
+			{
+			case player2.Fireboy:
+
+			case player2.Watergirl:
+				player2.isDead = true;
+
 				break;
 			}
 			break;
@@ -841,6 +875,13 @@ struct Pond
 			{
 			case player.Watergirl:
 				player.isDead = true;
+			
+				break;
+			}
+			switch (player2.playertype)
+			{
+			case player2.Watergirl:
+				player2.isDead = true;
 
 				break;
 			}
@@ -851,6 +892,13 @@ struct Pond
 			{
 			case player.Fireboy:
 				player.isDead = true;
+			
+				break;
+			}
+			switch (player2.playertype)
+			{
+			case player2.Fireboy:
+				player2.isDead = true;
 
 				break;
 			}
@@ -876,8 +924,14 @@ struct Switch {
 				if (sprite.getGlobalBounds().intersects(moroo.sprite.getGlobalBounds()) || sprite.getGlobalBounds().intersects(mora.sprite.getGlobalBounds())) {
 
 					moved = !moved;
-					if (moved)	sprite.setColor(Color::Green);
-					else	sprite.setColor(Color::Cyan);
+					if (moved) {
+						sprite.setColor(Color::Green);
+						PlayGameSoundEffect(GameSoundEffect::Lever_sound);
+					}
+					else {
+						PlayGameSoundEffect(GameSoundEffect::Lever_sound);
+						sprite.setColor(Color::Cyan);
+					}
 				}
 			}
 		}
@@ -910,13 +964,19 @@ struct Final_door
 	{
 		if ((player.playertype == Player::PlayerType::Watergirl) && player.sprite.getGlobalBounds().intersects(sprite.getGlobalBounds()) && (type == WATER_DOOR))
 		{
+
 			player_on_door = true;
 			sprite.setColor(Color::Green);
+			PlayGameSoundEffect(GameSoundEffect::Door_sound);
+			
 		}
 		else if ((player.playertype == Player::PlayerType::Fireboy) && player.sprite.getGlobalBounds().intersects(sprite.getGlobalBounds()) && (type == FIRE_DOOR))
 		{
+
 			player_on_door = true;
 			sprite.setColor(Color::Green);
+			PlayGameSoundEffect(GameSoundEffect::Door_sound);
+
 		}
 		else
 		{
