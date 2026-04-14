@@ -12,7 +12,6 @@
 // Runtime variables
 
 
-
 // Functions
 Font font;
 Text fpsDisplay;
@@ -22,6 +21,7 @@ void InitializeMenu()
 	font.loadFromFile("Main/Assets/Fonts/ContrailOne-Regular.ttf");
 	fpsDisplay.setFont(font);
 	fpsDisplay.setCharacterSize(24);
+	
 	// code for initializing menu variables and objects
 	// for example load sprites, set up text objects, etc.
 }
