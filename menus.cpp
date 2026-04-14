@@ -10,7 +10,10 @@
 
 
 // Runtime variables
-
+Sprite pauseMenu_mnu;
+Sprite EndButton_mnu;
+Sprite ResumeButton_mnu;
+Sprite RetryButton_mnu;
 
 // Functions
 Font font;
@@ -21,7 +24,12 @@ void InitializeMenu()
 	font.loadFromFile("Main/Assets/Fonts/ContrailOne-Regular.ttf");
 	fpsDisplay.setFont(font);
 	fpsDisplay.setCharacterSize(24);
-	
+	//Pause menu
+	ApplyTexture(pauseMenu_mnu, LoadTexture::menu_box_texture, Vector2f(windowSize.x - 600, windowSize.y - 250), Vector2f(1, 1), true);
+	pauseMenu_mnu.setPosition(windowSize.x / 2, windowSize.y / 2);
+
+	ApplyTexture(EndButton_mnu, LoadTexture::stone_button_0_texture, Vector2f(1000, 250), Vector2f(1, 1), true);
+	EndButton_mnu.setPosition(windowSize.x / 2, (windowSize.y / 2) + 100);
 	// code for initializing menu variables and objects
 	// for example load sprites, set up text objects, etc.
 }
@@ -75,6 +83,8 @@ void DrawUI()
 	{
 	case MAIN_MENU:
 		// code for drawing main menu
+		window.draw(pauseMenu_mnu);
+		window.draw(EndButton_mnu);
 		break;
 	case SETTINGS:
 		// code for drawing settings menu
