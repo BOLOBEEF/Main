@@ -28,10 +28,10 @@ Pond waterPond = Pond(Pond::WATER_POND, Vector2f(1000, 650));
 Pond poisonPond = Pond(Pond::POISON_POND, Vector2f(800, 600));
 
 Box box = Box(Vector2f(1100, 200));
-Final_door water_door = Final_door(Final_door::WATER_DOOR, Vector2f(1200, 25));
-Final_door fire_door = Final_door(Final_door::FIRE_DOOR, Vector2f(1300, 25));
-Switch lever = Switch(Vector2f(900, 800));
-Game_Door door = Game_Door(Vector2f(400.0f, 300.0f), Vector2f(400.0f, 200.0f));
+FinalDoor water_door = FinalDoor(FinalDoor::WATER_DOOR, Vector2f(1200, 25));
+FinalDoor fire_door = FinalDoor(FinalDoor::FIRE_DOOR, Vector2f(1300, 25));
+Lever lever = Lever(Vector2f(900, 800));
+Door door = Door(Vector2f(400.0f, 300.0f), Vector2f(400.0f, 200.0f));
 
 Sprite ground;
 Click click = Click(Vector2f(1200, 800));
@@ -43,6 +43,7 @@ Sprite outlineSprite;
 Sprite resultSprite;
 
 ColliderList colliders;
+//Object object;
 
 
 // LEVEL EDITING TOOLS
@@ -214,8 +215,8 @@ void InitializeGame()
 		colliders.elements[i].Initialize();
 
 	AllignColliders();
-	fireBoy.start();
-	waterGirl.start();
+	fireBoy.Initialize();
+	waterGirl.Initialize();
 	fireGem.start();
 	waterGem.start();
 	click.start();
@@ -387,8 +388,8 @@ void HandleGameInput(Event event)
 	if (gameState != GAME) return;
 
 	// code for handling game input that is related to game logic
-	fireBoy.checkJump(event);
-	waterGirl.checkJump(event);
+	fireBoy.CheckInput(event);
+	waterGirl.CheckInput(event);
 	lever.leverMove(fireBoy, waterGirl, event);
 
 	// in debug mode, when you press
@@ -409,8 +410,8 @@ void UpdateGame()
 
 	door.PreUpdate();
 
-	fireBoy.UpdateMotion();
-	waterGirl.UpdateMotion();
+	fireBoy.Update();
+	waterGirl.Update();
 
 	if (fireBoy.isOnGround) fireBoy.sprite.setColor(Color::Red);
 	else fireBoy.sprite.setColor(Color(255, 100, 100));

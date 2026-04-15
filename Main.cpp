@@ -51,6 +51,7 @@ int main()
 
 	// input issues: key repeat is enabled by default, which causes problems with our input handling, so we disable it
 	window.setKeyRepeatEnabled(false);
+	window.setVerticalSyncEnabled(true); // makes the game feel more consistent, not needed as all our logic is framerate-independent
 
 	Event event;
 	while (window.isOpen())
