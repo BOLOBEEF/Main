@@ -15,21 +15,38 @@ Sprite SettingButton_mnu;
 Sprite EndButton_Pausemnu;
 Sprite RetryButton_Pausemnu;
 Sprite ResumeButton_Pausemnu;
+Sprite PauseIcon_mnu;
+//Sprite PressedResumeButton_Pausemnu;
 
-Sprite MenuButton_GOVERmnu;
-Sprite RetryButton_GOVERmnu;
-Sprite SkipButton_GOVERmnu;
 Sprite GameOverbuttons_mnu[3];
 Sprite ContinueButton_Winmnu;
 
-
-
-// Functions
 Font font;
 Text fpsDisplay;
 Text End_Pausetxt, Resume_Pausetxt, Retry_Pausetxt, Pause_txt;
 Text Menu_GOVERtxt, Retry_GOVERtxt, Skip_GOVERtxt, GameOver_txt;
 Text Continue_Wintxt;
+
+
+// Functions
+bool MouseInput_mnu(Event event, Sprite& ButtonClicked, LoadTexture texture_enum_mnu, GameState state_mnu)
+{
+	if (event.type == Event::MouseButtonPressed && event.mouseButton.button == Mouse::Left)
+	{
+		if (ButtonClicked.getGlobalBounds().contains(mousePosition))
+		{
+			UpdateAnimation(ButtonClicked, texture_enum_mnu);
+		}
+	}
+	if (event.type == Event::MouseButtonReleased && event.mouseButton.button == Mouse::Left)
+	{
+		if (ButtonClicked.getGlobalBounds().contains(mousePosition))
+		{
+			UpdateGameState(state_mnu);
+		}
+	}
+	return true;
+}
 
 void InitializeMenu()
 {
@@ -40,6 +57,10 @@ void InitializeMenu()
 	ApplyTexture(Stone_mnu, LoadTexture::menu_box_texture, Vector2f(windowSize.x - 600, windowSize.y - 250));
 	UpdateAnimation(Stone_mnu, menu_box_texture);
 	Stone_mnu.setPosition(windowSize.x / 2, windowSize.y / 2);
+
+	ApplyTexture(PauseIcon_mnu, LoadTexture::pause_icon_texture, Vector2f(105, 105));
+	UpdateAnimation(PauseIcon_mnu, pause_icon_texture);
+	PauseIcon_mnu.setPosition(windowSize.x / 2, windowSize.y / 2);
 
 	ApplyTexture(EndButton_Pausemnu, LoadTexture::stone_button_0_texture, Vector2f(700, 170));
 	UpdateAnimation(EndButton_Pausemnu, stone_button_0_texture);
@@ -155,7 +176,7 @@ void InitializeMenu()
 	Continue_Wintxt.setFont(font);
 	Continue_Wintxt.setCharacterSize(50);
 	Continue_Wintxt.setFillColor(Color(230, 194, 0));
-	Continue_Wintxt.setString("GAMEOVER");
+	Continue_Wintxt.setString("CONTINUE");
 	Continue_Wintxt.setPosition((ContinueButton_Winmnu.getGlobalBounds().left + ContinueButton_Winmnu.getGlobalBounds().width / 2), (ContinueButton_Winmnu.getGlobalBounds().top + ContinueButton_Winmnu.getGlobalBounds().height / 2) - 5);
 	Continue_Wintxt.setOrigin(Continue_Wintxt.getLocalBounds().width / 2, GameOver_txt.getLocalBounds().height / 2);
 	Continue_Wintxt.setOutlineColor(Color::Black);
@@ -168,22 +189,37 @@ void InitializeMenu()
 
 void HandleMenuInput(Event event)
 {
+
 	switch (gameState)
 	{
 	case MAIN_MENU:
 		// code for handling main menu input
 		break;
-	case PAUSE_MENU:
+	case LEVEL_MENU:
 
 		break;
+	case PAUSE_MENU:
+		MouseInput_mnu(event, ResumeButton_Pausemnu, stone_button_1_texture, GAME);
+		if (MouseInput_mnu(event, RetryButton_Pausemnu, stone_button_1_texture, GAME))
+		{
+			//call function reset
+		}
+		MouseInput_mnu(event, EndButton_Pausemnu, stone_button_1_texture, LEVEL_MENU);
+		MouseInput_mnu(event, SettingButton_mnu, stone_button_1_texture, SETTINGS);
+		break;
 	case WIN_MENU:
-
+		MouseInput_mnu(event, ContinueButton_Winmnu, stone_button_1_texture, LEVEL_MENU);
 		break;
 	case SETTINGS:
 		// code for handling settings menu input
 		break;
 	case GAMEOVER:
-
+		MouseInput_mnu(event, GameOverbuttons_mnu[0], stone_button_1_texture, LEVEL_MENU);
+		MouseInput_mnu(event, GameOverbuttons_mnu[2], stone_button_1_texture, MAIN_MENU);
+		if (MouseInput_mnu(event, GameOverbuttons_mnu[1], stone_button_1_texture, GAME))
+		{
+			//call function reset
+		}
 		break;
 	case GAME:
 		// code for handling game UI input
@@ -203,6 +239,9 @@ void UpdateUI()
 	{
 	case MAIN_MENU:
 		// code for main menu
+		break;
+	case LEVEL_MENU:
+
 		break;
 	case PAUSE_MENU:
 
@@ -233,7 +272,11 @@ void DrawUI()
 	case MAIN_MENU:
 		// code for drawing main menu
 		break;
+	case LEVEL_MENU:
+
+		break;
 	case PAUSE_MENU:
+		DrawGame(true);
 		window.draw(Stone_mnu);
 		window.draw(EndButton_Pausemnu);
 		window.draw(RetryButton_Pausemnu);
@@ -265,6 +308,7 @@ void DrawUI()
 		break;
 	case GAME:
 		// code for drawing game UI
+		//window.draw(PauseIcon_mnu);
 		break;
 	default:
 		break;

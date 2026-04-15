@@ -55,6 +55,7 @@ void DrawTest();
 enum GameState
 {
 	MAIN_MENU,
+	LEVEL_MENU,
 	PAUSE_MENU,
 	WIN_MENU,
 	SETTINGS,
@@ -64,7 +65,7 @@ enum GameState
 
 
 // DO NOT CHANGE THIS DIRECTLY, USE UpdateGameState() INSTEAD
-GameState gameState = GAME;
+GameState gameState = GAMEOVER;
 
 
 
