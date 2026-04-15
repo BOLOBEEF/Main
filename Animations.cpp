@@ -220,10 +220,10 @@ void UpdateAnimation(Sprite& sprite, LoadTexture texture) {
 		sprite.setTextureRect(IntRect(0, 0, 48, 48));
 		break;
 	case stone_button_0_texture:
-		sprite.setTextureRect(IntRect(0, 0, 252, 117));
+		sprite.setTextureRect(IntRect(25, 0, 205, 117));
 		break;
 	case stone_button_1_texture:
-		sprite.setTextureRect(IntRect(252, 0, 252, 117));
+		sprite.setTextureRect(IntRect(275, 0, 205, 117));
 		break;
 	case main_menu_background_texture:
 		sprite.setTextureRect(IntRect(0, 0,1536, 1024));
