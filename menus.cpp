@@ -10,9 +10,8 @@
 
 
 // Runtime variables
+GameState PreviousMenu_State = MAIN_MENU;
 RectangleShape Dimmed_Backgriund;
-//Vector2f Current_mnu = Vector2f(Stone_mnu.getPosition().x, Stone_mnu.getPosition().y);
-//Vector2f Target_mnu = Vector2f(Stone_mnu.getPosition().x, Stone_mnu.getPosition().y + 1000);
 //float Current_mnu = ( Stone_mnu.getPosition().y);
 //float Target_mnu =  Stone_mnu.getPosition().y + 1000;
 Sprite Stone_mnu;
@@ -21,6 +20,11 @@ Sprite EndButton_Pausemnu;
 Sprite RetryButton_Pausemnu;
 Sprite ResumeButton_Pausemnu;
 Sprite PauseIcon_mnu;
+//Vector2f Current_Up_mnu = Vector2f(windowSize.x / 2, windowSize.y / 2 + 850);
+Vector2f Target_up_mnu = Vector2f(windowSize.x / 2, windowSize.y / 2);
+Vector2f Target_Down_mnu = Vector2f(windowSize.x / 2, windowSize.y / 2 + 1000);
+Vector2f Current_position_mnu = Target_Down_mnu;
+Vector2f Current_Target;
 //Sprite PressedResumeButton_Pausemnu;
 
 Sprite GameOverbuttons_mnu[3];
@@ -56,6 +60,56 @@ bool MouseInput_mnu(Event event, Sprite& ButtonClicked, LoadTexture Currnet_text
 	return true;
 }
 
+bool PauseMenu_Movement(Vector2f Desired_Target)
+{
+	Current_Target = Desired_Target;
+	Current_position_mnu = Damp(Current_position_mnu, Current_Target, 5, dt);
+	EndButton_Pausemnu.setPosition(Vector2f((windowSize.x / 2) - 35, (windowSize.y / 2) + 70) + Current_position_mnu - center);
+	RetryButton_Pausemnu.setPosition(Vector2f((windowSize.x / 2) + 435, (windowSize.y / 2) + 70) + Current_position_mnu - center);
+	ResumeButton_Pausemnu.setPosition(Vector2f((windowSize.x / 2 + 205), (windowSize.y / 2) + 220) + Current_position_mnu - center);
+	SettingButton_mnu.setPosition(Vector2f(Stone_mnu.getPosition().x + 485, Stone_mnu.getPosition().y - 240));
+	End_Pausetxt.setPosition(Vector2f(EndButton_Pausemnu.getGlobalBounds().left + EndButton_Pausemnu.getGlobalBounds().width / 2, (EndButton_Pausemnu.getGlobalBounds().top + EndButton_Pausemnu.getGlobalBounds().height / 2) - 20));
+	Retry_Pausetxt.setPosition(Vector2f(RetryButton_Pausemnu.getGlobalBounds().left + RetryButton_Pausemnu.getGlobalBounds().width / 2, (RetryButton_Pausemnu.getGlobalBounds().top + RetryButton_Pausemnu.getGlobalBounds().height / 2) - 20));
+	Resume_Pausetxt.setPosition(Vector2f(ResumeButton_Pausemnu.getGlobalBounds().left + ResumeButton_Pausemnu.getGlobalBounds().width / 2, (ResumeButton_Pausemnu.getGlobalBounds().top + ResumeButton_Pausemnu.getGlobalBounds().height / 2) - 20));
+	Pause_txt.setPosition(Vector2f((ResumeButton_Pausemnu.getGlobalBounds().left + ResumeButton_Pausemnu.getGlobalBounds().width / 2), (ResumeButton_Pausemnu.getGlobalBounds().top + ResumeButton_Pausemnu.getGlobalBounds().height / 2) - 400));
+	Stone_mnu.setPosition(Current_position_mnu);
+	if (Current_position_mnu == Desired_Target)
+	{
+		return false;
+	}
+}
+bool WinMenu_Movement(Vector2f Desired_Target)
+{
+	Current_Target = Desired_Target;
+	Current_position_mnu = Damp(Current_position_mnu, Current_Target, 5, dt);
+	Stone_mnu.setPosition(Current_position_mnu);
+	ContinueButton_Winmnu.setPosition(Vector2f((windowSize.x / 2) + 270, (windowSize.y / 2) + 200) + Current_position_mnu - center);
+	Continue_Wintxt.setPosition((ContinueButton_Winmnu.getGlobalBounds().left + ContinueButton_Winmnu.getGlobalBounds().width / 2), (ContinueButton_Winmnu.getGlobalBounds().top + ContinueButton_Winmnu.getGlobalBounds().height / 2) - 5);
+	if (Current_position_mnu == Desired_Target)
+	{
+		return false;
+	}
+}
+bool GameoverMenu_Movement(Vector2f Desired_Target)
+{
+	Current_Target = Desired_Target;
+	Current_position_mnu = Damp(Current_position_mnu, Current_Target, 5, dt);
+	Stone_mnu.setPosition(Current_position_mnu);
+	int x_shift_mnu = 350;
+	for (int i = 0; i < 3; i++)
+	{
+		GameOverbuttons_mnu[i].setPosition(Vector2f(((windowSize.x / 2) + x_shift_mnu + 200), ((windowSize.y / 2) + 145)) + Current_position_mnu - center);
+		x_shift_mnu -= 350;
+	}
+	Menu_GOVERtxt.setPosition((GameOverbuttons_mnu[2].getGlobalBounds().left + GameOverbuttons_mnu[2].getGlobalBounds().width / 2), (GameOverbuttons_mnu[2].getGlobalBounds().top + GameOverbuttons_mnu[2].getGlobalBounds().height / 2) - 15);
+	Retry_GOVERtxt.setPosition((GameOverbuttons_mnu[1].getGlobalBounds().left + GameOverbuttons_mnu[1].getGlobalBounds().width / 2), (GameOverbuttons_mnu[1].getGlobalBounds().top + GameOverbuttons_mnu[1].getGlobalBounds().height / 2) - 15);
+	Skip_GOVERtxt.setPosition((GameOverbuttons_mnu[0].getGlobalBounds().left + GameOverbuttons_mnu[0].getGlobalBounds().width / 2) + 30, (GameOverbuttons_mnu[0].getGlobalBounds().top + GameOverbuttons_mnu[0].getGlobalBounds().height / 2) - 10);
+	GameOver_txt.setPosition((GameOverbuttons_mnu[1].getGlobalBounds().left + GameOverbuttons_mnu[1].getGlobalBounds().width / 2), (GameOverbuttons_mnu[1].getGlobalBounds().top + GameOverbuttons_mnu[1].getGlobalBounds().height / 2) - 270);
+	if (Current_position_mnu == Desired_Target)
+	{
+		return false;
+	}
+}
 void InitializeMenu()
 {
 	font.loadFromFile("Main/Assets/Fonts/trajanpro-bold.otf");
@@ -78,15 +132,15 @@ void InitializeMenu()
 
 	ApplyTexture(EndButton_Pausemnu, LoadTexture::stone_button_0_texture, Vector2f(700, 170));
 	UpdateAnimation(EndButton_Pausemnu, stone_button_0_texture);
-	EndButton_Pausemnu.setPosition((windowSize.x / 2) - 60, (windowSize.y / 2) + 70);
+	EndButton_Pausemnu.setPosition((windowSize.x / 2) - 35, (windowSize.y / 2) + 70);
 
 	ApplyTexture(RetryButton_Pausemnu, LoadTexture::stone_button_0_texture, Vector2f(700, 170));
 	UpdateAnimation(RetryButton_Pausemnu, stone_button_0_texture);
-	RetryButton_Pausemnu.setPosition((windowSize.x / 2) + 410, (windowSize.y / 2) + 70);
+	RetryButton_Pausemnu.setPosition((windowSize.x / 2) + 435, (windowSize.y / 2) + 70);
 
 	ApplyTexture(ResumeButton_Pausemnu, LoadTexture::stone_button_0_texture, Vector2f(700, 170));
 	UpdateAnimation(ResumeButton_Pausemnu, stone_button_0_texture);
-	ResumeButton_Pausemnu.setPosition((windowSize.x / 2 + 170), (windowSize.y / 2) + 220);
+	ResumeButton_Pausemnu.setPosition((windowSize.x / 2 + 205), (windowSize.y / 2) + 220);
 
 	ApplyTexture(SettingButton_mnu, LoadTexture::SettingsButton0_texture, Vector2f(105, 105));
 	UpdateAnimation(SettingButton_mnu, SettingsButton0_texture);
@@ -100,7 +154,7 @@ void InitializeMenu()
 	{
 		ApplyTexture(GameOverbuttons_mnu[i], LoadTexture::stone_button_0_texture, Vector2f(680, 150));
 		UpdateAnimation(GameOverbuttons_mnu[i], stone_button_0_texture);
-		GameOverbuttons_mnu[i].setPosition(((windowSize.x / 2) + x_shift_mnu + 170), ((windowSize.y / 2) + 145));
+		GameOverbuttons_mnu[i].setPosition(((windowSize.x / 2) + x_shift_mnu + 200), ((windowSize.y / 2) + 145));
 		x_shift_mnu -= 350;
 	}
 
@@ -110,7 +164,7 @@ void InitializeMenu()
 
 	ApplyTexture(ContinueButton_Winmnu, LoadTexture::stone_button_0_texture, Vector2f(950, 170));
 	UpdateAnimation(ContinueButton_Winmnu, stone_button_0_texture);
-	ContinueButton_Winmnu.setPosition((windowSize.x / 2) + 225, (windowSize.y / 2) + 200);
+	ContinueButton_Winmnu.setPosition((windowSize.x / 2) + 270, (windowSize.y / 2) + 200);
 
 	//Pause menu text
 	End_Pausetxt.setFont(font);
@@ -164,6 +218,7 @@ void InitializeMenu()
 	Retry_GOVERtxt.setFillColor(Color(230, 194, 0));
 	Retry_GOVERtxt.setString("RETRY");
 	Retry_GOVERtxt.setPosition((GameOverbuttons_mnu[1].getGlobalBounds().left + GameOverbuttons_mnu[1].getGlobalBounds().width / 2), (GameOverbuttons_mnu[1].getGlobalBounds().top + GameOverbuttons_mnu[1].getGlobalBounds().height / 2) - 15);
+	Menu_GOVERtxt.setPosition((GameOverbuttons_mnu[2].getGlobalBounds().left + GameOverbuttons_mnu[2].getGlobalBounds().width / 2), (GameOverbuttons_mnu[2].getGlobalBounds().top + GameOverbuttons_mnu[2].getGlobalBounds().height / 2) - 15);
 	Retry_GOVERtxt.setOrigin(Retry_GOVERtxt.getLocalBounds().width / 2, Retry_GOVERtxt.getLocalBounds().height / 2);
 	Retry_GOVERtxt.setOutlineColor(Color::Black);
 	Retry_GOVERtxt.setOutlineThickness(5);
@@ -247,6 +302,26 @@ void HandleMenuInput(Event event)
 
 void OnUpdatedGameStateMenu() {
 	// do stuff here exactly when the gameState is changed
+
+	switch (gameState)
+	{
+	case MAIN_MENU:
+		break;
+	case LEVEL_MENU:
+		break;
+	case PAUSE_MENU:
+		break;
+	case WIN_MENU:
+		break;
+	case SETTINGS:
+		break;
+	case GAMEOVER:
+		break;
+	case GAME:
+		break;
+	default:
+		break;
+	}
 }
 
 void UpdateUI()
@@ -255,24 +330,53 @@ void UpdateUI()
 	{
 	case MAIN_MENU:
 		// code for main menu
+		GameoverMenu_Movement(Target_Down_mnu);
 		break;
 	case LEVEL_MENU:
-
+		if (PreviousMenu_State == GAMEOVER)
+		{
+			GameoverMenu_Movement(Target_Down_mnu);
+		}
+		else if (PreviousMenu_State == PAUSE_MENU)
+		{
+			PauseMenu_Movement(Target_Down_mnu);
+		}
+		else if (PreviousMenu_State == WIN_MENU)
+		{
+			WinMenu_Movement(Target_Down_mnu);
+		}
 		break;
 	case PAUSE_MENU:
-
+		PreviousMenu_State = PAUSE_MENU;
+		PauseMenu_Movement(Target_up_mnu);
 		break;
 	case WIN_MENU:
-
+		PreviousMenu_State = WIN_MENU;
+		WinMenu_Movement(Target_up_mnu);
 		break;
 	case SETTINGS:
 		// code for settings menu
 		break;
 	case GAMEOVER:
-
+		PreviousMenu_State = GAMEOVER;
+		GameoverMenu_Movement(Target_up_mnu);
 		break;
 	case GAME:
 		// code for game UI
+		//GameoverMenu_Movement(Target_Down_mnu);
+		//PauseMenu_Movement(Target_Down_mnu);
+		if (PreviousMenu_State == GAMEOVER)
+		{
+			GameoverMenu_Movement(Target_Down_mnu);
+		}
+		else if (PreviousMenu_State == PAUSE_MENU)
+		{
+			PauseMenu_Movement(Target_Down_mnu);
+		}
+		else if (PreviousMenu_State == WIN_MENU)
+		{
+			WinMenu_Movement(Target_Down_mnu);
+		}
 		break;
 	default:
 		break;
@@ -287,10 +391,64 @@ void DrawUI()
 	{
 	case MAIN_MENU:
 		// code for drawing main menu
-		break;
-	case LEVEL_MENU:
+		if (Current_position_mnu != Target_Down_mnu)
+		{
+
+			if (PreviousMenu_State == GAMEOVER)
+			{
+				window.draw(Stone_mnu);
+				for (int i = 0; i < 3; i++)
+				{
+					window.draw(GameOverbuttons_mnu[i]);
+				}
+				window.draw(Menu_GOVERtxt);
+				window.draw(Retry_GOVERtxt);
+				window.draw(Skip_GOVERtxt);
+				window.draw(GameOver_txt);
+			}
+		}
+		//draw the things of the Main menu down here
 
 		break;
+	case LEVEL_MENU:
+		if (Current_position_mnu != Target_Down_mnu)
+		{
+
+			if (PreviousMenu_State == GAMEOVER)
+			{
+				window.draw(Stone_mnu);
+				for (int i = 0; i < 3; i++)
+				{
+					window.draw(GameOverbuttons_mnu[i]);
+				}
+				window.draw(Menu_GOVERtxt);
+				window.draw(Retry_GOVERtxt);
+				window.draw(Skip_GOVERtxt);
+				window.draw(GameOver_txt);
+			}
+			else if (PreviousMenu_State == PAUSE_MENU)
+			{
+				window.draw(Stone_mnu);
+				window.draw(EndButton_Pausemnu);
+				window.draw(RetryButton_Pausemnu);
+				window.draw(ResumeButton_Pausemnu);
+				window.draw(SettingButton_mnu);
+				window.draw(End_Pausetxt);
+				window.draw(Retry_Pausetxt);
+				window.draw(Resume_Pausetxt);
+				window.draw(Pause_txt);
+			}
+			else if (PreviousMenu_State == WIN_MENU)
+			{
+				window.draw(Stone_mnu);
+				window.draw(ContinueButton_Winmnu);
+				window.draw(Continue_Wintxt);
+			}
+		}
+		//draw the things of the level menu down here
+
+		break;
+
 	case PAUSE_MENU:
 		DrawGame(true);
 		window.draw(Dimmed_Backgriund);
@@ -304,6 +462,7 @@ void DrawUI()
 		window.draw(Resume_Pausetxt);
 		window.draw(Pause_txt);
 		break;
+
 	case WIN_MENU:
 		DrawGame(true);
 		window.draw(Dimmed_Backgriund);
@@ -311,11 +470,29 @@ void DrawUI()
 		window.draw(ContinueButton_Winmnu);
 		window.draw(Continue_Wintxt);
 		break;
+
 	case SETTINGS:
 		// code for drawing settings menu
 		DrawGame(true);
 		window.draw(Dimmed_Backgriund);
+		if (Current_position_mnu != Target_Down_mnu)
+		{
+
+			if (PreviousMenu_State == PAUSE_MENU)
+			{
+				window.draw(Stone_mnu);
+				window.draw(EndButton_Pausemnu);
+				window.draw(RetryButton_Pausemnu);
+				window.draw(ResumeButton_Pausemnu);
+				window.draw(SettingButton_mnu);
+				window.draw(End_Pausetxt);
+				window.draw(Retry_Pausetxt);
+				window.draw(Resume_Pausetxt);
+				window.draw(Pause_txt);
+			}
+		}
 		break;
+
 	case GAMEOVER:
 		DrawGame(true);
 		window.draw(Dimmed_Backgriund);
@@ -329,9 +506,44 @@ void DrawUI()
 		window.draw(Skip_GOVERtxt);
 		window.draw(GameOver_txt);
 		break;
+
 	case GAME:
 		// code for drawing game UI
 		window.draw(PauseIcon_mnu);
+		if (Current_position_mnu != Target_Down_mnu)
+		{
+
+			if (PreviousMenu_State == GAMEOVER)
+			{
+				window.draw(Stone_mnu);
+				for (int i = 0; i < 3; i++)
+				{
+					window.draw(GameOverbuttons_mnu[i]);
+				}
+				window.draw(Menu_GOVERtxt);
+				window.draw(Retry_GOVERtxt);
+				window.draw(Skip_GOVERtxt);
+				window.draw(GameOver_txt);
+			}
+			else if (PreviousMenu_State == PAUSE_MENU)
+			{
+				window.draw(Stone_mnu);
+				window.draw(EndButton_Pausemnu);
+				window.draw(RetryButton_Pausemnu);
+				window.draw(ResumeButton_Pausemnu);
+				window.draw(SettingButton_mnu);
+				window.draw(End_Pausetxt);
+				window.draw(Retry_Pausetxt);
+				window.draw(Resume_Pausetxt);
+				window.draw(Pause_txt);
+			}
+			else if (PreviousMenu_State == WIN_MENU)
+			{
+				window.draw(Stone_mnu);
+				window.draw(ContinueButton_Winmnu);
+				window.draw(Continue_Wintxt);
+			}
+		}
 		break;
 	default:
 		break;

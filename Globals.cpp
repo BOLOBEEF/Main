@@ -49,6 +49,7 @@ void DrawTest();
 
 
 
+
 // Game flow:
 
 // Main GameState 
@@ -65,9 +66,10 @@ enum GameState
 
 
 // DO NOT CHANGE THIS DIRECTLY, USE UpdateGameState() INSTEAD
-GameState gameState = WIN_MENU;
+GameState gameState = GAME;
 
 
+void UpdateGameState(GameState newState, bool ForceUpdate);
 
 
 
@@ -79,6 +81,7 @@ void Initialize()
 	InitializeMenu();
 	InitializeGame();
 	InitializeTest();
+	UpdateGameState(gameState, true);
 }
 
 void HandleInput(Event event)
@@ -89,10 +92,10 @@ void HandleInput(Event event)
 	HandleTestInput(event);
 }
 
-void UpdateGameState(GameState newState)
+void UpdateGameState(GameState newState, bool ForceUpdate = false)
 {
 	// if didn't actually change gameState then skip
-	if (newState == gameState) return;
+	if (newState == gameState && !ForceUpdate) return;
 
 	gameState = newState;
 
