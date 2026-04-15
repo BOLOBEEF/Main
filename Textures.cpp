@@ -29,7 +29,7 @@ enum LoadTexture
 
 	// char assets s
 	death_smoke_texture,
-	diamondsh_texture,
+	diamonds_texture,
 	fire_glow_texture,
 	fire_head_jumping_texture,
 	fire_head_rising_texture,
@@ -253,8 +253,90 @@ void ApplyTexture(Sprite& sprite, LoadTexture texture, Vector2f size = Vector2f(
 
 	switch (texture)
 	{
+
+	case death_smoke_texture:
+		sprite.setTexture(death_smoke);
+		break;
+	case diamonds_texture:
+		sprite.setTexture(diamonds);
+		break;
+
+	case fire_glow_texture:
+		sprite.setTexture(fire_glow);
+		break;
+
+	case fire_head_jumping_texture:
+		sprite.setTexture(fire_head_jumping);
+		break;
+
+	case fire_head_rising_texture:
+		sprite.setTexture(fire_head_rising);
+		break;
+
+	case fire_ice_steps_texture:
+		sprite.setTexture(fire_ice_steps);
+		break;
+
+	case fire_idle_body_texture:
+		sprite.setTexture(fire_idle_body);
+		break;
+
+	case fire_idle_head_texture:
+		sprite.setTexture(fire_idle_head);
+		break;
+
+	case fire_running_texture:
+		sprite.setTexture(fire_running);
+		break;
+
+	case fire_stairs_texture:
+		sprite.setTexture(fire_stairs);
+		break;
+
+	case fire_head_falling_texture:
+		sprite.setTexture(fire_head_falling);
+		break;
+
+	case water_body_idle_texture:
+		sprite.setTexture(water_body_idle);
+		break;
+
+	case water_glow_texture:
+		sprite.setTexture(water_glow);
+		break;
+
+	case water_head_falling_texture:
+		sprite.setTexture(water_head_falling);
+		break;
+
+	case water_head_idle_texture:
+		sprite.setTexture(water_head_idle);
+		break;
+
+	case water_head_jump_texture:
+		sprite.setTexture(water_head_jump);
+		break;
+		
+	case water_head_rising_texture:
+		sprite.setTexture(water_head_rising);
+		break;
+
+	case water_ice_steps_texture:
+		sprite.setTexture(water_ice_steps);
+		break;
+
+	case water_running_texture:
+		sprite.setTexture(water_running);
+		break;
+
+	case water_stairs_texture:
+		sprite.setTexture(water_stairs);
+		break;
+
 	case movingbox_texture:
 		sprite.setTexture(movingbox);
+		sprite.setTextureRect(IntRect(0, 0, 74, 76));
+		break;
 	case BackButton0_texture:
 		sprite.setTexture(BackButton0);
 		break;

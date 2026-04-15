@@ -69,7 +69,7 @@ void UpdateAnimation(Sprite& sprite, LoadTexture texture) {
 		break;
 	case death_smoke_texture:
 		break;
-	case diamondsh_texture:
+	case diamonds_texture:
 		break;
 	case fire_glow_texture:
 		break;
@@ -80,6 +80,7 @@ void UpdateAnimation(Sprite& sprite, LoadTexture texture) {
 	case fire_ice_steps_texture:
 		break;
 	case fire_idle_body_texture:
+		sprite.setTextureRect(IntRect(0, 0, 32, 32));
 		break;
 	case fire_idle_head_texture:
 		break;
@@ -107,14 +108,7 @@ void UpdateAnimation(Sprite& sprite, LoadTexture texture) {
 		break;
 	case water_stairs_texture:
 		break;
-	case movingbox_texture:
-		break;
-	case snow_flat_texture:
-		break;
-	case snow_slope_right_side_down_texture:
-		break;
-	case snow_slope_left_side_down_texture:
-		break;
+	
 	case pusher_block_texture:
 		break;
 	case fire_door_open_texture:
@@ -231,6 +225,10 @@ void UpdateAnimation(Sprite& sprite, LoadTexture texture) {
 	case game_name_texture:
 		sprite.setTextureRect(IntRect(0, 0, 860, 270));
 		break;
+	case clock_timer_texture:
+		sprite.setTextureRect(IntRect(0, 0, 268, 100));
+		break;
+	
 	default:
 		break;
 	}
