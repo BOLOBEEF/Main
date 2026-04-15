@@ -12,20 +12,18 @@
 // Runtime variables
 GameState PreviousMenu_State = MAIN_MENU;
 RectangleShape Dimmed_Backgriund;
-//float Current_mnu = ( Stone_mnu.getPosition().y);
-//float Target_mnu =  Stone_mnu.getPosition().y + 1000;
+
 Sprite Stone_mnu;
 Sprite SettingButton_mnu;
 Sprite EndButton_Pausemnu;
 Sprite RetryButton_Pausemnu;
 Sprite ResumeButton_Pausemnu;
 Sprite PauseIcon_mnu;
-//Vector2f Current_Up_mnu = Vector2f(windowSize.x / 2, windowSize.y / 2 + 850);
+
 Vector2f Target_up_mnu = Vector2f(windowSize.x / 2, windowSize.y / 2);
 Vector2f Target_Down_mnu = Vector2f(windowSize.x / 2, windowSize.y / 2 + 1000);
 Vector2f Current_position_mnu = Target_Down_mnu;
 Vector2f Current_Target;
-//Sprite PressedResumeButton_Pausemnu;
 
 Sprite GameOverbuttons_mnu[3];
 Sprite ContinueButton_Winmnu;
@@ -38,14 +36,13 @@ Text Continue_Wintxt;
 
 
 // Functions
-bool MouseInput_mnu(Event event, Sprite& ButtonClicked, LoadTexture Currnet_texture_enum, LoadTexture Desired_texture_enum, MenuSoundEffect Sound_Played_mnu,GameState state_mnu)
+bool MouseInput_mnu(Event event, Sprite& ButtonClicked, LoadTexture Currnet_texture_enum, LoadTexture Desired_texture_enum, MenuSoundEffect Sound_Played_mnu, GameState state_mnu)
 {
 	if (event.type == Event::MouseButtonPressed && event.mouseButton.button == Mouse::Left)
 	{
 		if (ButtonClicked.getGlobalBounds().contains(mousePosition))
 		{
 			UpdateAnimation(ButtonClicked, Desired_texture_enum);
-			//Damp(Current_mnu, Target_mnu, 200, dt);
 			PlayMenuSoundEffect(Sound_Played_mnu);
 		}
 	}
@@ -59,11 +56,30 @@ bool MouseInput_mnu(Event event, Sprite& ButtonClicked, LoadTexture Currnet_text
 	}
 	return true;
 }
+bool MouseInput_Settings_mnu(Event event, Sprite& ButtonClicked, LoadTexture Currnet_texture_enum, LoadTexture Desired_texture_enum, MenuSoundEffect Sound_Played_mnu)
+{
+	if (event.type == Event::MouseButtonPressed && event.mouseButton.button == Mouse::Left)
+	{
+		if (ButtonClicked.getGlobalBounds().contains(mousePosition))
+		{
+			UpdateAnimation(ButtonClicked, Desired_texture_enum);
+			PlayMenuSoundEffect(Sound_Played_mnu);
+		}
+	}
+	if (event.type == Event::MouseButtonReleased && event.mouseButton.button == Mouse::Left)
+	{
+		if (ButtonClicked.getGlobalBounds().contains(mousePosition))
+		{
+			//Logic for muting or opening the sound
+		}
+	}
+	return true;
+}
 
 bool PauseMenu_Movement(Vector2f Desired_Target)
 {
 	Current_Target = Desired_Target;
-	Current_position_mnu = Damp(Current_position_mnu, Current_Target, 5, dt);
+	Current_position_mnu = Damp(Current_position_mnu, Current_Target, 25, dt);
 	EndButton_Pausemnu.setPosition(Vector2f((windowSize.x / 2) - 35, (windowSize.y / 2) + 70) + Current_position_mnu - center);
 	RetryButton_Pausemnu.setPosition(Vector2f((windowSize.x / 2) + 435, (windowSize.y / 2) + 70) + Current_position_mnu - center);
 	ResumeButton_Pausemnu.setPosition(Vector2f((windowSize.x / 2 + 205), (windowSize.y / 2) + 220) + Current_position_mnu - center);
@@ -81,7 +97,7 @@ bool PauseMenu_Movement(Vector2f Desired_Target)
 bool WinMenu_Movement(Vector2f Desired_Target)
 {
 	Current_Target = Desired_Target;
-	Current_position_mnu = Damp(Current_position_mnu, Current_Target, 5, dt);
+	Current_position_mnu = Damp(Current_position_mnu, Current_Target, 25, dt);
 	Stone_mnu.setPosition(Current_position_mnu);
 	ContinueButton_Winmnu.setPosition(Vector2f((windowSize.x / 2) + 270, (windowSize.y / 2) + 200) + Current_position_mnu - center);
 	Continue_Wintxt.setPosition((ContinueButton_Winmnu.getGlobalBounds().left + ContinueButton_Winmnu.getGlobalBounds().width / 2), (ContinueButton_Winmnu.getGlobalBounds().top + ContinueButton_Winmnu.getGlobalBounds().height / 2) - 5);
@@ -93,7 +109,7 @@ bool WinMenu_Movement(Vector2f Desired_Target)
 bool GameoverMenu_Movement(Vector2f Desired_Target)
 {
 	Current_Target = Desired_Target;
-	Current_position_mnu = Damp(Current_position_mnu, Current_Target, 5, dt);
+	Current_position_mnu = Damp(Current_position_mnu, Current_Target, 25, dt);
 	Stone_mnu.setPosition(Current_position_mnu);
 	int x_shift_mnu = 350;
 	for (int i = 0; i < 3; i++)
@@ -105,6 +121,18 @@ bool GameoverMenu_Movement(Vector2f Desired_Target)
 	Retry_GOVERtxt.setPosition((GameOverbuttons_mnu[1].getGlobalBounds().left + GameOverbuttons_mnu[1].getGlobalBounds().width / 2), (GameOverbuttons_mnu[1].getGlobalBounds().top + GameOverbuttons_mnu[1].getGlobalBounds().height / 2) - 15);
 	Skip_GOVERtxt.setPosition((GameOverbuttons_mnu[0].getGlobalBounds().left + GameOverbuttons_mnu[0].getGlobalBounds().width / 2) + 30, (GameOverbuttons_mnu[0].getGlobalBounds().top + GameOverbuttons_mnu[0].getGlobalBounds().height / 2) - 10);
 	GameOver_txt.setPosition((GameOverbuttons_mnu[1].getGlobalBounds().left + GameOverbuttons_mnu[1].getGlobalBounds().width / 2), (GameOverbuttons_mnu[1].getGlobalBounds().top + GameOverbuttons_mnu[1].getGlobalBounds().height / 2) - 270);
+	if (Current_position_mnu == Desired_Target)
+	{
+		return false;
+	}
+}
+bool SettingMenu_Movement(Vector2f Desired_Target)
+{
+	Current_Target = Desired_Target;
+	Current_position_mnu = Damp(Current_position_mnu, Current_Target, 25, dt);
+
+	// I Will Handle this After You finish Settings Menu
+
 	if (Current_position_mnu == Desired_Target)
 	{
 		return false;
@@ -126,9 +154,9 @@ void InitializeMenu()
 	UpdateAnimation(Stone_mnu, menu_box_texture);
 	Stone_mnu.setPosition(windowSize.x / 2, windowSize.y / 2);
 
-	ApplyTexture(PauseIcon_mnu, LoadTexture::pause_icon_texture, Vector2f(75, 75));
+	ApplyTexture(PauseIcon_mnu, LoadTexture::pause_icon_texture, Vector2f(65, 65));
 	UpdateAnimation(PauseIcon_mnu, pause_icon_texture);
-	PauseIcon_mnu.setPosition(windowSize.x / 2 + 820, windowSize.y / 2 - 500);
+	PauseIcon_mnu.setPosition(windowSize.x / 2 + 830, windowSize.y / 2 - 505);
 
 	ApplyTexture(EndButton_Pausemnu, LoadTexture::stone_button_0_texture, Vector2f(700, 170));
 	UpdateAnimation(EndButton_Pausemnu, stone_button_0_texture);
@@ -275,7 +303,6 @@ void HandleMenuInput(Event event)
 		}
 		MouseInput_mnu(event, EndButton_Pausemnu, stone_button_0_texture, stone_button_1_texture, ButtonClick, LEVEL_MENU);
 		MouseInput_mnu(event, SettingButton_mnu, SettingsButton0_texture, SettingsButton0_texture, ButtonClick, SETTINGS);
-		//Damp(Current_mnu, Target_mnu, 200, dt);
 		break;
 	case WIN_MENU:
 		MouseInput_mnu(event, ContinueButton_Winmnu, stone_button_0_texture, stone_button_1_texture, ButtonClick, LEVEL_MENU);
@@ -363,8 +390,6 @@ void UpdateUI()
 		break;
 	case GAME:
 		// code for game UI
-		//GameoverMenu_Movement(Target_Down_mnu);
-		//PauseMenu_Movement(Target_Down_mnu);
 		if (PreviousMenu_State == GAMEOVER)
 		{
 			GameoverMenu_Movement(Target_Down_mnu);
