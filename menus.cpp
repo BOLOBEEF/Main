@@ -311,7 +311,7 @@ void DrawUI()
 		break;
 	case GAME:
 		// code for drawing game UI
-		//window.draw(PauseIcon_mnu);
+		window.draw(PauseIcon_mnu);
 		break;
 	default:
 		break;

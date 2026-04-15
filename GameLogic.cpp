@@ -31,7 +31,7 @@ Box box = Box(Vector2f(1100, 200));
 Final_door water_door = Final_door(Final_door::WATER_DOOR, Vector2f(1200, 25));
 Final_door fire_door = Final_door(Final_door::FIRE_DOOR, Vector2f(1300, 25));
 Switch lever = Switch(Vector2f(900, 800));
-Game_Door door = Game_Door(Game_Door::CLOSED, Vector2f(400.0f, 300.0f), Vector2f(400.0f, 200.0f));
+Game_Door door = Game_Door(Vector2f(400.0f, 300.0f), Vector2f(400.0f, 200.0f));
 
 Sprite ground;
 Click click = Click(Vector2f(1200, 800));
@@ -219,6 +219,7 @@ void InitializeGame()
 	fireGem.start();
 	waterGem.start();
 	click.start();
+	click.SetDoor(&door);
 	box.Initialize();
 	lever.start();
 	lever.SetDoor(&door);
@@ -406,6 +407,8 @@ void UpdateGame()
 {
 	if (gameState != GAME) return;
 
+	door.PreUpdate();
+
 	fireBoy.UpdateMotion();
 	waterGirl.UpdateMotion();
 
@@ -433,19 +436,30 @@ void UpdateGame()
 
 	
 	click.isPressed(fireBoy,waterGirl);
+	lever.Update();
 	
 
-	firePond.Update(fireBoy,waterGirl);
-	waterPond.Update(fireBoy,waterGirl);
-	poisonPond.Update(fireBoy,waterGirl);
+	firePond.UpdateFireBoy(fireBoy);
+	firePond.UpdateWaterGirl(waterGirl);
+	waterPond.UpdateFireBoy(fireBoy);
+	waterPond.UpdateWaterGirl(waterGirl);
+	poisonPond.UpdateFireBoy(fireBoy);
+	poisonPond.UpdateWaterGirl(waterGirl);
 
 	water_door.Update(waterGirl);
 	fire_door.Update(fireBoy);
 
 	if (fireBoy.isDead)
 		fireBoy.sprite.setColor(Color::Yellow);
+	else 
+		fireBoy.sprite.setColor(Color::Red);
+
+
 	if (waterGirl.isDead)
 		waterGirl.sprite.setColor(Color::Yellow);
+	else
+		waterGirl.sprite.setColor(Color::Blue);
+
 	if (water_door.player_on_door && fire_door.player_on_door)
 	{
 		water_door.sprite.setColor(Color(128, 0, 128));

@@ -132,7 +132,12 @@ void InitializeAudio()
 	LevelGameoverSound.loadFromFile("Main/Assets/Sounds/LevelGameOver.mp3");
 	ClockSound.loadFromFile("Main/Assets/Sounds/Clock.mp3");
 	DiamondCollectingSound.loadFromFile("Main/Assets/Sounds/DiamondCollecting.mp3");
-	// load all buffers here
+
+
+	for (int i = 0; i < 6; i++)
+	{
+		soundEffectsPlayers[i].setVolume(100.0f);
+	}
 }
 
 void PlayMusic(BackgroundMusic music) {
@@ -194,88 +199,128 @@ void PlayMenuSoundEffect(MenuSoundEffect soundEffect) {
 	}
 }
 
-void PlayGameSoundEffect(GameSoundEffect soundEffect) {
-	for (int i = 0; i < 6; i++)
-	{
-		soundEffectsPlayers[i].setVolume(100.0f);
-	}
+void PlayGameSoundEffect(GameSoundEffect soundEffect, bool loop = false) {
+	// if loop -> set loop to true and start playing
+	// if not looping a sound that should be looped -> stop that sound
 
 	switch (soundEffect)
 	{
 	case GameOver_sound:
 		soundEffectsPlayers[0].setBuffer(LevelGameoverSound);
+		soundEffectsPlayers[0].setLoop(false);
 		soundEffectsPlayers[0].play();
 		break;
 	case Win_sound:
 		soundEffectsPlayers[0].setBuffer(LevelWinSound);
+		soundEffectsPlayers[0].setLoop(false);
 		soundEffectsPlayers[0].play();
 		break;
 
 	case Walking_boy_sound:
 		soundEffectsPlayers[1].setBuffer(StepsSound);
-		soundEffectsPlayers[1].play();
+		soundEffectsPlayers[1].setLoop(loop);
+		if (loop)
+			soundEffectsPlayers[1].play();
+		else 
+			soundEffectsPlayers[1].stop();
+		
 		break;
 	case Walking_girl_sound:
 		soundEffectsPlayers[2].setBuffer(StepsSound);
-		soundEffectsPlayers[2].play();
+		soundEffectsPlayers[2].setLoop(loop);
+		if (loop)
+			soundEffectsPlayers[2].play();
+		else
+			soundEffectsPlayers[2].stop();
+
 		break;
 	case IceSteps_Fb_sound:
 		soundEffectsPlayers[1].setBuffer(IceSteps_FbSound);
-		soundEffectsPlayers[1].play();
+		soundEffectsPlayers[1].setLoop(loop);
+		if (loop)
+			soundEffectsPlayers[1].play();
+		else
+			soundEffectsPlayers[1].stop();
 		break;
 	case IceSteps_Wg_sound:
 		soundEffectsPlayers[2].setBuffer(IceSteps_WgSound);
-		soundEffectsPlayers[2].play();
+		soundEffectsPlayers[2].setLoop(loop);
+		if (loop)
+			soundEffectsPlayers[2].play();
+		else
+			soundEffectsPlayers[2].stop();
 		break;
 	case Pondsteps_boy_sound:
 		soundEffectsPlayers[1].setBuffer(PondStepsSound);
-		soundEffectsPlayers[1].play();
+		soundEffectsPlayers[1].setLoop(loop);
+		if (loop)
+			soundEffectsPlayers[1].play();
+		else
+			soundEffectsPlayers[1].stop();
 		break;
 	case Pondsteps_girl_sound:
 		soundEffectsPlayers[2].setBuffer(PondStepsSound);
-		soundEffectsPlayers[2].play();
+		soundEffectsPlayers[2].setLoop(loop);
+		if (loop)
+			soundEffectsPlayers[2].play();
+		else
+			soundEffectsPlayers[2].stop();
 		break;
 	case Death_sound:
 		soundEffectsPlayers[1].setBuffer(DeathSound);
 		soundEffectsPlayers[2].setBuffer(DeathSound);
+		soundEffectsPlayers[1].setLoop(false);
 		soundEffectsPlayers[1].play();
 		break;
 	case BoyJump_sound:
 		soundEffectsPlayers[1].setBuffer(BoyJumpSound);
+		soundEffectsPlayers[1].setLoop(false);
 		soundEffectsPlayers[1].play();
 		break;
 	case GirlJump_sound:
 		soundEffectsPlayers[2].setBuffer(GirlJumpSound);
+		soundEffectsPlayers[2].setLoop(false);
 		soundEffectsPlayers[2].play();
 		break;
 
 	case Door_sound:
 		soundEffectsPlayers[3].setBuffer(DoorSound);
+		soundEffectsPlayers[3].setLoop(false);
 		soundEffectsPlayers[3].play();
 		break;
 	case Lever_sound:
 		soundEffectsPlayers[3].setBuffer(LeverSound);
+		soundEffectsPlayers[3].setLoop(false);
 		soundEffectsPlayers[3].play();
 		break;
 	case Platform_sound:
 		soundEffectsPlayers[3].setBuffer(PlatformSound);
+		soundEffectsPlayers[3].setLoop(false);
 		soundEffectsPlayers[3].play();
 		break;
 
 	case pondFreeze_sound:
 		soundEffectsPlayers[4].setBuffer(PondFreezeSound);
+		soundEffectsPlayers[4].setLoop(false);
 		soundEffectsPlayers[4].play();
 		break;
 	case PondMelt_sound:
 		soundEffectsPlayers[4].setBuffer(PondMeltSound);
+		soundEffectsPlayers[4].setLoop(false);
 		soundEffectsPlayers[4].play();
 		break;
 	case Wind_sound:
 		soundEffectsPlayers[4].setBuffer(WindSound);
-		soundEffectsPlayers[4].play();
+		soundEffectsPlayers[4].setLoop(false);
+		soundEffectsPlayers[4].setLoop(loop);
+		if (loop)
+			soundEffectsPlayers[4].play();
+		else
+			soundEffectsPlayers[4].stop();
 		break;
 	case DiamondCollect_sound:
 		soundEffectsPlayers[5].setBuffer(DiamondCollectingSound);
+		soundEffectsPlayers[5].setLoop(false);
 		soundEffectsPlayers[5].play();
 		break;
 	default:

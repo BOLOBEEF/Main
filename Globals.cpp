@@ -118,7 +118,7 @@ void UpdateGlobals() {
 
 void Draw()
 {
-	DrawUI();
 	DrawGame(false);
+	DrawUI();
 	DrawTest();
 }
