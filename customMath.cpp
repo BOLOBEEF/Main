@@ -85,6 +85,12 @@ float Damp(float current, float target, float speed, float dt)
 
 	return target + (current - target) * Clamp(pow(1 / speed, dt), 0, 1);
 }
+
+Vector2f Damp(Vector2f current, Vector2f target, float speed, float dt)
+{
+	return Vector2f(Damp(current.x, target.x, speed, dt), Damp(current.y, target.y, speed, dt));
+}
+
 float DampAngle(float current, float target, float smoothing, float dt) {
 	// Ensure the angles are between 0 and 360
 	while (current < 0) current += 360;
