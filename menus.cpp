@@ -288,14 +288,17 @@ void DrawUI()
 		window.draw(Pause_txt);
 		break;
 	case WIN_MENU:
+		DrawGame(true);
 		window.draw(Stone_mnu);
 		window.draw(ContinueButton_Winmnu);
 		window.draw(Continue_Wintxt);
 		break;
 	case SETTINGS:
 		// code for drawing settings menu
+		DrawGame(true);
 		break;
 	case GAMEOVER:
+		DrawGame(true);
 		window.draw(Stone_mnu);
 		for (int i = 0; i < 3; i++)
 		{

@@ -65,7 +65,7 @@ enum GameState
 
 
 // DO NOT CHANGE THIS DIRECTLY, USE UpdateGameState() INSTEAD
-GameState gameState = GAMEOVER;
+GameState gameState = GAME;
 
 
 
