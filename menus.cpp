@@ -10,6 +10,11 @@
 
 
 // Runtime variables
+RectangleShape Dimmed_Backgriund;
+//Vector2f Current_mnu = Vector2f(Stone_mnu.getPosition().x, Stone_mnu.getPosition().y);
+//Vector2f Target_mnu = Vector2f(Stone_mnu.getPosition().x, Stone_mnu.getPosition().y + 1000);
+//float Current_mnu = ( Stone_mnu.getPosition().y);
+//float Target_mnu =  Stone_mnu.getPosition().y + 1000;
 Sprite Stone_mnu;
 Sprite SettingButton_mnu;
 Sprite EndButton_Pausemnu;
@@ -29,19 +34,22 @@ Text Continue_Wintxt;
 
 
 // Functions
-bool MouseInput_mnu(Event event, Sprite& ButtonClicked, LoadTexture texture_enum_mnu, GameState state_mnu)
+bool MouseInput_mnu(Event event, Sprite& ButtonClicked, LoadTexture Currnet_texture_enum, LoadTexture Desired_texture_enum, MenuSoundEffect Sound_Played_mnu,GameState state_mnu)
 {
 	if (event.type == Event::MouseButtonPressed && event.mouseButton.button == Mouse::Left)
 	{
 		if (ButtonClicked.getGlobalBounds().contains(mousePosition))
 		{
-			UpdateAnimation(ButtonClicked, texture_enum_mnu);
+			UpdateAnimation(ButtonClicked, Desired_texture_enum);
+			//Damp(Current_mnu, Target_mnu, 200, dt);
+			PlayMenuSoundEffect(Sound_Played_mnu);
 		}
 	}
 	if (event.type == Event::MouseButtonReleased && event.mouseButton.button == Mouse::Left)
 	{
 		if (ButtonClicked.getGlobalBounds().contains(mousePosition))
 		{
+			UpdateAnimation(ButtonClicked, Currnet_texture_enum);
 			UpdateGameState(state_mnu);
 		}
 	}
@@ -53,14 +61,20 @@ void InitializeMenu()
 	font.loadFromFile("Main/Assets/Fonts/trajanpro-bold.otf");
 	fpsDisplay.setFont(font);
 	fpsDisplay.setCharacterSize(24);
+
+	//Dimmed Background
+	Dimmed_Backgriund.setSize(Vector2f(window.getSize().x, window.getSize().y));
+	Dimmed_Backgriund.setPosition(window.getPosition().x / 2, window.getPosition().y / 2);
+	Dimmed_Backgriund.setFillColor(Color(0, 0, 0, 180));
+
 	//Pause menu
 	ApplyTexture(Stone_mnu, LoadTexture::menu_box_texture, Vector2f(windowSize.x - 600, windowSize.y - 250));
 	UpdateAnimation(Stone_mnu, menu_box_texture);
 	Stone_mnu.setPosition(windowSize.x / 2, windowSize.y / 2);
 
-	ApplyTexture(PauseIcon_mnu, LoadTexture::pause_icon_texture, Vector2f(105, 105));
+	ApplyTexture(PauseIcon_mnu, LoadTexture::pause_icon_texture, Vector2f(75, 75));
 	UpdateAnimation(PauseIcon_mnu, pause_icon_texture);
-	PauseIcon_mnu.setPosition(windowSize.x / 2, windowSize.y / 2);
+	PauseIcon_mnu.setPosition(windowSize.x / 2 + 820, windowSize.y / 2 - 500);
 
 	ApplyTexture(EndButton_Pausemnu, LoadTexture::stone_button_0_texture, Vector2f(700, 170));
 	UpdateAnimation(EndButton_Pausemnu, stone_button_0_texture);
@@ -199,30 +213,32 @@ void HandleMenuInput(Event event)
 
 		break;
 	case PAUSE_MENU:
-		MouseInput_mnu(event, ResumeButton_Pausemnu, stone_button_1_texture, GAME);
-		if (MouseInput_mnu(event, RetryButton_Pausemnu, stone_button_1_texture, GAME))
+		MouseInput_mnu(event, ResumeButton_Pausemnu, stone_button_0_texture, stone_button_1_texture, ButtonClick, GAME);
+		if (MouseInput_mnu(event, RetryButton_Pausemnu, stone_button_0_texture, stone_button_1_texture, ButtonClick, GAME))
 		{
 			//call function reset
 		}
-		MouseInput_mnu(event, EndButton_Pausemnu, stone_button_1_texture, LEVEL_MENU);
-		MouseInput_mnu(event, SettingButton_mnu, stone_button_1_texture, SETTINGS);
+		MouseInput_mnu(event, EndButton_Pausemnu, stone_button_0_texture, stone_button_1_texture, ButtonClick, LEVEL_MENU);
+		MouseInput_mnu(event, SettingButton_mnu, SettingsButton0_texture, SettingsButton0_texture, ButtonClick, SETTINGS);
+		//Damp(Current_mnu, Target_mnu, 200, dt);
 		break;
 	case WIN_MENU:
-		MouseInput_mnu(event, ContinueButton_Winmnu, stone_button_1_texture, LEVEL_MENU);
+		MouseInput_mnu(event, ContinueButton_Winmnu, stone_button_0_texture, stone_button_1_texture, ButtonClick, LEVEL_MENU);
 		break;
 	case SETTINGS:
 		// code for handling settings menu input
 		break;
 	case GAMEOVER:
-		MouseInput_mnu(event, GameOverbuttons_mnu[0], stone_button_1_texture, LEVEL_MENU);
-		MouseInput_mnu(event, GameOverbuttons_mnu[2], stone_button_1_texture, MAIN_MENU);
-		if (MouseInput_mnu(event, GameOverbuttons_mnu[1], stone_button_1_texture, GAME))
+		MouseInput_mnu(event, GameOverbuttons_mnu[0], stone_button_0_texture, stone_button_1_texture, ButtonClick, LEVEL_MENU);
+		MouseInput_mnu(event, GameOverbuttons_mnu[2], stone_button_0_texture, stone_button_1_texture, ButtonClick, MAIN_MENU);
+		if (MouseInput_mnu(event, GameOverbuttons_mnu[1], stone_button_0_texture, stone_button_1_texture, ButtonClick, GAME))
 		{
 			//call function reset
 		}
 		break;
 	case GAME:
 		// code for handling game UI input
+		MouseInput_mnu(event, PauseIcon_mnu, pause_icon_texture, pause_icon_texture, ButtonClick, PAUSE_MENU);
 		break;
 	default:
 		break;
@@ -277,6 +293,7 @@ void DrawUI()
 		break;
 	case PAUSE_MENU:
 		DrawGame(true);
+		window.draw(Dimmed_Backgriund);
 		window.draw(Stone_mnu);
 		window.draw(EndButton_Pausemnu);
 		window.draw(RetryButton_Pausemnu);
@@ -289,6 +306,7 @@ void DrawUI()
 		break;
 	case WIN_MENU:
 		DrawGame(true);
+		window.draw(Dimmed_Backgriund);
 		window.draw(Stone_mnu);
 		window.draw(ContinueButton_Winmnu);
 		window.draw(Continue_Wintxt);
@@ -296,9 +314,11 @@ void DrawUI()
 	case SETTINGS:
 		// code for drawing settings menu
 		DrawGame(true);
+		window.draw(Dimmed_Backgriund);
 		break;
 	case GAMEOVER:
 		DrawGame(true);
+		window.draw(Dimmed_Backgriund);
 		window.draw(Stone_mnu);
 		for (int i = 0; i < 3; i++)
 		{
