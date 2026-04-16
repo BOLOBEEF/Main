@@ -791,17 +791,13 @@ struct Gem
 	Gemtype gemtype;
 	Sprite sprite;
 	bool isCollected = false;
-	void start() {
+
+	void Initialize() {
 		ApplyTexture(sprite, LoadTexture::RECTANGLE, Vector2f(30, 30));
-		if (gemtype == waterGem) {
+		if (gemtype == waterGem)
 			sprite.setColor(Color::Blue);
-
-		}
 		else
-		{
 			sprite.setColor(Color::Red);
-		}
-
 	}
 
 	Gem(){}
@@ -810,7 +806,8 @@ struct Gem
 		sprite.setPosition(position);
 		AllignSprite(sprite);
 	}
-	void checkintersect(Player hamada) {
+
+	void Update(Player hamada) {
 		if (gemtype == waterGem && hamada.playertype == Player::Watergirl) {
 			if (sprite.getGlobalBounds().intersects(hamada.sprite.getGlobalBounds())) {
 				PlayGameSoundEffect(GameSoundEffect::DiamondCollect_sound);
@@ -834,12 +831,12 @@ struct Door
 	Collider collider;
 	Vector2f startPosition;
 	Vector2f endPosition;
-	const float speed = 100.0f;
+	float speed = 100.0f;
 
 	Vector2f door_position = Vector2f(collider.sprite.getPosition());
 	bool rotated = false;
 
-	void Intialization() {
+	void Initialize() {
 		collider = Collider(Collider::ColliderType::Rectangle, startPosition);
 
 		ApplyTexture(sprite, LoadTexture::RECTANGLE, Vector2f(32, 32 * 2));
@@ -860,8 +857,8 @@ struct Door
 	}
 
 	Door(){}
-	Door(Vector2f start, Vector2f end) {
-		startPosition = start;
+	Door(Vector2f Initialize, Vector2f end) {
+		startPosition = Initialize;
 		endPosition = end;
 	}
 
@@ -869,13 +866,16 @@ struct Door
 		isOpen = false;
 	}
 
-	void moving_door()
-	{
+	void CheckCollision(Player& player) {
+		player.isOnGround |= collider.CheckCollision(player);
+	}
+
+	void UpdateMovement() {
 		if (isOpen) {
 			sprite.setColor(Color::Magenta);
 
 			Vector2f direction = endPosition - sprite.getPosition();
-			
+
 			if (abs(direction.x) + abs(direction.y) < 10) return; // avoid moving and overshooting when close to the end position
 
 			direction = Normalize(direction);
@@ -885,7 +885,7 @@ struct Door
 			sprite.setColor(Color::Yellow);
 
 			Vector2f direction = startPosition - sprite.getPosition();
-			
+
 			if (abs(direction.x) + abs(direction.y) < 10) return; // avoid moving and overshooting when close to the start position
 
 			direction = Normalize(direction);
@@ -894,8 +894,63 @@ struct Door
 		collider.sprite.setPosition(sprite.getPosition());
 	}
 
-	void CheckCollision(Player& player) {
-		player.isOnGround |= collider.CheckCollision(player);
+	void Update(Player& fireBoy, Player& waterGirl)
+	{
+		UpdateMovement();
+
+		CheckCollision(fireBoy);
+		CheckCollision(waterGirl);
+	}
+};
+struct Lever {
+	Sprite sprite;
+	Door* door;
+	bool hasDoor = false;
+
+	bool moved = false;
+	void Initialize() {
+		ApplyTexture(sprite, LoadTexture::RECTANGLE, Vector2f(20, 50));
+		sprite.setColor(Color::Cyan);
+	}
+
+	Lever(){}
+	Lever(Vector2f postion) {
+		sprite.setPosition(postion);
+		AllignSprite(sprite);
+	}
+
+	void SetDoor(Door* newDoor) {
+		door = newDoor;
+		hasDoor = true;
+	}
+
+	void CheckInput(Player moroo, Player mora, Event event) {
+		if (!hasDoor) return;
+
+		if (event.type == Event::KeyPressed) {
+			if (event.key.code == Keyboard::Space) {
+				if (sprite.getGlobalBounds().intersects(moroo.sprite.getGlobalBounds()) || sprite.getGlobalBounds().intersects(mora.sprite.getGlobalBounds())) {
+
+					moved = !moved;
+					if (moved) 
+					{ 
+						door->isOpen = true; 
+						sprite.setColor(Color::Green);
+						PlayGameSoundEffect(GameSoundEffect::Lever_sound);
+					}
+					else
+					{
+						sprite.setColor(Color::Cyan);
+						PlayGameSoundEffect(GameSoundEffect::Lever_sound);
+					}
+				}
+			}
+		}
+	}
+
+	void Update() {
+		if (!hasDoor) return;
+		door->isOpen |= moved;
 	}
 };
 struct Click
@@ -905,7 +960,7 @@ struct Click
 	Door* door;
 	bool hasDoor = false;
 
-	void start() {
+	void Initialize() {
 		ApplyTexture(sprite, LoadTexture::RECTANGLE, Vector2f(30, 30));
 		sprite.setColor(Color::Yellow);
 	}
@@ -921,7 +976,7 @@ struct Click
 		hasDoor = true;
 	}
 
-	void isPressed(Player anteel,Player anteela) {
+	void Update(Player anteel,Player anteela) {
 		if (!hasDoor) return;
 
 		bool lastState = buttonpressed;
@@ -966,6 +1021,18 @@ struct Pond
 	void Initialilze() {
 		ApplyTexture(sprite, LoadTexture::RECTANGLE, Vector2f(32 * 5, 32));
 		AllignSprite(sprite);
+
+		switch (type)
+		{
+		case Pond::POISON_POND: sprite.setColor(Color::Green);
+			break;
+		case Pond::FIRE_POND: sprite.setColor(Color::Red);
+			break;
+		case Pond::WATER_POND: sprite.setColor(Color::Blue);
+			break;
+		default:
+			break;
+		}
 	}
 
 	void UpdateFireBoy(Player& fireBoy) {
@@ -1050,14 +1117,20 @@ struct Box {
 
 	void Initialize() {
 		collider = Collider(Collider::ColliderType::Rectangle, startPosition);
-		ApplyTexture(collider.sprite, LoadTexture::RECTANGLE, Vector2f(48, 48));
+		ApplyTexture(collider.sprite, LoadTexture::movingbox_texture, Vector2f(48, 48));
+		collider.sprite.setTexture(movingbox);
 		collider.sprite.setPosition(startPosition);
 	}
 
-	void CheckColliderCollision(Collider collider) {
-		Collider::CollisionData collisionData = collider.CheckRectangleCollision(collider.sprite, collider.sprite.getGlobalBounds());
-		if (collisionData.collisionDirection == Collider::CollisionData::CollisionDirection::Top)
-			velocity.y = min(velocity.y, 1.0f);
+	void CheckCollision(ColliderList& colliders, Collider::CollisionData* colliderDatas) {
+		for (int i = 0; i < colliders.count; i++)
+		{
+			Collider::CollisionData collisionData = colliders.elements[i].CheckRectangleCollision(collider.sprite, colliders.elements[i].sprite.getGlobalBounds());
+			if (collisionData.collisionDirection == Collider::CollisionData::CollisionDirection::Top)
+				velocity.y = min(velocity.y, 1.0f);
+
+			colliderDatas[i] = collisionData;
+		}
 	}
 
 	void UpdatePhysics() {
@@ -1066,7 +1139,7 @@ struct Box {
 		collider.sprite.move(velocity * dt);
 	}
 
-	void CheckPlayerCollision(Player& player, Collider::CollisionData* boxCollisionDatas, int colliderCount) {
+	void CheckCollision(Player& player, Collider::CollisionData* boxCollisionDatas, int colliderCount) {
 		Collider::CollisionData collisionData;
 		player.isOnGround |= collider.CheckCollision(player, collisionData, FloatRect(), 1.0f, false);
 		if (collisionData.collisionDirection != Collider::CollisionData::CollisionDirection::None) player.isPushing = true;
@@ -1098,62 +1171,33 @@ struct Box {
 
 	}
 
+	void Update(Player& fireBoy, Player& waterGirl, ColliderList& colliders) {
+		UpdatePhysics();
+		Collider::CollisionData* boxCollisionDatas = new Collider::CollisionData[colliders.count];
+		CheckCollision(colliders, boxCollisionDatas);
+		CheckCollision(fireBoy, boxCollisionDatas, colliders.count);
+		CheckCollision(waterGirl, boxCollisionDatas, colliders.count);
+		delete[] boxCollisionDatas;
+	}
 
-	void Draw(RenderTarget& renderTarget) {
-		renderTarget.draw(collider.sprite);
+	void PreDraw() {
+		Sprite displaySprite = collider.sprite;
+		displaySprite.scale(1.1f, 1.1f);
+		window.draw(displaySprite);
 	}
 };
-struct Lever {
-	Sprite sprite;
-	Door* door;
-	bool hasDoor = false;
 
-	bool moved = false;
-	void start() {
-		ApplyTexture(sprite, LoadTexture::RECTANGLE, Vector2f(20, 50));
-		sprite.setColor(Color::Cyan);
-	}
 
-	Lever(){}
-	Lever(Vector2f postion) {
-		sprite.setPosition(postion);
-		AllignSprite(sprite);
-	}
 
-	void SetDoor(Door* newDoor) {
-		door = newDoor;
-		hasDoor = true;
-	}
 
-	void leverMove(Player moroo, Player mora, Event event) {
-		if (!hasDoor) return;
 
-		if (event.type == Event::KeyPressed) {
-			if (event.key.code == Keyboard::Space) {
-				if (sprite.getGlobalBounds().intersects(moroo.sprite.getGlobalBounds()) || sprite.getGlobalBounds().intersects(mora.sprite.getGlobalBounds())) {
-
-					moved = !moved;
-					if (moved) 
-					{ 
-						door->isOpen = true; 
-						sprite.setColor(Color::Green);
-						PlayGameSoundEffect(GameSoundEffect::Lever_sound);
-					}
-					else
-					{
-						sprite.setColor(Color::Cyan);
-						PlayGameSoundEffect(GameSoundEffect::Lever_sound);
-					}
-				}
-			}
-		}
-	}
-
-	void Update() {
-		if (!hasDoor) return;
-		door->isOpen |= moved;
-	}
-};
+// this is a generic object struct to have any level object
+// how to add a new object
+// 1. finish it's normal struct
+// 2. add it in the ObjectData struct and add it to the copyFrom function
+// 3. add a new enum for it in ObjectType enum
+// 4. add an Initialize"enum name here" funtion for it		for ex: InitializeGemObject is just the construct of Gem + gem.Initialize() at it's end
+// 5. add it's update and draw and checkInput functions to the switch cases of the Object struct if needed
 
 struct ObjectData {
 	Gem gem;
@@ -1162,40 +1206,278 @@ struct ObjectData {
 	Pond pond;
 	Box box;
 	Lever lever;
+
+	void CopyFrom(ObjectData other) {
+		gem = other.gem;
+		door = other.door;
+		button = other.button;
+		pond = other.pond;
+		lever = other.lever;
+	}
 };
 
 struct Object {
 	enum ObjectType
 	{
 		GemObject,
+		LeverObject,
 		DoorObject,
 		ClickObject,
 		PondObject,
-		SwitchObject,
 		BoxObject,
 	} type;
 
 	ObjectData data;
 
+	Object(){} // empty constructor for ObjectList to work
 	Object(ObjectType startType) {
 		type = startType;
+	}
+
+	void CopyFrom(Object other) {
+		type = other.type;
+		data.CopyFrom(other.data);
+	}
+
+	void InitializeGemObject(Gem::Gemtype crystaltype, Vector2f position) {
+		data.gem.gemtype = crystaltype;
+		data.gem.sprite.setPosition(position);
+		AllignSprite(data.gem.sprite);
+		data.gem.Initialize();
+	}
+
+	void InitializeLeverObject(Vector2f postion) {
+		data.lever.sprite.setPosition(postion);
+		AllignSprite(data.lever.sprite);
+		data.lever.Initialize();
+	}
+
+	void InitializeDoorObject(Vector2f Initialize, Vector2f end) {
+		data.door.startPosition = Initialize;
+		data.door.endPosition = end;
+		data.door.Initialize();
+	}
+
+	void InitializeClickObject(Vector2f postion) {
+		data.button.sprite.setPosition(postion);
+		AllignSprite(data.button.sprite);
+		data.button.Initialize();
+	}
+
+	void InitializePondObject(Pond::ponds_type startType, Vector2f position) {
+		data.pond.type = startType;
+		data.pond.sprite.setPosition(position);
+		data.pond.Initialilze();
+	}
+
+	void InitializeBoxObject(Vector2f position) {
+		data.box.startPosition = position;
+		data.box.Initialize();
+	}
+
+	void SetDoor(Object other) {
+		if (other.type != DoorObject) return;
+		Door& door = other.data.door;
 
 		switch (type)
 		{
-		case GemObject:
+		case Object::LeverObject: data.lever.SetDoor(&door);
 			break;
-		case DoorObject:
+		case Object::ClickObject: data.button.SetDoor(&door);
 			break;
-		case ClickObject:
+		}
+	}
+
+	void CheckInput(Player& fireboy, Player& waterGirl, Event event) {
+		switch (type)
+		{
+		case Object::GemObject:
 			break;
-		case PondObject:
+		case Object::LeverObject: data.lever.CheckInput(fireboy, waterGirl, event);
 			break;
-		case SwitchObject:
+		case Object::DoorObject:
 			break;
-		case BoxObject:
+		case Object::ClickObject:
+			break;
+		case Object::PondObject:
+			break;
+		case Object::BoxObject:
 			break;
 		default:
 			break;
 		}
+	}
+
+	void PreUpdate(Player& fireboy, Player& waterGirl) {
+		switch (type)
+		{
+		case Object::DoorObject: data.door.PreUpdate();
+			break;
+		}
+	}
+
+	void Update(Player& fireBoy, Player& waterGirl, ColliderList& colliders) {
+		switch (type)
+		{
+		case Object::GemObject:
+			data.gem.Update(fireBoy);
+			data.gem.Update(waterGirl);
+			break;
+		case Object::ClickObject: data.button.Update(fireBoy, waterGirl);
+			break;
+		case Object::PondObject:
+			data.pond.UpdateFireBoy(fireBoy);
+			data.pond.UpdateWaterGirl(waterGirl);
+			break;
+		case Object::LeverObject: data.lever.Update();
+			break;
+		case Object::BoxObject: data.box.Update(fireBoy, waterGirl, colliders);
+			break;
+		default:
+			break;
+		}
+	}
+
+	void PostUpdate(Player& fireBoy, Player& waterGirl) {
+		switch (type)
+		{
+		case Object::DoorObject: data.door.Update(fireBoy, waterGirl);
+			break;
+		}
+	}
+
+	// draw behind the players
+	void PreDraw() {
+		switch (type)
+		{
+		case Object::GemObject: window.draw(data.gem.sprite);
+			break;
+		}
+	}
+
+	// draw on top of the players
+	void PostDraw() {
+		switch (type)
+		{
+		case Object::DoorObject: window.draw(data.door.sprite);
+			break;
+		case Object::ClickObject: window.draw(data.button.sprite);
+			break;
+		case Object::PondObject: window.draw(data.pond.sprite);
+			break;
+		case Object::LeverObject: window.draw(data.lever.sprite);
+			break;
+		case Object::BoxObject: data.box.PreDraw();
+			break;
+		}
+	}
+};
+
+
+// just doing Object = another object gives an error for some reason
+// so had to add a copy funtcion instaed
+struct ObjectList {
+	int count = 0;
+	Object* elements;
+
+	ObjectList() {
+		elements = new Object[count];
+	}
+
+	void Add(Object element) {
+		Object* temp = new Object[count];
+
+		for (int i = 0; i < count; i++)
+			temp[i].CopyFrom(elements[i]);
+
+		count++;
+		elements = new Object[count];
+
+		if (count - 1 >= 0)
+			for (int i = 0; i < count - 1; i++)
+				elements[i].CopyFrom(temp[i]);
+
+		delete[] temp;
+
+		elements[count - 1].CopyFrom(element);
+	}
+
+	void RemoveAt(int index) {
+		if (count <= 0 || index < 0 || index >= count) return;
+
+		Object* temp = new Object[count];
+
+		for (int i = 0; i < count; i++)
+			temp[i].CopyFrom(elements[i]);
+
+		count--;
+		elements = new Object[count];
+
+		for (int i = 0; i < count; i++)
+			if (i < index)
+				elements[i].CopyFrom(temp[i]);
+			else
+				elements[i].CopyFrom(temp[i + 1]);
+
+		delete[] temp;
+	}
+
+	Object& GetLastElement() {
+		return elements[count - 1];
+	}
+
+	~ObjectList() {
+		delete[] elements;
+	}
+};
+
+struct IndexList {
+	int count = 0;
+	int* elements;
+
+	IndexList() {
+		elements = new int[count];
+	}
+
+	void Add(int element) {
+		int* temp = new int[count];
+
+		for (int i = 0; i < count; i++)
+			temp[i] = elements[i];
+
+		count++;
+		elements = new int[count];
+
+		if (count - 1 >= 0)
+			for (int i = 0; i < count - 1; i++)
+				elements[i] = temp[i];
+
+		delete[] temp;
+
+		elements[count - 1] = element;
+	}
+
+	void RemoveAt(int index) {
+		if (count <= 0 || index < 0 || index >= count) return;
+
+		int* temp = new int[count];
+
+		for (int i = 0; i < count; i++)
+			temp[i] = elements[i];
+
+		count--;
+		elements = new int[count];
+
+		for (int i = 0; i < count; i++)
+			if (i < index)
+				elements[i] = temp[i];
+			else
+				elements[i] = temp[i + 1];
+
+		delete[] temp;
+	}
+
+	~IndexList() {
+		delete[] elements;
 	}
 };

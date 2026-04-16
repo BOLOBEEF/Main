@@ -76,7 +76,7 @@ int main()
 
 		window.clear();
 
-		Draw();
+		PreDraw();
 
 		window.display();
 	}
