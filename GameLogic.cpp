@@ -27,6 +27,7 @@ FinalDoor water_door = FinalDoor(FinalDoor::WATER_DOOR, Vector2f(1200, 25));
 FinalDoor fire_door = FinalDoor(FinalDoor::FIRE_DOOR, Vector2f(1300, 25));
 
 Sprite ground;
+//Sprite background;
 
 RenderTexture maskTexture;
 RenderTexture resultTexture;
@@ -237,6 +238,9 @@ void InitializeGame()
 
 	ApplyTexture(ground, LoadTexture::GROUND, Vector2f(256, 256));
 	ground.setTextureRect(IntRect(0, 0, windowSize.x, windowSize.y));
+
+	/*ApplyTexture(background, LoadTexture::BACKGROUND, Vector2f(256, 256));
+	background.setTextureRect(IntRect(0, 0, windowSize.x, windowSize.y));*/
 
 
 	maskTexture.create(windowSize.x, windowSize.y);
@@ -463,6 +467,7 @@ void DrawGame(bool forceDraw)
 	if (!forceDraw && gameState != GAME) return;
 
 	// no need for window.clear or window.display
+	//window.draw(background);
 	window.draw(outlineSprite);
 	window.draw(resultSprite);
 
