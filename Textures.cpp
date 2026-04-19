@@ -15,6 +15,13 @@
 
 enum LoadTexture
 {
+	//texture for temporary_ground
+	
+	/*--------------------------------------------*/
+	TEMPORARY_GROUND,
+	/*--------------------------------------------*/
+
+	// texture for game objects
 	PLAYER_FIRE,
 	TRIANGLE,
 	TRIANGLE_ROTATED,
@@ -261,7 +268,16 @@ void ApplyTexture(Sprite& sprite, LoadTexture texture, Vector2f size = Vector2f(
 
 	switch (texture)
 	{
+
 		// char assets
+
+		// this is new!!
+		/*--------------------------------------------*/
+		case TEMPORARY_GROUND:
+			sprite.setTexture(groundTexture);
+			break;
+			/*--------------------------------------------*/
+
 	case death_smoke_texture:
 		sprite.setTexture(death_smoke);
 		break;

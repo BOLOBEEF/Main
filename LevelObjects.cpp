@@ -1481,3 +1481,59 @@ struct IndexList {
 		delete[] elements;
 	}
 };
+
+struct Temporary_ground
+{
+	Sprite sprite;
+	Collider collider;
+	Vector2f startPosition;
+	bool idle = true;
+	//bool player_on_ground = false;
+	Temporary_ground() {}
+	Temporary_ground(Vector2f position) {
+		sprite.setPosition(position);
+		AllignSprite(sprite);
+	}
+	void CheckCollision(Player& player, Temporary_ground& temp) {
+		if(player.sprite.getGlobalBounds().intersects(temp.sprite.getGlobalBounds()))
+			temp.idle = false;
+		//else
+		//	temp.idle = true;
+	}
+	void Initialize() {
+		//collider = Collider(Collider::ColliderType::Rectangle, sprite.getPosition());
+		ApplyTexture(sprite, LoadTexture::RECTANGLE, Vector2f(32*2, 32));
+		sprite.setColor(Color::Cyan);
+	}
+	void update(Player& player,Temporary_ground& temp) {
+		CheckCollision(player,temp);
+		static float timer = 0.0f;
+		Clock clock;
+		if (!temp.idle) {
+			sprite.setColor(Color::Magenta);
+			collider.sprite.setColor(Color::Magenta);
+			timer += dt;
+			
+			if (timer >= 5.0f)
+			{
+				cout << "Omar";
+				temp.sprite.setPosition(5000, 5000);
+				timer = 0.0f;
+				temp.idle = true;
+			}
+		}
+		else {
+			sprite.setColor(Color::Cyan);
+			collider.sprite.setColor(Color::Cyan);
+			//float timer = 0.0f;
+			timer += dt;
+			if (timer >= 8.0f)
+			{
+				cout << "Ahmed";
+				timer = 0.0f;
+				temp.sprite.setPosition(temp.startPosition);
+			
+			}
+		}
+	}
+};

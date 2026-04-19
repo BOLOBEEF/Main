@@ -22,7 +22,7 @@ enum ponds_type
 Player fireBoy = Player(Player::Fireboy, center + Vector2f(-600, 200));
 Player waterGirl = Player(Player::Watergirl, center + Vector2f(-550, 300));
 
-
+Temporary_ground temporaryground = Temporary_ground(center + Vector2f(0, 200));
 FinalDoor water_door = FinalDoor(FinalDoor::WATER_DOOR, Vector2f(1200, 25));
 FinalDoor fire_door = FinalDoor(FinalDoor::FIRE_DOOR, Vector2f(1300, 25));
 
@@ -254,6 +254,11 @@ void InitializeGame()
 	fire_door.Initialilze();
 	fire_door.sprite.setColor(Color::Red);
 
+	temporaryground.Initialize();
+	temporaryground.sprite.setColor(Color::Cyan);
+	temporaryground.startPosition = center + Vector2f(112, 309);
+
+
 	UpdateGroundTexture();
 }
 
@@ -459,6 +464,10 @@ void UpdateGame()
 		water_door.sprite.setColor(Color(128, 0, 128));
 		fire_door.sprite.setColor(Color(128, 0, 128));
 	}
+	temporaryground.CheckCollision(fireBoy,temporaryground);
+	//temporaryground.CheckCollision(waterGirl,temporaryground);
+	temporaryground.update(fireBoy, temporaryground);
+	temporaryground.update(waterGirl, temporaryground);
 }
 
 
@@ -480,6 +489,8 @@ void DrawGame(bool forceDraw)
 
 	window.draw(water_door.sprite);
 	window.draw(fire_door.sprite);
+
+	window.draw(temporaryground.sprite);
 
 	for (int i = 0; i < objects.count; i++)
 		objects.elements[i].PostDraw();
