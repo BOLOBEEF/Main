@@ -49,7 +49,8 @@ enum LoadTexture
 	water_ice_steps_texture,
 	water_running_texture,
 	water_stairs_texture,
-
+	diamond_fire_texture,
+	diamond_water_texture,
 	// map objects s
 	movingbox_texture,
 	snow_flat_texture,
@@ -62,7 +63,11 @@ enum LoadTexture
 	fire_pond_right_texture,
 	fire_pond_left_texture,
 	lever_stick_texture,
+	lever_base_texture,
 	bar_texture,
+	green_pond_texture,
+	green_pond_left_texture,
+	green_pond_right_texture,
 	bar_cap_right_texture,
 	bar_cap_left_texture,
 	ramp_1_texture,
@@ -128,7 +133,6 @@ Texture groundTexture;
 
 // char assets textures
 Texture death_smoke;
-Texture diamonds;
 Texture fire_glow;
 Texture fire_head_jumping;
 Texture fire_head_rising;
@@ -147,7 +151,8 @@ Texture water_head_rising;
 Texture water_ice_steps;
 Texture water_running;
 Texture water_stairs;
-
+Texture diamond_fire;
+Texture diamond_water;
 // map objects textures
 Texture movingbox;
 Texture snow_flat;
@@ -160,6 +165,7 @@ Texture fire_pond;
 Texture fire_pond_right;
 Texture fire_pond_left;
 Texture lever_stick;
+Texture lever_base;
 Texture bar;
 Texture bar_cap_right;
 Texture bar_cap_left;
@@ -255,14 +261,17 @@ void ApplyTexture(Sprite& sprite, LoadTexture texture, Vector2f size = Vector2f(
 
 	switch (texture)
 	{
-
+		// char assets
 	case death_smoke_texture:
 		sprite.setTexture(death_smoke);
 		break;
-	case diamonds_texture:
-		sprite.setTexture(diamonds);
+	case diamond_fire_texture:
+		sprite.setTexture(diamond_fire);
 		break;
 
+	case diamond_water_texture:
+		sprite.setTexture(diamond_water);
+		break; 
 	case fire_glow_texture:
 		sprite.setTexture(fire_glow);
 		break;
@@ -335,10 +344,120 @@ void ApplyTexture(Sprite& sprite, LoadTexture texture, Vector2f size = Vector2f(
 		sprite.setTexture(water_stairs);
 		break;
 
+		// map objects assets
+
+
+
+
+
+
+
+
 	case movingbox_texture:
 		sprite.setTexture(movingbox);
 		sprite.setTextureRect(IntRect(0, 0, 74, 76));
 		break;
+	
+
+	case snow_flat_texture:
+		sprite.setTexture(snow_flat);
+		break;
+
+	case snow_slope_right_side_down_texture:
+		sprite.setTexture(snow_slope_right_side_down);
+		break;
+
+	case snow_slope_left_side_down_texture:
+		sprite.setTexture(snow_slope_left_side_down);
+		break;
+
+	case pusher_block_texture:
+		sprite.setTexture(pusher_block);
+		break;
+
+	case fire_door_open_texture:
+		sprite.setTexture(fire_door_open);
+		break;
+
+	case water_door_open_texture:
+		sprite.setTexture(water_door_open);
+		break;
+
+	case fire_pond_texture:
+		sprite.setTexture(fire_pond);
+		break;
+
+	case fire_pond_right_texture:
+		sprite.setTexture(fire_pond_right);
+		break;
+
+	case fire_pond_left_texture:
+		sprite.setTexture(fire_pond_left);
+		break;
+
+	case lever_stick_texture:
+		sprite.setTexture(lever_stick);
+		break;
+
+	case lever_base_texture:
+		sprite.setTexture(lever_base);
+		break;
+
+	case bar_texture:
+		sprite.setTexture(bar);
+		break;
+
+	case bar_cap_right_texture:
+		sprite.setTexture(bar_cap_right);
+		break;
+
+	case bar_cap_left_texture:
+		sprite.setTexture(bar_cap_left);
+		break;
+
+	case ramp_1_texture:
+		sprite.setTexture(ramp_1);
+		break;
+
+	case water_pond_right_texture:
+		sprite.setTexture(water_pond_right);
+		break;
+
+	case water_pond_texture:
+		sprite.setTexture(water_pond);
+		break;
+
+	case water_pond_left_texture:
+		sprite.setTexture(water_pond_left);
+		break;
+
+	case slider_dot_texture:
+		sprite.setTexture(slider_dot);
+		break;
+
+	case slider_light_on_texture:
+		sprite.setTexture(slider_light_on);
+		break;
+
+	case green_pond_texture:
+		sprite.setTexture(green_pond);
+		break;
+
+	case green_pond_right_texture:
+		sprite.setTexture(green_pond_right);
+		break;
+
+	case green_pond_left_texture:
+		sprite.setTexture(green_pond_left);
+		break;
+
+
+
+
+
+
+		// menu assets
+
 	case BackButton0_texture:
 		sprite.setTexture(BackButton0);
 		break;
@@ -435,7 +554,6 @@ void ApplyTexture(Sprite& sprite, LoadTexture texture, Vector2f size = Vector2f(
 	case clock_timer_texture:
 		sprite.setTexture(clock_timer);
 		break;
-		
 	case stone_button_0_texture:
 		sprite.setTexture(stone_button);
 		break;
@@ -450,6 +568,8 @@ void ApplyTexture(Sprite& sprite, LoadTexture texture, Vector2f size = Vector2f(
 		sprite.setTexture(game_name);
 		break;
 
+
+		// temporary assets
 	case TRIANGLE:
 		sprite.setTexture(triangleTexture);
 		sprite.setColor(Color::White);
@@ -535,7 +655,8 @@ void InitializeTextures()
 	// this functions maybe called again if reloading the textures is needed
 
 	death_smoke.loadFromFile("Main/Assets/Animations/characters assets/death smoke.png");
-	diamonds.loadFromFile("Main/Assets/Animations/characters assets/diamonds.png");
+	diamond_fire.loadFromFile("Main/Assets/Animations/characters assets/diamond_fire.png");
+	diamond_water.loadFromFile("Main/Assets/Animations/characters assets/diamond_water.png");
 	fire_glow.loadFromFile("Main/Assets/Animations/characters assets/fire glow.png");
 	fire_head_jumping.loadFromFile("Main/Assets/Animations/characters assets/fire head jumping.png");
 	fire_head_rising.loadFromFile("Main/Assets/Animations/characters assets/fire head rising.png");
@@ -593,6 +714,7 @@ void InitializeTextures()
 	fire_pond_right.loadFromFile("Main/Assets/Animations/map objects assets/fire box right.png");
 	fire_pond_left.loadFromFile("Main/Assets/Animations/map objects assets/fire box left.png");
 	lever_stick.loadFromFile("Main/Assets/Animations/map objects assets/lever stick.png");
+	lever_base.loadFromFile("Main/Assets/Animations/map objects assets/lever base.png");
 	bar.loadFromFile("Main/Assets/Animations/map objects assets/bar center.png");
 	bar_cap_right.loadFromFile("Main/Assets/Animations/map objects assets/bar cap right.png");
 	bar_cap_left.loadFromFile("Main/Assets/Animations/map objects assets/bar cap left.png");
