@@ -7,11 +7,24 @@
 
 
 // Structs and enums
-
+enum FadeState 
+{
+	NoFading,
+	FadingUp,
+	FadingDown
+};
+FadeState currentFadeState = NoFading;
 
 // Runtime variables
+float fadeSpeed = 155, fadePercentage = 0;
+float holdSpeed = 40, holdLimit = 50;
+//Why hold? -> because when I make the fade transition, I change the game state when alpha becomes 255, so the pause menu won't move until this case, it will move when we start decrementing the alpha
+//which is not like the original game
+
 GameState PreviousMenu_State = MAIN_MENU;
-RectangleShape Dimmed_Backgriund;
+GameState FadeTransitionMenuState = MAIN_MENU;
+RectangleShape Dimmed_Background;
+RectangleShape FadingTransitionBackground;
 
 Sprite Stone_mnu;
 Sprite SettingButton_mnu;
@@ -36,14 +49,13 @@ Text Continue_Wintxt;
 
 
 // Functions
-bool MouseInput_mnu(Event event, Sprite& ButtonClicked, LoadTexture Currnet_texture_enum, LoadTexture Desired_texture_enum, MenuSoundEffect Sound_Played_mnu, GameState state_mnu)
+bool MouseInput_mnu(Event event, Sprite& ButtonClicked, LoadTexture Currnet_texture_enum, LoadTexture Desired_texture_enum, MenuSoundEffect Sound_Played_mnu, GameState state_mnu, bool fadeTransition)
 {
 	if (event.type == Event::MouseButtonPressed && event.mouseButton.button == Mouse::Left)
 	{
 		if (ButtonClicked.getGlobalBounds().contains(mousePosition))
 		{
 			UpdateAnimation(ButtonClicked, Desired_texture_enum);
-			PlayMenuSoundEffect(Sound_Played_mnu);
 		}
 	}
 	if (event.type == Event::MouseButtonReleased && event.mouseButton.button == Mouse::Left)
@@ -51,7 +63,16 @@ bool MouseInput_mnu(Event event, Sprite& ButtonClicked, LoadTexture Currnet_text
 		if (ButtonClicked.getGlobalBounds().contains(mousePosition))
 		{
 			UpdateAnimation(ButtonClicked, Currnet_texture_enum);
-			UpdateGameState(state_mnu);
+			PlayMenuSoundEffect(Sound_Played_mnu);
+			if (fadeTransition)
+			{
+				if (currentFadeState == NoFading)
+				{
+					currentFadeState = FadingUp;
+					FadeTransitionMenuState = state_mnu;
+				}
+			}
+			else if(!fadeTransition) UpdateGameState(state_mnu);
 		}
 	}
 	return true;
@@ -63,20 +84,20 @@ bool MouseInput_Settings_mnu(Event event, Sprite& ButtonClicked, LoadTexture Cur
 		if (ButtonClicked.getGlobalBounds().contains(mousePosition))
 		{
 			UpdateAnimation(ButtonClicked, Desired_texture_enum);
-			PlayMenuSoundEffect(Sound_Played_mnu);
 		}
 	}
 	if (event.type == Event::MouseButtonReleased && event.mouseButton.button == Mouse::Left)
 	{
 		if (ButtonClicked.getGlobalBounds().contains(mousePosition))
 		{
+			PlayMenuSoundEffect(Sound_Played_mnu);
 			//Logic for muting or opening the sound
 		}
 	}
 	return true;
 }
 
-bool PauseMenu_Movement(Vector2f Desired_Target)
+void PauseMenu_Movement(Vector2f Desired_Target)
 {
 	Current_Target = Desired_Target;
 	Current_position_mnu = Damp(Current_position_mnu, Current_Target, 25, dt);
@@ -89,24 +110,17 @@ bool PauseMenu_Movement(Vector2f Desired_Target)
 	Resume_Pausetxt.setPosition(Vector2f(ResumeButton_Pausemnu.getGlobalBounds().left + ResumeButton_Pausemnu.getGlobalBounds().width / 2, (ResumeButton_Pausemnu.getGlobalBounds().top + ResumeButton_Pausemnu.getGlobalBounds().height / 2) - 20));
 	Pause_txt.setPosition(Vector2f((ResumeButton_Pausemnu.getGlobalBounds().left + ResumeButton_Pausemnu.getGlobalBounds().width / 2), (ResumeButton_Pausemnu.getGlobalBounds().top + ResumeButton_Pausemnu.getGlobalBounds().height / 2) - 400));
 	Stone_mnu.setPosition(Current_position_mnu);
-	if (Current_position_mnu == Desired_Target)
-	{
-		return false;
-	}
+	
 }
-bool WinMenu_Movement(Vector2f Desired_Target)
+void WinMenu_Movement(Vector2f Desired_Target)
 {
 	Current_Target = Desired_Target;
 	Current_position_mnu = Damp(Current_position_mnu, Current_Target, 25, dt);
 	Stone_mnu.setPosition(Current_position_mnu);
 	ContinueButton_Winmnu.setPosition(Vector2f((windowSize.x / 2) + 270, (windowSize.y / 2) + 200) + Current_position_mnu - center);
 	Continue_Wintxt.setPosition((ContinueButton_Winmnu.getGlobalBounds().left + ContinueButton_Winmnu.getGlobalBounds().width / 2), (ContinueButton_Winmnu.getGlobalBounds().top + ContinueButton_Winmnu.getGlobalBounds().height / 2) - 5);
-	if (Current_position_mnu == Desired_Target)
-	{
-		return false;
-	}
 }
-bool GameoverMenu_Movement(Vector2f Desired_Target)
+void GameoverMenu_Movement(Vector2f Desired_Target)
 {
 	Current_Target = Desired_Target;
 	Current_position_mnu = Damp(Current_position_mnu, Current_Target, 25, dt);
@@ -121,22 +135,15 @@ bool GameoverMenu_Movement(Vector2f Desired_Target)
 	Retry_GOVERtxt.setPosition((GameOverbuttons_mnu[1].getGlobalBounds().left + GameOverbuttons_mnu[1].getGlobalBounds().width / 2), (GameOverbuttons_mnu[1].getGlobalBounds().top + GameOverbuttons_mnu[1].getGlobalBounds().height / 2) - 15);
 	Skip_GOVERtxt.setPosition((GameOverbuttons_mnu[0].getGlobalBounds().left + GameOverbuttons_mnu[0].getGlobalBounds().width / 2) + 30, (GameOverbuttons_mnu[0].getGlobalBounds().top + GameOverbuttons_mnu[0].getGlobalBounds().height / 2) - 10);
 	GameOver_txt.setPosition((GameOverbuttons_mnu[1].getGlobalBounds().left + GameOverbuttons_mnu[1].getGlobalBounds().width / 2), (GameOverbuttons_mnu[1].getGlobalBounds().top + GameOverbuttons_mnu[1].getGlobalBounds().height / 2) - 270);
-	if (Current_position_mnu == Desired_Target)
-	{
-		return false;
-	}
 }
-bool SettingMenu_Movement(Vector2f Desired_Target)
+void SettingMenu_Movement(Vector2f Desired_Target)
 {
 	Current_Target = Desired_Target;
 	Current_position_mnu = Damp(Current_position_mnu, Current_Target, 25, dt);
 
 	// I Will Handle this After You finish Settings Menu
 
-	if (Current_position_mnu == Desired_Target)
-	{
-		return false;
-	}
+	
 }
 void InitializeMenu()
 {
@@ -145,9 +152,14 @@ void InitializeMenu()
 	fpsDisplay.setCharacterSize(24);
 
 	//Dimmed Background
-	Dimmed_Backgriund.setSize(Vector2f(window.getSize().x, window.getSize().y));
-	Dimmed_Backgriund.setPosition(window.getPosition().x / 2, window.getPosition().y / 2);
-	Dimmed_Backgriund.setFillColor(Color(0, 0, 0, 180));
+	Dimmed_Background.setSize(Vector2f(window.getSize().x, window.getSize().y));
+	Dimmed_Background.setPosition(window.getPosition().x / 2, window.getPosition().y / 2);
+	Dimmed_Background.setFillColor(Color(0, 0, 0, 180));
+
+	//fading Transition Background
+	FadingTransitionBackground.setSize(Vector2f(window.getSize().x, window.getSize().y));
+	FadingTransitionBackground.setPosition(window.getPosition().x / 2, window.getPosition().y / 2);
+	//FadingTransitionBackground.setFillColor(Color(0, 0, 0, fadePercentage));
 
 	//Pause menu
 	ApplyTexture(Stone_mnu, LoadTexture::menu_box_texture, Vector2f(windowSize.x - 600, windowSize.y - 250));
@@ -296,31 +308,31 @@ void HandleMenuInput(Event event)
 
 		break;
 	case PAUSE_MENU:
-		MouseInput_mnu(event, ResumeButton_Pausemnu, stone_button_0_texture, stone_button_1_texture, ButtonClick, GAME);
-		if (MouseInput_mnu(event, RetryButton_Pausemnu, stone_button_0_texture, stone_button_1_texture, ButtonClick, GAME))
+		MouseInput_mnu(event, ResumeButton_Pausemnu, stone_button_0_texture, stone_button_1_texture, ButtonClick, GAME, false);
+		if (MouseInput_mnu(event, RetryButton_Pausemnu, stone_button_0_texture, stone_button_1_texture, ButtonClick, GAME, true))
 		{
 			//call function reset
 		}
-		MouseInput_mnu(event, EndButton_Pausemnu, stone_button_0_texture, stone_button_1_texture, ButtonClick, LEVEL_MENU);
-		MouseInput_mnu(event, SettingButton_mnu, SettingsButton0_texture, SettingsButton0_texture, ButtonClick, SETTINGS);
+		MouseInput_mnu(event, EndButton_Pausemnu, stone_button_0_texture, stone_button_1_texture, ButtonClick, LEVEL_MENU, true);
+		MouseInput_mnu(event, SettingButton_mnu, SettingsButton0_texture, SettingsButton0_texture, No_Sound_Buttons, SETTINGS, false);
 		break;
 	case WIN_MENU:
-		MouseInput_mnu(event, ContinueButton_Winmnu, stone_button_0_texture, stone_button_1_texture, ButtonClick, LEVEL_MENU);
+		MouseInput_mnu(event, ContinueButton_Winmnu, stone_button_0_texture, stone_button_1_texture, ButtonClick, LEVEL_MENU, true);
 		break;
 	case SETTINGS:
 		// code for handling settings menu input
 		break;
 	case GAMEOVER:
-		MouseInput_mnu(event, GameOverbuttons_mnu[0], stone_button_0_texture, stone_button_1_texture, ButtonClick, LEVEL_MENU);
-		MouseInput_mnu(event, GameOverbuttons_mnu[2], stone_button_0_texture, stone_button_1_texture, ButtonClick, MAIN_MENU);
-		if (MouseInput_mnu(event, GameOverbuttons_mnu[1], stone_button_0_texture, stone_button_1_texture, ButtonClick, GAME))
+		MouseInput_mnu(event, GameOverbuttons_mnu[0], stone_button_0_texture, stone_button_1_texture, ButtonClick, LEVEL_MENU, true);
+		MouseInput_mnu(event, GameOverbuttons_mnu[2], stone_button_0_texture, stone_button_1_texture, ButtonClick, MAIN_MENU, true);
+		if (MouseInput_mnu(event, GameOverbuttons_mnu[1], stone_button_0_texture, stone_button_1_texture, ButtonClick, GAME, true))
 		{
 			//call function reset
 		}
 		break;
 	case GAME:
 		// code for handling game UI input
-		MouseInput_mnu(event, PauseIcon_mnu, pause_icon_texture, pause_icon_texture, ButtonClick, PAUSE_MENU);
+		MouseInput_mnu(event, PauseIcon_mnu, pause_icon_texture, pause_icon_texture, No_Sound_Buttons, PAUSE_MENU, false);
 		break;
 	default:
 		break;
@@ -406,6 +418,32 @@ void UpdateUI()
 	default:
 		break;
 	}
+
+	if (currentFadeState == FadingUp)
+	{
+		fadePercentage += fadeSpeed * dt;
+		if (fadePercentage >= 255)
+		{
+			fadePercentage = 255;
+			UpdateGameState(FadeTransitionMenuState);
+			holdLimit -= holdSpeed * dt;
+			if (holdLimit <= 0)
+			{
+				currentFadeState = FadingDown;
+				holdLimit = 50;
+			}
+		}
+	}
+	else if (currentFadeState == FadingDown)
+	{
+		fadePercentage -= fadeSpeed * dt;
+		if (fadePercentage <= 0)
+		{
+			fadePercentage = 0;
+			currentFadeState = NoFading;
+		}
+	}
+	FadingTransitionBackground.setFillColor(Color(0, 0, 0, fadePercentage));
 }
 
 void DrawUI()
@@ -476,7 +514,7 @@ void DrawUI()
 
 	case PAUSE_MENU:
 		DrawGame(true);
-		window.draw(Dimmed_Backgriund);
+		window.draw(Dimmed_Background);
 		window.draw(Stone_mnu);
 		window.draw(EndButton_Pausemnu);
 		window.draw(RetryButton_Pausemnu);
@@ -490,7 +528,7 @@ void DrawUI()
 
 	case WIN_MENU:
 		DrawGame(true);
-		window.draw(Dimmed_Backgriund);
+		window.draw(Dimmed_Background);
 		window.draw(Stone_mnu);
 		window.draw(ContinueButton_Winmnu);
 		window.draw(Continue_Wintxt);
@@ -499,7 +537,7 @@ void DrawUI()
 	case SETTINGS:
 		// code for drawing settings menu
 		DrawGame(true);
-		window.draw(Dimmed_Backgriund);
+		window.draw(Dimmed_Background);
 		if (Current_position_mnu != Target_Down_mnu)
 		{
 
@@ -520,7 +558,7 @@ void DrawUI()
 
 	case GAMEOVER:
 		DrawGame(true);
-		window.draw(Dimmed_Backgriund);
+		window.draw(Dimmed_Background);
 		window.draw(Stone_mnu);
 		for (int i = 0; i < 3; i++)
 		{
@@ -573,7 +611,11 @@ void DrawUI()
 	default:
 		break;
 	}
-
+	
+	if (currentFadeState != NoFading)
+	{
+		window.draw(FadingTransitionBackground);
+	}
 	fpsDisplay.setString(to_string((int)round(1.0f / dt)));
 	window.draw(fpsDisplay);
 }

@@ -17,7 +17,8 @@ enum MenuSoundEffect
 	// add a type for each menu sound effect
 	ButtonClick,
 	Back,
-	Enter
+	Enter,
+	No_Sound_Buttons
 	// just some tine menu sound effects
 };
 
@@ -192,6 +193,9 @@ void PlayMenuSoundEffect(MenuSoundEffect soundEffect) {
 		Button.setBuffer(ButtonSound);
 		Button.setVolume(100.0f);
 		Button.play();
+		break;
+	case No_Sound_Buttons:
+		// no sound played
 		break;
 	default:
 		cout << "Invalid sound effect" << endl;
