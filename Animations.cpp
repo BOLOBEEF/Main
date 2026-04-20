@@ -147,6 +147,12 @@ void UpdateAnimation(Sprite& sprite, LoadTexture texture) {
 	case BackButtonFull0_texture:
 		sprite.setTextureRect(IntRect(0, 0, 209, 89));
 		break;
+	case cursor_texture:
+		sprite.setTextureRect(IntRect(0, 0, 128, 128));
+		break;
+	case pointer_texture:
+		sprite.setTextureRect(IntRect(128, 0, 128, 128));
+		break;
 	case Diamond0_texture:
 		break;
 	case Diamond1_texture:

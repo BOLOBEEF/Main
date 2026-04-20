@@ -123,6 +123,8 @@ enum LoadTexture
 	stone_button_1_texture,
 	main_menu_background_texture,
 	game_name_texture,
+	cursor_texture,
+	pointer_texture
 
 };
 
@@ -136,6 +138,7 @@ Texture firePondTexture, waterPondTexture, toxicPondTexture;
 Texture firedoor, waterdoor;
 Texture cubeTexture;
 Texture groundTexture;
+
 //Texture backgroundTexture;
 
 // char assets textures
@@ -221,6 +224,8 @@ Texture clock_timer;
 Texture stone_button;
 Texture main_menu_background;
 Texture game_name;
+//cursor texture
+Texture CursorAndPointer;
 
 // Functions
 
@@ -583,7 +588,13 @@ void ApplyTexture(Sprite& sprite, LoadTexture texture, Vector2f size = Vector2f(
 	case game_name_texture:
 		sprite.setTexture(game_name);
 		break;
-
+		// cursor and pointer
+	case cursor_texture:
+		sprite.setTexture(CursorAndPointer);
+		break;
+	case pointer_texture:
+		sprite.setTexture(CursorAndPointer);
+		break;
 
 		// temporary assets
 	case TRIANGLE:
@@ -746,6 +757,7 @@ void InitializeTextures()
 	loading_icon.loadFromFile("Main/Assets/Animations/menu assets/loading_icon.png");
 	pause_icon.loadFromFile("Main/Assets/Animations/menu assets/pause icon.png");
 	menu_box.loadFromFile("Main/Assets/Animations/menu assets/menu box.png");
+	CursorAndPointer.loadFromFile("Main/Assets/Animations/cursor assets/CursorAndPointer.png");
 	clock_timer.loadFromFile("Main/Assets/Animations/menu assets/clock timer.png");
 	stone_button.loadFromFile("Main/Assets/Animations/menu assets/stone button.png");
 	main_menu_background.loadFromFile("Main/Assets/Animations/menu assets/main menu background.png");

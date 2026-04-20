@@ -46,7 +46,8 @@ Text fpsDisplay;
 Text End_Pausetxt, Resume_Pausetxt, Retry_Pausetxt, Pause_txt;
 Text Menu_GOVERtxt, Retry_GOVERtxt, Skip_GOVERtxt, GameOver_txt;
 Text Continue_Wintxt;
-
+// cursor Variables
+Sprite cursorAndpointerSprite;
 
 // Functions
 bool MouseInput_mnu(Event event, Sprite& ButtonClicked, LoadTexture Currnet_texture_enum, LoadTexture Desired_texture_enum, MenuSoundEffect Sound_Played_mnu, GameState state_mnu, bool fadeTransition)
@@ -56,6 +57,7 @@ bool MouseInput_mnu(Event event, Sprite& ButtonClicked, LoadTexture Currnet_text
 		if (ButtonClicked.getGlobalBounds().contains(mousePosition))
 		{
 			UpdateAnimation(ButtonClicked, Desired_texture_enum);
+			UpdateAnimation(cursorAndpointerSprite, pointer_texture);
 		}
 	}
 	if (event.type == Event::MouseButtonReleased && event.mouseButton.button == Mouse::Left)
@@ -63,6 +65,7 @@ bool MouseInput_mnu(Event event, Sprite& ButtonClicked, LoadTexture Currnet_text
 		if (ButtonClicked.getGlobalBounds().contains(mousePosition))
 		{
 			UpdateAnimation(ButtonClicked, Currnet_texture_enum);
+			UpdateAnimation(cursorAndpointerSprite, cursor_texture);
 			PlayMenuSoundEffect(Sound_Played_mnu);
 			if (fadeTransition)
 			{
@@ -101,6 +104,7 @@ void PauseMenu_Movement(Vector2f Desired_Target)
 {
 	Current_Target = Desired_Target;
 	Current_position_mnu = Damp(Current_position_mnu, Current_Target, 25, dt);
+	Stone_mnu.setPosition(Current_position_mnu);
 	EndButton_Pausemnu.setPosition(Vector2f((windowSize.x / 2) - 35, (windowSize.y / 2) + 70) + Current_position_mnu - center);
 	RetryButton_Pausemnu.setPosition(Vector2f((windowSize.x / 2) + 435, (windowSize.y / 2) + 70) + Current_position_mnu - center);
 	ResumeButton_Pausemnu.setPosition(Vector2f((windowSize.x / 2 + 205), (windowSize.y / 2) + 220) + Current_position_mnu - center);
@@ -109,8 +113,6 @@ void PauseMenu_Movement(Vector2f Desired_Target)
 	Retry_Pausetxt.setPosition(Vector2f(RetryButton_Pausemnu.getGlobalBounds().left + RetryButton_Pausemnu.getGlobalBounds().width / 2, (RetryButton_Pausemnu.getGlobalBounds().top + RetryButton_Pausemnu.getGlobalBounds().height / 2) - 20));
 	Resume_Pausetxt.setPosition(Vector2f(ResumeButton_Pausemnu.getGlobalBounds().left + ResumeButton_Pausemnu.getGlobalBounds().width / 2, (ResumeButton_Pausemnu.getGlobalBounds().top + ResumeButton_Pausemnu.getGlobalBounds().height / 2) - 20));
 	Pause_txt.setPosition(Vector2f((ResumeButton_Pausemnu.getGlobalBounds().left + ResumeButton_Pausemnu.getGlobalBounds().width / 2), (ResumeButton_Pausemnu.getGlobalBounds().top + ResumeButton_Pausemnu.getGlobalBounds().height / 2) - 400));
-	Stone_mnu.setPosition(Current_position_mnu);
-	
 }
 void WinMenu_Movement(Vector2f Desired_Target)
 {
@@ -142,14 +144,17 @@ void SettingMenu_Movement(Vector2f Desired_Target)
 	Current_position_mnu = Damp(Current_position_mnu, Current_Target, 25, dt);
 
 	// I Will Handle this After You finish Settings Menu
-
-	
 }
 void InitializeMenu()
 {
 	font.loadFromFile("Main/Assets/Fonts/trajanpro-bold.otf");
 	fpsDisplay.setFont(font);
 	fpsDisplay.setCharacterSize(24);
+	//Cursor 
+	ApplyTexture(cursorAndpointerSprite, LoadTexture::cursor_texture, Vector2f(110, 55));
+	UpdateAnimation(cursorAndpointerSprite, cursor_texture);
+	cursorAndpointerSprite.setPosition(mousePosition);
+	cursorAndpointerSprite.setOrigin(cursorAndpointerSprite.getGlobalBounds().width / 2, cursorAndpointerSprite.getGlobalBounds().height / 2);
 
 	//Dimmed Background
 	Dimmed_Background.setSize(Vector2f(window.getSize().x, window.getSize().y));
@@ -159,7 +164,6 @@ void InitializeMenu()
 	//fading Transition Background
 	FadingTransitionBackground.setSize(Vector2f(window.getSize().x, window.getSize().y));
 	FadingTransitionBackground.setPosition(window.getPosition().x / 2, window.getPosition().y / 2);
-	//FadingTransitionBackground.setFillColor(Color(0, 0, 0, fadePercentage));
 
 	//Pause menu
 	ApplyTexture(Stone_mnu, LoadTexture::menu_box_texture, Vector2f(windowSize.x - 600, windowSize.y - 250));
@@ -444,12 +448,13 @@ void UpdateUI()
 		}
 	}
 	FadingTransitionBackground.setFillColor(Color(0, 0, 0, fadePercentage));
+
+	cursorAndpointerSprite.setPosition(mousePosition);
 }
 
 void DrawUI()
 {
 	// draw only, no need for window.clear or window.display
-
 	switch (gameState)
 	{
 	case MAIN_MENU:
@@ -600,12 +605,6 @@ void DrawUI()
 				window.draw(Resume_Pausetxt);
 				window.draw(Pause_txt);
 			}
-			else if (PreviousMenu_State == WIN_MENU)
-			{
-				window.draw(Stone_mnu);
-				window.draw(ContinueButton_Winmnu);
-				window.draw(Continue_Wintxt);
-			}
 		}
 		break;
 	default:
@@ -616,6 +615,7 @@ void DrawUI()
 	{
 		window.draw(FadingTransitionBackground);
 	}
+	window.draw(cursorAndpointerSprite);
 	fpsDisplay.setString(to_string((int)round(1.0f / dt)));
 	window.draw(fpsDisplay);
 }
