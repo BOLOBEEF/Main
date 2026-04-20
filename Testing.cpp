@@ -1,6 +1,6 @@
 
 // TESTING
-
+Sprite testSprite;
 // test
 
 
@@ -13,18 +13,29 @@ void InitializeTest() {
 	// test push
 }
 
-void HandleTestInput(Event event) {
+void HandleTestInput(Event event)
+{
+
 
 }
 
 void OnUpdatedGameStateTest() {
 
+
 }
 
-void UpdateTest() {
+void UpdateTest()
+{
+	ApplyTexture(testSprite, LoadTexture::lever_stick_texture, Vector2f(100.0f, 100.0f));
+	UpdateAnimation(testSprite, LoadTexture::lever_stick_texture);
+	testSprite.setPosition(400.0f, 200.0f);
+
 
 }
 
 void DrawTest() {
+	// for example test if a sound function is working here
+	// PlayMusic(BackgroundMusic::MainMenu);
+	window.draw(testSprite);
 
 }
