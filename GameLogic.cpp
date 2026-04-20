@@ -27,7 +27,7 @@ FinalDoor water_door = FinalDoor(FinalDoor::WATER_DOOR, Vector2f(1200, 25));
 FinalDoor fire_door = FinalDoor(FinalDoor::FIRE_DOOR, Vector2f(1300, 25));
 
 Sprite ground;
-//Sprite background;
+Sprite background;
 
 RenderTexture maskTexture;
 RenderTexture resultTexture;
@@ -43,14 +43,37 @@ ObjectList objects;
 // LEVEL EDITING TOOLS
 const bool enableEditMode = true;	// if true, you can place down objects by clicking, and remove them by right clicking, change object type by pressing 0 or 1 or....
 Vector2f editScale = Vector2f(1, 1);
+enum EditMode
+{
+	collider_mode,
+	object_mode
+} editMode;
 
-enum EditType
+enum EditObjectMode
+{
+	FireGem_mode,
+	WaterGem_mode,
+	Door_mode,
+	Door_Rotated_mode,
+	FirePond_mode,
+	WaterPond_mode,
+	PoisonPond_mode,
+	Box_mode,
+	Button_mode,
+	Lever_mode,
+} editObjectMode;
+bool isEditingDoor = false;
+int doorIndex = 0; // the door that is currently being edited
+
+
+
+enum EditColliderMode
 {
 	Rectangle,
 	Triangle,
 	Triangle_Rotated,
 };
-EditType currentEditType = EditType::Rectangle;
+EditColliderMode editColliderMode = EditColliderMode::Rectangle;
 
 
 void CheckCollision(Player& player) {
@@ -113,7 +136,6 @@ void LoadLevelData() {
 	colliders.Add(Collider(Collider::ColliderType::Triangle_Rotated, center + Vector2f(720, -140), Vector2f(1, 1)));
 	colliders.Add(Collider(Collider::ColliderType::Triangle_Rotated, center + Vector2f(688, -44), Vector2f(1, 1)));
 
-	IndexList indexList;
 
 	objects.Add(Object(Object::GemObject));
 	objects.GetLastElement().InitializeGemObject(Gem::fireGem, Vector2f(650, 800));
@@ -128,26 +150,16 @@ void LoadLevelData() {
 	objects.Add(Object(Object::BoxObject));
 	objects.GetLastElement().InitializeBoxObject(Vector2f(1100, 200));
 
-	
-
-	objects.Add(Object(Object::LeverObject));
-	objects.GetLastElement().InitializeLeverObject(Vector2f(900, 800));
-	indexList.Add(objects.count - 1);
-	objects.Add(Object(Object::ClickObject));
-	objects.GetLastElement().InitializeClickObject(Vector2f(1200, 800));
-	indexList.Add(objects.count - 1);
-
 	objects.Add(Object(Object::DoorObject));
 	objects.GetLastElement().InitializeDoorObject(Vector2f(400.0f, 300.0f), Vector2f(400.0f, 200.0f));
-	int doorIndex = objects.count - 1;
 
-	for (int i = 0; i < indexList.count; i++)
-		objects.GetLastElement().SetDoor(objects.elements[doorIndex]);
+	//objects.GetLastElement().data.door.button1 = Click(Vector2f(900, 800), true);
+	//objects.GetLastElement().data.door.lever = Lever(Vector2f(1200, 800), true);
 }
 
 
 void UpdateOutlinesTexture() {
-	const float outlineThickness = 5.0f;
+	const float outlineThickness = 3.0f;
 	const int iterations = 8 * 4;						// number of directions
 
 	float theta = 360 / iterations;
@@ -237,16 +249,19 @@ void InitializeGame()
 	
 
 	ApplyTexture(ground, LoadTexture::GROUND, Vector2f(256, 256));
+	ground.setTexture(groundTexture);
 	ground.setTextureRect(IntRect(0, 0, windowSize.x, windowSize.y));
 
-	/*ApplyTexture(background, LoadTexture::BACKGROUND, Vector2f(256, 256));
-	background.setTextureRect(IntRect(0, 0, windowSize.x, windowSize.y));*/
+	ApplyTexture(background, LoadTexture::BACKGROUND, Vector2f(256, 256));
+	background.setTexture(backgroundTexture);
+	background.setTextureRect(IntRect(0, 0, windowSize.x, windowSize.y));
 
 
 	maskTexture.create(windowSize.x, windowSize.y);
 	outlineTexture.create(windowSize.x, windowSize.y);
 	resultTexture.create(windowSize.x, windowSize.y);
 	outlineSprite.setTexture(outlineTexture.getTexture());
+	outlineSprite.setColor(Color(30, 30, 30));
 	resultSprite.setTexture(resultTexture.getTexture());
 
 	water_door.Initialilze();
@@ -284,7 +299,6 @@ void Print(string message) {
 
 
 void EditMode(Event event) {
-
 	// EDITING MANUAL:
 	// left click to add object, right click to remove object
 	// numpad 4 and 6 to change x scale, numpad 2 and 8 to change y scale
@@ -295,97 +309,232 @@ void EditMode(Event event) {
 
 
 	if (event.type == Event::MouseButtonPressed) {
-		if (event.mouseButton.button == Mouse::Left) {
-			// add object
-			if (editScale.x <= 0) editScale.x = 1;
-			if (editScale.y <= 0) editScale.y = 1;
+		if (editMode == EditMode::collider_mode)
+		{
+			if (event.mouseButton.button == Mouse::Left) {
+				// add object
+				if (editScale.x <= 0) editScale.x = 1;
+				if (editScale.y <= 0) editScale.y = 1;
 
-			Collider collider;
+				Collider collider;
 
-			switch (currentEditType)
-			{
-			case Rectangle:
-				collider = Collider(Collider::ColliderType::Rectangle, mousePosition, editScale);
-				collider.Initialize();
-				break;
-			case Triangle:
-				collider = Collider(Collider::ColliderType::Triangle, mousePosition, editScale);
-				collider.Initialize();
-				break;
-			case Triangle_Rotated:
-				collider = Collider(Collider::ColliderType::Triangle_Rotated, mousePosition, editScale);
-				collider.Initialize();
-				break;
-			default:
-				break;
-			}
-
-			AllignSprite(collider.sprite);
-
-			bool isColliding = false;
-			for (int i = 0; i < colliders.count; i++)
-				if (colliders.elements[i].sprite.getGlobalBounds().intersects(collider.sprite.getGlobalBounds())) {
-					isColliding = true;
+				switch (editColliderMode)
+				{
+				case Rectangle:
+					collider = Collider(Collider::ColliderType::Rectangle, mousePosition, editScale);
+					collider.Initialize();
+					break;
+				case Triangle:
+					collider = Collider(Collider::ColliderType::Triangle, mousePosition, editScale);
+					collider.Initialize();
+					break;
+				case Triangle_Rotated:
+					collider = Collider(Collider::ColliderType::Triangle_Rotated, mousePosition, editScale);
+					collider.Initialize();
+					break;
+				default:
 					break;
 				}
 
-			if (!isColliding) {
-				colliders.Add(collider);
-				UpdateGroundTexture();
-			}
-		}
+				AllignSprite(collider.sprite);
 
+				bool isColliding = false;
+				for (int i = 0; i < colliders.count; i++)
+					if (colliders.elements[i].sprite.getGlobalBounds().intersects(collider.sprite.getGlobalBounds())) {
+						isColliding = true;
+						break;
+					}
 
-		else if (event.mouseButton.button == Mouse::Right) {
-			// remove object
-			for (int i = 0; i < colliders.count; i++) {
-				if (colliders.elements[i].sprite.getGlobalBounds().contains(mousePosition)) {
-					colliders.RemoveAt(i);
+				if (!isColliding) {
+					colliders.Add(collider);
 					UpdateGroundTexture();
 				}
 			}
+
+
+			else if (event.mouseButton.button == Mouse::Right) {
+				// remove object
+				for (int i = 0; i < colliders.count; i++) {
+					if (colliders.elements[i].sprite.getGlobalBounds().contains(mousePosition)) {
+						colliders.RemoveAt(i);
+						UpdateGroundTexture();
+					}
+				}
+			}
+		}
+		else if (editMode == EditMode::object_mode)
+		{
+			// code for editing objects
+			Print(isEditingDoor ? "Editing door..." : "Editing objects...");
+
+			if (event.mouseButton.button == Mouse::Left)
+				switch (editObjectMode)
+				{
+				case FireGem_mode:
+					objects.Add(Object(Object::GemObject));
+					objects.GetLastElement().InitializeGemObject(Gem::fireGem, mousePosition);
+					break;
+				case WaterGem_mode:
+					objects.Add(Object(Object::GemObject));
+					objects.GetLastElement().InitializeGemObject(Gem::waterGem, mousePosition);
+					break;
+				case Door_mode:
+					objects.Add(Object(Object::DoorObject));
+					objects.GetLastElement().InitializeDoorObject(mousePosition, mousePosition + Vector2f(0, -100));
+					break;
+				case Door_Rotated_mode:
+					objects.Add(Object(Object::DoorObject));
+					objects.GetLastElement().data.door.rotated = true;
+					objects.GetLastElement().InitializeDoorObject(mousePosition, mousePosition + Vector2f(0, -100));
+					break;
+				case FirePond_mode:
+					objects.Add(Object(Object::PondObject));
+					objects.GetLastElement().InitializePondObject(Pond::FIRE_POND, mousePosition);
+					break;
+				case WaterPond_mode:
+					objects.Add(Object(Object::PondObject));
+					objects.GetLastElement().InitializePondObject(Pond::WATER_POND, mousePosition);
+					break;
+				case PoisonPond_mode:
+					objects.Add(Object(Object::PondObject));
+					objects.GetLastElement().InitializePondObject(Pond::POISON_POND, mousePosition);
+					break;
+				case Box_mode:
+					objects.Add(Object(Object::BoxObject));
+					objects.GetLastElement().InitializeBoxObject(mousePosition);
+					break;
+				case Button_mode:
+					if (isEditingDoor)
+					if (objects.elements[doorIndex].type == Object::DoorObject)
+					if (!objects.elements[doorIndex].data.door.button1.initialized)
+						objects.elements[doorIndex].data.door.button1 = Click(mousePosition, true);
+					else if (!objects.elements[doorIndex].data.door.button2.initialized)
+						objects.elements[doorIndex].data.door.button2 = Click(mousePosition, true);
+					else
+					{
+						objects.elements[doorIndex].data.door.button1 = Click(mousePosition, true);
+						objects.elements[doorIndex].data.door.button2.initialized = false;
+					}
+					break;
+				case Lever_mode:
+					if (isEditingDoor)
+					if (objects.elements[doorIndex].type == Object::DoorObject)
+					if (!objects.elements[doorIndex].data.door.lever.initialized)
+						objects.elements[doorIndex].data.door.lever = Lever(mousePosition, true);
+					break;
+				}
+			else if (event.mouseButton.button == Mouse::Right)
+				// remove object
+				for (int i = 0; i < objects.count; i++)
+					if (objects.elements[i].data.CheckContainsPoint(mousePosition))
+						objects.RemoveAt(i);
 		}
 	}
 
 	if (event.type == Event::KeyPressed) {
+		if (event.key.code == Keyboard::I) {
+			// switch edit mode
+			if (editMode == EditMode::collider_mode)
+				editMode = EditMode::object_mode;
+			else if (editMode == EditMode::object_mode)
+				editMode = EditMode::collider_mode;
+		}
+
 		if (event.key.code == Keyboard::P) {
 			// print objects code
 			PrintObjectsCode();
 		}
 
-		if (event.key.code == Keyboard::O) {
-			// undo last object placement
-			colliders.RemoveAt(colliders.count - 1);
-			UpdateGroundTexture();
+		if (editMode == EditMode::collider_mode)
+		{
+			isEditingDoor = false;
+
+			if (event.key.code == Keyboard::O) {
+				// undo last object placement
+				colliders.RemoveAt(colliders.count - 1);
+				UpdateGroundTexture();
+			}
+
+			if (event.key.code == Keyboard::Numpad4)
+				// undo last object placement
+				editScale.x--;
+			if (event.key.code == Keyboard::Numpad6)
+				// undo last object placement
+				editScale.x++;
+			if (event.key.code == Keyboard::Numpad2)
+				// undo last object placement
+				editScale.y--;
+			if (event.key.code == Keyboard::Numpad8)
+				// undo last object placement
+				editScale.y++;
+
+
+			if (event.key.code == Keyboard::Num1)
+				editColliderMode = EditColliderMode::Rectangle;
+
+			if (event.key.code == Keyboard::Num2)
+				editColliderMode = EditColliderMode::Triangle;
+
+			if (event.key.code == Keyboard::Num3)
+				editColliderMode = EditColliderMode::Triangle_Rotated;
 		}
+		else if (editMode == EditMode::object_mode)
+		{
+			if (event.key.code == Keyboard::O) {
+				// undo last object placement
+				objects.RemoveAt(objects.count - 1);
+			}
 
-		if (event.key.code == Keyboard::Numpad4)
-			// undo last object placement
-			editScale.x--;
-		if (event.key.code == Keyboard::Numpad6)
-			// undo last object placement
-			editScale.x++;
-		if (event.key.code == Keyboard::Numpad2)
-			// undo last object placement
-			editScale.y--;
-		if (event.key.code == Keyboard::Numpad8)
-			// undo last object placement
-			editScale.y++;
+			if (event.key.code == Keyboard::U) {
+				// add button or lever to door
+				for (int i = 0; i < objects.count; i++)
+					if (objects.elements[i].data.CheckContainsPoint(mousePosition) && objects.elements[i].type == Object::DoorObject)
+					{
+						isEditingDoor = true;
+						editObjectMode = EditObjectMode::Button_mode;
+						doorIndex = i;
+						Print("Editing door at index " + to_string(doorIndex));
+					}
+			}
 
+			if (event.key.code == Keyboard::X) {
+				// exit edit door mode
+				isEditingDoor = false;
+			}
 
-		if (event.key.code == Keyboard::Num1) {
-			// undo last object placement
-			currentEditType = EditType::Rectangle;
-		}
+			// code for editing objects
 
-		if (event.key.code == Keyboard::Num2) {
-			// undo last object placement
-			currentEditType = EditType::Triangle;
-		}
+			if (!isEditingDoor) {
+				if (event.key.code == Keyboard::Num1)
+					editObjectMode = EditObjectMode::FireGem_mode;
 
-		if (event.key.code == Keyboard::Num3) {
-			// undo last object placement
-			currentEditType = EditType::Triangle_Rotated;
+				if (event.key.code == Keyboard::Num2)
+					editObjectMode = EditObjectMode::WaterGem_mode;
+
+				if (event.key.code == Keyboard::Num3)
+					editObjectMode = EditObjectMode::PoisonPond_mode;
+
+				if (event.key.code == Keyboard::Num4)
+					editObjectMode = EditObjectMode::FirePond_mode;
+
+				if (event.key.code == Keyboard::Num5)
+					editObjectMode = EditObjectMode::WaterPond_mode;
+
+				if (event.key.code == Keyboard::Num6)
+					editObjectMode = EditObjectMode::Door_mode;
+
+				if (event.key.code == Keyboard::Num7)
+					editObjectMode = EditObjectMode::Door_Rotated_mode;
+
+				if (event.key.code == Keyboard::Num8)
+					editObjectMode = EditObjectMode::Box_mode;
+			}
+			else {
+				if (event.key.code == Keyboard::Num1)
+					editObjectMode = EditObjectMode::Button_mode;
+				if (event.key.code == Keyboard::Num2)
+					editObjectMode = EditObjectMode::Lever_mode;
+			}
 		}
 	}
 
@@ -422,10 +571,6 @@ void UpdateGame()
 		return;
 	}
 
-
-	for (int i = 0; i < objects.count; i++)
-		objects.elements[i].PreUpdate(fireBoy, waterGirl);
-
 	fireBoy.Update();
 	waterGirl.Update();
 
@@ -444,9 +589,6 @@ void UpdateGame()
 
 	water_door.Update(waterGirl);
 	fire_door.Update(fireBoy);
-
-	for (int i = 0; i < objects.count; i++)
-		objects.elements[i].PostUpdate(fireBoy, waterGirl);
 
 	if (fireBoy.isDead)
 		fireBoy.sprite.setColor(Color::Yellow);
@@ -476,7 +618,7 @@ void DrawGame(bool forceDraw)
 	if (!forceDraw && gameState != GAME) return;
 
 	// no need for window.clear or window.display
-	//window.draw(background);
+	window.draw(background);
 	window.draw(outlineSprite);
 	window.draw(resultSprite);
 

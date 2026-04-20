@@ -148,8 +148,7 @@ Texture firePondTexture, waterPondTexture, toxicPondTexture;
 Texture firedoor, waterdoor;
 Texture cubeTexture;
 Texture groundTexture;
-
-//Texture backgroundTexture;
+Texture backgroundTexture;
 
 // char assets textures
 Texture death_smoke;
@@ -686,7 +685,7 @@ void ApplyTexture(Sprite& sprite, LoadTexture texture, Vector2f size = Vector2f(
 		sprite.setTexture(groundTexture);
 		centerOrigin = false;
 	case BACKGROUND:
-		//sprite.setTexture(backgroundTexture);
+		sprite.setTexture(backgroundTexture);
 		centerOrigin = false;
 		break;
 	case DOOR_FIRE:
@@ -726,8 +725,8 @@ void InitializeGameTextures() {
 	cubeTexture.loadFromFile("Main/Assets/Textures/Cube.png");
 	groundTexture.loadFromFile("Main/Assets/Textures/Ground.png");
 	groundTexture.setRepeated(true);
-	//backgroundTexture.loadFromFile("Main/Assets/Textures/backGround.png");
-	//backgroundTexture.setRepeated(true);
+	backgroundTexture.loadFromFile("Main/Assets/Textures/backGround.png");
+	backgroundTexture.setRepeated(true);
 }
 
 
