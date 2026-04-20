@@ -626,6 +626,7 @@ void DrawGame(bool forceDraw)
 		objects.elements[i].PreDraw();
 
 
+
 	window.draw(fireBoy.sprite);
 	window.draw(waterGirl.sprite);
 

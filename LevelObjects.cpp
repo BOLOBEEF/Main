@@ -793,11 +793,16 @@ struct Gem
 	bool isCollected = false;
 
 	void Initialize() {
-		ApplyTexture(sprite, LoadTexture::RECTANGLE, Vector2f(30, 30));
-		if (gemtype == waterGem)
+		
+		
+		if (gemtype == waterGem) {
 			sprite.setColor(Color::Blue);
-		else
+			ApplyTexture(sprite, LoadTexture::diamond_water_texture, Vector2f(80, 80));
+		}
+		else {
 			sprite.setColor(Color::Red);
+			ApplyTexture(sprite, LoadTexture::diamond_fire_texture, Vector2f(80, 80));
+		}
 	}
 
 	Gem(){}
@@ -828,11 +833,13 @@ struct Lever {
 
 	bool initialized = false;
 	Sprite sprite;
+	Sprite baseSprite;
+
 	bool state = false;
 
 	void Initialize() {
-		ApplyTexture(sprite, LoadTexture::RECTANGLE, Vector2f(20, 50));
-		sprite.setColor(Color::Cyan);
+		ApplyTexture(sprite, LoadTexture::lever_stick_texture, Vector2f(100, 100));
+		ApplyTexture(baseSprite, LoadTexture::lever_base_texture, Vector2f(100, 100));
 		initialized = true;
 	}
 
@@ -851,18 +858,29 @@ struct Lever {
 					state = !state;
 					if (state) 
 					{ 
-						sprite.setColor(Color::Green);
+					
 						PlayGameSoundEffect(GameSoundEffect::Lever_sound);
 					}
 					else
 					{
-						sprite.setColor(Color::Cyan);
+		
 						PlayGameSoundEffect(GameSoundEffect::Lever_sound);
 					}
 				}
 			}
 		}
 	}
+	void leverDraw() {
+		if (state)sprite.setRotation(-30);
+		else
+		{
+			sprite.setRotation(30);
+		}
+		window.draw(sprite);
+		baseSprite.setPosition(sprite.getPosition());
+		window.draw(baseSprite);
+	}
+	
 };
 struct Click
 {
@@ -872,14 +890,14 @@ struct Click
 	bool isPressed = false;
 
 	void Initialize() {
-		ApplyTexture(sprite, LoadTexture::RECTANGLE, Vector2f(30, 30));
-		sprite.setColor(Color::Yellow);
+		ApplyTexture(sprite, LoadTexture::pusher_block_texture, Vector2f(75, 75));
+		
 		initialized = true;
 	}
 
 	Click(){}
 	Click(Vector2f postion, bool initialize = false) {
-		sprite.setPosition(postion);
+		sprite.setPosition(postion+Vector2f(0,40));
 		AllignSprite(sprite);
 		if (initialize) Initialize();
 	}
@@ -889,12 +907,13 @@ struct Click
 		if (sprite.getGlobalBounds().intersects(anteel.sprite.getGlobalBounds())|| sprite.getGlobalBounds().intersects(anteela.sprite.getGlobalBounds())) {
 		
 			isPressed = true;
-			sprite.setColor(Color::Magenta);
-
+			if (sprite.getTextureRect().top<50)
+			sprite.setTextureRect(IntRect(sprite.getTextureRect().left, sprite.getTextureRect().top-100*dt, sprite.getTextureRect().width, sprite.getTextureRect().height));
+			
 		}
 		else {
 			isPressed = false;
-			sprite.setColor(Color::Yellow);
+			
 		}
 		if (isPressed!=lastState) {
 			PlayGameSoundEffect(GameSoundEffect::Platform_sound);
@@ -1005,7 +1024,7 @@ struct Door
 
 		if (button1.initialized) window.draw(button1.sprite);
 		if (button2.initialized) window.draw(button2.sprite);
-		if (lever.initialized) window.draw(lever.sprite);
+		if (lever.initialized) lever.leverDraw();
 	}
 };
 struct Pond
@@ -1331,11 +1350,14 @@ struct Object {
 	void PostDraw() {
 		switch (type)
 		{
+	
+
 		case Object::DoorObject: data.door.Draw();
 			break;
 		case Object::PondObject: window.draw(data.pond.sprite);
 			break;
 		case Object::BoxObject: data.box.PreDraw();
+			
 			break;
 		}
 	}
