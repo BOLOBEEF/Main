@@ -282,6 +282,36 @@ void UpdateAnimation(Sprite& sprite, LoadTexture texture) {
 		break;
 	}
 
+	case green_pond_texture:
+	{
+		
+			int frameCount = 15;
+			int width =750, height =50 ;
+			int index = (int)(globalClock.getElapsedTime().asSeconds() * speed) % frameCount;
+			sprite.setTextureRect(IntRect(index * (width / frameCount), 0, (width / frameCount), height));
+			break;
+		
+	}
+	case green_pond_right_texture:
+	{
+
+		int frameCount = 15;
+		int width = 750, height = 43;
+		int index = (int)(globalClock.getElapsedTime().asSeconds() * speed) % frameCount;
+		sprite.setTextureRect(IntRect(index * (width / frameCount), 0, (width / frameCount), height));
+		break;
+
+	}
+	case green_pond_left_texture:
+	{
+
+		int frameCount = 15;
+		int width = 750, height = 42;
+		int index = (int)(globalClock.getElapsedTime().asSeconds() * speed) % frameCount;
+		sprite.setTextureRect(IntRect(index * (width / frameCount), 0, (width / frameCount), height));
+		break;
+
+	}
 
 	case lever_stick_texture:
 		break;
