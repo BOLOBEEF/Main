@@ -125,6 +125,17 @@ enum LoadTexture
 	game_name_texture,
 	cursor_texture,
 
+	pointer_texture,
+	arrow_icon0_texture,
+	arrow_icon1_texture,
+	x_icon_texture,
+	tick_icon_texture,
+	rating_diamonds_texture,
+	finished_icon_texture,
+	diamonds_green_texture,
+	diamonds_purple_texture,
+	diamonds_orange_texture,
+
 };
 
 
@@ -222,6 +233,15 @@ Texture clock_timer;
 Texture stone_button;
 Texture main_menu_background;
 Texture game_name;
+Texture arrow_icon0;
+Texture arrow_icon1;
+Texture x_icon;
+Texture tick_icon;
+Texture rating_diamonds;
+Texture finished_icon;
+Texture diamonds_green;
+Texture diamonds_purple;
+Texture diamonds_orange;
 //cursor texture
 Texture CursorAndPointer;
 
@@ -476,6 +496,42 @@ void ApplyTexture(Sprite& sprite, LoadTexture texture, Vector2f size = Vector2f(
 
 
 		// menu assets
+
+	case arrow_icon0_texture:
+		sprite.setTexture(arrow_icon0);
+		break;
+
+	case arrow_icon1_texture:
+		sprite.setTexture(arrow_icon1);
+		break;
+
+	case x_icon_texture:
+		sprite.setTexture(x_icon);
+		break;
+
+	case tick_icon_texture:
+		sprite.setTexture(tick_icon);
+		break;
+
+	case rating_diamonds_texture:
+		sprite.setTexture(rating_diamonds);
+		break;
+
+	case finished_icon_texture:
+		sprite.setTexture(finished_icon);
+		break;
+
+	case diamonds_green_texture:
+		sprite.setTexture(diamonds_green);
+		break;
+
+	case diamonds_purple_texture:
+		sprite.setTexture(diamonds_purple);
+		break;
+
+	case diamonds_orange_texture:
+		sprite.setTexture(diamonds_orange);
+		break;
 
 	case BackButton0_texture:
 		sprite.setTexture(BackButton0);
@@ -757,6 +813,14 @@ void InitializeTextures()
 	stone_button.loadFromFile("Main/Assets/Animations/menu assets/stone button.png");
 	main_menu_background.loadFromFile("Main/Assets/Animations/menu assets/main menu background.png");
 	game_name.loadFromFile("Main/Assets/Animations/menu assets/GameNameForest.png");
+	x_icon.loadFromFile("Main/Assets/Animations/menu assets/x_icon.png");
+	tick_icon.loadFromFile("Main/Assets/Animations/menu assets/tick_icon.png");
+	arrow_icon0.loadFromFile("Main/Assets/Animations/menu assets/arrow_icon0.png");
+	arrow_icon1.loadFromFile("Main/Assets/Animations/menu assets/arrow_icon1.png");
+	rating_diamonds.loadFromFile("Main/Assets/Animations/menu assets/rating_diamonds.png");
+	finished_icon.loadFromFile("Main/Assets/Animations/menu assets/finished_icon.png");
+
+
 	// divide the process into functions
 	InitializeMenuTextures();
 	InitializeGameTextures();
