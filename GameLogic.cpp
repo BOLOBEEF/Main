@@ -410,6 +410,11 @@ void EditMode(Event event) {
 						objects.elements[doorIndex].data.door.button1 = Click(mousePosition, true);
 					else if (!objects.elements[doorIndex].data.door.button2.initialized)
 						objects.elements[doorIndex].data.door.button2 = Click(mousePosition, true);
+					else
+					{
+						objects.elements[doorIndex].data.door.button1 = Click(mousePosition, true);
+						objects.elements[doorIndex].data.door.button2.initialized = false;
+					}
 					break;
 				case Lever_mode:
 					if (isEditingDoor)
