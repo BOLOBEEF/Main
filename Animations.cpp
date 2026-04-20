@@ -44,9 +44,8 @@ void HandleAnimationsInput(Event event)
 }
 
 void UpdateAnimation(Sprite& sprite, LoadTexture texture) {
-	float speed = 10.0f;
-	int frameCount = 6;
-	int index = (int)(globalClock.getElapsedTime().asSeconds() * speed) % frameCount;
+	float speed = 20.0f;
+	
 
 	switch (texture)
 	{
@@ -65,10 +64,15 @@ void UpdateAnimation(Sprite& sprite, LoadTexture texture) {
 	case RECTANGLE:
 		break;
 	case GROUND:
-		sprite.setTextureRect(IntRect(index * 32, 0, 32, 32));
+		sprite.setTextureRect(IntRect(8 * 32, 0, 32, 32));
 		break;
-	case death_smoke_texture:
+	case death_smoke_texture: {
+
+		int frameCount = 45;
+		int index = (int)(globalClock.getElapsedTime().asSeconds() * speed) % frameCount;
+		sprite.setTextureRect(IntRect(index * 102, 0, 102, 107));
 		break;
+	}
 	case diamonds_texture:
 		break;
 	case fire_glow_texture:
@@ -82,10 +86,16 @@ void UpdateAnimation(Sprite& sprite, LoadTexture texture) {
 	case fire_idle_body_texture:
 		sprite.setTextureRect(IntRect(0, 0, 32, 32));
 		break;
-	case fire_idle_head_texture:
+	case fire_idle_head_texture:{
+		
 		break;
-	case fire_running_texture:
+	}
+	case fire_running_texture: {
+		int frameCount = 8;
+		int index = (int)(globalClock.getElapsedTime().asSeconds() * speed) % frameCount;
+		sprite.setTextureRect(IntRect(index * 130, 0, 130, 172));
 		break;
+	}
 	case fire_stairs_texture:
 		break;
 	case fire_head_falling_texture:
@@ -146,12 +156,6 @@ void UpdateAnimation(Sprite& sprite, LoadTexture texture) {
 		break;
 	case BackButtonFull0_texture:
 		sprite.setTextureRect(IntRect(0, 0, 209, 89));
-		break;
-	case cursor_texture:
-		sprite.setTextureRect(IntRect(0, 0, 128, 128));
-		break;
-	case pointer_texture:
-		sprite.setTextureRect(IntRect(128, 0, 128, 128));
 		break;
 	case Diamond0_texture:
 		break;

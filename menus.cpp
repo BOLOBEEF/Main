@@ -21,6 +21,7 @@ float holdSpeed = 40, holdLimit = 50;
 //Why hold? -> because when I make the fade transition, I change the game state when alpha becomes 255, so the pause menu won't move until this case, it will move when we start decrementing the alpha
 //which is not like the original game
 
+
 GameState PreviousMenu_State = MAIN_MENU;
 GameState FadeTransitionMenuState = MAIN_MENU;
 RectangleShape Dimmed_Background;
@@ -48,6 +49,7 @@ Text Menu_GOVERtxt, Retry_GOVERtxt, Skip_GOVERtxt, GameOver_txt;
 Text Continue_Wintxt;
 // cursor Variables
 Sprite cursorAndpointerSprite;
+bool ispointerNow = false;
 
 // Functions
 bool MouseInput_mnu(Event event, Sprite& ButtonClicked, LoadTexture Currnet_texture_enum, LoadTexture Desired_texture_enum, MenuSoundEffect Sound_Played_mnu, GameState state_mnu, bool fadeTransition)
@@ -57,7 +59,8 @@ bool MouseInput_mnu(Event event, Sprite& ButtonClicked, LoadTexture Currnet_text
 		if (ButtonClicked.getGlobalBounds().contains(mousePosition))
 		{
 			UpdateAnimation(ButtonClicked, Desired_texture_enum);
-			UpdateAnimation(cursorAndpointerSprite, pointer_texture);
+			cursorAndpointerSprite.setTextureRect(IntRect(152, 0, 75, 77));
+			ispointerNow = true;
 		}
 	}
 	if (event.type == Event::MouseButtonReleased && event.mouseButton.button == Mouse::Left)
@@ -65,7 +68,7 @@ bool MouseInput_mnu(Event event, Sprite& ButtonClicked, LoadTexture Currnet_text
 		if (ButtonClicked.getGlobalBounds().contains(mousePosition))
 		{
 			UpdateAnimation(ButtonClicked, Currnet_texture_enum);
-			UpdateAnimation(cursorAndpointerSprite, cursor_texture);
+			ispointerNow = false;
 			PlayMenuSoundEffect(Sound_Played_mnu);
 			if (fadeTransition)
 			{
@@ -87,6 +90,8 @@ bool MouseInput_Settings_mnu(Event event, Sprite& ButtonClicked, LoadTexture Cur
 		if (ButtonClicked.getGlobalBounds().contains(mousePosition))
 		{
 			UpdateAnimation(ButtonClicked, Desired_texture_enum);
+			cursorAndpointerSprite.setTextureRect(IntRect(152, 0, 75, 77));
+			ispointerNow = true;
 		}
 	}
 	if (event.type == Event::MouseButtonReleased && event.mouseButton.button == Mouse::Left)
@@ -94,6 +99,7 @@ bool MouseInput_Settings_mnu(Event event, Sprite& ButtonClicked, LoadTexture Cur
 		if (ButtonClicked.getGlobalBounds().contains(mousePosition))
 		{
 			PlayMenuSoundEffect(Sound_Played_mnu);
+			ispointerNow = false;
 			//Logic for muting or opening the sound
 		}
 	}
@@ -151,7 +157,7 @@ void InitializeMenu()
 	fpsDisplay.setFont(font);
 	fpsDisplay.setCharacterSize(24);
 	//Cursor 
-	ApplyTexture(cursorAndpointerSprite, LoadTexture::cursor_texture, Vector2f(110, 55));
+	ApplyTexture(cursorAndpointerSprite, LoadTexture::cursor_texture, Vector2f(140, 50));
 	UpdateAnimation(cursorAndpointerSprite, cursor_texture);
 	cursorAndpointerSprite.setPosition(mousePosition);
 	cursorAndpointerSprite.setOrigin(cursorAndpointerSprite.getGlobalBounds().width / 2, cursorAndpointerSprite.getGlobalBounds().height / 2);
@@ -449,7 +455,14 @@ void UpdateUI()
 	}
 	FadingTransitionBackground.setFillColor(Color(0, 0, 0, fadePercentage));
 
-	cursorAndpointerSprite.setPosition(mousePosition);
+	cursorAndpointerSprite.setPosition(mousePosition + Vector2f(30, -10));
+	float cursorAnimationSpeed = 5.0f;
+	int cursorAnimationFrameCount = 2;
+	if (!ispointerNow)
+	{
+		int cursorAnimationIndex = (int)(globalClock.getElapsedTime().asSeconds() * cursorAnimationSpeed) % cursorAnimationFrameCount;
+		cursorAndpointerSprite.setTextureRect(IntRect(cursorAnimationIndex * 75, 0, 75, 77));
+	}
 }
 
 void DrawUI()
