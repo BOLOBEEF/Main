@@ -43,6 +43,8 @@ ObjectList objects;
 // LEVEL EDITING TOOLS
 const bool enableEditMode = true;	// if true, you can place down objects by clicking, and remove them by right clicking, change object type by pressing 0 or 1 or....
 Vector2f editScale = Vector2f(1, 1);
+int editPondWidth = 1;
+
 enum EditMode
 {
 	collider_mode,
@@ -92,7 +94,7 @@ void CheckCollision(Player& player) {
 void AllignColliders() {
 	for (int i = 0; i < colliders.count; i++)
 	{
-		AllignSprite(colliders.elements[i].sprite);
+		Allign(colliders.elements[i].sprite);
 	}
 }
 
@@ -101,7 +103,6 @@ void LoadLevelData() {
 	colliders.Add(Collider(Collider::ColliderType::Rectangle, center + Vector2f(16, -524), Vector2f(53, 1)));
 	colliders.Add(Collider(Collider::ColliderType::Rectangle, center + Vector2f(480, 436), Vector2f(22, 1)));
 	colliders.Add(Collider(Collider::ColliderType::Rectangle, center + Vector2f(-448, -236), Vector2f(22, 1)));
-	colliders.Add(Collider(Collider::ColliderType::Rectangle, center + Vector2f(-576, 308), Vector2f(14, 1)));
 	colliders.Add(Collider(Collider::ColliderType::Rectangle, center + Vector2f(-464, 180), Vector2f(21, 1)));
 	colliders.Add(Collider(Collider::ColliderType::Rectangle, center + Vector2f(256, 244), Vector2f(18, 1)));
 	colliders.Add(Collider(Collider::ColliderType::Rectangle, center + Vector2f(-320, -44), Vector2f(18, 1)));
@@ -135,26 +136,53 @@ void LoadLevelData() {
 	colliders.Add(Collider(Collider::ColliderType::Rectangle, center + Vector2f(768, -76), Vector2f(4, 3)));
 	colliders.Add(Collider(Collider::ColliderType::Triangle_Rotated, center + Vector2f(720, -140), Vector2f(1, 1)));
 	colliders.Add(Collider(Collider::ColliderType::Triangle_Rotated, center + Vector2f(688, -44), Vector2f(1, 1)));
-
-
 	objects.Add(Object(Object::GemObject));
-	objects.GetLastElement().InitializeGemObject(Gem::fireGem, Vector2f(650, 800));
-	objects.Add(Object(Object::GemObject));
-	objects.GetLastElement().InitializeGemObject(Gem::waterGem, Vector2f(800, 800));
+	objects.GetLastElement().InitializeGemObject(Gem::waterGem, Vector2f(808, 808));
 	objects.Add(Object(Object::PondObject));
-	objects.GetLastElement().InitializePondObject(Pond::POISON_POND, Vector2f(800, 600));
+	objects.GetLastElement().InitializePondObject(Pond::POISON_POND, Vector2f(816, 592), 1);
 	objects.Add(Object(Object::PondObject));
-	objects.GetLastElement().InitializePondObject(Pond::FIRE_POND, Vector2f(600, 550));
+	objects.GetLastElement().InitializePondObject(Pond::FIRE_POND, Vector2f(592, 560), 1);
 	objects.Add(Object(Object::PondObject));
-	objects.GetLastElement().InitializePondObject(Pond::WATER_POND, Vector2f(1000, 650));
-	objects.Add(Object(Object::BoxObject));
-	objects.GetLastElement().InitializeBoxObject(Vector2f(1100, 200));
-
+	objects.GetLastElement().InitializePondObject(Pond::WATER_POND, Vector2f(1008, 656), 1);
 	objects.Add(Object(Object::DoorObject));
-	objects.GetLastElement().InitializeDoorObject(Vector2f(400.0f, 300.0f), Vector2f(400.0f, 200.0f));
-
-	//objects.GetLastElement().data.door.button1 = Click(Vector2f(900, 800), true);
-	//objects.GetLastElement().data.door.lever = Lever(Vector2f(1200, 800), true);
+	objects.GetLastElement().InitializeDoorObject(Vector2f(416, 368), Vector2f(416, 192));
+	objects.Add(Object(Object::GemObject));
+	objects.GetLastElement().InitializeGemObject(Gem::fireGem, Vector2f(616, 648));
+	objects.Add(Object(Object::GemObject));
+	objects.GetLastElement().InitializeGemObject(Gem::fireGem, Vector2f(712, 648));
+	objects.Add(Object(Object::GemObject));
+	objects.GetLastElement().InitializeGemObject(Gem::fireGem, Vector2f(904, 648));
+	objects.Add(Object(Object::GemObject));
+	objects.GetLastElement().InitializeGemObject(Gem::fireGem, Vector2f(808, 808));
+	objects.Add(Object(Object::GemObject));
+	objects.GetLastElement().InitializeGemObject(Gem::fireGem, Vector2f(712, 904));
+	objects.Add(Object(Object::GemObject));
+	objects.GetLastElement().InitializeGemObject(Gem::fireGem, Vector2f(904, 904));
+	objects.Add(Object(Object::GemObject));
+	objects.GetLastElement().InitializeGemObject(Gem::fireGem, Vector2f(1288, 904));
+	objects.Add(Object(Object::GemObject));
+	objects.GetLastElement().InitializeGemObject(Gem::fireGem, Vector2f(1288, 680));
+	objects.Add(Object(Object::GemObject));
+	objects.GetLastElement().InitializeGemObject(Gem::waterGem, Vector2f(488, 424));
+	objects.Add(Object(Object::GemObject));
+	objects.GetLastElement().InitializeGemObject(Gem::waterGem, Vector2f(712, 424));
+	objects.Add(Object(Object::PondObject));
+	objects.GetLastElement().InitializePondObject(Pond::FIRE_POND, Vector2f(1136, 496), 1);
+	objects.Add(Object(Object::PondObject));
+	objects.GetLastElement().InitializePondObject(Pond::FIRE_POND, Vector2f(1296, 496), 3);
+	objects.Add(Object(Object::PondObject));
+	objects.GetLastElement().InitializePondObject(Pond::FIRE_POND, Vector2f(848, 464), 3);
+	objects.Add(Object(Object::PondObject));
+	objects.GetLastElement().InitializePondObject(Pond::WATER_POND, Vector2f(496, 720), 3);
+	objects.Add(Object(Object::DoorObject));
+	objects.GetLastElement().InitializeDoorObject(Vector2f(224, 528), Vector2f(224, 416));
+	objects.Add(Object(Object::DoorObject));
+	objects.GetLastElement().InitializeDoorObject(Vector2f(480, 614), Vector2f(480, 512));
+	objects.GetLastElement().data.door.button1 = Click(Vector2f(637, 943), true);
+	objects.GetLastElement().data.door.button2 = Click(Vector2f(764, 943), true);
+	objects.GetLastElement().data.door.lever = Lever(Vector2f(861, 941), true);
+	objects.Add(Object(Object::GemObject));
+	objects.GetLastElement().InitializeGemObject(Gem::fireGem, Vector2f(776, 680));
 }
 
 
@@ -264,9 +292,9 @@ void InitializeGame()
 	outlineSprite.setColor(Color(30, 30, 30));
 	resultSprite.setTexture(resultTexture.getTexture());
 
-	water_door.Initialilze();
+	water_door.Initialize();
 	water_door.sprite.setColor(Color::Blue);
-	fire_door.Initialilze();
+	fire_door.Initialize();
 	fire_door.sprite.setColor(Color::Red);
 
 	temporaryground.Initialize();
@@ -277,7 +305,7 @@ void InitializeGame()
 	UpdateGroundTexture();
 }
 
-void PrintCollidersCode() {
+void PrintLevelData() {
 	for (int i = 0; i < colliders.count; i++) {
 		string type = (colliders.elements[i].type == Collider::ColliderType::Rectangle ? "Rectangle" : colliders.elements[i].type == Collider::ColliderType::Triangle ? "Triangle" : "Triangle_Rotated");
 		string position = "Vector2f(" + to_string((int)(colliders.elements[i].sprite.getPosition().x - center.x)) + ", " + to_string((int)(colliders.elements[i].sprite.getPosition().y - center.y)) + ")";
@@ -285,11 +313,50 @@ void PrintCollidersCode() {
 		cout << "colliders.Add(Collider(Collider::ColliderType::" << type << ", center + " << position << ", " << scale << "));" << endl;
 	}
 
+	for (int i = 0; i < objects.count; i++) {
+		string type;
+		string position;
+		string extraData;
+		switch (objects.elements[i].type)
+		{
+		case Object::GemObject:
+			type = (objects.elements[i].data.gem.type == Gem::fireGem ? "FireGem_mode" : "WaterGem_mode");
+			position = "Vector2f(" + to_string((int)objects.elements[i].data.gem.sprite.getPosition().x) + ", " + to_string((int)objects.elements[i].data.gem.sprite.getPosition().y) + ")";
+			cout << "objects.Add(Object(Object::GemObject));" << endl;
+			cout << "objects.GetLastElement().InitializeGemObject(Gem::" << (objects.elements[i].data.gem.type == Gem::fireGem ? "fireGem" : "waterGem") << ", " << position << ");" << endl;
+			break;
+		case Object::DoorObject:
+			type = (objects.elements[i].data.door.rotated ? "Door_Rotated_mode" : "Door_mode");
+			position = "Vector2f(" + to_string((int)objects.elements[i].data.door.sprite.getPosition().x) + ", " + to_string((int)objects.elements[i].data.door.sprite.getPosition().y) + ")";
+			extraData = "Vector2f(" + to_string((int)(objects.elements[i].data.door.endPosition.x)) + ", " + to_string((int)(objects.elements[i].data.door.endPosition.y)) + ")";
+			cout << "objects.Add(Object(Object::DoorObject));" << endl;
+			cout << "objects.GetLastElement().InitializeDoorObject(" << position << ", " << extraData << ");" << endl;
+			if (objects.elements[i].data.door.button1.initialized)
+				cout << "objects.GetLastElement().data.door.button1 = Click(Vector2f(" << (int)objects.elements[i].data.door.button1.initialPosition.x << ", " << (int)objects.elements[i].data.door.button1.initialPosition.y << "), true);" << endl;
+			if (objects.elements[i].data.door.button2.initialized)
+				cout << "objects.GetLastElement().data.door.button2 = Click(Vector2f(" << (int)objects.elements[i].data.door.button2.initialPosition.x << ", " << (int)objects.elements[i].data.door.button2.initialPosition.y << "), true);" << endl;
+			if (objects.elements[i].data.door.lever.initialized)
+				cout << "objects.GetLastElement().data.door.lever = Lever(Vector2f(" << (int)objects.elements[i].data.door.lever.initialPosition.x << ", " << (int)objects.elements[i].data.door.lever.initialPosition.y << "), true);" << endl;
+			break;
+		case Object::PondObject:
+			if (objects.elements[i].data.pond.type == Pond::FIRE_POND)
+				type = "FIRE_POND";
+			else if (objects.elements[i].data.pond.type == Pond::WATER_POND)
+				type = "WATER_POND";
+			else
+				type = "POISON_POND";
+			position = "Vector2f(" + to_string((int)objects.elements[i].data.pond.sprite.getPosition().x) + ", " + to_string((int)objects.elements[i].data.pond.sprite.getPosition().y) + ")";
+			extraData = to_string(objects.elements[i].data.pond.width);
+			cout << "objects.Add(Object(Object::PondObject));" << endl;
+			cout << "objects.GetLastElement().InitializePondObject(Pond::" << type << ", " << position << ", " << extraData << ");" << endl;
+			break;
+		}
+	}
 }
 
 void PrintObjectsCode() {
 	cout << "START" << endl;
-	PrintCollidersCode();
+	PrintLevelData();
 	cout << "END" << endl;
 }
 
@@ -336,7 +403,7 @@ void EditMode(Event event) {
 					break;
 				}
 
-				AllignSprite(collider.sprite);
+				Allign(collider.sprite);
 
 				bool isColliding = false;
 				for (int i = 0; i < colliders.count; i++)
@@ -364,9 +431,6 @@ void EditMode(Event event) {
 		}
 		else if (editMode == EditMode::object_mode)
 		{
-			// code for editing objects
-			Print(isEditingDoor ? "Editing door..." : "Editing objects...");
-
 			if (event.mouseButton.button == Mouse::Left)
 				switch (editObjectMode)
 				{
@@ -389,15 +453,15 @@ void EditMode(Event event) {
 					break;
 				case FirePond_mode:
 					objects.Add(Object(Object::PondObject));
-					objects.GetLastElement().InitializePondObject(Pond::FIRE_POND, mousePosition);
+					objects.GetLastElement().InitializePondObject(Pond::FIRE_POND, mousePosition, editPondWidth);
 					break;
 				case WaterPond_mode:
 					objects.Add(Object(Object::PondObject));
-					objects.GetLastElement().InitializePondObject(Pond::WATER_POND, mousePosition);
+					objects.GetLastElement().InitializePondObject(Pond::WATER_POND, mousePosition, editPondWidth);
 					break;
 				case PoisonPond_mode:
 					objects.Add(Object(Object::PondObject));
-					objects.GetLastElement().InitializePondObject(Pond::POISON_POND, mousePosition);
+					objects.GetLastElement().InitializePondObject(Pond::POISON_POND, mousePosition, editPondWidth);
 					break;
 				case Box_mode:
 					objects.Add(Object(Object::BoxObject));
@@ -405,29 +469,62 @@ void EditMode(Event event) {
 					break;
 				case Button_mode:
 					if (isEditingDoor)
-					if (objects.elements[doorIndex].type == Object::DoorObject)
-					if (!objects.elements[doorIndex].data.door.button1.initialized)
-						objects.elements[doorIndex].data.door.button1 = Click(mousePosition, true);
-					else if (!objects.elements[doorIndex].data.door.button2.initialized)
-						objects.elements[doorIndex].data.door.button2 = Click(mousePosition, true);
-					else
-					{
-						objects.elements[doorIndex].data.door.button1 = Click(mousePosition, true);
-						objects.elements[doorIndex].data.door.button2.initialized = false;
-					}
+						if (objects.elements[doorIndex].type == Object::DoorObject)
+							if (objects.elements[doorIndex].data.door.lastButtonAdded)
+							{
+								objects.elements[doorIndex].data.door.button1 = Click(mousePosition, true);
+								objects.elements[doorIndex].data.door.lastButtonAdded = false;
+							}
+							else
+							{
+								objects.elements[doorIndex].data.door.button2 = Click(mousePosition, true);
+								objects.elements[doorIndex].data.door.lastButtonAdded = true;
+							}
+						else
+						{
+							isEditingDoor = false; // break out of door edit mode since the door has been removed
+							editObjectMode = EditObjectMode::FireGem_mode; // reset edit object mode to default
+						}
 					break;
 				case Lever_mode:
 					if (isEditingDoor)
-					if (objects.elements[doorIndex].type == Object::DoorObject)
-					if (!objects.elements[doorIndex].data.door.lever.initialized)
-						objects.elements[doorIndex].data.door.lever = Lever(mousePosition, true);
+						if (objects.elements[doorIndex].type == Object::DoorObject)
+							objects.elements[doorIndex].data.door.lever = Lever(mousePosition, true);
 					break;
 				}
+			
+			// check collision with other objects	
+			// Object.CheckCollisionWithObjects(objects);
+
 			else if (event.mouseButton.button == Mouse::Right)
 				// remove object
 				for (int i = 0; i < objects.count; i++)
+				{
+					if (objects.elements[i].type == Object::DoorObject) {
+						// also check the lever and buttons of the door
+						int colliderIndex = objects.elements[i].data.door.CheckDoorObjects(mousePosition); // returns the index that means if button1 or 2 or lever is clicked
+						if (colliderIndex != 0) {
+							switch (colliderIndex)
+							{
+							case 1:
+								objects.elements[i].data.door.button1.initialized = false; // reset button
+								break;
+							case 2:
+								objects.elements[i].data.door.button2.initialized = false; // reset button
+								break;
+							case 3:
+								objects.elements[i].data.door.lever.initialized = false; // reset lever
+								break;
+							default:
+								break;
+							}
+							continue; // skip the rest of the loop to avoid deleting the door when trying to delete the button or lever
+						}
+					}
+
 					if (objects.elements[i].data.CheckContainsPoint(mousePosition))
 						objects.RemoveAt(i);
+				}
 		}
 	}
 
@@ -456,16 +553,12 @@ void EditMode(Event event) {
 			}
 
 			if (event.key.code == Keyboard::Numpad4)
-				// undo last object placement
 				editScale.x--;
 			if (event.key.code == Keyboard::Numpad6)
-				// undo last object placement
 				editScale.x++;
 			if (event.key.code == Keyboard::Numpad2)
-				// undo last object placement
 				editScale.y--;
 			if (event.key.code == Keyboard::Numpad8)
-				// undo last object placement
 				editScale.y++;
 
 
@@ -484,6 +577,17 @@ void EditMode(Event event) {
 				// undo last object placement
 				objects.RemoveAt(objects.count - 1);
 			}
+			
+			if (event.key.code == Keyboard::Numpad4)
+			{
+				editPondWidth--;
+				if (editPondWidth < 1) editPondWidth = 1;
+			}
+			if (event.key.code == Keyboard::Numpad6)
+			{
+				editPondWidth++;
+				if (editPondWidth < 1) editPondWidth = 1;
+			}
 
 			if (event.key.code == Keyboard::U) {
 				// add button or lever to door
@@ -500,6 +604,7 @@ void EditMode(Event event) {
 			if (event.key.code == Keyboard::X) {
 				// exit edit door mode
 				isEditingDoor = false;
+				editObjectMode = EditObjectMode::FireGem_mode; // reset object mode to default
 			}
 
 			// code for editing objects
@@ -616,16 +721,18 @@ void UpdateGame()
 void DrawGame(bool forceDraw)
 {
 	if (!forceDraw && gameState != GAME) return;
-
 	// no need for window.clear or window.display
+
 	window.draw(background);
-	window.draw(outlineSprite);
-	window.draw(resultSprite);
 
 	for (int i = 0; i < objects.count; i++)
 		objects.elements[i].PreDraw();
 
+	window.draw(outlineSprite);
+	window.draw(resultSprite);
 
+	for (int i = 0; i < objects.count; i++)
+		objects.elements[i].MidDraw();
 
 	window.draw(fireBoy.sprite);
 	window.draw(waterGirl.sprite);

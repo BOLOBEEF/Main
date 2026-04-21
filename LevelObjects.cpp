@@ -1,12 +1,17 @@
 
 // STRUCTS for level objects
-void AllignSprite(Sprite& sprite, Vector2f defaultSize = Vector2f(32, 32)) {
+void Allign(Sprite& sprite, Vector2f defaultSize = Vector2f(32, 32)) {
 	FloatRect bounds = sprite.getGlobalBounds();
 	Vector2f position = Vector2f(bounds.left, bounds.top);
 	position.x = round(position.x / defaultSize.x) * defaultSize.x;
 	position.y = round(position.y / defaultSize.y) * defaultSize.y;
 
 	sprite.setPosition(position + Vector2f(bounds.width / 2.0f, bounds.height / 2.0f));
+}
+
+void Allign(Vector2f& position, Vector2f defaultSize = Vector2f(32, 32)) {
+	position.x = round(position.x / defaultSize.x) * defaultSize.x;
+	position.y = round(position.y / defaultSize.y) * defaultSize.y;
 }
 
 struct Player
@@ -403,185 +408,6 @@ struct Collider
 		}
 
 		return triangleCollisionData;
-		//bool collided = false;
-
-		//if (playerBounds.intersects(triangleBounds)) {
-		//	Vector2f usedTrianglePoints[3];
-
-		//	if (!rotated) {
-		//		usedTrianglePoints[0] = Vector2f(triangleBounds.left, triangleBounds.top);
-		//		usedTrianglePoints[1] = Vector2f(triangleBounds.left, triangleBounds.top + triangleBounds.height);
-		//		usedTrianglePoints[2] = Vector2f(triangleBounds.left + triangleBounds.width, triangleBounds.top + triangleBounds.height);
-		//	}
-		//	else {
-		//		usedTrianglePoints[0] = Vector2f(triangleBounds.left + triangleBounds.width, triangleBounds.top);
-		//		usedTrianglePoints[1] = Vector2f(triangleBounds.left + triangleBounds.width, triangleBounds.top + triangleBounds.height);
-		//		usedTrianglePoints[2] = Vector2f(triangleBounds.left, triangleBounds.top + triangleBounds.height);
-		//	}
-
-
-
-		//	Vector2f playerDownLeftPoint = Vector2f(playerBounds.left, playerBounds.top + playerBounds.height);
-		//	Vector2f playerDownRightPoint = Vector2f(playerBounds.left + playerBounds.width, playerBounds.top + playerBounds.height);
-
-
-		//	Collider::CollisionData boxCollisionData = CheckRectangleCollision(player, triangleBounds, false, (!rotated ? FloatRect(5.0f, 0.0f, 5.0f, 0.0f) : FloatRect(5.0f, 0.0f, 0.0f, 5.0f)));
-
-		//	if (!rotated) {
-		//		if (boxCollisionData.collisionDirection == Collider::CollisionData::CollisionDirection::Bottom)
-		//		{
-		//			if (!resolveCollision)
-		//				return boxCollisionData;
-
-		//			player.sprite.move(0, boxCollisionData.overlapDistance);
-		//			player.velocity.y = max(player.velocity.y, 0.0f);
-		//			return boxCollisionData;
-		//		}
-		//		else if (boxCollisionData.collisionDirection == Collider::CollisionData::CollisionDirection::Left)
-		//		{
-		//			if (!resolveCollision)
-		//				return boxCollisionData;
-
-		//			player.sprite.move(-boxCollisionData.overlapDistance, 0);
-		//			player.velocity.x = min(player.velocity.x, 0.0f);
-		//			return boxCollisionData;
-		//		}
-
-		//		else if (boxCollisionData.collisionDirection == Collider::CollisionData::CollisionDirection::Top && playerBounds.contains(usedTrianglePoints[0]))
-		//		{
-		//			if (!resolveCollision)
-		//				return boxCollisionData;
-
-		//			player.sprite.move(0, -boxCollisionData.overlapDistance);
-		//			player.velocity.y = min(player.velocity.y, 1.0f);
-		//			return boxCollisionData;
-		//		}
-
-		//		else if (boxCollisionData.collisionDirection == Collider::CollisionData::CollisionDirection::Right && playerBounds.contains(usedTrianglePoints[2]))
-		//		{
-		//			// Compare the overlap distance with the distance to move out of the triangle upwards, and move according to the smaller one
-		//			float triangleHeight = triangleBounds.height;
-		//			float triangleWidth = triangleBounds.width;
-		//			float newWidth = abs(playerDownLeftPoint.x - usedTrianglePoints[2].x);
-		//			float newHeight = newWidth * triangleHeight / triangleWidth;
-
-		//			// move up a distance till the point is no longer inside the triangle
-		//			float heightOverlap = newHeight - abs(playerDownLeftPoint.y - (triangleBounds.top + triangleBounds.height));
-
-		//			if (boxCollisionData.overlapDistance < abs(heightOverlap) - 2) {
-		//				if (!resolveCollision)
-		//					return boxCollisionData;
-
-		//				player.sprite.move(boxCollisionData.overlapDistance, 0);
-		//				player.velocity.x = max(player.velocity.x, 0.0f);
-		//				return boxCollisionData;
-		//			}
-		//			else
-		//			{
-		//				if (!resolveCollision)
-		//					return { Collider::CollisionData::Slope, abs(heightOverlap) };
-
-		//				player.sprite.move(0, -abs(heightOverlap));
-		//				player.velocity.y = min(player.velocity.y, 1.0f);
-		//				return { Collider::CollisionData::Slope, abs(heightOverlap) };
-		//			}
-		//		}
-		//		else if (IsPointInsideTriangle(playerDownLeftPoint + Vector2f(0, -1), usedTrianglePoints))
-		//		{
-		//			if (!resolveCollision)
-		//				return { Collider::CollisionData::Slope, 0 };
-
-		//			float triangleHeight = triangleBounds.height;
-		//			float triangleWidth = triangleBounds.width;
-		//			float newWidth = abs(playerDownLeftPoint.x - usedTrianglePoints[2].x);
-		//			float newHeight = newWidth * triangleHeight / triangleWidth;
-
-		//			// move up a distance till the point is no longer inside the triangle
-		//			float heightOverlap = newHeight - abs(playerDownLeftPoint.y - (triangleBounds.top + triangleBounds.height));
-		//			player.sprite.move(0, -abs(heightOverlap) + 1);
-		//			player.velocity.y = min(player.velocity.y, 1.0f);
-		//			return { Collider::CollisionData::Slope, abs(heightOverlap) };
-		//		}
-		//	}
-		//	else {
-		//		if (boxCollisionData.collisionDirection == Collider::CollisionData::CollisionDirection::Bottom)
-		//		{
-		//			if (!resolveCollision)
-		//				return boxCollisionData;
-
-		//			player.sprite.move(0, boxCollisionData.overlapDistance);
-		//			player.velocity.y = max(player.velocity.y, 0.0f);
-		//			return boxCollisionData;
-		//		}
-		//		else if (boxCollisionData.collisionDirection == Collider::CollisionData::CollisionDirection::Right)
-		//		{
-		//			if (!resolveCollision)
-		//				return boxCollisionData;
-
-		//			player.sprite.move(boxCollisionData.overlapDistance, 0);
-		//			player.velocity.x = max(player.velocity.x, 0.0f);
-		//			return boxCollisionData;
-		//		}
-
-		//		else if (boxCollisionData.collisionDirection == Collider::CollisionData::CollisionDirection::Top && playerBounds.contains(usedTrianglePoints[0]))
-		//		{
-		//			if (!resolveCollision)
-		//				return boxCollisionData;
-
-		//			player.sprite.move(0, -boxCollisionData.overlapDistance);
-		//			player.velocity.y = min(player.velocity.y, 1.0f);
-		//			return boxCollisionData;
-		//		}
-
-		//		else if (boxCollisionData.collisionDirection == Collider::CollisionData::CollisionDirection::Left && playerBounds.contains(usedTrianglePoints[2]))
-		//		{
-		//			float triangleHeight = triangleBounds.height;
-		//			float triangleWidth = triangleBounds.width;
-		//			float newWidth = abs(playerDownRightPoint.x - usedTrianglePoints[2].x);
-		//			float newHeight = newWidth * triangleHeight / triangleWidth;
-
-		//			// move up a distance till the point is no longer inside the triangle
-		//			float heightOverlap = newHeight - abs(playerDownRightPoint.y - (triangleBounds.top + triangleBounds.height));
-
-		//			if (boxCollisionData.overlapDistance < abs(heightOverlap) - 2) {
-		//				if (!resolveCollision)
-		//					return boxCollisionData;
-
-		//				player.sprite.move(-boxCollisionData.overlapDistance, 0);
-		//				player.velocity.x = min(player.velocity.x, 0.0f);
-		//				return boxCollisionData;
-		//			}
-		//			else
-		//			{
-		//				if (!resolveCollision)
-		//					return { Collider::CollisionData::Slope, abs(heightOverlap) };
-
-		//				player.sprite.move(0, -abs(heightOverlap));
-		//				player.velocity.y = min(player.velocity.y, 1.0f);
-		//				return { Collider::CollisionData::Slope, abs(heightOverlap) };
-		//			}
-		//		}
-		//		else if (IsPointInsideTriangle(playerDownRightPoint + Vector2f(0, -1), usedTrianglePoints))
-		//		{
-		//			if (!resolveCollision)
-		//				return { Collider::CollisionData::Slope, 0 };
-
-		//			float triangleHeight = triangleBounds.height;
-		//			float triangleWidth = triangleBounds.width;
-		//			float newWidth = abs(playerDownRightPoint.x - usedTrianglePoints[2].x);
-		//			float newHeight = newWidth * triangleHeight / triangleWidth;
-
-		//			// move up a distance till the point is no longer inside the triangle
-		//			float heightOverlap = newHeight - abs(playerDownRightPoint.y - (triangleBounds.top + triangleBounds.height));
-		//			player.sprite.move(0, -abs(heightOverlap) + 1);
-		//			player.velocity.y = min(player.velocity.y, 1.0f);
-		//			return { Collider::CollisionData::Slope, abs(heightOverlap) };
-		//		}
-		//	}
-
-		//}
-
-		//return { Collider::CollisionData::None, 0.0f };;	// placeholder, implement this later
 	}
 
 
@@ -729,10 +555,10 @@ struct FinalDoor
 	Sprite sprite;
 	Vector2f startPosition;
 
-	void Initialilze() {
+	void Initialize() {
 		ApplyTexture(sprite, LoadTexture::RECTANGLE, Vector2f(32, 32 * 2));
 		sprite.setPosition(startPosition);
-		AllignSprite(sprite);
+		Allign(sprite);
 	}
 	FinalDoor(door_type startType, Vector2f position) {
 		type = startType;
@@ -788,14 +614,14 @@ struct FinalDoor
 struct Gem
 {
 	enum Gemtype { waterGem, fireGem };
-	Gemtype gemtype;
+	Gemtype type;
 	Sprite sprite;
 	bool isCollected = false;
 
 	void Initialize() {
 		
 		
-		if (gemtype == waterGem) {
+		if (type == waterGem) {
 			sprite.setColor(Color::Blue);
 			ApplyTexture(sprite, LoadTexture::diamond_water_texture, Vector2f(80, 80));
 		}
@@ -807,20 +633,20 @@ struct Gem
 
 	Gem(){}
 	Gem(Gemtype crystaltype, Vector2f position) {
-		gemtype = crystaltype;
+		type = crystaltype;
 		sprite.setPosition(position);
-		AllignSprite(sprite);
+		Allign(sprite);
 	}
 
 	void Update(Player hamada) {
-		if (gemtype == waterGem && hamada.playertype == Player::Watergirl) {
+		if (type == waterGem && hamada.playertype == Player::Watergirl) {
 			if (sprite.getGlobalBounds().intersects(hamada.sprite.getGlobalBounds())) {
 				PlayGameSoundEffect(GameSoundEffect::DiamondCollect_sound);
 				isCollected = true;
 				sprite.setScale(0, 0);
 			}
 		}
-		if (gemtype == fireGem && hamada.playertype == Player::Fireboy) {
+		if (type == fireGem && hamada.playertype == Player::Fireboy) {
 			if (sprite.getGlobalBounds().intersects(hamada.sprite.getGlobalBounds())) {
 				PlayGameSoundEffect(GameSoundEffect::DiamondCollect_sound);
 				isCollected = true;
@@ -834,20 +660,23 @@ struct Lever {
 	bool initialized = false;
 	Sprite sprite;
 	Sprite baseSprite;
+	Vector2f initialPosition;
 
 	bool state = false;
 
 	void Initialize() {
-		ApplyTexture(sprite, LoadTexture::lever_stick_texture, Vector2f(100, 100));
-		ApplyTexture(baseSprite, LoadTexture::lever_base_texture, Vector2f(100, 100));
+		ApplyTexture(sprite, LoadTexture::lever_stick_texture, Vector2f(85, 85));
+		ApplyTexture(baseSprite, LoadTexture::lever_base_texture, Vector2f(85, 85));
 		initialized = true;
 	}
 
 	Lever(){}
-	Lever(Vector2f postion, bool initialize = false) {
-		sprite.setPosition(postion);
-		AllignSprite(sprite);
+	Lever(Vector2f position, bool initialize = false) {
+		initialPosition = position;
 		if (initialize) Initialize();
+		sprite.setPosition(position);
+		Allign(sprite);
+		sprite.move(0, 20);
 	}
 
 	void CheckInput(Player moroo, Player mora, Event event) {
@@ -888,6 +717,10 @@ struct Click
 
 	Sprite sprite;
 	bool isPressed = false;
+	Vector2f initialPosition;
+	Vector2f startPosition;
+
+	float speed = 60.0f;
 
 	void Initialize() {
 		ApplyTexture(sprite, LoadTexture::pusher_block_texture, Vector2f(75, 75));
@@ -896,10 +729,15 @@ struct Click
 	}
 
 	Click(){}
-	Click(Vector2f postion, bool initialize = false) {
-		sprite.setPosition(postion+Vector2f(0,40));
-		AllignSprite(sprite);
+	Click(Vector2f position, bool initialize = false) {
+		initialPosition = position;
 		if (initialize) Initialize();
+		startPosition = position;
+		sprite.setPosition(startPosition);
+		Allign(sprite);
+
+		sprite.move(0, 20);
+		startPosition = sprite.getPosition();
 	}
 
 	void Update(Player anteel,Player anteela) {
@@ -907,13 +745,14 @@ struct Click
 		if (sprite.getGlobalBounds().intersects(anteel.sprite.getGlobalBounds())|| sprite.getGlobalBounds().intersects(anteela.sprite.getGlobalBounds())) {
 		
 			isPressed = true;
-			if (sprite.getTextureRect().top<50)
-			sprite.setTextureRect(IntRect(sprite.getTextureRect().left, sprite.getTextureRect().top-100*dt, sprite.getTextureRect().width, sprite.getTextureRect().height));
-			
+
+			if (abs(startPosition.y - sprite.getPosition().y) < 20)
+			sprite.move(0, speed * dt);
 		}
 		else {
 			isPressed = false;
-			
+			if (startPosition.y < sprite.getPosition().y)
+			sprite.move(0, -speed * dt);
 		}
 		if (isPressed!=lastState) {
 			PlayGameSoundEffect(GameSoundEffect::Platform_sound);
@@ -937,6 +776,7 @@ struct Door
 	Click button1;
 	Click button2;
 	Lever lever;
+	bool lastButtonAdded = false; // used to alternate between button1 and button2 when adding buttons to the door
 
 
 	void Initialize() {
@@ -956,7 +796,7 @@ struct Door
 			
 
 		sprite.setColor(Color::Yellow);
-		AllignSprite(sprite);
+		Allign(sprite);
 		startPosition = sprite.getPosition();
 	}
 
@@ -964,6 +804,15 @@ struct Door
 	Door(Vector2f start, Vector2f end) {
 		startPosition = start;
 		endPosition = end;
+	}
+
+	// check if position is inside the door objects (button or lever)
+	int CheckDoorObjects(Vector2f position) {
+		if (button1.sprite.getGlobalBounds().contains(position)) return 1;
+		if (button2.sprite.getGlobalBounds().contains(position)) return 2;
+		if (lever.sprite.getGlobalBounds().contains(position)) return 3;
+
+		return 0; // nothing collided
 	}
 
 	void CheckCollision(Player& player) {
@@ -991,7 +840,6 @@ struct Door
 			direction = Normalize(direction);
 			sprite.move(direction * speed * dt);
 		}
-		collider.sprite.setPosition(sprite.getPosition());
 	}
 
 	void CheckInput(Player& fireBoy, Player& waterGirl, Event event) {
@@ -1003,6 +851,8 @@ struct Door
 	{
 		// reset door state
 		isOpen = false;
+		
+		collider.sprite.setPosition(sprite.getPosition());
 
 		if (button1.initialized)
 			button1.Update(fireBoy, waterGirl);
@@ -1019,11 +869,16 @@ struct Door
 		CheckCollision(waterGirl);
 	}
 
-	void Draw() {
+	// draw the door before the ground so the objects appear on top of the door
+	void PreDraw() {
 		window.draw(sprite);
 
 		if (button1.initialized) window.draw(button1.sprite);
 		if (button2.initialized) window.draw(button2.sprite);
+	}
+
+	// draw the lever after the ground so it appears on top of the ground and players when the door is open
+	void PostDraw() {
 		if (lever.initialized) lever.leverDraw();
 	}
 };
@@ -1040,6 +895,7 @@ struct Pond
 
 	bool fireBoyColliding = false;
 	bool waterGirlColliding = false;
+	int width = 1;
 
 	Pond(){}
 	Pond(ponds_type startType, Vector2f position) {
@@ -1047,9 +903,10 @@ struct Pond
 		sprite.setPosition(position);
 	}
 
-	void Initialilze() {
-		ApplyTexture(sprite, LoadTexture::RECTANGLE, Vector2f(32 * 5, 32));
-		AllignSprite(sprite);
+	void Initialize(int startWidth = 1) {
+		width = startWidth;
+		ApplyTexture(sprite, LoadTexture::RECTANGLE, Vector2f(32 * width, 32));
+		Allign(sprite);
 
 		switch (type)
 		{
@@ -1277,29 +1134,62 @@ struct Object {
 	}
 
 	void InitializeGemObject(Gem::Gemtype crystaltype, Vector2f position) {
-		data.gem.gemtype = crystaltype;
+		data.gem.type = crystaltype;
 		data.gem.Initialize();
 		data.gem.sprite.setPosition(position);
-		AllignSprite(data.gem.sprite);
+		Allign(data.gem.sprite);
 	}
 
 	void InitializeDoorObject(Vector2f Initialize, Vector2f end) {
 		data.door.startPosition = Initialize;
-		data.door.endPosition = end;
 		data.door.Initialize();
+		data.door.startPosition = data.door.sprite.getPosition();
+		Allign(end);
+		data.door.endPosition = end;
 	}
 
-	void InitializePondObject(Pond::ponds_type startType, Vector2f position) {
+	void InitializePondObject(Pond::ponds_type startType, Vector2f position, int width) {
 		data.pond.type = startType;
-		data.pond.Initialilze();
+		data.pond.Initialize(width);
 		data.pond.sprite.setPosition(position);
-		AllignSprite(data.pond.sprite);
+		Allign(data.pond.sprite);
 	}
 
 	void InitializeBoxObject(Vector2f position) {
 		data.box.startPosition = position;
 		data.box.Initialize();
 	}
+
+	/*bool CheckObjectCollision(Object other) {
+		switch (type)
+		{
+		case Object::GemObject:
+			switch (other.type)
+			{
+			case Object::GemObject:
+				break;
+			case Object::DoorObject:
+				break;
+			case Object::PondObject:
+				break;
+			case Object::BoxObject:
+				break;
+			default:
+				break;
+			}
+			break;
+		case Object::DoorObject:
+			break;
+		case Object::PondObject:
+			break;
+		case Object::BoxObject:
+			break;
+		default:
+			break;
+		}
+
+		return false;
+	}*/
 
 	void CheckInput(Player& fireboy, Player& waterGirl, Event event) {
 		switch (type)
@@ -1337,8 +1227,17 @@ struct Object {
 		}
 	}
 
-	// draw behind the players
+	// draw behind the ground and the players
 	void PreDraw() {
+		switch (type)
+		{
+		case Object::DoorObject: data.door.PreDraw();
+			break;
+		}
+	}
+
+	// draw behind the players
+	void MidDraw() {
 		switch (type)
 		{
 		case Object::GemObject: window.draw(data.gem.sprite);
@@ -1346,18 +1245,15 @@ struct Object {
 		}
 	}
 
-	// draw on top of the players
+	// draw on top of all the other objects
 	void PostDraw() {
 		switch (type)
 		{
-	
-
-		case Object::DoorObject: data.door.Draw();
-			break;
 		case Object::PondObject: window.draw(data.pond.sprite);
 			break;
 		case Object::BoxObject: data.box.PreDraw();
-			
+			break;
+		case Object::DoorObject: data.door.PostDraw();
 			break;
 		}
 	}
@@ -1431,7 +1327,7 @@ struct Temporary_ground
 	Temporary_ground() {}
 	Temporary_ground(Vector2f position) {
 		sprite.setPosition(position);
-		AllignSprite(sprite);
+		Allign(sprite);
 	}
 	void CheckCollision(Player& player, Temporary_ground& temp) {
 		if(player.sprite.getGlobalBounds().intersects(temp.sprite.getGlobalBounds()))
