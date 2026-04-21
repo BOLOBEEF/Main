@@ -1441,16 +1441,16 @@ struct Temporary_ground
 	}
 	void Initialize() {
 		//collider = Collider(Collider::ColliderType::Rectangle, sprite.getPosition());
-		ApplyTexture(sprite, LoadTexture::RECTANGLE, Vector2f(32*2, 32));
-		sprite.setColor(Color::Cyan);
+		ApplyTexture(sprite, LoadTexture::TEMPORARY_GROUND, Vector2f(32*2, 32));
+		
 	}
 	void update(Player& player,Temporary_ground& temp) {
 		CheckCollision(player,temp);
 		static float timer = 0.0f;
 		Clock clock;
 		if (!temp.idle) {
-			sprite.setColor(Color::Magenta);
-			collider.sprite.setColor(Color::Magenta);
+			
+		
 			timer += dt;
 			
 			if (timer >= 5.0f)
@@ -1462,8 +1462,8 @@ struct Temporary_ground
 			}
 		}
 		else {
-			sprite.setColor(Color::Cyan);
-			collider.sprite.setColor(Color::Cyan);
+		
+			
 			//float timer = 0.0f;
 			timer += dt;
 			if (timer >= 8.0f)
