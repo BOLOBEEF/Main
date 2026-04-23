@@ -66,7 +66,7 @@ enum GameState
 
 
 // DO NOT CHANGE THIS DIRECTLY, USE UpdateGameState() INSTEAD
-GameState gameState = GAME;
+GameState gameState = PAUSE_MENU;
 
 
 void UpdateGameState(GameState newState, bool ForceUpdate);

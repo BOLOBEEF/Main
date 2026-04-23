@@ -426,7 +426,7 @@ void UpdateAnimation(Sprite& sprite, LoadTexture texture) {
 	}
 }
 
-void UpdatePlayerTexture(Sprite& sprite, PlayerType type, PlayerState newState, Vector2f size, bool Head = false) {
+void UpdatePlayerTexture(Sprite& sprite, PlayerType type, PlayerState newState, bool Head = false) {
 
 	if (!Head)
 	switch (type)
@@ -435,10 +435,10 @@ void UpdatePlayerTexture(Sprite& sprite, PlayerType type, PlayerState newState, 
 			switch (newState)
 			{
 			case Walk:
-				ApplyTexture(sprite, LoadTexture::fire_running_texture, size);
+				ApplyTexture(sprite, LoadTexture::fire_running_texture, Vector2f(1.0f, 1.0f), Vector2f(1.0f, 1.0f), true, false);
 				break;
 			case Idle:
-				ApplyTexture(sprite, LoadTexture::fire_idle_body_texture, size);
+				ApplyTexture(sprite, LoadTexture::fire_idle_body_texture, Vector2f(1.0f, 1.0f), Vector2f(1.0f, 1.0f), true, false);
 				break;
 			default:
 				break;
@@ -448,10 +448,10 @@ void UpdatePlayerTexture(Sprite& sprite, PlayerType type, PlayerState newState, 
 			switch (newState)
 			{
 			case Walk:
-				ApplyTexture(sprite, LoadTexture::water_running_texture, size);
+				ApplyTexture(sprite, LoadTexture::water_running_texture, Vector2f(1.0f, 1.0f), Vector2f(1.0f, 1.0f), true, false);
 				break;
 			case Idle:
-				ApplyTexture(sprite, LoadTexture::water_body_idle_texture, size);
+				ApplyTexture(sprite, LoadTexture::water_body_idle_texture, Vector2f(1.0f, 1.0f), Vector2f(1.0f, 1.0f), true, false);
 				break;
 			default:
 				break;
@@ -468,16 +468,16 @@ void UpdatePlayerTexture(Sprite& sprite, PlayerType type, PlayerState newState, 
 			switch (newState)
 			{
 			case Walk:
-				ApplyTexture(sprite, LoadTexture::fire_idle_head_texture, size);
+				ApplyTexture(sprite, LoadTexture::fire_idle_head_texture, Vector2f(1.0f, 1.0f), Vector2f(1.0f, 1.0f), true, false);
 				break;
 			case Jump_Rise:
-				ApplyTexture(sprite, LoadTexture::fire_idle_head_texture, size);
+				ApplyTexture(sprite, LoadTexture::fire_idle_head_texture, Vector2f(1.0f, 1.0f), Vector2f(1.0f, 1.0f), true, false);
 				break;
 			case Fall:
-				ApplyTexture(sprite, LoadTexture::fire_idle_head_texture, size);
+				ApplyTexture(sprite, LoadTexture::fire_idle_head_texture, Vector2f(1.0f, 1.0f), Vector2f(1.0f, 1.0f), true, false);
 				break;
 			case Idle:
-				ApplyTexture(sprite, LoadTexture::fire_idle_head_texture, size);
+				ApplyTexture(sprite, LoadTexture::fire_idle_head_texture, Vector2f(1.0f, 1.0f), Vector2f(1.0f, 1.0f), true, false);
 				break;
 			default:
 				break;
@@ -487,16 +487,16 @@ void UpdatePlayerTexture(Sprite& sprite, PlayerType type, PlayerState newState, 
 			switch (newState)
 			{
 			case Walk:
-				ApplyTexture(sprite, LoadTexture::water_head_idle_texture, size);
+				ApplyTexture(sprite, LoadTexture::water_head_idle_texture, Vector2f(1.0f, 1.0f), Vector2f(1.0f, 1.0f), true, false);
 				break;
 			case Jump_Rise:
-				ApplyTexture(sprite, LoadTexture::water_head_idle_texture, size);
+				ApplyTexture(sprite, LoadTexture::water_head_idle_texture, Vector2f(1.0f, 1.0f), Vector2f(1.0f, 1.0f), true, false);
 				break;
 			case Fall:
-				ApplyTexture(sprite, LoadTexture::water_head_idle_texture, size);
+				ApplyTexture(sprite, LoadTexture::water_head_idle_texture, Vector2f(1.0f, 1.0f), Vector2f(1.0f, 1.0f), true, false);
 				break;
 			case Idle:
-				ApplyTexture(sprite, LoadTexture::water_head_idle_texture, size);
+				ApplyTexture(sprite, LoadTexture::water_head_idle_texture, Vector2f(1.0f, 1.0f), Vector2f(1.0f, 1.0f), true, false);
 				break;
 			default:
 				break;
@@ -513,23 +513,32 @@ void UpdateAnimationPlayer(Sprite& sprite, PlayerState state, bool Head = false)
 	float speed = 10.0f;
 	int frameCount = 6;
 	int index = (int)(globalClock.getElapsedTime().asSeconds() * speed) % frameCount;
-	float width = 32, height = 32;
+	float width = 100, height = 100;
 
+	if (!Head) {
+		if (state == Walk)
+			sprite.setTextureRect(IntRect(0, 0, width, height));
+		else
+			sprite.setTextureRect(IntRect(0, 0, width, height));
+	}
+	else
 	switch (state)
 	{
 	case Walk:
-		sprite.setTextureRect(IntRect(index * width, 0, width, height));
+		sprite.setTextureRect(IntRect(0, 0, width, height));
 		break;
 	case Jump_Rise:
-		sprite.setTextureRect(IntRect(index * width, 0, width, height));
+		sprite.setTextureRect(IntRect(0, 0, width, height));
 		break;
 	case Fall:
-		sprite.setTextureRect(IntRect(index * width, 0, width, height));
+		sprite.setTextureRect(IntRect(0, 0, width, height));
 		break;
 	case Idle:
-		sprite.setTextureRect(IntRect(index * width, 0, width, height));
+		sprite.setTextureRect(IntRect(0, 0, width, height));
 		break;
 	default:
 		break;
 	}
+
+	SetSpriteOriginToCenter(sprite);
 }

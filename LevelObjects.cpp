@@ -18,14 +18,14 @@ void Allign(Vector2f& position, Vector2f defaultSize = Vector2f(32, 32)) {
 	enum PlayerType { Fireboy, Watergirl };
 	enum PlayerState { Walk, Jump_Rise, Fall, Idle };
 
-void UpdatePlayerTexture(Sprite&, PlayerType, PlayerState, Vector2f, bool);
+void UpdatePlayerTexture(Sprite&, PlayerType, PlayerState, bool);
 void UpdateAnimationPlayer(Sprite&, PlayerState, bool);
 
 struct Player
 {
 	// Settings:
-	const float accelration = 100.0f;
-	const float deccelration = 5.0f;
+	const float accelration = 200.0f;
+	const float deccelration = 10.0f;
 	const float speed = 150.0f;
 	const float slopeSpeed = speed * 0.707f;
 	const float pushSpeed = slopeSpeed;
@@ -33,11 +33,13 @@ struct Player
 	const float jump = -250.0f;
 	const Vector2f idleRange = Vector2f(10.0f, 10.0f); // the range of velocity in which the player is considered idle
 	const Vector2f colliderSize = Vector2f(50, 60);
-	const Vector2f displaySize = Vector2f(160, 160);
+	const float displayBodySize = 1.0f;
+	const float displayHeadSize = 0.7f;
 
 	// runtime variables
 	Sprite hitbox;
-	Sprite displaySprite;
+	Sprite displayBodySprite;
+	Sprite displayHeadSprite;
 	Vector2f velocity = { 0,0 };
 	PlayerType playertype;
 	PlayerState playerState = Idle, lastState = Idle;
@@ -58,7 +60,10 @@ struct Player
 
 	void Initialize() {
 		ApplyTexture(hitbox, LoadTexture::RECTANGLE, colliderSize);
-		UpdatePlayerTexture(displaySprite, playertype, playerState, displaySize, false);
+		UpdatePlayerTexture(displayBodySprite, playertype, playerState, false);
+		UpdatePlayerTexture(displayHeadSprite, playertype, playerState, true);
+		displayBodySprite.setScale(displayBodySize, displayBodySize);
+		displayHeadSprite.setScale(displayHeadSize, displayHeadSize);
 
 		if (playertype == Fireboy)
 			hitbox.setColor(Color::Red);
@@ -105,10 +110,13 @@ struct Player
 		else justUpdatedPlayerState = false;
 
 		if (justUpdatedPlayerState)
-			UpdatePlayerTexture(displaySprite, playertype, playerState, displaySize, false);
+		{
+			UpdatePlayerTexture(displayBodySprite, playertype, playerState, false);
+			UpdatePlayerTexture(displayHeadSprite, playertype, playerState, true);
+		}
 
-		UpdateAnimationPlayer(displaySprite, playerState, false);
-
+		//UpdateAnimationPlayer(displayBodySprite, playerState, false);
+		UpdateAnimationPlayer(displayHeadSprite, playerState, true);
 
 		velocity.y += gravity * dt;
 
@@ -146,11 +154,16 @@ struct Player
 
 	void Draw() {
 		window.draw(hitbox);
-		displaySprite.setPosition(hitbox.getPosition());
-		if (velocity.x > 0 && displaySprite.getScale().x < 0) displaySprite.scale(-1, 1);
-		else if (velocity.x < 0 && displaySprite.getScale().x > 0) displaySprite.scale(-1, 1);
-		displaySprite.move(0, -10);
-		window.draw(displaySprite);
+		displayBodySprite.setPosition(hitbox.getPosition());
+		if (velocity.x > 0 && displayBodySprite.getScale().x < 0) displayBodySprite.scale(-1, 1);
+		else if (velocity.x < 0 && displayBodySprite.getScale().x > 0) displayBodySprite.scale(-1, 1);
+		displayBodySprite.move(0, -10);
+		window.draw(displayBodySprite);
+		displayHeadSprite.setPosition(hitbox.getPosition());
+		if (velocity.x > 0 && displayHeadSprite.getScale().x < 0) displayHeadSprite.scale(-1, 1);
+		else if (velocity.x < 0 && displayHeadSprite.getScale().x > 0) displayHeadSprite.scale(-1, 1);
+		displayHeadSprite.move(0, -20);
+		window.draw(displayHeadSprite);
 	}
 };
 struct Collider
@@ -910,6 +923,7 @@ struct Door
 struct Pond
 {
 	Sprite sprite;
+	bool addedColliders = false;
 
 	enum ponds_type
 	{
@@ -1344,54 +1358,86 @@ struct ObjectList {
 
 struct Temporary_ground
 {
-	Sprite sprite;
 	Collider collider;
+	Sprite displaySprite;
+	float displayScale = 0.8f;
 	Vector2f startPosition;
-	bool idle = true;
-	//bool player_on_ground = false;
+	Vector2f startScale;
+	bool collided = false;
+	bool isVisible = true;
+	float timer = 0.0f;
+
 	Temporary_ground() {}
 	Temporary_ground(Vector2f position) {
-		sprite.setPosition(position);
-		Allign(sprite);
+		startPosition = position;
 	}
-	void CheckCollision(Player& player, Temporary_ground& temp) {
-		if(player.hitbox.getGlobalBounds().intersects(temp.sprite.getGlobalBounds()))
-			temp.idle = false;
-		//else
-		//	temp.idle = true;
-	}
+
+
 	void Initialize() {
-		//collider = Collider(Collider::ColliderType::Rectangle, sprite.getPosition());
-		ApplyTexture(sprite, LoadTexture::TEMPORARY_GROUND, Vector2f(32*2, 32));
-		
+		collider = Collider(Collider::ColliderType::Rectangle, startPosition, Vector2f(32 * 2, 32));
+		ApplyTexture(collider.sprite, LoadTexture::RECTANGLE, Vector2f(32 * 3, 10), Vector2f(1, 1));
+		ApplyTexture(displaySprite, LoadTexture::TEMPORARY_GROUND, Vector2f(1, 1), Vector2f(1, 1), true, false);
+		displaySprite.scale(displayScale, displayScale);
+		startScale = collider.sprite.getScale();
+		collider.sprite.setPosition(startPosition);
+		Allign(collider.sprite);
 	}
-	void update(Player& player,Temporary_ground& temp) {
-		CheckCollision(player,temp);
-		static float timer = 0.0f;
-		Clock clock;
-		if (!temp.idle) {
-			
-		
-			timer += dt;
-			
-			if (timer >= 5.0f)
-			{
-				cout << "Omar";
-				temp.sprite.setPosition(5000, 5000);
-				timer = 0.0f;
-				temp.idle = true;
+
+	void ContinueTimer() {
+		timer += dt;
+	}
+
+	void ResetTimer() {
+		timer = 0.0f;
+	}
+
+
+	void Update(Player& player) {
+
+		Collider::CollisionData collisionData;
+		if (isVisible) {
+			player.isOnGround |= collider.CheckCollision(player, collisionData);
+		}
+
+		// if the player stood on top of it, start the timer to disappear, if not collided reset the timer and make the ground appear again
+		if (!collided)
+		{
+			if (collisionData.collisionDirection == Collider::CollisionData::CollisionDirection::Top) {
+				collided = true;
+				ResetTimer();
+				PlayGameSoundEffect(GameSoundEffect::Platform_sound); // change sound later
 			}
 		}
-		else {
-		
-			
-			//float timer = 0.0f;
-			timer += dt;
-			if (timer >= 8.0f)
+		else
+		{
+			// if player already collided, continue the timer and check if it's time to disappear
+			ContinueTimer();
+
+			if (timer >= 5.0f)
 			{
-				timer = 0.0f;
-				temp.sprite.setPosition(temp.startPosition);
+				collider.sprite.setScale(0, 0);
+				isVisible = false;
+				collided = false;
+				ResetTimer();
 			}
+		}
+
+		if (!isVisible && !collided) {
+			ContinueTimer();
+			if (timer >= 5.0f) {
+				collider.sprite.setScale(startScale);
+				isVisible = true;
+				ResetTimer();
+			}
+		}
+	}
+
+	void Draw() {
+		if (isVisible)
+		{
+			// window.draw(collider.sprite);
+			displaySprite.setPosition(collider.sprite.getPosition());
+			window.draw(displaySprite);
 		}
 	}
 };

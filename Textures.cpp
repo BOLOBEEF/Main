@@ -81,6 +81,7 @@ enum LoadTexture
 	water_pond_right_texture,
 	water_pond_texture,
 	water_pond_left_texture,
+	temporaryPlatform_texture,
 	slider_dot_texture,
 	slider_light_on_texture,
 	DOOR_WATER,
@@ -197,6 +198,7 @@ Texture slider_light_on;
 Texture green_pond;
 Texture green_pond_right;
 Texture green_pond_left;
+Texture temporaryPlatform;
 //menu assets textures
 Texture BackButton0;
 Texture BackButtonFull0;
@@ -285,7 +287,7 @@ void SetSpriteOriginToCenter(Sprite& sprite, bool dontMove = false) {
 }
 
 
-void ApplyTexture(Sprite& sprite, LoadTexture texture, Vector2f size = Vector2f(1.0f, 1.0f), Vector2f scale = Vector2f(1.0f, 1.0f), bool centerOrigin = true) {
+void ApplyTexture(Sprite& sprite, LoadTexture texture, Vector2f size = Vector2f(1.0f, 1.0f), Vector2f scale = Vector2f(1.0f, 1.0f), bool centerOrigin = true, bool setSize = true) {
 	bool isValid = true;
 	bool flip = false;
 
@@ -297,7 +299,8 @@ void ApplyTexture(Sprite& sprite, LoadTexture texture, Vector2f size = Vector2f(
 		// this is new!!
 		/*--------------------------------------------*/
 		case TEMPORARY_GROUND:
-			sprite.setTexture(groundTexture);
+			temporaryPlatform.setSmooth(false);
+			sprite.setTexture(temporaryPlatform);
 			break;
 			/*--------------------------------------------*/
 
@@ -703,6 +706,8 @@ void ApplyTexture(Sprite& sprite, LoadTexture texture, Vector2f size = Vector2f(
 
 	if (!isValid) return;
 	if (centerOrigin) SetSpriteOriginToCenter(sprite, true);
+
+	if (setSize)
 	if (flip)
 		SetSpriteSize(sprite, size, true);
 	else
@@ -793,6 +798,7 @@ void InitializeTextures()
 	fire_pond_left.loadFromFile("Main/Assets/Animations/map objects assets/fire box left.png");
 	lever_stick.loadFromFile("Main/Assets/Animations/map objects assets/lever stick.png");
 	lever_base.loadFromFile("Main/Assets/Animations/map objects assets/lever base.png");
+	temporaryPlatform.loadFromFile("Main/Assets/Animations/map objects assets/hanging platform.png");
 	bar.loadFromFile("Main/Assets/Animations/map objects assets/bar center.png");
 	bar_cap_right.loadFromFile("Main/Assets/Animations/map objects assets/bar cap right.png");
 	bar_cap_left.loadFromFile("Main/Assets/Animations/map objects assets/bar cap left.png");

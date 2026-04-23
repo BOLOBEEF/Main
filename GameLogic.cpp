@@ -19,10 +19,10 @@ enum ponds_type
 
 
 // Runtime variables
-Player fireBoy = Player(Player::Fireboy, center + Vector2f(-600, 200));
-Player waterGirl = Player(Player::Watergirl, center + Vector2f(-550, 300));
+Player fireBoy = Player(Fireboy, center + Vector2f(-600, 200));
+Player waterGirl = Player(Watergirl, center + Vector2f(-550, 300));
 
-Temporary_ground temporaryground = Temporary_ground(center + Vector2f(0, 200));
+Temporary_ground temporaryground = Temporary_ground(center);
 FinalDoor water_door = FinalDoor(FinalDoor::WATER_DOOR, Vector2f(1200, 25));
 FinalDoor fire_door = FinalDoor(FinalDoor::FIRE_DOOR, Vector2f(1300, 25));
 
@@ -43,7 +43,7 @@ ObjectList objects;
 // LEVEL EDITING TOOLS
 const bool enableEditMode = true;	// if true, you can place down objects by clicking, and remove them by right clicking, change object type by pressing 0 or 1 or....
 Vector2f editScale = Vector2f(1, 1);
-int editPondWidth = 1;
+int editPondWidth = 4;
 
 enum EditMode
 {
@@ -185,6 +185,31 @@ void LoadLevelData() {
 	objects.GetLastElement().InitializeGemObject(Gem::fireGem, Vector2f(776, 680));
 }
 
+void AddCustomColliders() {
+	for (int i = 0; i < objects.count; i++)
+	{
+		Pond& pond = objects.elements[i].data.pond;
+
+		if (objects.elements[i].type == Object::PondObject && !pond.addedColliders)
+		{
+			// Add custom colliders for the pond object
+
+			for (int j = 0; j < pond.width; j++)
+			{
+				Collider collider(Collider::ColliderType::Rectangle, Vector2f(32, 32));
+				collider.Initialize();
+				collider.sprite.setPosition(pond.sprite.getPosition().x + i * 32, pond.sprite.getPosition().y);
+
+
+				colliders.Add(collider);
+				collider.sprite.setColor(Color::Magenta);
+			}
+
+			pond.addedColliders = true;
+		}
+	}
+}
+
 
 void UpdateOutlinesTexture() {
 	const float outlineThickness = 3.0f;
@@ -270,6 +295,8 @@ void InitializeGame()
 	for (int i = 0; i < colliders.count; i++)
 		colliders.elements[i].Initialize();
 
+	AddCustomColliders();
+
 	AllignColliders();
 	fireBoy.Initialize();
 	waterGirl.Initialize();
@@ -298,8 +325,6 @@ void InitializeGame()
 	fire_door.sprite.setColor(Color::Red);
 
 	temporaryground.Initialize();
-	temporaryground.sprite.setColor(Color::Cyan);
-	temporaryground.startPosition = center + Vector2f(112, 309);
 
 
 	UpdateGroundTexture();
@@ -664,7 +689,10 @@ void HandleGameInput(Event event)
 void OnUpdatedGameStateGameLogic() {
 	// do stuff here exactly when the gameState is changed
 	if (gameState != GAME) return;
-
+	fireBoy.isDead = false;
+	waterGirl.isDead = false;
+	fireBoy.hitbox.setPosition(center + Vector2f(-600, 200));
+	waterGirl.hitbox.setPosition(center + Vector2f(-550, 300));
 }
 
 
@@ -679,10 +707,10 @@ void UpdateGame()
 	fireBoy.Update();
 	waterGirl.Update();
 
-	if (fireBoy.isOnGround) fireBoy.sprite.setColor(Color::Red);
-	else fireBoy.sprite.setColor(Color(255, 100, 100));
-	if (waterGirl.isOnGround) waterGirl.sprite.setColor(Color::Blue);
-	else waterGirl.sprite.setColor(Color(100, 100, 255));
+	if (fireBoy.isOnGround) fireBoy.hitbox.setColor(Color::Red);
+	else fireBoy.hitbox.setColor(Color(255, 100, 100));
+	if (waterGirl.isOnGround) waterGirl.hitbox.setColor(Color::Blue);
+	else waterGirl.hitbox.setColor(Color(100, 100, 255));
 
 
 	CheckCollision(fireBoy);
@@ -696,25 +724,24 @@ void UpdateGame()
 	fire_door.Update(fireBoy);
 
 	if (fireBoy.isDead)
-		fireBoy.sprite.setColor(Color::Yellow);
+		fireBoy.hitbox.setColor(Color::Yellow);
 	else 
-		fireBoy.sprite.setColor(Color::Red);
+		fireBoy.hitbox.setColor(Color::Red);
 
 
 	if (waterGirl.isDead)
-		waterGirl.sprite.setColor(Color::Yellow);
+		waterGirl.hitbox.setColor(Color::Yellow);
 	else
-		waterGirl.sprite.setColor(Color::Blue);
+		waterGirl.hitbox.setColor(Color::Blue);
 
 	if (water_door.player_on_door && fire_door.player_on_door)
 	{
 		water_door.sprite.setColor(Color(128, 0, 128));
 		fire_door.sprite.setColor(Color(128, 0, 128));
 	}
-	temporaryground.CheckCollision(fireBoy,temporaryground);
-	//temporaryground.CheckCollision(waterGirl,temporaryground);
-	temporaryground.update(fireBoy, temporaryground);
-	temporaryground.update(waterGirl, temporaryground);
+
+	temporaryground.Update(fireBoy);
+	temporaryground.Update(waterGirl);
 }
 
 
@@ -734,14 +761,17 @@ void DrawGame(bool forceDraw)
 	for (int i = 0; i < objects.count; i++)
 		objects.elements[i].MidDraw();
 
-	window.draw(fireBoy.sprite);
-	window.draw(waterGirl.sprite);
+	fireBoy.Draw();
+	waterGirl.Draw();
 
 	window.draw(water_door.sprite);
 	window.draw(fire_door.sprite);
 
-	window.draw(temporaryground.sprite);
 
 	for (int i = 0; i < objects.count; i++)
 		objects.elements[i].PostDraw();
+	temporaryground.Draw();
+
+	/*for (int i = 0; i < colliders.count; i++)
+		window.draw(colliders.elements[i].sprite);*/
 }
