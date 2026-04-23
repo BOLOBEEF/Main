@@ -14,6 +14,13 @@ void Allign(Vector2f& position, Vector2f defaultSize = Vector2f(32, 32)) {
 	position.y = round(position.y / defaultSize.y) * defaultSize.y;
 }
 
+
+	enum PlayerType { Fireboy, Watergirl };
+	enum PlayerState { Walk, Jump_Rise, Fall, Idle };
+
+void UpdatePlayerTexture(Sprite&, PlayerType, PlayerState, Vector2f, bool);
+void UpdateAnimationPlayer(Sprite&, PlayerState, bool);
+
 struct Player
 {
 	// Settings:
@@ -25,13 +32,15 @@ struct Player
 	const float gravity = 250.0f;
 	const float jump = -250.0f;
 	const Vector2f idleRange = Vector2f(10.0f, 10.0f); // the range of velocity in which the player is considered idle
+	const Vector2f colliderSize = Vector2f(50, 60);
+	const Vector2f displaySize = Vector2f(160, 160);
 
 	// runtime variables
-	enum PlayerType { Fireboy, Watergirl } playertype;
-	enum PlayerState { Walk, Jump_Rise, Fall, Idle } playerState = Idle, lastState = Idle;
-
-	Sprite sprite;
+	Sprite hitbox;
+	Sprite displaySprite;
 	Vector2f velocity = { 0,0 };
+	PlayerType playertype;
+	PlayerState playerState = Idle, lastState = Idle;
 	bool justUpdatedPlayerState = false;
 	float currentSpeed = speed;
 	bool isOnGround = false;
@@ -43,15 +52,17 @@ struct Player
 
 	Player(PlayerType charctertype, Vector2f startPosition) {
 		playertype = charctertype;
-		sprite.setOrigin(sprite.getLocalBounds().width / 2.0f, sprite.getLocalBounds().height / 2.0f);
-		sprite.setPosition(startPosition);
+		hitbox.setOrigin(hitbox.getLocalBounds().width / 2.0f, hitbox.getLocalBounds().height / 2.0f);
+		hitbox.setPosition(startPosition);
 	}
 
 	void Initialize() {
-		ApplyTexture(sprite, LoadTexture::RECTANGLE, Vector2f(50, 60));
+		ApplyTexture(hitbox, LoadTexture::RECTANGLE, colliderSize);
+		UpdatePlayerTexture(displaySprite, playertype, playerState, displaySize, false);
+
 		if (playertype == Fireboy)
-			sprite.setColor(Color::Red);
-		else sprite.setColor(Color::Blue);
+			hitbox.setColor(Color::Red);
+		else hitbox.setColor(Color::Blue);
 	}
 
 
@@ -93,6 +104,11 @@ struct Player
 		if (lastState != playerState) justUpdatedPlayerState = true;
 		else justUpdatedPlayerState = false;
 
+		if (justUpdatedPlayerState)
+			UpdatePlayerTexture(displaySprite, playertype, playerState, displaySize, false);
+
+		UpdateAnimationPlayer(displaySprite, playerState, false);
+
 
 		velocity.y += gravity * dt;
 
@@ -102,7 +118,7 @@ struct Player
 
 		velocity.x = Clamp(velocity.x, -currentSpeed, currentSpeed);
 
-		sprite.move(velocity * dt);
+		hitbox.move(velocity * dt);
 
 		isOnGround = false;
 		isOnSlope = false;
@@ -126,6 +142,15 @@ struct Player
 				}
 			}
 		}
+	}
+
+	void Draw() {
+		window.draw(hitbox);
+		displaySprite.setPosition(hitbox.getPosition());
+		if (velocity.x > 0 && displaySprite.getScale().x < 0) displaySprite.scale(-1, 1);
+		else if (velocity.x < 0 && displaySprite.getScale().x > 0) displaySprite.scale(-1, 1);
+		displaySprite.move(0, -10);
+		window.draw(displaySprite);
 	}
 };
 struct Collider
@@ -262,7 +287,7 @@ struct Collider
 
 	// Function overload, used for collision resolve for players, with velocity resolve
 	Collider::CollisionData CheckRectangleCollision(Player& player, FloatRect otherBounds, bool resolveCollision = true, FloatRect bias = FloatRect(5.0f, 5.0f, 0.0f, 0.0f), float thisMoveRatio = 0.0f, bool resolveVelocity = true) {
-		CollisionData collisionData = CheckRectangleCollision(player.sprite, otherBounds, resolveCollision, bias, thisMoveRatio);
+		CollisionData collisionData = CheckRectangleCollision(player.hitbox, otherBounds, resolveCollision, bias, thisMoveRatio);
 
 		if (resolveCollision && resolveVelocity) ResolveCollisionVelocity(collisionData, player);
 
@@ -395,12 +420,12 @@ struct Collider
 	
 	Collider::CollisionData CheckTriangleCollision(Player& player, FloatRect triangleBounds, bool rotated, bool resolveCollision = true, float thisMoveRatio = 0.0f, bool resolveVelocity = true) {
 
-		Sprite playerSprite = player.sprite;
-		FloatRect playerBounds = player.sprite.getGlobalBounds();
+		Sprite playerSprite = player.hitbox;
+		FloatRect playerBounds = player.hitbox.getGlobalBounds();
 		CollisionData triangleCollisionData = CheckTriangleCollision(playerBounds, triangleBounds, rotated);
 
 		if (resolveCollision) {
-			ResolveCollision(triangleCollisionData, player.sprite, 1 - thisMoveRatio);
+			ResolveCollision(triangleCollisionData, player.hitbox, 1 - thisMoveRatio);
 			if (resolveVelocity) ResolveCollisionVelocity(triangleCollisionData, player);
 
 			if (thisMoveRatio != 0.0f)
@@ -479,7 +504,7 @@ struct Collider
 		}
 
 
-		FloatRect playerBounds = player.sprite.getGlobalBounds();
+		FloatRect playerBounds = player.hitbox.getGlobalBounds();
 		FloatRect colliderBounds = FloatRect(playerBounds.left, playerBounds.top + groundedDistance, playerBounds.width, playerBounds.height);
 
 
@@ -568,7 +593,7 @@ struct FinalDoor
 	void Update(Player player)
 	{
 		touched = player_on_door;
-		if ((player.playertype == Player::PlayerType::Watergirl) && player.sprite.getGlobalBounds().intersects(sprite.getGlobalBounds()) && (type == WATER_DOOR))
+		if ((player.playertype == PlayerType::Watergirl) && player.hitbox.getGlobalBounds().intersects(sprite.getGlobalBounds()) && (type == WATER_DOOR))
 		{
 
 			player_on_door = true;
@@ -576,7 +601,7 @@ struct FinalDoor
 			
 			
 		}
-		else if ((player.playertype == Player::PlayerType::Fireboy) && player.sprite.getGlobalBounds().intersects(sprite.getGlobalBounds()) && (type == FIRE_DOOR))
+		else if ((player.playertype == PlayerType::Fireboy) && player.hitbox.getGlobalBounds().intersects(sprite.getGlobalBounds()) && (type == FIRE_DOOR))
 		{
 
 			player_on_door = true;
@@ -639,15 +664,15 @@ struct Gem
 	}
 
 	void Update(Player hamada) {
-		if (type == waterGem && hamada.playertype == Player::Watergirl) {
-			if (sprite.getGlobalBounds().intersects(hamada.sprite.getGlobalBounds())) {
+		if (type == waterGem && hamada.playertype == Watergirl) {
+			if (sprite.getGlobalBounds().intersects(hamada.hitbox.getGlobalBounds())) {
 				PlayGameSoundEffect(GameSoundEffect::DiamondCollect_sound);
 				isCollected = true;
 				sprite.setScale(0, 0);
 			}
 		}
-		if (type == fireGem && hamada.playertype == Player::Fireboy) {
-			if (sprite.getGlobalBounds().intersects(hamada.sprite.getGlobalBounds())) {
+		if (type == fireGem && hamada.playertype == Fireboy) {
+			if (sprite.getGlobalBounds().intersects(hamada.hitbox.getGlobalBounds())) {
 				PlayGameSoundEffect(GameSoundEffect::DiamondCollect_sound);
 				isCollected = true;
 				sprite.setScale(0, 0);
@@ -682,7 +707,7 @@ struct Lever {
 	void CheckInput(Player moroo, Player mora, Event event) {
 		if (event.type == Event::KeyPressed) {
 			if (event.key.code == Keyboard::Space) {
-				if (sprite.getGlobalBounds().intersects(moroo.sprite.getGlobalBounds()) || sprite.getGlobalBounds().intersects(mora.sprite.getGlobalBounds())) {
+				if (sprite.getGlobalBounds().intersects(moroo.hitbox.getGlobalBounds()) || sprite.getGlobalBounds().intersects(mora.hitbox.getGlobalBounds())) {
 
 					state = !state;
 					if (state) 
@@ -742,7 +767,7 @@ struct Click
 
 	void Update(Player anteel,Player anteela) {
 		bool lastState = isPressed;
-		if (sprite.getGlobalBounds().intersects(anteel.sprite.getGlobalBounds())|| sprite.getGlobalBounds().intersects(anteela.sprite.getGlobalBounds())) {
+		if (sprite.getGlobalBounds().intersects(anteel.hitbox.getGlobalBounds())|| sprite.getGlobalBounds().intersects(anteela.hitbox.getGlobalBounds())) {
 		
 			isPressed = true;
 
@@ -925,7 +950,7 @@ struct Pond
 		// if no collision return
 		bool lastState = fireBoyColliding;
 
-		fireBoyColliding = fireBoy.sprite.getGlobalBounds().intersects(sprite.getGlobalBounds());
+		fireBoyColliding = fireBoy.hitbox.getGlobalBounds().intersects(sprite.getGlobalBounds());
 
 		if (fireBoyColliding)
 		switch (type)
@@ -942,9 +967,9 @@ struct Pond
 			break;
 
 		case FIRE_POND:
-			if (fireBoy.playerState == Player::Idle)
+			if (fireBoy.playerState == Idle)
 				PlayGameSoundEffect(GameSoundEffect::Pondsteps_boy_sound, false);
-			else if (fireBoy.justUpdatedPlayerState && fireBoy.lastState == Player::Idle)
+			else if (fireBoy.justUpdatedPlayerState && fireBoy.lastState == Idle)
 				PlayGameSoundEffect(GameSoundEffect::Pondsteps_boy_sound, true);
 			else if (lastState != fireBoyColliding && fireBoyColliding == true)
 				PlayGameSoundEffect(GameSoundEffect::Pondsteps_boy_sound, true);
@@ -959,7 +984,7 @@ struct Pond
 		// if no collision return
 		bool lastState = waterGirlColliding;
 
-		waterGirlColliding = waterGirl.sprite.getGlobalBounds().intersects(sprite.getGlobalBounds());
+		waterGirlColliding = waterGirl.hitbox.getGlobalBounds().intersects(sprite.getGlobalBounds());
 
 		if (waterGirlColliding)
 			switch (type)
@@ -976,9 +1001,9 @@ struct Pond
 				break;
 
 			case WATER_POND:
-				if (waterGirl.playerState == Player::Idle)
+				if (waterGirl.playerState == Idle)
 					PlayGameSoundEffect(GameSoundEffect::Pondsteps_boy_sound, false);
-				else if (waterGirl.justUpdatedPlayerState && waterGirl.lastState == Player::Idle)
+				else if (waterGirl.justUpdatedPlayerState && waterGirl.lastState == Idle)
 					PlayGameSoundEffect(GameSoundEffect::Pondsteps_boy_sound, true);
 				else if (lastState != waterGirlColliding && waterGirlColliding == true)
 					PlayGameSoundEffect(GameSoundEffect::Pondsteps_boy_sound, true);
@@ -1330,7 +1355,7 @@ struct Temporary_ground
 		Allign(sprite);
 	}
 	void CheckCollision(Player& player, Temporary_ground& temp) {
-		if(player.sprite.getGlobalBounds().intersects(temp.sprite.getGlobalBounds()))
+		if(player.hitbox.getGlobalBounds().intersects(temp.sprite.getGlobalBounds()))
 			temp.idle = false;
 		//else
 		//	temp.idle = true;

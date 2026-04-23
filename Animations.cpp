@@ -426,31 +426,32 @@ void UpdateAnimation(Sprite& sprite, LoadTexture texture) {
 	}
 }
 
-void UpdatePlayerTexture(Sprite& sprite, Player::PlayerType type, Player::PlayerState newState, Vector2f size, bool Head = false) {
+void UpdatePlayerTexture(Sprite& sprite, PlayerType type, PlayerState newState, Vector2f size, bool Head = false) {
 
 	if (!Head)
 	switch (type)
 	{
-	case Player::Fireboy:
+	case Fireboy:
 			switch (newState)
 			{
-			case Player::Walk:
-				ApplyTexture(sprite, LoadTexture::water_body_idle_texture, size);
+			case Walk:
+				ApplyTexture(sprite, LoadTexture::fire_running_texture, size);
 				break;
-			case Player::Idle:
-				// Update idle animation
+			case Idle:
+				ApplyTexture(sprite, LoadTexture::fire_idle_body_texture, size);
 				break;
 			default:
 				break;
 			}
 		break;
-		case Player::Watergirl:
+		case Watergirl:
 			switch (newState)
 			{
-			case Player::Walk:
+			case Walk:
+				ApplyTexture(sprite, LoadTexture::water_running_texture, size);
+				break;
+			case Idle:
 				ApplyTexture(sprite, LoadTexture::water_body_idle_texture, size);
-			case Player::Idle:
-				// Update idle animation
 				break;
 			default:
 				break;
@@ -463,39 +464,39 @@ void UpdatePlayerTexture(Sprite& sprite, Player::PlayerType type, Player::Player
 	else
 		switch (type)
 		{
-		case Player::Fireboy:
+		case Fireboy:
 			switch (newState)
 			{
-			case Player::Walk:
-				ApplyTexture(sprite, LoadTexture::water_body_idle_texture, size);
+			case Walk:
+				ApplyTexture(sprite, LoadTexture::fire_idle_head_texture, size);
 				break;
-			case Player::Jump_Rise:
-				// Update jump rise animation
+			case Jump_Rise:
+				ApplyTexture(sprite, LoadTexture::fire_idle_head_texture, size);
 				break;
-			case Player::Fall:
-				// Update fall animation
+			case Fall:
+				ApplyTexture(sprite, LoadTexture::fire_idle_head_texture, size);
 				break;
-			case Player::Idle:
-				// Update idle animation
+			case Idle:
+				ApplyTexture(sprite, LoadTexture::fire_idle_head_texture, size);
 				break;
 			default:
 				break;
 			}
 			break;
-		case Player::Watergirl:
+		case Watergirl:
 			switch (newState)
 			{
-			case Player::Walk:
-				ApplyTexture(sprite, LoadTexture::water_body_idle_texture, size);
+			case Walk:
+				ApplyTexture(sprite, LoadTexture::water_head_idle_texture, size);
 				break;
-			case Player::Jump_Rise:
-				// Update jump rise animation
+			case Jump_Rise:
+				ApplyTexture(sprite, LoadTexture::water_head_idle_texture, size);
 				break;
-			case Player::Fall:
-				// Update fall animation
+			case Fall:
+				ApplyTexture(sprite, LoadTexture::water_head_idle_texture, size);
 				break;
-			case Player::Idle:
-				// Update idle animation
+			case Idle:
+				ApplyTexture(sprite, LoadTexture::water_head_idle_texture, size);
 				break;
 			default:
 				break;
@@ -507,25 +508,26 @@ void UpdatePlayerTexture(Sprite& sprite, Player::PlayerType type, Player::Player
 
 }
 
-void UpdateAnimationPlayer(Sprite& sprite, Player::PlayerState state, bool Head = false)
+void UpdateAnimationPlayer(Sprite& sprite, PlayerState state, bool Head = false)
 {
 	float speed = 10.0f;
 	int frameCount = 6;
 	int index = (int)(globalClock.getElapsedTime().asSeconds() * speed) % frameCount;
+	float width = 32, height = 32;
 
 	switch (state)
 	{
-	case Player::Walk:
-		sprite.setTextureRect(IntRect(index * 32, 0, 32, 32));
+	case Walk:
+		sprite.setTextureRect(IntRect(index * width, 0, width, height));
 		break;
-	case Player::Jump_Rise:
-		// Update jump rise animation
+	case Jump_Rise:
+		sprite.setTextureRect(IntRect(index * width, 0, width, height));
 		break;
-	case Player::Fall:
-		// Update fall animation
+	case Fall:
+		sprite.setTextureRect(IntRect(index * width, 0, width, height));
 		break;
-	case Player::Idle:
-		// Update idle animation
+	case Idle:
+		sprite.setTextureRect(IntRect(index * width, 0, width, height));
 		break;
 	default:
 		break;
