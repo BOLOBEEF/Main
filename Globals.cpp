@@ -19,6 +19,7 @@ Vector2f mousePosition;
 void InitializeAudio();
 
 // menu
+void RatingCheck(bool maleAndFemale_case, bool DiamondCollection_case, bool BeforeTimeOut_case);
 void InitializeMenu();
 void HandleMenuInput(Event event);
 void OnUpdatedGameStateMenu();
@@ -66,7 +67,7 @@ enum GameState
 
 
 // DO NOT CHANGE THIS DIRECTLY, USE UpdateGameState() INSTEAD
-GameState gameState = PAUSE_MENU;
+GameState gameState = WIN_MENU;
 
 
 void UpdateGameState(GameState newState, bool ForceUpdate);
