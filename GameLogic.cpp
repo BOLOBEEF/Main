@@ -21,8 +21,6 @@ enum ponds_type
 // Runtime variables
 Player fireBoy = Player(Fireboy, center + Vector2f(-600, 200));
 Player waterGirl = Player(Watergirl, center + Vector2f(-550, 300));
-
-Temporary_ground temporaryground = Temporary_ground(center);
 FinalDoor water_door = FinalDoor(FinalDoor::WATER_DOOR, Vector2f(1200, 25));
 FinalDoor fire_door = FinalDoor(FinalDoor::FIRE_DOOR, Vector2f(1300, 25));
 
@@ -63,6 +61,7 @@ enum EditObjectMode
 	Box_mode,
 	Button_mode,
 	Lever_mode,
+	TemporaryGround_mode
 } editObjectMode;
 bool isEditingDoor = false;
 int doorIndex = 0; // the door that is currently being edited
@@ -94,7 +93,9 @@ void CheckCollision(Player& player) {
 void AllignColliders() {
 	for (int i = 0; i < colliders.count; i++)
 	{
-		Allign(colliders.elements[i].sprite);
+		if (colliders.elements[i].editable) {
+			Allign(colliders.elements[i].sprite);
+		}
 	}
 }
 
@@ -103,10 +104,7 @@ void LoadLevelData() {
 	colliders.Add(Collider(Collider::ColliderType::Rectangle, center + Vector2f(16, -524), Vector2f(53, 1)));
 	colliders.Add(Collider(Collider::ColliderType::Rectangle, center + Vector2f(480, 436), Vector2f(22, 1)));
 	colliders.Add(Collider(Collider::ColliderType::Rectangle, center + Vector2f(-448, -236), Vector2f(22, 1)));
-	colliders.Add(Collider(Collider::ColliderType::Rectangle, center + Vector2f(-464, 180), Vector2f(21, 1)));
 	colliders.Add(Collider(Collider::ColliderType::Rectangle, center + Vector2f(256, 244), Vector2f(18, 1)));
-	colliders.Add(Collider(Collider::ColliderType::Rectangle, center + Vector2f(-320, -44), Vector2f(18, 1)));
-	colliders.Add(Collider(Collider::ColliderType::Rectangle, center + Vector2f(336, -12), Vector2f(29, 1)));
 	colliders.Add(Collider(Collider::ColliderType::Rectangle, center + Vector2f(592, 20), Vector2f(13, 1)));
 	colliders.Add(Collider(Collider::ColliderType::Rectangle, center + Vector2f(752, 84), Vector2f(3, 1)));
 	colliders.Add(Collider(Collider::ColliderType::Rectangle, center + Vector2f(688, 52), Vector2f(7, 1)));
@@ -130,12 +128,13 @@ void LoadLevelData() {
 	colliders.Add(Collider(Collider::ColliderType::Triangle, center + Vector2f(-656, 116), Vector2f(3, 3)));
 	colliders.Add(Collider(Collider::ColliderType::Rectangle, center + Vector2f(784, -140), Vector2f(3, 1)));
 	colliders.Add(Collider(Collider::ColliderType::Rectangle, center + Vector2f(816, 36), Vector2f(1, 4)));
-	colliders.Add(Collider(Collider::ColliderType::Triangle, center + Vector2f(-16, -44), Vector2f(1, 1)));
 	colliders.Add(Collider(Collider::ColliderType::Rectangle, center + Vector2f(-752, 84), Vector2f(3, 5)));
 	colliders.Add(Collider(Collider::ColliderType::Triangle, center + Vector2f(464, -236), Vector2f(1, 1)));
 	colliders.Add(Collider(Collider::ColliderType::Rectangle, center + Vector2f(768, -76), Vector2f(4, 3)));
 	colliders.Add(Collider(Collider::ColliderType::Triangle_Rotated, center + Vector2f(720, -140), Vector2f(1, 1)));
 	colliders.Add(Collider(Collider::ColliderType::Triangle_Rotated, center + Vector2f(688, -44), Vector2f(1, 1)));
+	colliders.Add(Collider(Collider::ColliderType::Rectangle, center + Vector2f(-304, 212), Vector2f(1, 1)));
+	colliders.Add(Collider(Collider::ColliderType::Rectangle, center + Vector2f(-112, 180), Vector2f(1, 1)));
 	objects.Add(Object(Object::GemObject));
 	objects.GetLastElement().InitializeGemObject(Gem::waterGem, Vector2f(808, 808));
 	objects.Add(Object(Object::PondObject));
@@ -177,37 +176,22 @@ void LoadLevelData() {
 	objects.Add(Object(Object::DoorObject));
 	objects.GetLastElement().InitializeDoorObject(Vector2f(224, 528), Vector2f(224, 416));
 	objects.Add(Object(Object::DoorObject));
-	objects.GetLastElement().InitializeDoorObject(Vector2f(480, 614), Vector2f(480, 512));
+	objects.GetLastElement().InitializeDoorObject(Vector2f(480, 624), Vector2f(480, 512));
 	objects.GetLastElement().data.door.button1 = Click(Vector2f(637, 943), true);
 	objects.GetLastElement().data.door.button2 = Click(Vector2f(764, 943), true);
 	objects.GetLastElement().data.door.lever = Lever(Vector2f(861, 941), true);
 	objects.Add(Object(Object::GemObject));
 	objects.GetLastElement().InitializeGemObject(Gem::fireGem, Vector2f(776, 680));
-}
-
-void AddCustomColliders() {
-	for (int i = 0; i < objects.count; i++)
-	{
-		Pond& pond = objects.elements[i].data.pond;
-
-		if (objects.elements[i].type == Object::PondObject && !pond.addedColliders)
-		{
-			// Add custom colliders for the pond object
-
-			for (int j = 0; j < pond.width; j++)
-			{
-				Collider collider(Collider::ColliderType::Rectangle, Vector2f(32, 32));
-				collider.Initialize();
-				collider.sprite.setPosition(pond.sprite.getPosition().x + i * 32, pond.sprite.getPosition().y);
-
-
-				colliders.Add(collider);
-				collider.sprite.setColor(Color::Magenta);
-			}
-
-			pond.addedColliders = true;
-		}
-	}
+	objects.Add(Object(Object::PondObject));
+	objects.GetLastElement().InitializePondObject(Pond::FIRE_POND, Vector2f(544, 848), 4);
+	objects.Add(Object(Object::BoxObject));
+	objects.GetLastElement().InitializeBoxObject(Vector2f(1109, 744));
+	objects.Add(Object(Object::TemporaryGroundObject));
+	objects.GetLastElement().InitializeTemporaryGroundObject(Vector2f(720, 805));
+	objects.Add(Object(Object::TemporaryGroundObject));
+	objects.GetLastElement().InitializeTemporaryGroundObject(Vector2f(528, 677));
+	objects.Add(Object(Object::TemporaryGroundObject));
+	objects.GetLastElement().InitializeTemporaryGroundObject(Vector2f(688, 581));
 }
 
 
@@ -233,10 +217,16 @@ void UpdateGroundTexture() {
 	// --- Step 1: Draw mask (small sprites) ---
 	maskTexture.clear(Color::Transparent);
 
+
+	// add all colliders
 	for (int i = 0; i < colliders.count; i++)
-	{
 		maskTexture.draw(colliders.elements[i].sprite);
-	}
+
+	// also add the ponds mask
+	for (int i = 0; i < objects.count; i++)
+		if (objects.elements[i].type == Object::PondObject)
+			maskTexture.draw(objects.elements[i].data.pond.mask);
+
 	maskTexture.display();
 
 	// update outlines too
@@ -290,12 +280,10 @@ void InitializeGame()
 {
 	LoadLevelData();
 
-
 	// code for initializing game variables and objects
 	for (int i = 0; i < colliders.count; i++)
 		colliders.elements[i].Initialize();
 
-	AddCustomColliders();
 
 	AllignColliders();
 	fireBoy.Initialize();
@@ -324,8 +312,6 @@ void InitializeGame()
 	fire_door.Initialize();
 	fire_door.sprite.setColor(Color::Red);
 
-	temporaryground.Initialize();
-
 
 	UpdateGroundTexture();
 }
@@ -352,7 +338,7 @@ void PrintLevelData() {
 			break;
 		case Object::DoorObject:
 			type = (objects.elements[i].data.door.rotated ? "Door_Rotated_mode" : "Door_mode");
-			position = "Vector2f(" + to_string((int)objects.elements[i].data.door.sprite.getPosition().x) + ", " + to_string((int)objects.elements[i].data.door.sprite.getPosition().y) + ")";
+			position = "Vector2f(" + to_string((int)objects.elements[i].data.door.displaySprite.getPosition().x) + ", " + to_string((int)objects.elements[i].data.door.displaySprite.getPosition().y) + ")";
 			extraData = "Vector2f(" + to_string((int)(objects.elements[i].data.door.endPosition.x)) + ", " + to_string((int)(objects.elements[i].data.door.endPosition.y)) + ")";
 			cout << "objects.Add(Object(Object::DoorObject));" << endl;
 			cout << "objects.GetLastElement().InitializeDoorObject(" << position << ", " << extraData << ");" << endl;
@@ -370,11 +356,18 @@ void PrintLevelData() {
 				type = "WATER_POND";
 			else
 				type = "POISON_POND";
-			position = "Vector2f(" + to_string((int)objects.elements[i].data.pond.sprite.getPosition().x) + ", " + to_string((int)objects.elements[i].data.pond.sprite.getPosition().y) + ")";
+			position = "Vector2f(" + to_string((int)objects.elements[i].data.pond.mask.getPosition().x) + ", " + to_string((int)objects.elements[i].data.pond.mask.getPosition().y) + ")";
 			extraData = to_string(objects.elements[i].data.pond.width);
 			cout << "objects.Add(Object(Object::PondObject));" << endl;
 			cout << "objects.GetLastElement().InitializePondObject(Pond::" << type << ", " << position << ", " << extraData << ");" << endl;
 			break;
+		case Object::BoxObject:
+			cout << "objects.Add(Object(Object::BoxObject));" << endl;
+			cout << "objects.GetLastElement().InitializeBoxObject(Vector2f(" << (int)objects.elements[i].data.box.collider.sprite.getPosition().x << ", " << (int)objects.elements[i].data.box.collider.sprite.getPosition().y << "));" << endl;
+			break;
+		case Object::TemporaryGroundObject:
+			cout << "objects.Add(Object(Object::TemporaryGroundObject));" << endl;
+			cout << "objects.GetLastElement().InitializeTemporaryGroundObject(Vector2f(" << (int)objects.elements[i].data.temporaryGround.collider.sprite.getPosition().x << ", " << (int)objects.elements[i].data.temporaryGround.collider.sprite.getPosition().y << "));" << endl;
 		}
 	}
 }
@@ -447,7 +440,7 @@ void EditMode(Event event) {
 			else if (event.mouseButton.button == Mouse::Right) {
 				// remove object
 				for (int i = 0; i < colliders.count; i++) {
-					if (colliders.elements[i].sprite.getGlobalBounds().contains(mousePosition)) {
+					if (colliders.elements[i].sprite.getGlobalBounds().contains(mousePosition) && colliders.elements[i].editable) {
 						colliders.RemoveAt(i);
 						UpdateGroundTexture();
 					}
@@ -479,18 +472,25 @@ void EditMode(Event event) {
 				case FirePond_mode:
 					objects.Add(Object(Object::PondObject));
 					objects.GetLastElement().InitializePondObject(Pond::FIRE_POND, mousePosition, editPondWidth);
+					UpdateGroundTexture(); // update ground texture to add the pond mask
 					break;
 				case WaterPond_mode:
 					objects.Add(Object(Object::PondObject));
 					objects.GetLastElement().InitializePondObject(Pond::WATER_POND, mousePosition, editPondWidth);
+					UpdateGroundTexture(); // update ground texture to add the pond mask
 					break;
 				case PoisonPond_mode:
 					objects.Add(Object(Object::PondObject));
 					objects.GetLastElement().InitializePondObject(Pond::POISON_POND, mousePosition, editPondWidth);
+					UpdateGroundTexture(); // update ground texture to add the pond mask
 					break;
 				case Box_mode:
 					objects.Add(Object(Object::BoxObject));
 					objects.GetLastElement().InitializeBoxObject(mousePosition);
+					break;
+				case TemporaryGround_mode:
+					objects.Add(Object(Object::TemporaryGroundObject));
+					objects.GetLastElement().InitializeTemporaryGroundObject(mousePosition);
 					break;
 				case Button_mode:
 					if (isEditingDoor)
@@ -548,7 +548,11 @@ void EditMode(Event event) {
 					}
 
 					if (objects.elements[i].data.CheckContainsPoint(mousePosition))
+					{
+						bool shouldUpdateGroundTexture = (objects.elements[i].type == Object::PondObject); // only update ground texture if a pond is removed since ponds affect the ground texture
 						objects.RemoveAt(i);
+						if (shouldUpdateGroundTexture) UpdateGroundTexture();
+					}
 				}
 		}
 	}
@@ -658,6 +662,9 @@ void EditMode(Event event) {
 
 				if (event.key.code == Keyboard::Num8)
 					editObjectMode = EditObjectMode::Box_mode;
+
+				if (event.key.code == Keyboard::Num9)
+					editObjectMode = EditObjectMode::TemporaryGround_mode;
 			}
 			else {
 				if (event.key.code == Keyboard::Num1)
@@ -739,9 +746,6 @@ void UpdateGame()
 		water_door.sprite.setColor(Color(128, 0, 128));
 		fire_door.sprite.setColor(Color(128, 0, 128));
 	}
-
-	temporaryground.Update(fireBoy);
-	temporaryground.Update(waterGirl);
 }
 
 
@@ -770,8 +774,8 @@ void DrawGame(bool forceDraw)
 
 	for (int i = 0; i < objects.count; i++)
 		objects.elements[i].PostDraw();
-	temporaryground.Draw();
 
-	/*for (int i = 0; i < colliders.count; i++)
-		window.draw(colliders.elements[i].sprite);*/
+
+	//for (int i = 0; i < colliders.count; i++)
+		//window.draw(colliders.elements[i].sprite);
 }

@@ -31,7 +31,7 @@ struct Player
 	const float pushSpeed = slopeSpeed;
 	const float gravity = 250.0f;
 	const float jump = -250.0f;
-	const Vector2f idleRange = Vector2f(10.0f, 10.0f); // the range of velocity in which the player is considered idle
+	const Vector2f idleRange = Vector2f(30.0f, 30.0f); // the range of velocity in which the player is considered idle
 	const Vector2f colliderSize = Vector2f(50, 60);
 	const float displayBodySize = 1.0f;
 	const float displayHeadSize = 0.7f;
@@ -99,11 +99,11 @@ struct Player
 
 		lastState = playerState;
 
-		if (velocity.x > idleRange.x || velocity.x < -idleRange.y) {
+		if (velocity.x > idleRange.x || velocity.x < -idleRange.x) {
 			playerState = Walk;
 		}
-		else if (velocity.y > idleRange.y)playerState = Fall;
-		else if (velocity.y < -idleRange.y)playerState = Jump_Rise;
+		else if (velocity.y > idleRange.y)  playerState = Fall;
+		else if (velocity.y < -idleRange.y) playerState = Jump_Rise;
 		else playerState = Idle;
 
 		if (lastState != playerState) justUpdatedPlayerState = true;
@@ -184,6 +184,7 @@ struct Collider
 	ColliderType type;
 	Vector2f startPosition;
 	Vector2f scale;
+	bool editable;		// if the collider should align to the grid or not (default true), used for the pond ground collider
 
 	struct CollisionData
 	{
@@ -471,10 +472,11 @@ struct Collider
 	
 	// need empty constructor for collider list, but make sure to set the type and position before using the collider
 	Collider() {}
-	Collider(ColliderType newType, Vector2f position, Vector2f newScale = Vector2f(1, 1)) {
+	Collider(ColliderType newType, Vector2f position, Vector2f newScale = Vector2f(1, 1), bool IsEditable = true) {
 		type = newType;
 		scale = newScale;
 		startPosition = position;
+		editable = IsEditable;
 	}
 
 
@@ -660,11 +662,9 @@ struct Gem
 		
 		
 		if (type == waterGem) {
-			sprite.setColor(Color::Blue);
 			ApplyTexture(sprite, LoadTexture::diamond_water_texture, Vector2f(80, 80));
 		}
 		else {
-			sprite.setColor(Color::Red);
 			ApplyTexture(sprite, LoadTexture::diamond_fire_texture, Vector2f(80, 80));
 		}
 	}
@@ -802,7 +802,7 @@ struct Click
 struct Door
 {
 	bool isOpen = false;
-	Sprite sprite;
+	Sprite displaySprite;
 	Collider collider;
 	Vector2f startPosition;
 	Vector2f endPosition;
@@ -820,8 +820,8 @@ struct Door
 	void Initialize() {
 		collider = Collider(Collider::ColliderType::Rectangle, startPosition);
 
-		ApplyTexture(sprite, LoadTexture::RECTANGLE, Vector2f(32, 32 * 2));
-		sprite.setPosition(startPosition);
+		ApplyTexture(displaySprite, LoadTexture::RECTANGLE, Vector2f(32, 32 * 2));
+		displaySprite.setPosition(startPosition);
 
 		if (rotated)
 		{
@@ -829,13 +829,13 @@ struct Door
 		}
 		else {
 			ApplyTexture(collider.sprite, LoadTexture::RECTANGLE, Vector2f(32 * 2, 32));
-			sprite.rotate(90);
+			displaySprite.rotate(90);
 		}
 			
 
-		sprite.setColor(Color::Yellow);
-		Allign(sprite);
-		startPosition = sprite.getPosition();
+		displaySprite.setColor(Color::Yellow);
+		Allign(displaySprite);
+		startPosition = displaySprite.getPosition();
 	}
 
 	Door(){}
@@ -859,24 +859,24 @@ struct Door
 
 	void UpdateMovement() {
 		if (isOpen) {
-			sprite.setColor(Color::Magenta);
+			displaySprite.setColor(Color::Magenta);
 
-			Vector2f direction = endPosition - sprite.getPosition();
+			Vector2f direction = endPosition - displaySprite.getPosition();
 
 			if (abs(direction.x) + abs(direction.y) < 10) return; // avoid moving and overshooting when close to the end position
 
 			direction = Normalize(direction);
-			sprite.move(direction * speed * dt);
+			displaySprite.move(direction * speed * dt);
 		}
 		else {
-			sprite.setColor(Color::Yellow);
+			displaySprite.setColor(Color::Yellow);
 
-			Vector2f direction = startPosition - sprite.getPosition();
+			Vector2f direction = startPosition - displaySprite.getPosition();
 
 			if (abs(direction.x) + abs(direction.y) < 10) return; // avoid moving and overshooting when close to the start position
 
 			direction = Normalize(direction);
-			sprite.move(direction * speed * dt);
+			displaySprite.move(direction * speed * dt);
 		}
 	}
 
@@ -890,7 +890,7 @@ struct Door
 		// reset door state
 		isOpen = false;
 		
-		collider.sprite.setPosition(sprite.getPosition());
+		collider.sprite.setPosition(displaySprite.getPosition());
 
 		if (button1.initialized)
 			button1.Update(fireBoy, waterGirl);
@@ -909,7 +909,7 @@ struct Door
 
 	// draw the door before the ground so the objects appear on top of the door
 	void PreDraw() {
-		window.draw(sprite);
+		window.draw(displaySprite);
 
 		if (button1.initialized) window.draw(button1.sprite);
 		if (button2.initialized) window.draw(button2.sprite);
@@ -922,8 +922,10 @@ struct Door
 };
 struct Pond
 {
-	Sprite sprite;
-	bool addedColliders = false;
+	Sprite mask;
+	Collider startColl;
+	Collider endColl;
+	Collider midColl;
 
 	enum ponds_type
 	{
@@ -939,32 +941,47 @@ struct Pond
 	Pond(){}
 	Pond(ponds_type startType, Vector2f position) {
 		type = startType;
-		sprite.setPosition(position);
+		mask.setPosition(position);
 	}
 
 	void Initialize(int startWidth = 1) {
 		width = startWidth;
-		ApplyTexture(sprite, LoadTexture::RECTANGLE, Vector2f(32 * width, 32));
-		Allign(sprite);
+		ApplyTexture(mask, LoadTexture::RECTANGLE, Vector2f(32 * width, 32));
+		Allign(mask);
+	}
 
-		switch (type)
-		{
-		case Pond::POISON_POND: sprite.setColor(Color::Green);
-			break;
-		case Pond::FIRE_POND: sprite.setColor(Color::Red);
-			break;
-		case Pond::WATER_POND: sprite.setColor(Color::Blue);
-			break;
-		default:
-			break;
-		}
+	void InitializeColliders() {
+		// Add custom colliders for the pond object
+		float groundHeight = 0.3f;
+		midColl = Collider(Collider::ColliderType::Rectangle,
+			Vector2f(
+				mask.getGlobalBounds().left + mask.getGlobalBounds().width / 2.0f,
+				mask.getGlobalBounds().top + mask.getGlobalBounds().height - groundHeight * 32 / 2.0f),
+			Vector2f(width, groundHeight),
+			false);
+
+		startColl = Collider(Collider::ColliderType::Triangle,
+			Vector2f(
+				mask.getGlobalBounds().left + 16,
+				mask.getGlobalBounds().top + 16), Vector2f(1, 1), false);
+
+
+		endColl = Collider(Collider::ColliderType::Triangle_Rotated,
+			Vector2f(
+				mask.getGlobalBounds().left + mask.getGlobalBounds().width - 16,
+				mask.getGlobalBounds().top + 16), Vector2f(1, 1), false);
+		
+		startColl.Initialize();
+		endColl.Initialize();
+		midColl.Initialize();
 	}
 
 	void UpdateFireBoy(Player& fireBoy) {
 		// if no collision return
 		bool lastState = fireBoyColliding;
-
-		fireBoyColliding = fireBoy.hitbox.getGlobalBounds().intersects(sprite.getGlobalBounds());
+		FloatRect intersections;
+		bool isTouching = fireBoy.hitbox.getGlobalBounds().intersects(mask.getGlobalBounds(), intersections);
+		fireBoyColliding = min(intersections.width, intersections.height) > 10; // only consider it a collision if the intersection area is big enough, to avoid colliding when just touching the edge of the pond
 
 		if (fireBoyColliding)
 		switch (type)
@@ -992,13 +1009,18 @@ struct Pond
 
 		if (lastState != fireBoyColliding && fireBoyColliding == false)
 			PlayGameSoundEffect(GameSoundEffect::Pondsteps_boy_sound, false);
+
+		fireBoy.isOnGround |= startColl.CheckCollision(fireBoy);
+		fireBoy.isOnGround |= midColl.CheckCollision(fireBoy);
+		fireBoy.isOnGround |= endColl.CheckCollision(fireBoy);
 	}
 
 	void UpdateWaterGirl(Player& waterGirl) {
 		// if no collision return
 		bool lastState = waterGirlColliding;
-
-		waterGirlColliding = waterGirl.hitbox.getGlobalBounds().intersects(sprite.getGlobalBounds());
+		FloatRect intersections;
+		bool isTouching = waterGirl.hitbox.getGlobalBounds().intersects(mask.getGlobalBounds(), intersections);
+		waterGirlColliding = min(intersections.width, intersections.height) > 10; // only consider it a collision if the intersection area is big enough, to avoid colliding when just touching the edge of the pond
 
 		if (waterGirlColliding)
 			switch (type)
@@ -1016,16 +1038,24 @@ struct Pond
 
 			case WATER_POND:
 				if (waterGirl.playerState == Idle)
-					PlayGameSoundEffect(GameSoundEffect::Pondsteps_boy_sound, false);
+					PlayGameSoundEffect(GameSoundEffect::Pondsteps_girl_sound, false);
 				else if (waterGirl.justUpdatedPlayerState && waterGirl.lastState == Idle)
-					PlayGameSoundEffect(GameSoundEffect::Pondsteps_boy_sound, true);
+					PlayGameSoundEffect(GameSoundEffect::Pondsteps_girl_sound, true);
 				else if (lastState != waterGirlColliding && waterGirlColliding == true)
-					PlayGameSoundEffect(GameSoundEffect::Pondsteps_boy_sound, true);
+					PlayGameSoundEffect(GameSoundEffect::Pondsteps_girl_sound, true);
 				break;
 			}
 
 		if (lastState != waterGirlColliding && waterGirlColliding == false)
-			PlayGameSoundEffect(GameSoundEffect::Pondsteps_boy_sound, false);
+			PlayGameSoundEffect(GameSoundEffect::Pondsteps_girl_sound, false);
+
+		waterGirl.isOnGround |= startColl.CheckCollision(waterGirl);
+		waterGirl.isOnGround |= midColl.CheckCollision(waterGirl);
+		waterGirl.isOnGround |= endColl.CheckCollision(waterGirl);	
+	}
+
+	void Draw() {
+		// window.draw(mask);
 	}
 };
 struct Box {
@@ -1113,6 +1143,92 @@ struct Box {
 };
 
 
+struct Temporary_ground
+{
+	Collider collider;
+	Sprite displaySprite;
+	float displayScale = 0.8f;
+	Vector2f startPosition;
+	Vector2f startScale;
+	bool collided = false;
+	bool isVisible = true;
+	float timer = 0.0f;
+
+	Temporary_ground() {}
+	Temporary_ground(Vector2f position) {
+		startPosition = position;
+	}
+
+
+	void Initialize() {
+		collider = Collider(Collider::ColliderType::Rectangle, startPosition, Vector2f(32 * 2, 32));
+		ApplyTexture(collider.sprite, LoadTexture::RECTANGLE, Vector2f(32 * 3, 10), Vector2f(1, 1));
+		ApplyTexture(displaySprite, LoadTexture::TEMPORARY_GROUND, Vector2f(1, 1), Vector2f(1, 1), true, false);
+		displaySprite.scale(displayScale, displayScale);
+		startScale = collider.sprite.getScale();
+		collider.sprite.setPosition(startPosition);
+		Allign(collider.sprite);
+		SetSpriteSize(collider.sprite, Vector2f(displaySprite.getGlobalBounds().width, displaySprite.getGlobalBounds().height));
+	}
+
+	void ContinueTimer() {
+		timer += dt;
+	}
+
+	void ResetTimer() {
+		timer = 0.0f;
+	}
+
+
+	void Update(Player& player) {
+		Collider::CollisionData collisionData;
+		if (isVisible) {
+			player.isOnGround |= collider.CheckCollision(player, collisionData);
+		}
+
+		// if the player stood on top of it, start the timer to disappear, if not collided reset the timer and make the ground appear again
+		if (!collided)
+		{
+			if (collisionData.collisionDirection == Collider::CollisionData::CollisionDirection::Top) {
+				collided = true;
+				ResetTimer();
+				PlayGameSoundEffect(GameSoundEffect::Platform_sound); // change sound later
+			}
+		}
+		else
+		{
+			// if player already collided, continue the timer and check if it's time to disappear
+			ContinueTimer();
+
+			if (timer >= 5.0f)
+			{
+				collider.sprite.setScale(0, 0);
+				isVisible = false;
+				collided = false;
+				ResetTimer();
+			}
+		}
+
+		if (!isVisible && !collided) {
+			ContinueTimer();
+			if (timer >= 5.0f) {
+				collider.sprite.setScale(startScale);
+				isVisible = true;
+				ResetTimer();
+				SetSpriteSize(collider.sprite, Vector2f(displaySprite.getGlobalBounds().width, displaySprite.getGlobalBounds().height));
+			}
+		}
+	}
+
+	void Draw() {
+		if (isVisible)
+		{
+			//window.draw(collider.sprite);
+			displaySprite.setPosition(collider.sprite.getPosition());
+			window.draw(displaySprite);
+		}
+	}
+};
 
 
 
@@ -1123,28 +1239,26 @@ struct Box {
 // 3. add a new enum for it in ObjectType enum
 // 4. add an Initialize"enum name here" funtion for it		for ex: InitializeGemObject is just the construct of Gem + gem.Initialize() at it's end
 // 5. add it's update and draw and checkInput functions to the switch cases of the Object struct if needed
+// then god be with you when adding it to the level editor XD
 
 struct ObjectData {
 	Gem gem;
 	Door door;
 	Pond pond;
 	Box box;
+	Temporary_ground temporaryGround;
 
-	void CopyFrom(ObjectData other) {
-		gem = other.gem;
-		door = other.door;
-		pond = other.pond;
-		box = other.box;
-	}
 
 	bool CheckContainsPoint(Vector2f point) {
 		if (gem.sprite.getGlobalBounds().contains(point))
 			return true;
-		if (door.sprite.getGlobalBounds().contains(point))
+		if (door.displaySprite.getGlobalBounds().contains(point))
 			return true;
-		if (pond.sprite.getGlobalBounds().contains(point))
+		if (pond.mask.getGlobalBounds().contains(point))
 			return true;
 		if (box.collider.sprite.getGlobalBounds().contains(point))
+			return true;
+		if (temporaryGround.collider.sprite.getGlobalBounds().contains(point))
 			return true;
 
 		return false;
@@ -1158,6 +1272,7 @@ struct Object {
 		DoorObject,
 		PondObject,
 		BoxObject,
+		TemporaryGroundObject
 	} type;
 
 	ObjectData data;
@@ -1165,11 +1280,6 @@ struct Object {
 	Object(){} // empty constructor for ObjectList to work
 	Object(ObjectType startType) {
 		type = startType;
-	}
-
-	void CopyFrom(Object other) {
-		type = other.type;
-		data.CopyFrom(other.data);
 	}
 
 	void InitializeGemObject(Gem::Gemtype crystaltype, Vector2f position) {
@@ -1182,7 +1292,7 @@ struct Object {
 	void InitializeDoorObject(Vector2f Initialize, Vector2f end) {
 		data.door.startPosition = Initialize;
 		data.door.Initialize();
-		data.door.startPosition = data.door.sprite.getPosition();
+		data.door.startPosition = data.door.displaySprite.getPosition();
 		Allign(end);
 		data.door.endPosition = end;
 	}
@@ -1190,13 +1300,19 @@ struct Object {
 	void InitializePondObject(Pond::ponds_type startType, Vector2f position, int width) {
 		data.pond.type = startType;
 		data.pond.Initialize(width);
-		data.pond.sprite.setPosition(position);
-		Allign(data.pond.sprite);
+		data.pond.mask.setPosition(position);
+		Allign(data.pond.mask);
+		data.pond.InitializeColliders();
 	}
 
 	void InitializeBoxObject(Vector2f position) {
 		data.box.startPosition = position;
 		data.box.Initialize();
+	}
+
+	void InitializeTemporaryGroundObject(Vector2f position) {
+		data.temporaryGround.startPosition = position;
+		data.temporaryGround.Initialize();
 	}
 
 	/*bool CheckObjectCollision(Object other) {
@@ -1261,6 +1377,10 @@ struct Object {
 			break;
 		case Object::DoorObject: data.door.Update(fireBoy, waterGirl);
 			break;
+		case Object::TemporaryGroundObject:
+			data.temporaryGround.Update(fireBoy);
+			data.temporaryGround.Update(waterGirl);
+			break;
 		default:
 			break;
 		}
@@ -1271,6 +1391,8 @@ struct Object {
 		switch (type)
 		{
 		case Object::DoorObject: data.door.PreDraw();
+			break;
+		case Object::TemporaryGroundObject: data.temporaryGround.Draw();
 			break;
 		}
 	}
@@ -1288,7 +1410,7 @@ struct Object {
 	void PostDraw() {
 		switch (type)
 		{
-		case Object::PondObject: window.draw(data.pond.sprite);
+		case Object::PondObject: data.pond.Draw();
 			break;
 		case Object::BoxObject: data.box.PreDraw();
 			break;
@@ -1313,18 +1435,18 @@ struct ObjectList {
 		Object* temp = new Object[count];
 
 		for (int i = 0; i < count; i++)
-			temp[i].CopyFrom(elements[i]);
+			temp[i] = elements[i];
 
 		count++;
 		elements = new Object[count];
 
 		if (count - 1 >= 0)
 			for (int i = 0; i < count - 1; i++)
-				elements[i].CopyFrom(temp[i]);
+				elements[i] = temp[i];
 
 		delete[] temp;
 
-		elements[count - 1].CopyFrom(element);
+		elements[count - 1] = element;
 	}
 
 	void RemoveAt(int index) {
@@ -1333,16 +1455,16 @@ struct ObjectList {
 		Object* temp = new Object[count];
 
 		for (int i = 0; i < count; i++)
-			temp[i].CopyFrom(elements[i]);
+			temp[i] = elements[i];
 
 		count--;
 		elements = new Object[count];
 
 		for (int i = 0; i < count; i++)
 			if (i < index)
-				elements[i].CopyFrom(temp[i]);
+				elements[i] = temp[i];
 			else
-				elements[i].CopyFrom(temp[i + 1]);
+				elements[i] = temp[i + 1];
 
 		delete[] temp;
 	}
@@ -1353,91 +1475,5 @@ struct ObjectList {
 
 	~ObjectList() {
 		delete[] elements;
-	}
-};
-
-struct Temporary_ground
-{
-	Collider collider;
-	Sprite displaySprite;
-	float displayScale = 0.8f;
-	Vector2f startPosition;
-	Vector2f startScale;
-	bool collided = false;
-	bool isVisible = true;
-	float timer = 0.0f;
-
-	Temporary_ground() {}
-	Temporary_ground(Vector2f position) {
-		startPosition = position;
-	}
-
-
-	void Initialize() {
-		collider = Collider(Collider::ColliderType::Rectangle, startPosition, Vector2f(32 * 2, 32));
-		ApplyTexture(collider.sprite, LoadTexture::RECTANGLE, Vector2f(32 * 3, 10), Vector2f(1, 1));
-		ApplyTexture(displaySprite, LoadTexture::TEMPORARY_GROUND, Vector2f(1, 1), Vector2f(1, 1), true, false);
-		displaySprite.scale(displayScale, displayScale);
-		startScale = collider.sprite.getScale();
-		collider.sprite.setPosition(startPosition);
-		Allign(collider.sprite);
-	}
-
-	void ContinueTimer() {
-		timer += dt;
-	}
-
-	void ResetTimer() {
-		timer = 0.0f;
-	}
-
-
-	void Update(Player& player) {
-
-		Collider::CollisionData collisionData;
-		if (isVisible) {
-			player.isOnGround |= collider.CheckCollision(player, collisionData);
-		}
-
-		// if the player stood on top of it, start the timer to disappear, if not collided reset the timer and make the ground appear again
-		if (!collided)
-		{
-			if (collisionData.collisionDirection == Collider::CollisionData::CollisionDirection::Top) {
-				collided = true;
-				ResetTimer();
-				PlayGameSoundEffect(GameSoundEffect::Platform_sound); // change sound later
-			}
-		}
-		else
-		{
-			// if player already collided, continue the timer and check if it's time to disappear
-			ContinueTimer();
-
-			if (timer >= 5.0f)
-			{
-				collider.sprite.setScale(0, 0);
-				isVisible = false;
-				collided = false;
-				ResetTimer();
-			}
-		}
-
-		if (!isVisible && !collided) {
-			ContinueTimer();
-			if (timer >= 5.0f) {
-				collider.sprite.setScale(startScale);
-				isVisible = true;
-				ResetTimer();
-			}
-		}
-	}
-
-	void Draw() {
-		if (isVisible)
-		{
-			// window.draw(collider.sprite);
-			displaySprite.setPosition(collider.sprite.getPosition());
-			window.draw(displaySprite);
-		}
 	}
 };

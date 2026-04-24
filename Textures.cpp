@@ -285,7 +285,10 @@ void SetSpriteOriginToCenter(Sprite& sprite, bool dontMove = false) {
 	// instead accept any origin
 	if (dontMove) sprite.move(-Vector2f((oldOrigin.x - bounds.width / 2.0f) * sprite.getScale().x, (oldOrigin.y - bounds.height / 2.0f) * sprite.getScale().y));
 }
-
+Color SetColorAlpha(Color color, float alpha) {
+	color.a = alpha;
+	return color;
+}
 
 void ApplyTexture(Sprite& sprite, LoadTexture texture, Vector2f size = Vector2f(1.0f, 1.0f), Vector2f scale = Vector2f(1.0f, 1.0f), bool centerOrigin = true, bool setSize = true) {
 	bool isValid = true;
@@ -798,7 +801,7 @@ void InitializeTextures()
 	fire_pond_left.loadFromFile("Main/Assets/Animations/map objects assets/fire box left.png");
 	lever_stick.loadFromFile("Main/Assets/Animations/map objects assets/lever stick.png");
 	lever_base.loadFromFile("Main/Assets/Animations/map objects assets/lever base.png");
-	temporaryPlatform.loadFromFile("Main/Assets/Animations/map objects assets/hanging platform.png");
+	temporaryPlatform.loadFromFile("Main/Assets/Animations/map objects assets/pulley_platform.png");
 	bar.loadFromFile("Main/Assets/Animations/map objects assets/bar center.png");
 	bar_cap_right.loadFromFile("Main/Assets/Animations/map objects assets/bar cap right.png");
 	bar_cap_left.loadFromFile("Main/Assets/Animations/map objects assets/bar cap left.png");
