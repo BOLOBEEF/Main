@@ -15,7 +15,16 @@ enum FadeState
 };
 FadeState currentFadeState = NoFading;
 
+enum DimState
+{
+	NoDimming,
+	DimmingUp,
+	DimmingDown
+};
+DimState currentDimState = NoDimming;
+
 // Runtime variables
+float dimingSpeed, dimPercentage = 0;
 float fadeSpeed = 155, fadePercentage = 0;
 float holdSpeed = 40, holdLimit = 50;
 //Why hold? -> because when I make the fade transition, I change the game state when alpha becomes 255, so the pause menu won't move until this case, it will move when we start decrementing the alpha
@@ -27,6 +36,11 @@ GameState FadeTransitionMenuState = MAIN_MENU;
 RectangleShape Dimmed_Background;
 RectangleShape FadingTransitionBackground;
 
+Vector2f Target_up_mnu = Vector2f(windowSize.x / 2, windowSize.y / 2);
+Vector2f Target_Down_mnu = Vector2f(windowSize.x / 2, windowSize.y / 2 + 1000);
+Vector2f Current_position_mnu = Target_Down_mnu;
+Vector2f Current_Target;
+
 Sprite Stone_mnu;
 Sprite SettingButton_mnu;
 Sprite EndButton_Pausemnu;
@@ -34,30 +48,41 @@ Sprite RetryButton_Pausemnu;
 Sprite ResumeButton_Pausemnu;
 Sprite PauseIcon_mnu;
 
-Vector2f Target_up_mnu = Vector2f(windowSize.x / 2, windowSize.y / 2);
-Vector2f Target_Down_mnu = Vector2f(windowSize.x / 2, windowSize.y / 2 + 1000);
-Vector2f Current_position_mnu = Target_Down_mnu;
-Vector2f Current_Target;
 
 Sprite GameOverbuttons_mnu[3];
+
+
 Sprite ContinueButton_Winmnu;
+Sprite MaleAndFemale_icon_Winmnu;
+Sprite diamondRating_icon_Winmnu;
+Sprite timerRating_icon_Winmnu;
+Sprite arrowIcon_Winmnu;
+Sprite levelDiamond_Winmnu;
+Sprite checkOrCrossMaleOrFemale_icon_Winmnu, checkOrCrossDiamonds_icon_Winmnu, checkOrCrossTimer_icon_Winmnu;
+float ratingOrder = 0, ratingOrder_Speed = 200;
+bool MaleAndFemale_turn = false, diamondRating_turn = false, timerRating_turn = false, levelAndArrowIcon_turn = false;
+bool isMaleAndFemaleSoundPlayed = false, isdiamondSoundPlayed = false, istimerSoundPlayed = false, islevelAndArrowSoundPlayed = false;
+//because i want to play the sounds of each rating once in the game loop not to rerun it each iteration 
+
 
 Font font;
 Text fpsDisplay;
 Text End_Pausetxt, Resume_Pausetxt, Retry_Pausetxt, Pause_txt;
 Text Menu_GOVERtxt, Retry_GOVERtxt, Skip_GOVERtxt, GameOver_txt;
 Text Continue_Wintxt;
+Text NoText; // to use it as a default value in the MouseInput_mnu function
 // cursor Variables
 Sprite cursorAndpointerSprite;
 
 // Functions
-bool MouseInput_mnu(Event event, Sprite& ButtonClicked, LoadTexture Currnet_texture_enum, LoadTexture Desired_texture_enum, MenuSoundEffect Sound_Played_mnu, GameState state_mnu, bool fadeTransition)
+bool MouseInput_mnu(Event event, Sprite& ButtonClicked, LoadTexture Currnet_texture_enum, LoadTexture Desired_texture_enum, MenuSoundEffect Sound_Played_mnu, GameState state_mnu, bool fadeTransition, Text& buttonText = NoText)
 {
 	if (event.type == Event::MouseButtonPressed && event.mouseButton.button == Mouse::Left)
 	{
 		if (ButtonClicked.getGlobalBounds().contains(mousePosition))
 		{
 			UpdateAnimation(ButtonClicked, Desired_texture_enum);
+			buttonText.setScale(0.97, 0.97);
 			UpdateAnimation(cursorAndpointerSprite, pointer_texture);
 		}
 	}
@@ -66,6 +91,7 @@ bool MouseInput_mnu(Event event, Sprite& ButtonClicked, LoadTexture Currnet_text
 		if (ButtonClicked.getGlobalBounds().contains(mousePosition))
 		{
 			UpdateAnimation(ButtonClicked, Currnet_texture_enum);
+			buttonText.setScale(1, 1);
 			UpdateAnimation(cursorAndpointerSprite, cursor_texture);
 			PlayMenuSoundEffect(Sound_Played_mnu);
 			if (fadeTransition)
@@ -78,10 +104,16 @@ bool MouseInput_mnu(Event event, Sprite& ButtonClicked, LoadTexture Currnet_text
 			}
 			else if(!fadeTransition) UpdateGameState(state_mnu);
 		}
+		else
+		{
+			UpdateAnimation(ButtonClicked, Currnet_texture_enum);
+			buttonText.setScale(1, 1);
+			UpdateAnimation(cursorAndpointerSprite, cursor_texture);
+		}
 	}
 	return true;
 }
-bool MouseInput_Settings_mnu(Event event, Sprite& ButtonClicked, LoadTexture Currnet_texture_enum, LoadTexture Desired_texture_enum, MenuSoundEffect Sound_Played_mnu)
+bool MouseInput_Settings_mnu(Event event, Sprite& ButtonClicked, LoadTexture Desired_texture_enum, MenuSoundEffect Sound_Played_mnu)
 {
 	if (event.type == Event::MouseButtonPressed && event.mouseButton.button == Mouse::Left)
 	{
@@ -123,6 +155,19 @@ void WinMenu_Movement(Vector2f Desired_Target)
 	Current_position_mnu = Damp(Current_position_mnu, Current_Target, 25, dt);
 	Stone_mnu.setPosition(Current_position_mnu);
 	ContinueButton_Winmnu.setPosition(Vector2f((windowSize.x / 2) + 270, (windowSize.y / 2) + 200) + Current_position_mnu - center);
+	MaleAndFemale_icon_Winmnu.setPosition(Vector2f(windowSize.x / 2 - 330, windowSize.y / 2 - 190) + Current_position_mnu - center);
+	diamondRating_icon_Winmnu.setPosition(Vector2f(windowSize.x / 2 - 330, windowSize.y / 2 - 90) + Current_position_mnu - center);
+	timerRating_icon_Winmnu.setPosition(Vector2f(windowSize.x / 2 - 330, windowSize.y / 2 + 10) + Current_position_mnu - center);
+	arrowIcon_Winmnu.setPosition(Vector2f(windowSize.x / 2, windowSize.y / 2 - 95) + Current_position_mnu - center);
+	checkOrCrossMaleOrFemale_icon_Winmnu.setPosition(Vector2f(windowSize.x / 2 - 205, windowSize.y / 2 - 190) + Current_position_mnu - center);
+	checkOrCrossDiamonds_icon_Winmnu.setPosition(Vector2f(windowSize.x / 2 - 205, windowSize.y / 2 - 90) + Current_position_mnu - center);
+	checkOrCrossTimer_icon_Winmnu.setPosition(Vector2f(windowSize.x / 2 - 205, windowSize.y / 2 + 10) + Current_position_mnu - center);
+	if (levelAndArrowIcon_turn)
+	{
+		ApplyTexture(arrowIcon_Winmnu, LoadTexture::arrow_icon1_texture, Vector2f(150, 100));
+		UpdateAnimation(arrowIcon_Winmnu, arrow_icon1_texture);
+		arrowIcon_Winmnu.setPosition(Vector2f(windowSize.x / 2, windowSize.y / 2 - 95) + Current_position_mnu - center);
+	}
 	Continue_Wintxt.setPosition((ContinueButton_Winmnu.getGlobalBounds().left + ContinueButton_Winmnu.getGlobalBounds().width / 2), (ContinueButton_Winmnu.getGlobalBounds().top + ContinueButton_Winmnu.getGlobalBounds().height / 2) - 5);
 }
 void GameoverMenu_Movement(Vector2f Desired_Target)
@@ -148,19 +193,41 @@ void SettingMenu_Movement(Vector2f Desired_Target)
 
 	// I Will Handle this After You finish Settings Menu
 }
+
+void RatingCheck(bool maleAndFemale_case = false, bool DiamondCollection_case = false, bool BeforeTimeOut_case = false)
+{
+	if (maleAndFemale_case == true)
+	{
+		ApplyTexture(checkOrCrossMaleOrFemale_icon_Winmnu, LoadTexture::tick_icon_texture, Vector2f(62, 62));
+		UpdateAnimation(checkOrCrossMaleOrFemale_icon_Winmnu, tick_icon_texture);
+		checkOrCrossMaleOrFemale_icon_Winmnu.setPosition(windowSize.x / 2 - 205, windowSize.y / 2 - 190);
+	}
+	if (DiamondCollection_case == true)
+	{
+		ApplyTexture(checkOrCrossDiamonds_icon_Winmnu, LoadTexture::tick_icon_texture, Vector2f(62, 62));
+		UpdateAnimation(checkOrCrossDiamonds_icon_Winmnu, tick_icon_texture);
+		checkOrCrossDiamonds_icon_Winmnu.setPosition(windowSize.x / 2 - 205, windowSize.y / 2 - 90);
+	}
+	if (BeforeTimeOut_case == true)
+	{
+		ApplyTexture(checkOrCrossTimer_icon_Winmnu, LoadTexture::tick_icon_texture, Vector2f(62, 62));
+		UpdateAnimation(checkOrCrossTimer_icon_Winmnu, tick_icon_texture);
+		checkOrCrossTimer_icon_Winmnu.setPosition(windowSize.x / 2 - 205, windowSize.y / 2 + 10);
+	}
+}
+
 void InitializeMenu()
 {
 	font.loadFromFile("Main/Assets/Fonts/trajanpro-bold.otf");
 	fpsDisplay.setFont(font);
 	fpsDisplay.setCharacterSize(24);
 	//Cursor 
-	ApplyTexture(cursorAndpointerSprite, LoadTexture::cursor_texture, Vector2f(50, 30));
+	ApplyTexture(cursorAndpointerSprite, LoadTexture::cursor_texture, Vector2f(45, 30));
 	UpdateAnimation(cursorAndpointerSprite, cursor_texture);
 
 	//Dimmed Background
 	Dimmed_Background.setSize(Vector2f(window.getSize().x, window.getSize().y));
 	Dimmed_Background.setPosition(window.getPosition().x / 2, window.getPosition().y / 2);
-	Dimmed_Background.setFillColor(Color(0, 0, 0, 180));
 
 	//fading Transition Background
 	FadingTransitionBackground.setSize(Vector2f(window.getSize().x, window.getSize().y));
@@ -193,7 +260,7 @@ void InitializeMenu()
 
 	//Game Over menu
 
-	// stone background has already set
+	// stone background has been already set
 	int x_shift_mnu = 350;
 	for (int i = 0; i < 3; i++)
 	{
@@ -205,10 +272,44 @@ void InitializeMenu()
 
 	//Win Menu 
 
-	// stone background has already set
+	// stone background has been already set
 	ApplyTexture(ContinueButton_Winmnu, LoadTexture::stone_button_0_texture, Vector2f(950, 170));
 	UpdateAnimation(ContinueButton_Winmnu, stone_button_0_texture);
 	ContinueButton_Winmnu.setPosition((windowSize.x / 2) + 270, (windowSize.y / 2) + 200);
+
+	ApplyTexture(MaleAndFemale_icon_Winmnu, LoadTexture::finished_icon_texture, Vector2f(110, 130));
+	UpdateAnimation(MaleAndFemale_icon_Winmnu, finished_icon_texture);
+	MaleAndFemale_icon_Winmnu.setPosition(windowSize.x / 2 - 330, windowSize.y / 2 - 190);
+
+	ApplyTexture(diamondRating_icon_Winmnu, LoadTexture::rating_diamonds_texture, Vector2f(100, 80));
+	UpdateAnimation(diamondRating_icon_Winmnu, rating_diamonds_texture);
+	diamondRating_icon_Winmnu.setPosition(windowSize.x / 2 - 330, windowSize.y / 2 - 90);
+
+	ApplyTexture(timerRating_icon_Winmnu, LoadTexture::rating_diamonds_texture, Vector2f(100, 80));
+	UpdateAnimation(timerRating_icon_Winmnu, rating_diamonds_texture);
+	timerRating_icon_Winmnu.setPosition(windowSize.x / 2 - 330, windowSize.y / 2 + 10);
+
+	ApplyTexture(arrowIcon_Winmnu, LoadTexture::arrow_icon0_texture, Vector2f(150, 100));
+	UpdateAnimation(arrowIcon_Winmnu, arrow_icon0_texture);
+	arrowIcon_Winmnu.setPosition(windowSize.x / 2, windowSize.y / 2 - 80);
+
+	//ApplyTexture(levelDiamond_Winmnu, LoadTexture::, Vector2f(150, 150));
+	//UpdateAnimation(levelDiamond_Winmnu, rating_diamonds_texture);
+	//levelDiamond_Winmnu.setPosition(windowSize.x / 2 + 100, windowSize.y / 2 - 70);
+
+	ApplyTexture(checkOrCrossMaleOrFemale_icon_Winmnu, LoadTexture::x_icon_texture, Vector2f(65, 65));
+	UpdateAnimation(checkOrCrossMaleOrFemale_icon_Winmnu, x_icon_texture);
+	checkOrCrossMaleOrFemale_icon_Winmnu.setPosition(windowSize.x / 2 - 205, windowSize.y / 2 - 190);
+
+	ApplyTexture(checkOrCrossDiamonds_icon_Winmnu, LoadTexture::x_icon_texture, Vector2f(65, 65));
+	UpdateAnimation(checkOrCrossDiamonds_icon_Winmnu, x_icon_texture);
+	checkOrCrossDiamonds_icon_Winmnu.setPosition(windowSize.x / 2 - 205, windowSize.y / 2 - 90);
+
+	ApplyTexture(checkOrCrossTimer_icon_Winmnu, LoadTexture::x_icon_texture, Vector2f(65, 65));
+	UpdateAnimation(checkOrCrossTimer_icon_Winmnu, x_icon_texture);
+	checkOrCrossTimer_icon_Winmnu.setPosition(windowSize.x / 2 - 205, windowSize.y / 2 + 10);
+
+	RatingCheck(true, true, true);
 
 	//Pause menu text
 	End_Pausetxt.setFont(font);
@@ -312,24 +413,24 @@ void HandleMenuInput(Event event)
 
 		break;
 	case PAUSE_MENU:
-		MouseInput_mnu(event, ResumeButton_Pausemnu, stone_button_0_texture, stone_button_1_texture, ButtonClick, GAME, false);
-		if (MouseInput_mnu(event, RetryButton_Pausemnu, stone_button_0_texture, stone_button_1_texture, ButtonClick, GAME, true))
+		MouseInput_mnu(event, ResumeButton_Pausemnu, stone_button_0_texture, stone_button_1_texture, ButtonClick, GAME, false, Resume_Pausetxt);
+		if (MouseInput_mnu(event, RetryButton_Pausemnu, stone_button_0_texture, stone_button_1_texture, ButtonClick, GAME, true, Retry_Pausetxt))
 		{
 			//call function reset
 		}
-		MouseInput_mnu(event, EndButton_Pausemnu, stone_button_0_texture, stone_button_1_texture, ButtonClick, LEVEL_MENU, true);
+		MouseInput_mnu(event, EndButton_Pausemnu, stone_button_0_texture, stone_button_1_texture, ButtonClick, LEVEL_MENU, true, End_Pausetxt);
 		MouseInput_mnu(event, SettingButton_mnu, SettingsButton0_texture, SettingsButton0_texture, No_Sound_Buttons, SETTINGS, false);
 		break;
 	case WIN_MENU:
-		MouseInput_mnu(event, ContinueButton_Winmnu, stone_button_0_texture, stone_button_1_texture, ButtonClick, LEVEL_MENU, true);
+		MouseInput_mnu(event, ContinueButton_Winmnu, stone_button_0_texture, stone_button_1_texture, ButtonClick, LEVEL_MENU, true, Continue_Wintxt);
 		break;
 	case SETTINGS:
 		// code for handling settings menu input
 		break;
 	case GAMEOVER:
-		MouseInput_mnu(event, GameOverbuttons_mnu[0], stone_button_0_texture, stone_button_1_texture, ButtonClick, LEVEL_MENU, true);
-		MouseInput_mnu(event, GameOverbuttons_mnu[2], stone_button_0_texture, stone_button_1_texture, ButtonClick, MAIN_MENU, true);
-		if (MouseInput_mnu(event, GameOverbuttons_mnu[1], stone_button_0_texture, stone_button_1_texture, ButtonClick, GAME, true))
+		MouseInput_mnu(event, GameOverbuttons_mnu[0], stone_button_0_texture, stone_button_1_texture, ButtonClick, LEVEL_MENU, true, Skip_GOVERtxt);
+		MouseInput_mnu(event, GameOverbuttons_mnu[2], stone_button_0_texture, stone_button_1_texture, ButtonClick, MAIN_MENU, true, Menu_GOVERtxt);
+		if (MouseInput_mnu(event, GameOverbuttons_mnu[1], stone_button_0_texture, stone_button_1_texture, ButtonClick, GAME, true, Retry_GOVERtxt))
 		{
 			//call function reset
 		}
@@ -349,18 +450,26 @@ void OnUpdatedGameStateMenu() {
 	switch (gameState)
 	{
 	case MAIN_MENU:
+		PlayMusic(MainMenu);
 		break;
 	case LEVEL_MENU:
+		PlayMusic(MainMenu);
 		break;
 	case PAUSE_MENU:
+		musicPlayer.stop();
 		break;
 	case WIN_MENU:
+		musicPlayer.stop();
+		PlayGameSoundEffect(Win_sound);
 		break;
 	case SETTINGS:
 		break;
 	case GAMEOVER:
+		musicPlayer.stop();
+		PlayGameSoundEffect(GameOver_sound);
 		break;
 	case GAME:
+		PlayMusic(Game_Slow);
 		break;
 	default:
 		break;
@@ -392,10 +501,55 @@ void UpdateUI()
 	case PAUSE_MENU:
 		PreviousMenu_State = PAUSE_MENU;
 		PauseMenu_Movement(Target_up_mnu);
+		currentDimState = DimmingUp;
 		break;
 	case WIN_MENU:
 		PreviousMenu_State = WIN_MENU;
 		WinMenu_Movement(Target_up_mnu);
+		currentDimState = DimmingUp;
+
+		ratingOrder += ratingOrder_Speed * dt;
+		if (ratingOrder >= 600)
+		{
+			ratingOrder = 600;
+			levelAndArrowIcon_turn = true;
+			ApplyTexture(arrowIcon_Winmnu, LoadTexture::arrow_icon1_texture, Vector2f(150, 100));
+			UpdateAnimation(arrowIcon_Winmnu, arrow_icon1_texture);
+			arrowIcon_Winmnu.setPosition(windowSize.x / 2, windowSize.y / 2 - 95);
+			if (!islevelAndArrowSoundPlayed)
+			{
+				PlayGameSoundEffect(EndDiamond_sound);
+				islevelAndArrowSoundPlayed = true;
+			}
+		}
+		else if (ratingOrder >= 500)
+		{
+			timerRating_turn = true;
+			if (!istimerSoundPlayed)
+			{
+				PlayGameSoundEffect(EndTaskPassAndFail_sound);
+				istimerSoundPlayed = true;
+			}
+		}
+		else if (ratingOrder >= 400)
+		{
+			diamondRating_turn = true;
+			if (!isdiamondSoundPlayed)
+			{
+				PlayGameSoundEffect(EndTaskPassAndFail_sound);
+				isdiamondSoundPlayed = true;
+			}
+		}
+		else if (ratingOrder >= 300)
+		{
+			MaleAndFemale_turn = true;
+			if (!isMaleAndFemaleSoundPlayed)
+			{
+				PlayGameSoundEffect(EndTaskPassAndFail_sound);
+				isMaleAndFemaleSoundPlayed = true;
+			}
+		}
+
 		break;
 	case SETTINGS:
 		// code for settings menu
@@ -403,6 +557,7 @@ void UpdateUI()
 	case GAMEOVER:
 		PreviousMenu_State = GAMEOVER;
 		GameoverMenu_Movement(Target_up_mnu);
+		currentDimState = DimmingUp;
 		break;
 	case GAME:
 		// code for game UI
@@ -418,6 +573,7 @@ void UpdateUI()
 		{
 			WinMenu_Movement(Target_Down_mnu);
 		}
+		currentDimState = DimmingDown;
 		break;
 	default:
 		break;
@@ -448,6 +604,28 @@ void UpdateUI()
 		}
 	}
 	FadingTransitionBackground.setFillColor(Color(0, 0, 0, fadePercentage));
+
+	if (currentDimState == DimmingUp)
+	{
+		dimingSpeed = 155;
+		dimPercentage += dimingSpeed * dt;
+		if (dimPercentage >= 150)
+		{
+			dimPercentage = 150;
+			currentDimState = NoDimming;
+		}
+	}
+	else if (currentDimState == DimmingDown)
+	{
+		dimingSpeed = 190;
+		dimPercentage -= dimingSpeed * dt;
+		if (dimPercentage <= 0)
+		{
+			dimPercentage = 0;
+			currentDimState = NoDimming;
+		}
+	}
+	Dimmed_Background.setFillColor(Color(0, 0, 0, dimPercentage));
 
 	cursorAndpointerSprite.setPosition(mousePosition + Vector2f(21, 13));
 }
@@ -510,6 +688,14 @@ void DrawUI()
 			{
 				window.draw(Stone_mnu);
 				window.draw(ContinueButton_Winmnu);
+				window.draw(MaleAndFemale_icon_Winmnu);
+				window.draw(diamondRating_icon_Winmnu);
+				window.draw(timerRating_icon_Winmnu);
+				window.draw(arrowIcon_Winmnu);
+				window.draw(levelDiamond_Winmnu);
+				window.draw(checkOrCrossMaleOrFemale_icon_Winmnu);
+				window.draw(checkOrCrossDiamonds_icon_Winmnu);
+				window.draw(checkOrCrossTimer_icon_Winmnu);
 				window.draw(Continue_Wintxt);
 			}
 		}
@@ -536,6 +722,32 @@ void DrawUI()
 		window.draw(Dimmed_Background);
 		window.draw(Stone_mnu);
 		window.draw(ContinueButton_Winmnu);
+		window.draw(MaleAndFemale_icon_Winmnu);
+		window.draw(diamondRating_icon_Winmnu);
+		window.draw(timerRating_icon_Winmnu);
+		window.draw(arrowIcon_Winmnu);
+		window.draw(levelDiamond_Winmnu);
+		if (levelAndArrowIcon_turn)
+		{
+			window.draw(checkOrCrossMaleOrFemale_icon_Winmnu);
+			window.draw(checkOrCrossDiamonds_icon_Winmnu);
+			window.draw(checkOrCrossTimer_icon_Winmnu);
+		}
+		else if (timerRating_turn)
+		{
+			window.draw(checkOrCrossMaleOrFemale_icon_Winmnu);
+			window.draw(checkOrCrossDiamonds_icon_Winmnu);
+			window.draw(checkOrCrossTimer_icon_Winmnu);
+		}
+		else if (diamondRating_turn)
+		{
+			window.draw(checkOrCrossMaleOrFemale_icon_Winmnu);
+			window.draw(checkOrCrossDiamonds_icon_Winmnu);
+		}
+		else if (MaleAndFemale_turn)
+		{
+			window.draw(checkOrCrossMaleOrFemale_icon_Winmnu);
+		}
 		window.draw(Continue_Wintxt);
 		break;
 
@@ -577,6 +789,7 @@ void DrawUI()
 
 	case GAME:
 		// code for drawing game UI
+		window.draw(Dimmed_Background);
 		window.draw(PauseIcon_mnu);
 		if (Current_position_mnu != Target_Down_mnu)
 		{

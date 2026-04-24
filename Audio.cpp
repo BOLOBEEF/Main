@@ -52,8 +52,11 @@ enum GameSoundEffect
 	Wind_sound,
 
 	//index[5]
-	DiamondCollect_sound
+	DiamondCollect_sound,
 	// and so on
+
+	EndDiamond_sound,
+	EndTaskPassAndFail_sound
 };
 
 enum BackgroundMusic {
@@ -90,6 +93,9 @@ SoundBuffer LevelWinSound;
 SoundBuffer LevelGameoverSound;
 SoundBuffer ClockSound;
 SoundBuffer DiamondCollectingSound;
+
+SoundBuffer EndDiamondSoundBF;
+SoundBuffer EndTaskPassAndFailSoundBF;
 // and so on
 
 // have only one Music player and 5 sound effect players
@@ -100,6 +106,9 @@ int currentSoundEffectPlayer = 0;
 Sound soundEffectsPlayers[6];
 //Sound Clock;
 Sound Button;
+Sound EndDiamondSound;
+Sound EndTaskPassAndFailSound;
+
 
 // loop on those sound effect players when playing sound effects, so we can play multiple sound effects at the same time without cutting each other off, but we can only play 5 sound effects at the same time
 
@@ -134,6 +143,8 @@ void InitializeAudio()
 	ClockSound.loadFromFile("Main/Assets/Sounds/Clock.mp3");
 	DiamondCollectingSound.loadFromFile("Main/Assets/Sounds/DiamondCollecting.mp3");
 
+	EndDiamondSoundBF.loadFromFile("Main/Assets/Sounds/EndDiamond.mp3");
+	EndTaskPassAndFailSoundBF.loadFromFile("Main/Assets/Sounds/EndTaskPass&Fail.mp3");
 
 	for (int i = 0; i < 6; i++)
 	{
@@ -326,6 +337,18 @@ void PlayGameSoundEffect(GameSoundEffect soundEffect, bool loop = false) {
 		soundEffectsPlayers[5].setBuffer(DiamondCollectingSound);
 		soundEffectsPlayers[5].setLoop(false);
 		soundEffectsPlayers[5].play();
+		break;
+	case EndDiamond_sound:
+		EndDiamondSound.setBuffer(EndDiamondSoundBF);
+		EndDiamondSound.setLoop(false);
+		EndDiamondSound.setVolume(100.0f);
+		EndDiamondSound.play();
+		break;
+	case EndTaskPassAndFail_sound:
+		EndTaskPassAndFailSound.setBuffer(EndTaskPassAndFailSoundBF);
+		EndTaskPassAndFailSound.setLoop(false);
+		EndTaskPassAndFailSound.setVolume(100.0f);
+		EndTaskPassAndFailSound.play();
 		break;
 	default:
 		cout << "Invalid sound effect" << endl;
