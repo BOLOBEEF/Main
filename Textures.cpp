@@ -752,7 +752,28 @@ void InitializeGameTextures() {
 
 
 void InitializeTextures()
-{
+{// set smooth
+	fire_head_jumping.setSmooth(true);
+	death_smoke.setSmooth(true);
+	diamond_fire.setSmooth(true);
+	diamond_water.setSmooth(true);
+	fire_glow.setSmooth(true);
+	fire_head_jumping.setSmooth(true);
+	fire_head_rising.setSmooth(true);
+	fire_ice_steps.setSmooth(true);
+	fire_idle_body.setSmooth(true);
+	fire_idle_head.setSmooth(true);
+	fire_running.setSmooth(true);
+	fire_stairs.setSmooth(true);
+	fire_head_falling.setSmooth(true);
+	water_body_idle.setSmooth(true);
+	water_head_idle.setSmooth(true);
+	water_head_jump.setSmooth(true);
+	water_head_rising.setSmooth(true);
+	water_ice_steps.setSmooth(true);
+	water_running.setSmooth(true);
+	water_glow.setSmooth(true);
+	water_head_falling.setSmooth(true);
 	// load all texture here
 	// this functions maybe called again if reloading the textures is needed
 

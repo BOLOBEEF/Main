@@ -582,16 +582,25 @@ void UpdatePlayerTexture(Sprite& sprite, PlayerType type, PlayerState newState, 
 
 void UpdateAnimationPlayer(Sprite& sprite, PlayerState state, bool Head = false)
 {
-	float speed = 10.0f;
-	int frameCount = 6;
-	int index = (int)(globalClock.getElapsedTime().asSeconds() * speed) % frameCount;
-	float width = 100, height = 100;
+	float speed = 20.0f;
+	float width = 10, height = 0;
 
 	if (!Head) {
-		if (state == Walk)
-			sprite.setTextureRect(IntRect(0, 0, width, height));
-		else
-			sprite.setTextureRect(IntRect(0, 0, width, height));
+		
+		
+		
+		if (state == Walk) {
+			int frameCount = 8;
+			int index = (int)(globalClock.getElapsedTime().asSeconds() * speed) % frameCount;
+			float width = 1040, height = 170;
+		      
+			sprite.setTextureRect(IntRect(index * (width / frameCount), 0, (width/frameCount), height));
+		}
+		else {
+			int framecount = 8;
+			float width = 1040, height = 170;
+			sprite.setTextureRect(IntRect(0, 0, (width/framecount), height));
+		}
 	}
 	else
 	switch (state)
