@@ -420,6 +420,78 @@ void UpdateAnimation(Sprite& sprite, LoadTexture texture) {
 	case clock_timer_texture:
 		sprite.setTextureRect(IntRect(0, 0, 268, 100));
 		break;
+	case tick_icon_texture:
+		sprite.setTextureRect(IntRect(0, 0, 69, 69));
+		break;
+	case rating_timer_texture:
+		sprite.setTextureRect(IntRect(0, 0, 93, 73));
+		break;
+	case diamonds_green_idle_texture:
+		sprite.setTextureRect(IntRect(0, 0, 128, 128));
+		break;
+	case diamonds_orange_idle_texture:
+		sprite.setTextureRect(IntRect(0, 0, 128, 128));
+		break;
+	case diamonds_purple_idle_texture:
+		sprite.setTextureRect(IntRect(0, 0, 128, 128));
+		break;
+	case diamonds_green_texture: {
+		int frameCount = 8;
+		int width = 1024, height = 128;
+		int frameWidth = width / frameCount;
+		 bool lastframe = false;
+		 int index = 0;
+
+		if (!lastframe) {
+			
+			int speedd = 6.1f;
+			index = (int)(globalClock.getElapsedTime().asSeconds() * speedd);
+			if (index >= frameCount -1 ) {
+				index = frameCount -1 ; 
+				lastframe = true;       
+			}
+		}
+		sprite.setTextureRect(sf::IntRect(index * frameWidth, 0, frameWidth, height));
+		break;
+	}
+	case diamonds_orange_texture: {
+		int frameCount = 8;
+		int width = 1024, height = 128;
+		int frameWidth = width / frameCount;
+		bool lastframe = false;
+		int index = 0;
+
+		if (!lastframe) {
+
+			int speedd = 6.1f;
+			index = (int)(globalClock.getElapsedTime().asSeconds() * speedd);
+			if (index >= frameCount - 1) {
+				index = frameCount - 1;
+				lastframe = true;
+			}
+		}
+		sprite.setTextureRect(sf::IntRect(index * frameWidth, 0, frameWidth, height));
+		break;
+	}
+	case diamonds_purple_texture: {
+		int frameCount = 8;
+		int width = 1024, height = 128;
+		int frameWidth = width / frameCount;
+		bool lastframe = false;
+		int index = 0;
+
+		if (!lastframe) {
+
+			int speedd = 6.1f;
+			index = (int)(globalClock.getElapsedTime().asSeconds() * speedd);
+			if (index >= frameCount - 1) {
+				index = frameCount - 1;
+				lastframe = true;
+			}
+		}
+		sprite.setTextureRect(sf::IntRect(index * frameWidth, 0, frameWidth, height));
+		break;
+	}
 	
 	default:
 		break;
