@@ -23,10 +23,12 @@ void OnUpdatedGameStateTest() {
 
 void UpdateTest()
 {
+	
 
 }
 
 void DrawTest() {
 	// for example test if a sound function is working here
 	// PlayMusic(BackgroundMusic::MainMenu);
+	
 }
