@@ -420,6 +420,78 @@ void UpdateAnimation(Sprite& sprite, LoadTexture texture) {
 	case clock_timer_texture:
 		sprite.setTextureRect(IntRect(0, 0, 268, 100));
 		break;
+	case tick_icon_texture:
+		sprite.setTextureRect(IntRect(0, 0, 69, 69));
+		break;
+	case rating_timer_texture:
+		sprite.setTextureRect(IntRect(0, 0, 93, 73));
+		break;
+	case diamonds_green_idle_texture:
+		sprite.setTextureRect(IntRect(0, 0, 128, 128));
+		break;
+	case diamonds_orange_idle_texture:
+		sprite.setTextureRect(IntRect(0, 0, 128, 128));
+		break;
+	case diamonds_purple_idle_texture:
+		sprite.setTextureRect(IntRect(0, 0, 128, 128));
+		break;
+	case diamonds_green_texture: {
+		int frameCount = 8;
+		int width = 1024, height = 128;
+		int frameWidth = width / frameCount;
+		 bool lastframe = false;
+		 int index = 0;
+
+		if (!lastframe) {
+			
+			int speedd = 6.1f;
+			index = (int)(globalClock.getElapsedTime().asSeconds() * speedd);
+			if (index >= frameCount -1 ) {
+				index = frameCount -1 ; 
+				lastframe = true;       
+			}
+		}
+		sprite.setTextureRect(sf::IntRect(index * frameWidth, 0, frameWidth, height));
+		break;
+	}
+	case diamonds_orange_texture: {
+		int frameCount = 8;
+		int width = 1024, height = 128;
+		int frameWidth = width / frameCount;
+		bool lastframe = false;
+		int index = 0;
+
+		if (!lastframe) {
+
+			int speedd = 6.1f;
+			index = (int)(globalClock.getElapsedTime().asSeconds() * speedd);
+			if (index >= frameCount - 1) {
+				index = frameCount - 1;
+				lastframe = true;
+			}
+		}
+		sprite.setTextureRect(sf::IntRect(index * frameWidth, 0, frameWidth, height));
+		break;
+	}
+	case diamonds_purple_texture: {
+		int frameCount = 8;
+		int width = 1024, height = 128;
+		int frameWidth = width / frameCount;
+		bool lastframe = false;
+		int index = 0;
+
+		if (!lastframe) {
+
+			int speedd = 6.1f;
+			index = (int)(globalClock.getElapsedTime().asSeconds() * speedd);
+			if (index >= frameCount - 1) {
+				index = frameCount - 1;
+				lastframe = true;
+			}
+		}
+		sprite.setTextureRect(sf::IntRect(index * frameWidth, 0, frameWidth, height));
+		break;
+	}
 	
 	default:
 		break;
@@ -510,16 +582,25 @@ void UpdatePlayerTexture(Sprite& sprite, PlayerType type, PlayerState newState, 
 
 void UpdateAnimationPlayer(Sprite& sprite, PlayerState state, bool Head = false)
 {
-	float speed = 10.0f;
-	int frameCount = 6;
-	int index = (int)(globalClock.getElapsedTime().asSeconds() * speed) % frameCount;
-	float width = 100, height = 100;
+	float speed = 20.0f;
+	float width = 10, height = 0;
 
 	if (!Head) {
-		if (state == Walk)
-			sprite.setTextureRect(IntRect(0, 0, width, height));
-		else
-			sprite.setTextureRect(IntRect(0, 0, width, height));
+		
+		
+		
+		if (state == Walk) {
+			int frameCount = 8;
+			int index = (int)(globalClock.getElapsedTime().asSeconds() * speed) % frameCount;
+			float width = 1040, height = 170;
+		      
+			sprite.setTextureRect(IntRect(index * (width / frameCount), 0, (width/frameCount), height));
+		}
+		else {
+			int framecount = 8;
+			float width = 1040, height = 170;
+			sprite.setTextureRect(IntRect(0, 0, (width/framecount), height));
+		}
 	}
 	else
 	switch (state)

@@ -136,7 +136,10 @@ enum LoadTexture
 	diamonds_green_texture,
 	diamonds_purple_texture,
 	diamonds_orange_texture,
-
+	rating_timer_texture,
+	diamonds_green_idle_texture,
+	diamonds_purple_idle_texture,
+	diamonds_orange_idle_texture,
 };
 
 
@@ -244,6 +247,7 @@ Texture finished_icon;
 Texture diamonds_green;
 Texture diamonds_purple;
 Texture diamonds_orange;
+Texture rating_timer;
 //cursor texture
 Texture CursorAndPointer;
 
@@ -519,6 +523,10 @@ void ApplyTexture(Sprite& sprite, LoadTexture texture, Vector2f size = Vector2f(
 		sprite.setTexture(tick_icon);
 		break;
 
+	case rating_timer_texture:
+		sprite.setTexture(rating_timer);
+		break;
+
 	case rating_diamonds_texture:
 		sprite.setTexture(rating_diamonds);
 		break;
@@ -536,6 +544,17 @@ void ApplyTexture(Sprite& sprite, LoadTexture texture, Vector2f size = Vector2f(
 		break;
 
 	case diamonds_orange_texture:
+		sprite.setTexture(diamonds_orange);
+		break;
+	case diamonds_green_idle_texture:
+		sprite.setTexture(diamonds_green);
+		break;
+
+	case diamonds_purple_idle_texture:
+		sprite.setTexture(diamonds_purple);
+		break;
+
+	case diamonds_orange_idle_texture:
 		sprite.setTexture(diamonds_orange);
 		break;
 
@@ -736,7 +755,28 @@ void InitializeGameTextures() {
 
 
 void InitializeTextures()
-{
+{// set smooth
+	fire_head_jumping.setSmooth(true);
+	death_smoke.setSmooth(true);
+	diamond_fire.setSmooth(true);
+	diamond_water.setSmooth(true);
+	fire_glow.setSmooth(true);
+	fire_head_jumping.setSmooth(true);
+	fire_head_rising.setSmooth(true);
+	fire_ice_steps.setSmooth(true);
+	fire_idle_body.setSmooth(true);
+	fire_idle_head.setSmooth(true);
+	fire_running.setSmooth(true);
+	fire_stairs.setSmooth(true);
+	fire_head_falling.setSmooth(true);
+	water_body_idle.setSmooth(true);
+	water_head_idle.setSmooth(true);
+	water_head_jump.setSmooth(true);
+	water_head_rising.setSmooth(true);
+	water_ice_steps.setSmooth(true);
+	water_running.setSmooth(true);
+	water_glow.setSmooth(true);
+	water_head_falling.setSmooth(true);
 	// load all texture here
 	// this functions maybe called again if reloading the textures is needed
 
@@ -828,7 +868,9 @@ void InitializeTextures()
 	arrow_icon1.loadFromFile("Main/Assets/Animations/menu assets/arrow_icon1.png");
 	rating_diamonds.loadFromFile("Main/Assets/Animations/menu assets/rating_diamonds.png");
 	finished_icon.loadFromFile("Main/Assets/Animations/menu assets/finished_icon.png");
-
+	diamonds_green.loadFromFile("Main/Assets/Animations/menu assets/diamond_green.png");
+	diamonds_orange.loadFromFile("Main/Assets/Animations/menu assets/diamond_orange.png");
+	diamonds_purple.loadFromFile("Main/Assets/Animations/menu assets/diamond_purple.png");
 
 	// divide the process into functions
 	InitializeMenuTextures();
