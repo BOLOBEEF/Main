@@ -540,13 +540,13 @@ void UpdatePlayerTexture(Sprite& sprite, PlayerType type, PlayerState newState, 
 			switch (newState)
 			{
 			case Walk:
-				ApplyTexture(sprite, LoadTexture::fire_idle_head_texture, Vector2f(1.0f, 1.0f), Vector2f(1.0f, 1.0f), true, false);
+				ApplyTexture(sprite, LoadTexture::fire_head_jumping_texture, Vector2f(1.0f, 1.0f), Vector2f(1.0f, 1.0f), true, false);
 				break;
 			case Jump_Rise:
-				ApplyTexture(sprite, LoadTexture::fire_idle_head_texture, Vector2f(1.0f, 1.0f), Vector2f(1.0f, 1.0f), true, false);
+				ApplyTexture(sprite, LoadTexture::fire_head_rising_texture, Vector2f(1.0f, 1.0f), Vector2f(1.0f, 1.0f), true, false);
 				break;
 			case Fall:
-				ApplyTexture(sprite, LoadTexture::fire_idle_head_texture, Vector2f(1.0f, 1.0f), Vector2f(1.0f, 1.0f), true, false);
+				ApplyTexture(sprite, LoadTexture::fire_head_falling_texture, Vector2f(1.0f, 1.0f), Vector2f(1.0f, 1.0f), true, false);
 				break;
 			case Idle:
 				ApplyTexture(sprite, LoadTexture::fire_idle_head_texture, Vector2f(1.0f, 1.0f), Vector2f(1.0f, 1.0f), true, false);
@@ -559,13 +559,13 @@ void UpdatePlayerTexture(Sprite& sprite, PlayerType type, PlayerState newState, 
 			switch (newState)
 			{
 			case Walk:
-				ApplyTexture(sprite, LoadTexture::water_head_idle_texture, Vector2f(1.0f, 1.0f), Vector2f(1.0f, 1.0f), true, false);
+				ApplyTexture(sprite, LoadTexture::water_head_jump_texture, Vector2f(1.0f, 1.0f), Vector2f(1.0f, 1.0f), true, false);
 				break;
 			case Jump_Rise:
-				ApplyTexture(sprite, LoadTexture::water_head_idle_texture, Vector2f(1.0f, 1.0f), Vector2f(1.0f, 1.0f), true, false);
+				ApplyTexture(sprite, LoadTexture::water_head_rising_texture, Vector2f(1.0f, 1.0f), Vector2f(1.0f, 1.0f), true, false);
 				break;
 			case Fall:
-				ApplyTexture(sprite, LoadTexture::water_head_idle_texture, Vector2f(1.0f, 1.0f), Vector2f(1.0f, 1.0f), true, false);
+				ApplyTexture(sprite, LoadTexture::water_head_falling_texture, Vector2f(1.0f, 1.0f), Vector2f(1.0f, 1.0f), true, false);
 				break;
 			case Idle:
 				ApplyTexture(sprite, LoadTexture::water_head_idle_texture, Vector2f(1.0f, 1.0f), Vector2f(1.0f, 1.0f), true, false);
