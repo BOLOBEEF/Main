@@ -871,7 +871,7 @@ void InitializeTextures()
 	diamonds_green.loadFromFile("Main/Assets/Animations/menu assets/diamond_green.png");
 	diamonds_orange.loadFromFile("Main/Assets/Animations/menu assets/diamond_orange.png");
 	diamonds_purple.loadFromFile("Main/Assets/Animations/menu assets/diamond_purple.png");
-
+	rating_timer.loadFromFile("Main/Assets/Animations/menu assets/rating_timer.png");
 	// divide the process into functions
 	InitializeMenuTextures();
 	InitializeGameTextures();

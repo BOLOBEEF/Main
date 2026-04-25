@@ -74,7 +74,55 @@ Text NoText; // to use it as a default value in the MouseInput_mnu function
 // cursor Variables
 Sprite cursorAndpointerSprite;
 
+int finalScore = 0;
 // Functions
+void RatingCheck(bool maleAndFemale_case = false, bool DiamondCollection_case = false, bool BeforeTimeOut_case = false)
+{
+	int numberOfChecks = 0;
+	if (maleAndFemale_case == true)
+	{
+		ApplyTexture(checkOrCrossMaleOrFemale_icon_Winmnu, LoadTexture::tick_icon_texture, Vector2f(90, 90));
+		UpdateAnimation(checkOrCrossMaleOrFemale_icon_Winmnu, tick_icon_texture);
+		checkOrCrossMaleOrFemale_icon_Winmnu.setPosition(windowSize.x / 2 - 205, windowSize.y / 2 - 195);
+		numberOfChecks += 1;
+	}
+	else if (maleAndFemale_case == false)
+	{
+		ApplyTexture(checkOrCrossMaleOrFemale_icon_Winmnu, LoadTexture::x_icon_texture, Vector2f(75, 75));
+		UpdateAnimation(checkOrCrossMaleOrFemale_icon_Winmnu, x_icon_texture);
+		checkOrCrossMaleOrFemale_icon_Winmnu.setPosition(windowSize.x / 2 - 205, windowSize.y / 2 - 190);
+	}
+
+	if (DiamondCollection_case == true)
+	{
+		ApplyTexture(checkOrCrossDiamonds_icon_Winmnu, LoadTexture::tick_icon_texture, Vector2f(90, 90));
+		UpdateAnimation(checkOrCrossDiamonds_icon_Winmnu, tick_icon_texture);
+		checkOrCrossDiamonds_icon_Winmnu.setPosition(windowSize.x / 2 - 205, windowSize.y / 2 - 85);
+		numberOfChecks += 1;
+	}
+	else if (DiamondCollection_case == false)
+	{
+		ApplyTexture(checkOrCrossDiamonds_icon_Winmnu, LoadTexture::x_icon_texture, Vector2f(75, 75));
+		UpdateAnimation(checkOrCrossDiamonds_icon_Winmnu, x_icon_texture);
+		checkOrCrossDiamonds_icon_Winmnu.setPosition(windowSize.x / 2 - 205, windowSize.y / 2 - 85);
+	}
+
+	if (BeforeTimeOut_case == true)
+	{
+		ApplyTexture(checkOrCrossTimer_icon_Winmnu, LoadTexture::tick_icon_texture, Vector2f(90, 90));
+		UpdateAnimation(checkOrCrossTimer_icon_Winmnu, tick_icon_texture);
+		checkOrCrossTimer_icon_Winmnu.setPosition(windowSize.x / 2 - 205, windowSize.y / 2);
+		numberOfChecks += 1;
+	}
+	else if (BeforeTimeOut_case == false)
+	{
+		ApplyTexture(checkOrCrossTimer_icon_Winmnu, LoadTexture::x_icon_texture, Vector2f(75, 75));
+		UpdateAnimation(checkOrCrossTimer_icon_Winmnu, x_icon_texture);
+		checkOrCrossTimer_icon_Winmnu.setPosition(windowSize.x / 2 - 205, windowSize.y / 2 + 20);
+	}
+	finalScore = numberOfChecks;
+}
+
 bool MouseInput_mnu(Event event, Sprite& ButtonClicked, LoadTexture Currnet_texture_enum, LoadTexture Desired_texture_enum, MenuSoundEffect Sound_Played_mnu, GameState state_mnu, bool fadeTransition, Text& buttonText = NoText)
 {
 	if (event.type == Event::MouseButtonPressed && event.mouseButton.button == Mouse::Left)
@@ -156,17 +204,37 @@ void WinMenu_Movement(Vector2f Desired_Target)
 	Stone_mnu.setPosition(Current_position_mnu);
 	ContinueButton_Winmnu.setPosition(Vector2f((windowSize.x / 2) + 270, (windowSize.y / 2) + 200) + Current_position_mnu - center);
 	MaleAndFemale_icon_Winmnu.setPosition(Vector2f(windowSize.x / 2 - 330, windowSize.y / 2 - 190) + Current_position_mnu - center);
-	diamondRating_icon_Winmnu.setPosition(Vector2f(windowSize.x / 2 - 330, windowSize.y / 2 - 90) + Current_position_mnu - center);
-	timerRating_icon_Winmnu.setPosition(Vector2f(windowSize.x / 2 - 330, windowSize.y / 2 + 10) + Current_position_mnu - center);
+	diamondRating_icon_Winmnu.setPosition(Vector2f(windowSize.x / 2 - 330, windowSize.y / 2 - 80) + Current_position_mnu - center);
+	timerRating_icon_Winmnu.setPosition(Vector2f(windowSize.x / 2 - 330, windowSize.y / 2 + 20) + Current_position_mnu - center);
 	arrowIcon_Winmnu.setPosition(Vector2f(windowSize.x / 2, windowSize.y / 2 - 95) + Current_position_mnu - center);
+	levelDiamond_Winmnu.setPosition(Vector2f(windowSize.x / 2 + 748, windowSize.y / 2 - 95) + Current_position_mnu - center);
+
 	checkOrCrossMaleOrFemale_icon_Winmnu.setPosition(Vector2f(windowSize.x / 2 - 205, windowSize.y / 2 - 190) + Current_position_mnu - center);
 	checkOrCrossDiamonds_icon_Winmnu.setPosition(Vector2f(windowSize.x / 2 - 205, windowSize.y / 2 - 90) + Current_position_mnu - center);
-	checkOrCrossTimer_icon_Winmnu.setPosition(Vector2f(windowSize.x / 2 - 205, windowSize.y / 2 + 10) + Current_position_mnu - center);
+	checkOrCrossTimer_icon_Winmnu.setPosition(Vector2f(windowSize.x / 2 - 205, windowSize.y / 2 + 15) + Current_position_mnu - center);
 	if (levelAndArrowIcon_turn)
 	{
 		ApplyTexture(arrowIcon_Winmnu, LoadTexture::arrow_icon1_texture, Vector2f(150, 100));
 		UpdateAnimation(arrowIcon_Winmnu, arrow_icon1_texture);
 		arrowIcon_Winmnu.setPosition(Vector2f(windowSize.x / 2, windowSize.y / 2 - 95) + Current_position_mnu - center);
+		if (finalScore == 1)
+		{
+			ApplyTexture(levelDiamond_Winmnu, LoadTexture::diamonds_purple_texture, Vector2f(150, 150));
+			UpdateAnimation(levelDiamond_Winmnu, diamonds_purple_texture);
+			levelDiamond_Winmnu.setPosition(Vector2f(windowSize.x / 2 + 225, windowSize.y / 2 - 95) + Current_position_mnu - center);
+		}
+		else if (finalScore == 2)
+		{
+			ApplyTexture(levelDiamond_Winmnu, LoadTexture::diamonds_orange_texture, Vector2f(150, 150));
+			UpdateAnimation(levelDiamond_Winmnu, diamonds_orange_texture);
+			levelDiamond_Winmnu.setPosition(Vector2f(windowSize.x / 2 + 225, windowSize.y / 2 - 95) + Current_position_mnu - center);
+		}
+		else if (finalScore == 3)
+		{
+			ApplyTexture(levelDiamond_Winmnu, LoadTexture::diamonds_green_texture, Vector2f(150, 150));
+			UpdateAnimation(levelDiamond_Winmnu, diamonds_green_texture);
+			levelDiamond_Winmnu.setPosition(Vector2f(windowSize.x / 2 + 225, windowSize.y / 2 - 95) + Current_position_mnu - center);
+		}
 	}
 	Continue_Wintxt.setPosition((ContinueButton_Winmnu.getGlobalBounds().left + ContinueButton_Winmnu.getGlobalBounds().width / 2), (ContinueButton_Winmnu.getGlobalBounds().top + ContinueButton_Winmnu.getGlobalBounds().height / 2) - 5);
 }
@@ -194,27 +262,7 @@ void SettingMenu_Movement(Vector2f Desired_Target)
 	// I Will Handle this After You finish Settings Menu
 }
 
-void RatingCheck(bool maleAndFemale_case = false, bool DiamondCollection_case = false, bool BeforeTimeOut_case = false)
-{
-	if (maleAndFemale_case == true)
-	{
-		ApplyTexture(checkOrCrossMaleOrFemale_icon_Winmnu, LoadTexture::tick_icon_texture, Vector2f(62, 62));
-		UpdateAnimation(checkOrCrossMaleOrFemale_icon_Winmnu, tick_icon_texture);
-		checkOrCrossMaleOrFemale_icon_Winmnu.setPosition(windowSize.x / 2 - 205, windowSize.y / 2 - 190);
-	}
-	if (DiamondCollection_case == true)
-	{
-		ApplyTexture(checkOrCrossDiamonds_icon_Winmnu, LoadTexture::tick_icon_texture, Vector2f(62, 62));
-		UpdateAnimation(checkOrCrossDiamonds_icon_Winmnu, tick_icon_texture);
-		checkOrCrossDiamonds_icon_Winmnu.setPosition(windowSize.x / 2 - 205, windowSize.y / 2 - 90);
-	}
-	if (BeforeTimeOut_case == true)
-	{
-		ApplyTexture(checkOrCrossTimer_icon_Winmnu, LoadTexture::tick_icon_texture, Vector2f(62, 62));
-		UpdateAnimation(checkOrCrossTimer_icon_Winmnu, tick_icon_texture);
-		checkOrCrossTimer_icon_Winmnu.setPosition(windowSize.x / 2 - 205, windowSize.y / 2 + 10);
-	}
-}
+
 
 void InitializeMenu()
 {
@@ -222,6 +270,7 @@ void InitializeMenu()
 	fpsDisplay.setFont(font);
 	fpsDisplay.setCharacterSize(24);
 	//Cursor 
+	CursorAndPointer.setSmooth(true);
 	ApplyTexture(cursorAndpointerSprite, LoadTexture::cursor_texture, Vector2f(45, 30));
 	UpdateAnimation(cursorAndpointerSprite, cursor_texture);
 
@@ -234,14 +283,17 @@ void InitializeMenu()
 	FadingTransitionBackground.setPosition(window.getPosition().x / 2, window.getPosition().y / 2);
 
 	//Pause menu
+	menu_box.setSmooth(true);
 	ApplyTexture(Stone_mnu, LoadTexture::menu_box_texture, Vector2f(windowSize.x - 600, windowSize.y - 250));
 	UpdateAnimation(Stone_mnu, menu_box_texture);
 	Stone_mnu.setPosition(windowSize.x / 2, windowSize.y / 2);
 
+	pause_icon.setSmooth(true);
 	ApplyTexture(PauseIcon_mnu, LoadTexture::pause_icon_texture, Vector2f(65, 65));
 	UpdateAnimation(PauseIcon_mnu, pause_icon_texture);
 	PauseIcon_mnu.setPosition(windowSize.x / 2 + 830, windowSize.y / 2 - 505);
 
+	stone_button.setSmooth(true);
 	ApplyTexture(EndButton_Pausemnu, LoadTexture::stone_button_0_texture, Vector2f(700, 170));
 	UpdateAnimation(EndButton_Pausemnu, stone_button_0_texture);
 	EndButton_Pausemnu.setPosition((windowSize.x / 2) - 35, (windowSize.y / 2) + 70);
@@ -277,39 +329,37 @@ void InitializeMenu()
 	UpdateAnimation(ContinueButton_Winmnu, stone_button_0_texture);
 	ContinueButton_Winmnu.setPosition((windowSize.x / 2) + 270, (windowSize.y / 2) + 200);
 
-	ApplyTexture(MaleAndFemale_icon_Winmnu, LoadTexture::finished_icon_texture, Vector2f(110, 130));
+	finished_icon.setSmooth(true);
+	ApplyTexture(MaleAndFemale_icon_Winmnu, LoadTexture::finished_icon_texture, Vector2f(125, 145));
 	UpdateAnimation(MaleAndFemale_icon_Winmnu, finished_icon_texture);
 	MaleAndFemale_icon_Winmnu.setPosition(windowSize.x / 2 - 330, windowSize.y / 2 - 190);
 
-	ApplyTexture(diamondRating_icon_Winmnu, LoadTexture::rating_diamonds_texture, Vector2f(100, 80));
+	rating_diamonds.setSmooth(true);
+	ApplyTexture(diamondRating_icon_Winmnu, LoadTexture::rating_diamonds_texture, Vector2f(110, 90));
 	UpdateAnimation(diamondRating_icon_Winmnu, rating_diamonds_texture);
-	diamondRating_icon_Winmnu.setPosition(windowSize.x / 2 - 330, windowSize.y / 2 - 90);
+	diamondRating_icon_Winmnu.setPosition(windowSize.x / 2 - 330, windowSize.y / 2 - 80);
 
-	ApplyTexture(timerRating_icon_Winmnu, LoadTexture::rating_diamonds_texture, Vector2f(100, 80));
+	rating_timer.setSmooth(true);
+	ApplyTexture(timerRating_icon_Winmnu, LoadTexture::rating_timer_texture, Vector2f(135, 100));
 	UpdateAnimation(timerRating_icon_Winmnu, rating_diamonds_texture);
-	timerRating_icon_Winmnu.setPosition(windowSize.x / 2 - 330, windowSize.y / 2 + 10);
+	timerRating_icon_Winmnu.setPosition(windowSize.x / 2 - 330, windowSize.y / 2 + 20);
 
+	arrow_icon0.setSmooth(true);
+	arrow_icon1.setSmooth(true);
 	ApplyTexture(arrowIcon_Winmnu, LoadTexture::arrow_icon0_texture, Vector2f(150, 100));
 	UpdateAnimation(arrowIcon_Winmnu, arrow_icon0_texture);
 	arrowIcon_Winmnu.setPosition(windowSize.x / 2, windowSize.y / 2 - 80);
 
-	//ApplyTexture(levelDiamond_Winmnu, LoadTexture::, Vector2f(150, 150));
-	//UpdateAnimation(levelDiamond_Winmnu, rating_diamonds_texture);
-	//levelDiamond_Winmnu.setPosition(windowSize.x / 2 + 100, windowSize.y / 2 - 70);
-
-	ApplyTexture(checkOrCrossMaleOrFemale_icon_Winmnu, LoadTexture::x_icon_texture, Vector2f(65, 65));
-	UpdateAnimation(checkOrCrossMaleOrFemale_icon_Winmnu, x_icon_texture);
-	checkOrCrossMaleOrFemale_icon_Winmnu.setPosition(windowSize.x / 2 - 205, windowSize.y / 2 - 190);
-
-	ApplyTexture(checkOrCrossDiamonds_icon_Winmnu, LoadTexture::x_icon_texture, Vector2f(65, 65));
-	UpdateAnimation(checkOrCrossDiamonds_icon_Winmnu, x_icon_texture);
-	checkOrCrossDiamonds_icon_Winmnu.setPosition(windowSize.x / 2 - 205, windowSize.y / 2 - 90);
-
-	ApplyTexture(checkOrCrossTimer_icon_Winmnu, LoadTexture::x_icon_texture, Vector2f(65, 65));
-	UpdateAnimation(checkOrCrossTimer_icon_Winmnu, x_icon_texture);
-	checkOrCrossTimer_icon_Winmnu.setPosition(windowSize.x / 2 - 205, windowSize.y / 2 + 10);
-
-	RatingCheck(true, true, true);
+	diamonds_green.setSmooth(true);
+	diamonds_orange.setSmooth(true);
+	diamonds_purple.setSmooth(true);
+	ApplyTexture(levelDiamond_Winmnu, LoadTexture::diamonds_green_idle_texture, Vector2f(1195, 150));
+	UpdateAnimation(levelDiamond_Winmnu, diamonds_green_idle_texture);
+	levelDiamond_Winmnu.setPosition(windowSize.x / 2 + 748, windowSize.y / 2 - 95);
+	
+	x_icon.setSmooth(true);
+	tick_icon.setSmooth(true);
+	RatingCheck(true, true, false);
 
 	//Pause menu text
 	End_Pausetxt.setFont(font);
