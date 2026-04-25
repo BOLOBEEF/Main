@@ -196,7 +196,7 @@ void LoadLevelData() {
 
 
 void UpdateOutlinesTexture() {
-	const float outlineThickness = 3.0f;
+	const float outlineThickness = 5.0f;
 	const int iterations = 8 * 4;						// number of directions
 
 	float theta = 360 / iterations;
@@ -304,7 +304,7 @@ void InitializeGame()
 	outlineTexture.create(windowSize.x, windowSize.y);
 	resultTexture.create(windowSize.x, windowSize.y);
 	outlineSprite.setTexture(outlineTexture.getTexture());
-	outlineSprite.setColor(Color(30, 30, 30));
+	outlineSprite.setColor(Color::Black);
 	resultSprite.setTexture(resultTexture.getTexture());
 
 	water_door.Initialize();

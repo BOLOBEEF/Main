@@ -32,7 +32,7 @@ struct Player
 	const float gravity = 250.0f;
 	const float jump = -250.0f;
 	const Vector2f idleRange = Vector2f(30.0f, 30.0f); // the range of velocity in which the player is considered idle
-	const Vector2f colliderSize = Vector2f(50, 60);
+	const Vector2f colliderSize = Vector2f(15, 60);
 	const float displayBodySize = 1.0f;
 	const float displayHeadSize = 0.7f;
 
