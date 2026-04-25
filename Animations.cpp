@@ -439,18 +439,18 @@ void UpdateAnimation(Sprite& sprite, LoadTexture texture) {
 		int frameCount = 8;
 		int width = 1024, height = 128;
 		int frameWidth = width / frameCount;
-		 bool lastframe = false;
-		 int index = 0;
 
-		if (!lastframe) {
-			
-			int speedd = 6.1f;
-			index = (int)(globalClock.getElapsedTime().asSeconds() * speedd);
-			if (index >= frameCount -1 ) {
-				index = frameCount -1 ; 
-				lastframe = true;       
-			}
+		static sf::Clock animClock1; // separate clock
+		float speed = 30.0f;
+
+		float time = animClock1.getElapsedTime().asSeconds();
+		int index = (int)(time * speed);
+
+		if (index >= frameCount) {
+			index = frameCount - 1;
+
 		}
+
 		sprite.setTextureRect(sf::IntRect(index * frameWidth, 0, frameWidth, height));
 		break;
 	}
@@ -458,18 +458,18 @@ void UpdateAnimation(Sprite& sprite, LoadTexture texture) {
 		int frameCount = 8;
 		int width = 1024, height = 128;
 		int frameWidth = width / frameCount;
-		bool lastframe = false;
-		int index = 0;
 
-		if (!lastframe) {
+		static sf::Clock animClock1; // separate clock
+		float speed = 30.0f; 
 
-			int speedd = 6.1f;
-			index = (int)(globalClock.getElapsedTime().asSeconds() * speedd);
-			if (index >= frameCount - 1) {
-				index = frameCount - 1;
-				lastframe = true;
-			}
+		float time = animClock1.getElapsedTime().asSeconds();
+		int index = (int)(time * speed);
+
+		if (index >= frameCount) {
+			index = frameCount - 1;
+			
 		}
+
 		sprite.setTextureRect(sf::IntRect(index * frameWidth, 0, frameWidth, height));
 		break;
 	}
@@ -477,18 +477,18 @@ void UpdateAnimation(Sprite& sprite, LoadTexture texture) {
 		int frameCount = 8;
 		int width = 1024, height = 128;
 		int frameWidth = width / frameCount;
-		bool lastframe = false;
-		int index = 0;
 
-		if (!lastframe) {
+		static sf::Clock animClock1; // separate clock
+		float speed = 30.0f;
 
-			int speedd = 6.1f;
-			index = (int)(globalClock.getElapsedTime().asSeconds() * speedd);
-			if (index >= frameCount - 1) {
-				index = frameCount - 1;
-				lastframe = true;
-			}
+		float time = animClock1.getElapsedTime().asSeconds();
+		int index = (int)(time * speed);
+
+		if (index >= frameCount) {
+			index = frameCount - 1;
+
 		}
+
 		sprite.setTextureRect(sf::IntRect(index * frameWidth, 0, frameWidth, height));
 		break;
 	}
