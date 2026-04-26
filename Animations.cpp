@@ -79,8 +79,21 @@ void UpdateAnimation(Sprite& sprite, LoadTexture texture) {
 	case death_smoke_texture: {
 
 		int frameCount = 45;
-		int index = (int)(globalClock.getElapsedTime().asSeconds() * speed) % frameCount;
-		sprite.setTextureRect(IntRect(index * 102, 0, 102, 107));
+		int width = 4590, height = 107;
+		int frameWidth = width / frameCount;
+
+		static sf::Clock animClock1; // separate clock
+		float speed = 30.0f;
+
+		float time = animClock1.getElapsedTime().asSeconds();
+		int index = (int)(time * speed);
+
+		if (index >= frameCount) {
+			index = frameCount ;
+
+		}
+
+		sprite.setTextureRect(sf::IntRect(index * frameWidth, 0, frameWidth, height));
 		break;
 	}
 
