@@ -34,7 +34,7 @@ struct Player
 	const Vector2f idleRange = Vector2f(30.0f, 30.0f); // the range of velocity in which the player is considered idle
 	const Vector2f colliderSize = Vector2f(15, 60);
 	const float displayBodySize = 1.0f;
-	const float displayHeadSize = 0.7f;
+	const float displayHeadSize = 1.0f;
 
 	// runtime variables
 	Sprite hitbox;
@@ -153,17 +153,36 @@ struct Player
 	}
 
 	void Draw() {
-		window.draw(hitbox);
+		//window.draw(hitbox);
+		bool drawHeadFirst = true;
 		displayBodySprite.setPosition(hitbox.getPosition());
 		if (velocity.x > 0 && displayBodySprite.getScale().x < 0) displayBodySprite.scale(-1, 1);
 		else if (velocity.x < 0 && displayBodySprite.getScale().x > 0) displayBodySprite.scale(-1, 1);
 		displayBodySprite.move(0, -10);
-		window.draw(displayBodySprite);
+
 		displayHeadSprite.setPosition(hitbox.getPosition());
 		if (velocity.x > 0 && displayHeadSprite.getScale().x < 0) displayHeadSprite.scale(-1, 1);
 		else if (velocity.x < 0 && displayHeadSprite.getScale().x > 0) displayHeadSprite.scale(-1, 1);
-		displayHeadSprite.move(0, -20);
-		window.draw(displayHeadSprite);
+		displayHeadSprite.move(0, -10);
+
+		// head rotation
+		if (playerState == PlayerState::Walk) {
+			float rotation = atan2(velocity.y, velocity.x) * 180 / 3.14159f;
+			if (velocity.x < 0) rotation += 180;
+			displayHeadSprite.setRotation(rotation);
+		}
+		else
+			displayHeadSprite.setRotation(0);
+
+
+		if (playerState == PlayerState::Jump_Rise) {
+			window.draw(displayHeadSprite);
+			window.draw(displayBodySprite);
+		}
+		else {
+			window.draw(displayBodySprite);
+			window.draw(displayHeadSprite);
+		}
 	}
 };
 struct Collider
