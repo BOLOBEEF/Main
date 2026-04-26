@@ -62,12 +62,13 @@ enum GameState
 	WIN_MENU,
 	SETTINGS,
 	GAMEOVER,
+	CREDITS,
 	GAME			// this is the in-game UI, not the game logic
 };
 
 
 // DO NOT CHANGE THIS DIRECTLY, USE UpdateGameState() INSTEAD
-GameState gameState = WIN_MENU;
+GameState gameState = MAIN_MENU;
 GameState lastGameState = gameState;	// used to keep track of the last game state
 
 

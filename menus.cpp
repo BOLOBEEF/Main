@@ -47,7 +47,10 @@ Sprite EndButton_Pausemnu;
 Sprite RetryButton_Pausemnu;
 Sprite ResumeButton_Pausemnu;
 Sprite PauseIcon_mnu;
-
+Sprite MainMenuBackground_mnu;
+Sprite GameName_mnu;
+Sprite PlayButton_mnu;
+Sprite CreditsButton_mnu;
 
 Sprite GameOverbuttons_mnu[3];
 
@@ -286,6 +289,25 @@ void InitializeMenu()
 	FadingTransitionBackground.setSize(Vector2f(window.getSize().x, window.getSize().y));
 	FadingTransitionBackground.setPosition(window.getPosition().x / 2, window.getPosition().y / 2);
 
+	//Main menu
+	ApplyTexture(MainMenuBackground_mnu, LoadTexture::main_menu_background_texture, Vector2f(windowSize.x, windowSize.y));	
+	MainMenuBackground_mnu.setPosition(windowSize.x / 2 ,windowSize.y / 2);	
+
+	if (gameState == MAIN_MENU)
+	{
+		ApplyTexture(SettingButton_mnu, LoadTexture::SettingsButton0_texture, Vector2f(120, 120));
+		SettingButton_mnu.setPosition(150, 860);
+	}
+
+	ApplyTexture(GameName_mnu, LoadTexture::game_name_texture, Vector2f(860, 270));
+	GameName_mnu.setPosition(windowSize.x / 2, windowSize.y / 2 - 150);
+
+	ApplyTexture(PlayButton_mnu, LoadTexture::PlayButton_texture, Vector2f(240, 160));
+	PlayButton_mnu.setPosition(windowSize.x / 2, windowSize.y / 2 + 100);
+	
+	ApplyTexture(CreditsButton_mnu, LoadTexture::CreditsButton_Texture, Vector2f(260, 173));
+	CreditsButton_mnu.setPosition(windowSize.x / 2, windowSize.y / 2 + 300);
+
 	//Pause menu
 	menu_box.setSmooth(true);
 	ApplyTexture(Stone_mnu, LoadTexture::menu_box_texture, Vector2f(windowSize.x - 600, windowSize.y - 250));
@@ -309,11 +331,12 @@ void InitializeMenu()
 	ApplyTexture(ResumeButton_Pausemnu, LoadTexture::stone_button_0_texture, Vector2f(700, 170));
 	UpdateAnimation(ResumeButton_Pausemnu, stone_button_0_texture);
 	ResumeButton_Pausemnu.setPosition((windowSize.x / 2 + 205), (windowSize.y / 2) + 220);
-
-	ApplyTexture(SettingButton_mnu, LoadTexture::SettingsButton0_texture, Vector2f(105, 105));
-	UpdateAnimation(SettingButton_mnu, SettingsButton0_texture);
-	SettingButton_mnu.setPosition((Stone_mnu.getGlobalBounds().left + Stone_mnu.getGlobalBounds().width / 2) + 485, Stone_mnu.getGlobalBounds().top + 170);
-
+	if (gameState == PAUSE_MENU)
+	{
+		ApplyTexture(SettingButton_mnu, LoadTexture::SettingsButton0_texture, Vector2f(105, 105));
+		UpdateAnimation(SettingButton_mnu, SettingsButton0_texture);
+		SettingButton_mnu.setPosition((Stone_mnu.getGlobalBounds().left + Stone_mnu.getGlobalBounds().width / 2) + 485, Stone_mnu.getGlobalBounds().top + 170);
+	}
 	//Game Over menu
 
 	// stone background has been already set
@@ -462,6 +485,8 @@ void HandleMenuInput(Event event)
 	{
 	case MAIN_MENU:
 		// code for handling main menu input
+		MouseInput_mnu(event, SettingButton_mnu, SettingsButton0_texture, SettingsButton0_texture, ButtonClick, SETTINGS, false);
+		MouseInput_mnu(event, PlayButton_mnu, PlayButton_texture, PlayButton_texture, ButtonClick, GAME, false);
 		break;
 	case LEVEL_MENU:
 
@@ -691,6 +716,12 @@ void DrawUI()
 	{
 	case MAIN_MENU:
 		// code for drawing main menu
+		window.draw(MainMenuBackground_mnu);
+		window.draw(GameName_mnu);
+		window.draw(PlayButton_mnu);
+		window.draw(CreditsButton_mnu);
+		window.draw(SettingButton_mnu);
+
 		if (Current_position_mnu != Target_Down_mnu)
 		{
 
