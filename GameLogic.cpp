@@ -754,8 +754,8 @@ void UpdateGame()
 		fire_door.sprite.setColor(Color(128, 0, 128));
 	}
 
-	fan.Update(fireBoy, fan);
-	fan.Update(waterGirl, fan);
+	fan.Update(fireBoy);
+	fan.Update(waterGirl);
 
 }
 
