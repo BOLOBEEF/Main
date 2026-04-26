@@ -19,7 +19,7 @@ void Allign(Vector2f& position, Vector2f defaultSize = Vector2f(32, 32)) {
 	enum PlayerState { Walk, Jump_Rise, Fall, Idle };
 
 void UpdatePlayerTexture(Sprite&, PlayerType, PlayerState, bool);
-void UpdateAnimationPlayer(Sprite&, PlayerState, bool);
+void UpdateAnimationPlayer(Sprite&, PlayerType, PlayerState, bool);
 
 struct Player
 {
@@ -115,8 +115,8 @@ struct Player
 			UpdatePlayerTexture(displayHeadSprite, playertype, playerState, true);
 		}
 
-		//UpdateAnimationPlayer(displayBodySprite, playerState, false);
-		UpdateAnimationPlayer(displayHeadSprite, playerState, true);
+		UpdateAnimationPlayer(displayBodySprite, playertype, playerState, false);
+		UpdateAnimationPlayer(displayHeadSprite, playertype, playerState, true);
 
 		velocity.y += gravity * dt;
 

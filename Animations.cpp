@@ -459,7 +459,7 @@ void UpdateAnimation(Sprite& sprite, LoadTexture texture) {
 		int width = 1024, height = 128;
 		int frameWidth = width / frameCount;
 
-		static sf::Clock animClock1; // separate clock
+		Clock animClock1; // separate clock
 		float speed = 30.0f; 
 
 		float time = animClock1.getElapsedTime().asSeconds();
@@ -478,7 +478,7 @@ void UpdateAnimation(Sprite& sprite, LoadTexture texture) {
 		int width = 1024, height = 128;
 		int frameWidth = width / frameCount;
 
-		static sf::Clock animClock1; // separate clock
+		Clock animClock1; // separate clock
 		float speed = 30.0f;
 
 		float time = animClock1.getElapsedTime().asSeconds();
@@ -580,9 +580,9 @@ void UpdatePlayerTexture(Sprite& sprite, PlayerType type, PlayerState newState, 
 
 }
 
-void UpdateAnimationPlayer(Sprite& sprite, PlayerState state, bool Head = false)
+void UpdateAnimationPlayer(Sprite& sprite, PlayerType type,PlayerState state, bool Head = false)
 {
-	float speed = 20.0f;
+	float speed = 25.0f;
 	float width = 10, height = 0;
 
 	if (!Head) {
@@ -602,24 +602,96 @@ void UpdateAnimationPlayer(Sprite& sprite, PlayerState state, bool Head = false)
 			sprite.setTextureRect(IntRect(0, 0, (width/framecount), height));
 		}
 	}
-	else
-	switch (state)
-	{
-	case Walk:
-		sprite.setTextureRect(IntRect(0, 0, width, height));
-		break;
-	case Jump_Rise:
-		sprite.setTextureRect(IntRect(0, 0, width, height));
-		break;
-	case Fall:
-		sprite.setTextureRect(IntRect(0, 0, width, height));
-		break;
-	case Idle:
-		sprite.setTextureRect(IntRect(0, 0, width, height));
-		break;
-	default:
-		break;
-	}
+	else {
+		switch (type) {
+		case Fireboy:
+			switch (state)
+			{
+			case Walk: {
+				int frameCount = 11;
+				int index = (int)(globalClock.getElapsedTime().asSeconds() * speed) % frameCount;
+				float width = 1716, height = 130;
 
+				sprite.setTextureRect(IntRect(index * (width / frameCount), 0, (width / frameCount), height));
+				break;
+			}
+			case Jump_Rise:{
+				int frameCount = 5;
+				int index = (int)(globalClock.getElapsedTime().asSeconds() * speed) % frameCount;
+				float width = 530, height = 130;
+
+				sprite.setTextureRect(IntRect(index * (width / frameCount), 0, (width / frameCount), height));
+				break;
+			}
+			case Fall:
+			{
+				int frameCount = 5;
+				int index = (int)(globalClock.getElapsedTime().asSeconds() * speed) % frameCount;
+				float width = 650, height = 162;
+
+				sprite.setTextureRect(IntRect(index * (width / frameCount), 0, (width / frameCount), height));
+				break;
+			}
+			case Idle:
+			{
+				int frameCount = 19;
+				int index = (int)(globalClock.getElapsedTime().asSeconds() * speed) % frameCount;
+				float width = 2470, height = 162;
+
+				sprite.setTextureRect(IntRect(index * (width / frameCount), 0, (width / frameCount), height));
+				break;
+			}
+			default:
+				break;
+			}
+			break;
+		case Watergirl:
+			switch (state)
+			{
+			case Walk: {
+				int frameCount = 11;
+				int index = (int)(globalClock.getElapsedTime().asSeconds() * speed) % frameCount;
+				float width = 1914, height = 142;
+
+				sprite.setTextureRect(IntRect(index * (width / frameCount), 0, (width / frameCount), height));
+				break;
+			}
+			case Jump_Rise: {
+				int frameCount = 11;
+				int index = (int)(globalClock.getElapsedTime().asSeconds() * speed) % frameCount;
+				float width = 1452, height = 143;
+
+				sprite.setTextureRect(IntRect(index * (width / frameCount), 0, (width / frameCount), height));
+				break;
+			}
+			case Fall:
+			{
+				int frameCount = 11;
+				int index = (int)(globalClock.getElapsedTime().asSeconds() * speed) % frameCount;
+				float width = 1430, height = 204;
+
+				sprite.setTextureRect(IntRect(index * (width / frameCount), 0, (width / frameCount), height));
+				break;
+			}
+			case Idle:
+			{
+				int frameCount = 30;
+				int index = (int)(globalClock.getElapsedTime().asSeconds() * speed) % frameCount;
+				float width = 3900, height = 162;
+
+				sprite.setTextureRect(IntRect(index * (width / frameCount), 0, (width / frameCount), height));
+				break;
+			
+	
+			}
+			
+			default:
+				break;
+			}
+			break;
+		default:
+			break;
+		}
+	}
 	SetSpriteOriginToCenter(sprite);
 }
