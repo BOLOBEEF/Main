@@ -71,7 +71,7 @@ bool isMaleAndFemaleSoundPlayed = false, isdiamondSoundPlayed = false, istimerSo
 Font font;
 Text fpsDisplay;
 Text End_Pausetxt, Resume_Pausetxt, Retry_Pausetxt, Pause_txt;
-Text Menu_GOVERtxt, Retry_GOVERtxt, Skip_GOVERtxt, GameOver_txt;
+Text Menu_GOVERtxt, Retry_GOVERtxt, Levels_GOVERtxt, GameOver_txt;
 Text Continue_Wintxt;
 Text NoText; // to use it as a default value in the MouseInput_mnu function
 // cursor Variables
@@ -79,6 +79,18 @@ Sprite cursorAndpointerSprite;
 
 int finalScore = 0;
 // Functions
+
+void changeCursorColor(Event event)
+{
+	if (event.type == Event::MouseButtonPressed && event.mouseButton.button == Mouse::Left)
+	{
+		UpdateAnimation(cursorAndpointerSprite, pointer_texture);
+	}
+	if (event.type == Event::MouseButtonReleased && event.mouseButton.button == Mouse::Left)
+	{
+		UpdateAnimation(cursorAndpointerSprite, cursor_texture);
+	}
+}
 void RatingCheck(bool maleAndFemale_case = false, bool DiamondCollection_case = false, bool BeforeTimeOut_case = false)
 {
 	int numberOfChecks = 0;
@@ -134,7 +146,6 @@ bool MouseInput_mnu(Event event, Sprite& ButtonClicked, LoadTexture Currnet_text
 		{
 			UpdateAnimation(ButtonClicked, Desired_texture_enum);
 			buttonText.setScale(0.97, 0.97);
-			UpdateAnimation(cursorAndpointerSprite, pointer_texture);
 			return true;
 		}
 	}
@@ -144,7 +155,6 @@ bool MouseInput_mnu(Event event, Sprite& ButtonClicked, LoadTexture Currnet_text
 		{
 			UpdateAnimation(ButtonClicked, Currnet_texture_enum);
 			buttonText.setScale(1, 1);
-			UpdateAnimation(cursorAndpointerSprite, cursor_texture);
 			PlayMenuSoundEffect(Sound_Played_mnu);
 			if (fadeTransition)
 			{
@@ -175,7 +185,6 @@ bool MouseInput_Settings_mnu(Event event, Sprite& ButtonClicked, LoadTexture Des
 		if (ButtonClicked.getGlobalBounds().contains(mousePosition))
 		{
 			UpdateAnimation(ButtonClicked, Desired_texture_enum);
-			UpdateAnimation(cursorAndpointerSprite, pointer_texture);
 		}
 	}
 	if (event.type == Event::MouseButtonReleased && event.mouseButton.button == Mouse::Left)
@@ -183,7 +192,6 @@ bool MouseInput_Settings_mnu(Event event, Sprite& ButtonClicked, LoadTexture Des
 		if (ButtonClicked.getGlobalBounds().contains(mousePosition))
 		{
 			PlayMenuSoundEffect(Sound_Played_mnu);
-			UpdateAnimation(cursorAndpointerSprite, cursor_texture);
 			//Logic for muting or opening the sound
 		}
 	}
@@ -258,7 +266,7 @@ void GameoverMenu_Movement(Vector2f Desired_Target)
 	}
 	Menu_GOVERtxt.setPosition((GameOverbuttons_mnu[2].getGlobalBounds().left + GameOverbuttons_mnu[2].getGlobalBounds().width / 2), (GameOverbuttons_mnu[2].getGlobalBounds().top + GameOverbuttons_mnu[2].getGlobalBounds().height / 2) - 15);
 	Retry_GOVERtxt.setPosition((GameOverbuttons_mnu[1].getGlobalBounds().left + GameOverbuttons_mnu[1].getGlobalBounds().width / 2), (GameOverbuttons_mnu[1].getGlobalBounds().top + GameOverbuttons_mnu[1].getGlobalBounds().height / 2) - 15);
-	Skip_GOVERtxt.setPosition((GameOverbuttons_mnu[0].getGlobalBounds().left + GameOverbuttons_mnu[0].getGlobalBounds().width / 2) + 30, (GameOverbuttons_mnu[0].getGlobalBounds().top + GameOverbuttons_mnu[0].getGlobalBounds().height / 2) - 10);
+	Levels_GOVERtxt.setPosition((GameOverbuttons_mnu[0].getGlobalBounds().left + GameOverbuttons_mnu[0].getGlobalBounds().width / 2), (GameOverbuttons_mnu[0].getGlobalBounds().top + GameOverbuttons_mnu[0].getGlobalBounds().height / 2) - 10);
 	GameOver_txt.setPosition((GameOverbuttons_mnu[1].getGlobalBounds().left + GameOverbuttons_mnu[1].getGlobalBounds().width / 2), (GameOverbuttons_mnu[1].getGlobalBounds().top + GameOverbuttons_mnu[1].getGlobalBounds().height / 2) - 270);
 }
 void SettingMenu_Movement(Vector2f Desired_Target)
@@ -445,14 +453,14 @@ void InitializeMenu()
 	Retry_GOVERtxt.setOutlineColor(Color::Black);
 	Retry_GOVERtxt.setOutlineThickness(5);
 
-	Skip_GOVERtxt.setFont(font);
-	Skip_GOVERtxt.setCharacterSize(50);
-	Skip_GOVERtxt.setFillColor(Color(230, 194, 0));
-	Skip_GOVERtxt.setString("SKIP");
-	Skip_GOVERtxt.setPosition((GameOverbuttons_mnu[0].getGlobalBounds().left + GameOverbuttons_mnu[0].getGlobalBounds().width / 2) + 30, (GameOverbuttons_mnu[0].getGlobalBounds().top + GameOverbuttons_mnu[0].getGlobalBounds().height / 2) - 10);
-	Skip_GOVERtxt.setOrigin(Retry_GOVERtxt.getLocalBounds().width / 2, Retry_GOVERtxt.getLocalBounds().height / 2);
-	Skip_GOVERtxt.setOutlineColor(Color::Black);
-	Skip_GOVERtxt.setOutlineThickness(5);
+	Levels_GOVERtxt.setFont(font);
+	Levels_GOVERtxt.setCharacterSize(50);
+	Levels_GOVERtxt.setFillColor(Color(230, 194, 0));
+	Levels_GOVERtxt.setString("LEVELS");
+	Levels_GOVERtxt.setPosition((GameOverbuttons_mnu[0].getGlobalBounds().left + GameOverbuttons_mnu[0].getGlobalBounds().width / 2) , (GameOverbuttons_mnu[0].getGlobalBounds().top + GameOverbuttons_mnu[0].getGlobalBounds().height / 2) - 10);
+	Levels_GOVERtxt.setOrigin(Retry_GOVERtxt.getLocalBounds().width / 2, Retry_GOVERtxt.getLocalBounds().height / 2);
+	Levels_GOVERtxt.setOutlineColor(Color::Black);
+	Levels_GOVERtxt.setOutlineThickness(5);
 
 	GameOver_txt.setFont(font);
 	GameOver_txt.setCharacterSize(65);
@@ -507,7 +515,7 @@ void HandleMenuInput(Event event)
 		// code for handling settings menu input
 		break;
 	case GAMEOVER:
-		MouseInput_mnu(event, GameOverbuttons_mnu[0], stone_button_0_texture, stone_button_1_texture, ButtonClick, LEVEL_MENU, true, Skip_GOVERtxt);
+		MouseInput_mnu(event, GameOverbuttons_mnu[0], stone_button_0_texture, stone_button_1_texture, ButtonClick, LEVEL_MENU, true, Levels_GOVERtxt);
 		MouseInput_mnu(event, GameOverbuttons_mnu[2], stone_button_0_texture, stone_button_1_texture, ButtonClick, MAIN_MENU, true, Menu_GOVERtxt);
 		if (MouseInput_mnu(event, GameOverbuttons_mnu[1], stone_button_0_texture, stone_button_1_texture, ButtonClick, GAME, true, Retry_GOVERtxt))
 		{
@@ -521,6 +529,7 @@ void HandleMenuInput(Event event)
 	default:
 		break;
 	}
+	changeCursorColor(event);
 }
 
 void OnUpdatedGameStateMenu() {
@@ -734,7 +743,7 @@ void DrawUI()
 				}
 				window.draw(Menu_GOVERtxt);
 				window.draw(Retry_GOVERtxt);
-				window.draw(Skip_GOVERtxt);
+				window.draw(Levels_GOVERtxt);
 				window.draw(GameOver_txt);
 			}
 		}
@@ -754,7 +763,7 @@ void DrawUI()
 				}
 				window.draw(Menu_GOVERtxt);
 				window.draw(Retry_GOVERtxt);
-				window.draw(Skip_GOVERtxt);
+				window.draw(Levels_GOVERtxt);
 				window.draw(GameOver_txt);
 			}
 			else if (PreviousMenu_State == PAUSE_MENU)
@@ -868,7 +877,7 @@ void DrawUI()
 		}
 		window.draw(Menu_GOVERtxt);
 		window.draw(Retry_GOVERtxt);
-		window.draw(Skip_GOVERtxt);
+		window.draw(Levels_GOVERtxt);
 		window.draw(GameOver_txt);
 		break;
 
@@ -888,7 +897,7 @@ void DrawUI()
 				}
 				window.draw(Menu_GOVERtxt);
 				window.draw(Retry_GOVERtxt);
-				window.draw(Skip_GOVERtxt);
+				window.draw(Levels_GOVERtxt);
 				window.draw(GameOver_txt);
 			}
 			else if (PreviousMenu_State == PAUSE_MENU)
