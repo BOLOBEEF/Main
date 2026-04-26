@@ -18,6 +18,7 @@ void Allign(Vector2f& position, Vector2f defaultSize = Vector2f(32, 32)) {
 	enum PlayerType { Fireboy, Watergirl };
 	enum PlayerState { Walk, Jump_Rise, Fall, Idle };
 
+void UpdateAnimation(Sprite&, LoadTexture);
 void UpdatePlayerTexture(Sprite&, PlayerType, PlayerState, bool);
 void UpdateAnimationPlayer(Sprite&, PlayerType, PlayerState, bool);
 
@@ -826,6 +827,7 @@ struct Door
 	Vector2f startPosition;
 	Vector2f endPosition;
 	float speed = 100.0f;
+	Vector2f dimensions = Vector2f(32, 32 * 4);
 
 	Vector2f door_position = Vector2f(collider.sprite.getPosition());
 	bool rotated = false;
@@ -839,15 +841,15 @@ struct Door
 	void Initialize() {
 		collider = Collider(Collider::ColliderType::Rectangle, startPosition);
 
-		ApplyTexture(displaySprite, LoadTexture::RECTANGLE, Vector2f(32, 32 * 2));
+		ApplyTexture(displaySprite, LoadTexture::RECTANGLE, dimensions);
 		displaySprite.setPosition(startPosition);
 
 		if (rotated)
 		{
-			ApplyTexture(collider.sprite, LoadTexture::RECTANGLE, Vector2f(32, 32 * 2));
+			ApplyTexture(collider.sprite, LoadTexture::RECTANGLE, dimensions);
 		}
 		else {
-			ApplyTexture(collider.sprite, LoadTexture::RECTANGLE, Vector2f(32 * 2, 32));
+			ApplyTexture(collider.sprite, LoadTexture::RECTANGLE, Vector2f(dimensions.y, dimensions.x));
 			displaySprite.rotate(90);
 		}
 			
@@ -941,7 +943,8 @@ struct Door
 };
 struct Pond
 {
-	Sprite mask;
+	Sprite collider;
+	Vector2f displayOffset = Vector2f(-7, -6);
 	Collider startColl;
 	Collider endColl;
 	Collider midColl;
@@ -957,49 +960,64 @@ struct Pond
 	bool waterGirlColliding = false;
 	int width = 1;
 
+	Vector2f GetTopLeft(Sprite sprite) {
+		return Vector2f(sprite.getGlobalBounds().left, sprite.getGlobalBounds().top);
+	}
+
 	Pond(){}
 	Pond(ponds_type startType, Vector2f position) {
 		type = startType;
-		mask.setPosition(position);
+		collider.setPosition(position);
 	}
 
 	void Initialize(int startWidth = 1) {
 		width = startWidth;
-		ApplyTexture(mask, LoadTexture::RECTANGLE, Vector2f(32 * width, 32));
-		Allign(mask);
+		ApplyTexture(collider, LoadTexture::RECTANGLE, Vector2f(32 * width, 32));
+		Allign(collider);
+	}
+
+	void SetPosition(Vector2f position) {
+		collider.setPosition(position);
+		Allign(collider);
 	}
 
 	void InitializeColliders() {
 		// Add custom colliders for the pond object
-		float groundHeight = 0.3f;
+		float groundHeight = 0.5f;
+		float slopeXScale = 2.0f;
+		float slopeXOffset = 10.0f;
+
 		midColl = Collider(Collider::ColliderType::Rectangle,
 			Vector2f(
-				mask.getGlobalBounds().left + mask.getGlobalBounds().width / 2.0f,
-				mask.getGlobalBounds().top + mask.getGlobalBounds().height - groundHeight * 32 / 2.0f),
+				collider.getGlobalBounds().left + collider.getGlobalBounds().width / 2.0f,
+				collider.getGlobalBounds().top + collider.getGlobalBounds().height - groundHeight * 32 / 2.0f),
 			Vector2f(width, groundHeight),
 			false);
 
 		startColl = Collider(Collider::ColliderType::Triangle,
 			Vector2f(
-				mask.getGlobalBounds().left + 16,
-				mask.getGlobalBounds().top + 16), Vector2f(1, 1), false);
+				collider.getGlobalBounds().left + 16,
+				collider.getGlobalBounds().top + 16), Vector2f(slopeXScale, 1), false);
 
 
 		endColl = Collider(Collider::ColliderType::Triangle_Rotated,
 			Vector2f(
-				mask.getGlobalBounds().left + mask.getGlobalBounds().width - 16,
-				mask.getGlobalBounds().top + 16), Vector2f(1, 1), false);
+				collider.getGlobalBounds().left + collider.getGlobalBounds().width - 16,
+				collider.getGlobalBounds().top + 16), Vector2f(slopeXScale, 1), false);
+
 		
 		startColl.Initialize();
 		endColl.Initialize();
 		midColl.Initialize();
+		startColl.sprite.move(slopeXOffset, 0);
+		endColl.sprite.move(-slopeXOffset, 0);
 	}
 
 	void UpdateFireBoy(Player& fireBoy) {
 		// if no collision return
 		bool lastState = fireBoyColliding;
 		FloatRect intersections;
-		bool isTouching = fireBoy.hitbox.getGlobalBounds().intersects(mask.getGlobalBounds(), intersections);
+		bool isTouching = fireBoy.hitbox.getGlobalBounds().intersects(collider.getGlobalBounds(), intersections);
 		fireBoyColliding = min(intersections.width, intersections.height) > 10; // only consider it a collision if the intersection area is big enough, to avoid colliding when just touching the edge of the pond
 
 		if (fireBoyColliding)
@@ -1038,7 +1056,7 @@ struct Pond
 		// if no collision return
 		bool lastState = waterGirlColliding;
 		FloatRect intersections;
-		bool isTouching = waterGirl.hitbox.getGlobalBounds().intersects(mask.getGlobalBounds(), intersections);
+		bool isTouching = waterGirl.hitbox.getGlobalBounds().intersects(collider.getGlobalBounds(), intersections);
 		waterGirlColliding = min(intersections.width, intersections.height) > 10; // only consider it a collision if the intersection area is big enough, to avoid colliding when just touching the edge of the pond
 
 		if (waterGirlColliding)
@@ -1073,8 +1091,72 @@ struct Pond
 		waterGirl.isOnGround |= endColl.CheckCollision(waterGirl);	
 	}
 
+	void Update(Player& fireBoy, Player& waterGirl) {
+
+		UpdateFireBoy(fireBoy);
+		UpdateWaterGirl(waterGirl);
+	}
+
 	void Draw() {
-		// window.draw(mask);
+		//window.draw(collider);
+
+		Sprite* displaySprites = new Sprite[width];
+
+		for (int i = 0; i < width; i++)
+		{
+			if (i == 0)
+				switch (type)
+				{
+				case Pond::POISON_POND: ApplyTexture(displaySprites[i], LoadTexture::green_pond_left_texture, Vector2f(32, 32), Vector2f(1, 1), false, false);
+					UpdateAnimation(displaySprites[i], LoadTexture::green_pond_left_texture);
+					break;
+				case Pond::FIRE_POND: ApplyTexture(displaySprites[i], LoadTexture::fire_pond_left_texture, Vector2f(32, 32), Vector2f(1, 1), false, false);
+					UpdateAnimation(displaySprites[i], LoadTexture::fire_pond_left_texture);	
+					break;
+				case Pond::WATER_POND: ApplyTexture(displaySprites[i], LoadTexture::water_pond_left_texture, Vector2f(32, 32), Vector2f(1, 1), false, false);
+					UpdateAnimation(displaySprites[i], LoadTexture::water_pond_left_texture);
+					break;
+				}
+			else if (i == width - 1)
+				switch (type)
+				{
+				case Pond::POISON_POND: ApplyTexture(displaySprites[i], LoadTexture::green_pond_right_texture, Vector2f(32, 32), Vector2f(1, 1), false, false);
+					UpdateAnimation(displaySprites[i], LoadTexture::green_pond_right_texture);
+					break;
+				case Pond::FIRE_POND: ApplyTexture(displaySprites[i], LoadTexture::fire_pond_right_texture, Vector2f(32, 32), Vector2f(1, 1), false, false);	
+					UpdateAnimation(displaySprites[i], LoadTexture::fire_pond_right_texture);
+					break;
+				case Pond::WATER_POND: ApplyTexture(displaySprites[i], LoadTexture::water_pond_right_texture, Vector2f(32, 32), Vector2f(1, 1), false, false);
+					UpdateAnimation(displaySprites[i], LoadTexture::water_pond_right_texture);
+					break;
+				}
+			else
+				switch (type)
+				{
+				case Pond::POISON_POND: ApplyTexture(displaySprites[i], LoadTexture::green_pond_texture, Vector2f(32, 32), Vector2f(1, 1), false, false);
+					UpdateAnimation(displaySprites[i], LoadTexture::green_pond_texture);
+					break;
+				case Pond::FIRE_POND: ApplyTexture(displaySprites[i], LoadTexture::fire_pond_texture, Vector2f(32, 32), Vector2f(1, 1), false, false);
+					UpdateAnimation(displaySprites[i], LoadTexture::fire_pond_texture);
+					break;
+				case Pond::WATER_POND: ApplyTexture(displaySprites[i], LoadTexture::water_pond_texture, Vector2f(32, 32), Vector2f(1, 1), false, false);
+					UpdateAnimation(displaySprites[i], LoadTexture::water_pond_texture);
+					break;
+				}
+
+			displaySprites[i].setPosition(GetTopLeft(collider) + displayOffset + Vector2f(32 * i, 0));
+			
+			if (type == FIRE_POND || type == POISON_POND) {
+				displaySprites[i].move(-2, 0);
+
+				if (i != 0 && i != width - 1)
+					displaySprites[i].move(0, -4);
+			}
+			
+			window.draw(displaySprites[i]);
+
+		}
+		delete[] displaySprites;
 	}
 };
 struct Box {
@@ -1273,7 +1355,7 @@ struct ObjectData {
 			return true;
 		if (door.displaySprite.getGlobalBounds().contains(point))
 			return true;
-		if (pond.mask.getGlobalBounds().contains(point))
+		if (pond.collider.getGlobalBounds().contains(point))
 			return true;
 		if (box.collider.sprite.getGlobalBounds().contains(point))
 			return true;
@@ -1319,8 +1401,8 @@ struct Object {
 	void InitializePondObject(Pond::ponds_type startType, Vector2f position, int width) {
 		data.pond.type = startType;
 		data.pond.Initialize(width);
-		data.pond.mask.setPosition(position);
-		Allign(data.pond.mask);
+		data.pond.SetPosition(position);
+		Allign(data.pond.collider);
 		data.pond.InitializeColliders();
 	}
 
@@ -1389,8 +1471,7 @@ struct Object {
 			data.gem.Update(waterGirl);
 			break;
 		case Object::PondObject:
-			data.pond.UpdateFireBoy(fireBoy);
-			data.pond.UpdateWaterGirl(waterGirl);
+			data.pond.Update(fireBoy, waterGirl);
 			break;
 		case Object::BoxObject: data.box.Update(fireBoy, waterGirl, colliders);
 			break;
