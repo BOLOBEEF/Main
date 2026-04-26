@@ -88,6 +88,8 @@ enum LoadTexture
 	DOOR_FIRE,
 
 	//menu assets s
+	PlayButton_texture,
+	CreditsButton_Texture,
 	BackButton0_texture,
 	BackButtonFull0_texture,
 	Diamond0_texture,
@@ -203,6 +205,8 @@ Texture green_pond_right;
 Texture green_pond_left;
 Texture temporaryPlatform;
 //menu assets textures
+Texture PlayButton;
+Texture CreditsButton;
 Texture BackButton0;
 Texture BackButtonFull0;
 Texture Diamond0;
@@ -506,6 +510,14 @@ void ApplyTexture(Sprite& sprite, LoadTexture texture, Vector2f size = Vector2f(
 
 
 		// menu assets
+
+	case PlayButton_texture:
+		sprite.setTexture(PlayButton);
+		break;
+
+	case CreditsButton_Texture:
+		sprite.setTexture(CreditsButton);
+		break;
 
 	case arrow_icon0_texture:
 		sprite.setTexture(arrow_icon0);
@@ -872,6 +884,8 @@ void InitializeTextures()
 	diamonds_orange.loadFromFile("Main/Assets/Animations/menu assets/diamond_orange.png");
 	diamonds_purple.loadFromFile("Main/Assets/Animations/menu assets/diamond_purple.png");
 	rating_timer.loadFromFile("Main/Assets/Animations/menu assets/rating_timer.png");
+	PlayButton.loadFromFile("Main/Assets/Animations/menu assets/PlayButton.png");
+	CreditsButton.loadFromFile("Main/Assets/Animations/menu assets/CreditsButton.png");
 	// divide the process into functions
 	InitializeMenuTextures();
 	InitializeGameTextures();
