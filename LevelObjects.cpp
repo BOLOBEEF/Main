@@ -1332,7 +1332,32 @@ struct Temporary_ground
 	}
 };
 
-
+struct Fan
+{
+	Sprite fan_sprite;
+	Sprite air_sprite;
+	Collider collider;
+	Fan(){}
+	Fan(Vector2f fan_position) {
+		fan_sprite.setPosition(fan_position);
+		Allign(fan_sprite);
+		air_sprite.setPosition(fan_sprite.getPosition() + Vector2f(0, -32 * 3));
+		//Allign(air_sprite);
+	}
+	void Initialize() {
+		ApplyTexture(fan_sprite, LoadTexture::RECTANGLE, Vector2f(32*2, 32*2));
+		ApplyTexture(air_sprite, LoadTexture::RECTANGLE, Vector2f(32*2, 32 * 5));
+		Allign(fan_sprite);
+		Allign(air_sprite);
+	}
+	void Update(Player& player) {
+		if (air_sprite.getGlobalBounds().intersects(player.hitbox.getGlobalBounds()))
+		{
+			if (player.hitbox.getPosition().y > air_sprite.getPosition().y)
+			player.velocity.y -=500.0f * dt;
+		}
+	}
+};
 
 // this is a generic object struct to have any level object
 // how to add a new object

@@ -24,6 +24,8 @@ Player waterGirl = Player(Watergirl, center + Vector2f(-550, 300));
 FinalDoor water_door = FinalDoor(FinalDoor::WATER_DOOR, Vector2f(1200, 25));
 FinalDoor fire_door = FinalDoor(FinalDoor::FIRE_DOOR, Vector2f(1300, 25));
 
+Fan fan = Fan(Vector2f(900, 368));
+
 Sprite ground;
 Sprite background;
 
@@ -294,6 +296,9 @@ void InitializeGame()
 	fire_door.Initialize();
 	fire_door.sprite.setColor(Color::Red);
 
+	fan.Initialize();
+	fan.fan_sprite.setColor(Color::Red);
+	fan.air_sprite.setColor(Color::White);
 
 	UpdateGroundTexture();
 }
@@ -748,6 +753,10 @@ void UpdateGame()
 		water_door.sprite.setColor(Color(128, 0, 128));
 		fire_door.sprite.setColor(Color(128, 0, 128));
 	}
+
+	fan.Update(fireBoy, fan);
+	fan.Update(waterGirl, fan);
+
 }
 
 
@@ -777,7 +786,8 @@ void DrawGame(bool forceDraw)
 	for (int i = 0; i < objects.count; i++)
 		objects.elements[i].PostDraw();
 
-
+	window.draw(fan.air_sprite);
+	window.draw(fan.fan_sprite);
 	//for (int i = 0; i < colliders.count; i++)
 		//window.draw(colliders.elements[i].sprite);
 }
