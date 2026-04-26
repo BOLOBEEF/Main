@@ -227,6 +227,7 @@ void WinMenu_Movement(Vector2f Desired_Target)
 	checkOrCrossMaleOrFemale_icon_Winmnu.setPosition(Vector2f(windowSize.x / 2 - 205, windowSize.y / 2 - 190) + Current_position_mnu - center);
 	checkOrCrossDiamonds_icon_Winmnu.setPosition(Vector2f(windowSize.x / 2 - 205, windowSize.y / 2 - 90) + Current_position_mnu - center);
 	checkOrCrossTimer_icon_Winmnu.setPosition(Vector2f(windowSize.x / 2 - 205, windowSize.y / 2 + 15) + Current_position_mnu - center);
+
 	if (levelAndArrowIcon_turn)
 	{
 		ApplyTexture(arrowIcon_Winmnu, LoadTexture::arrow_icon1_texture, Vector2f(150, 100));
@@ -394,7 +395,7 @@ void InitializeMenu()
 	
 	x_icon.setSmooth(true);
 	tick_icon.setSmooth(true);
-	RatingCheck(true, true, false);
+	RatingCheck(true, true, true);
 
 	//Pause menu text
 	End_Pausetxt.setFont(font);
