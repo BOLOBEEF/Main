@@ -68,6 +68,7 @@ enum GameState
 
 // DO NOT CHANGE THIS DIRECTLY, USE UpdateGameState() INSTEAD
 GameState gameState = WIN_MENU;
+GameState lastGameState = gameState;	// used to keep track of the last game state
 
 
 void UpdateGameState(GameState newState, bool ForceUpdate);
@@ -98,6 +99,7 @@ void UpdateGameState(GameState newState, bool ForceUpdate = false)
 	// if didn't actually change gameState then skip
 	if (newState == gameState && !ForceUpdate) return;
 
+	lastGameState = gameState;
 	gameState = newState;
 
 	OnUpdatedGameStateMenu();

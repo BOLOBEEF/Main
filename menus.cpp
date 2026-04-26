@@ -132,6 +132,7 @@ bool MouseInput_mnu(Event event, Sprite& ButtonClicked, LoadTexture Currnet_text
 			UpdateAnimation(ButtonClicked, Desired_texture_enum);
 			buttonText.setScale(0.97, 0.97);
 			UpdateAnimation(cursorAndpointerSprite, pointer_texture);
+			return true;
 		}
 	}
 	if (event.type == Event::MouseButtonReleased && event.mouseButton.button == Mouse::Left)
@@ -151,6 +152,8 @@ bool MouseInput_mnu(Event event, Sprite& ButtonClicked, LoadTexture Currnet_text
 				}
 			}
 			else if(!fadeTransition) UpdateGameState(state_mnu);
+			
+			return true;
 		}
 		else
 		{
@@ -159,7 +162,8 @@ bool MouseInput_mnu(Event event, Sprite& ButtonClicked, LoadTexture Currnet_text
 			UpdateAnimation(cursorAndpointerSprite, cursor_texture);
 		}
 	}
-	return true;
+
+	return false;
 }
 bool MouseInput_Settings_mnu(Event event, Sprite& ButtonClicked, LoadTexture Desired_texture_enum, MenuSoundEffect Sound_Played_mnu)
 {
@@ -466,7 +470,7 @@ void HandleMenuInput(Event event)
 		MouseInput_mnu(event, ResumeButton_Pausemnu, stone_button_0_texture, stone_button_1_texture, ButtonClick, GAME, false, Resume_Pausetxt);
 		if (MouseInput_mnu(event, RetryButton_Pausemnu, stone_button_0_texture, stone_button_1_texture, ButtonClick, GAME, true, Retry_Pausetxt))
 		{
-			//call function reset
+			RestartGame();
 		}
 		MouseInput_mnu(event, EndButton_Pausemnu, stone_button_0_texture, stone_button_1_texture, ButtonClick, LEVEL_MENU, true, End_Pausetxt);
 		MouseInput_mnu(event, SettingButton_mnu, SettingsButton0_texture, SettingsButton0_texture, No_Sound_Buttons, SETTINGS, false);
@@ -482,7 +486,7 @@ void HandleMenuInput(Event event)
 		MouseInput_mnu(event, GameOverbuttons_mnu[2], stone_button_0_texture, stone_button_1_texture, ButtonClick, MAIN_MENU, true, Menu_GOVERtxt);
 		if (MouseInput_mnu(event, GameOverbuttons_mnu[1], stone_button_0_texture, stone_button_1_texture, ButtonClick, GAME, true, Retry_GOVERtxt))
 		{
-			//call function reset
+			RestartGame();
 		}
 		break;
 	case GAME:

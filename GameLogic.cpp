@@ -693,14 +693,33 @@ void HandleGameInput(Event event)
 	EditMode(event);
 }
 
-void OnUpdatedGameStateGameLogic() {
-	// do stuff here exactly when the gameState is changed
-	if (gameState != GAME) return;
+// temporary restart function
+void RestartGame() {
+	Vector2f fireBoyStartPos = center + Vector2f(-600, 200);
+	Vector2f waterGirlStartPos = center + Vector2f(-550, 300);
+
 	fireBoy.isDead = false;
 	waterGirl.isDead = false;
-	fireBoy.hitbox.setPosition(center + Vector2f(-600, 200));
-	waterGirl.hitbox.setPosition(center + Vector2f(-550, 300));
+	fireBoy.hitbox.setPosition(fireBoyStartPos);
+	waterGirl.hitbox.setPosition(waterGirlStartPos);
 }
+
+
+void OnUpdatedGameStateGameLogic() {
+	// do stuff here exactly when the gameState is changed
+	if (gameState == GAMEOVER) {
+		RestartGame();
+		return;
+	}
+
+	if (gameState != GAME) return;
+
+	if (fireBoy.isDead || waterGirl.isDead) {
+		UpdateGameState(GAMEOVER);
+		return;
+	}
+}
+
 
 
 void UpdateGame()
