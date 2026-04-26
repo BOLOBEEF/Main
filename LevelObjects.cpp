@@ -1163,6 +1163,7 @@ struct Box {
 	Collider collider;
 	Vector2f startPosition;
 	Vector2f velocity = Vector2f(0, 0);
+	float scale = 2.8f;
 
 	float gravity = 500.0f;
 
@@ -1173,7 +1174,7 @@ struct Box {
 
 	void Initialize() {
 		collider = Collider(Collider::ColliderType::Rectangle, startPosition);
-		ApplyTexture(collider.sprite, LoadTexture::movingbox_texture, Vector2f(48, 48));
+		ApplyTexture(collider.sprite, LoadTexture::movingbox_texture, Vector2f(32 * scale, 32 * scale));
 		collider.sprite.setTexture(movingbox);
 		collider.sprite.setPosition(startPosition);
 	}
