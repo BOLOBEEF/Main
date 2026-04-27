@@ -12,6 +12,7 @@
 // Runtime variables
 // Ex: clocks and timers for animations
 
+Clock animClock1; // separate clock
 
 
 // Functions
@@ -42,6 +43,9 @@ void HandleAnimationsInput(Event event)
 		break;
 	}
 }
+
+
+
 
 void UpdateAnimation(Sprite& sprite, LoadTexture texture) {
 	float speed = 20.0f;
@@ -456,7 +460,6 @@ void UpdateAnimation(Sprite& sprite, LoadTexture texture) {
 		int index = (int)(globalClock.getElapsedTime().asSeconds() * speed) % frameCount;
 		sprite.setTextureRect(IntRect(index * (width / frameCount), 0, (width / frameCount), height));
 		break;
-
 	}
 	case diamonds_green_texture: {
 		int frameCount = 8;
@@ -482,7 +485,6 @@ void UpdateAnimation(Sprite& sprite, LoadTexture texture) {
 		int width = 1024, height = 128;
 		int frameWidth = width / frameCount;
 
-		static sf::Clock animClock1; // separate clock
 		float speed = 30.0f; 
 
 		float time = animClock1.getElapsedTime().asSeconds();

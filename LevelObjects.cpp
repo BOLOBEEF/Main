@@ -609,14 +609,27 @@ struct FinalDoor
 		WATER_DOOR,
 		FIRE_DOOR
 	}type;
+
 	bool touched = false;
 	bool player_on_door = false;
+	float scale = 0.6f;
+	int currentFrame = 0;
 
 	Sprite sprite;
 	Vector2f startPosition;
 
 	void Initialize() {
-		ApplyTexture(sprite, LoadTexture::RECTANGLE, Vector2f(32, 32 * 2));
+		switch (type)
+		{
+		case WATER_DOOR:
+			ApplyTexture(sprite, LoadTexture::water_door_open_texture, Vector2f(3586 , 138));
+			sprite.scale(scale, scale);
+			break;
+		case FIRE_DOOR:
+			ApplyTexture(sprite, LoadTexture::fire_door_open_texture, Vector2f(3586 , 138));
+			sprite.scale(scale, scale);
+			break;
+		}
 		sprite.setPosition(startPosition);
 		Allign(sprite);
 	}
@@ -632,32 +645,14 @@ struct FinalDoor
 		{
 
 			player_on_door = true;
-			sprite.setColor(Color::Green);
-			
-			
 		}
 		else if ((player.playertype == PlayerType::Fireboy) && player.hitbox.getGlobalBounds().intersects(sprite.getGlobalBounds()) && (type == FIRE_DOOR))
 		{
-
 			player_on_door = true;
-			sprite.setColor(Color::Green);
-		
-
 		}
 		else
 		{
 			player_on_door = false;
-			switch (type)
-			{
-			case FinalDoor::WATER_DOOR:
-				sprite.setColor(Color::Blue);
-				break;
-			case FinalDoor::FIRE_DOOR:
-				sprite.setColor(Color::Red);
-				break;
-			default:
-				break;
-			}
 		}
 		if (touched != player_on_door&& player_on_door==true) {
 			PlayGameSoundEffect(GameSoundEffect::Door_sound);
