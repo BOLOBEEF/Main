@@ -326,12 +326,20 @@ void InitializeMenu()
 	ExitButton_mnu.setPosition(windowSize.x / 2 - 350, windowSize.y / 2 + 150);
 
 	ApplyTexture(IdleFbBodymnu, LoadTexture::fire_idle_body_texture, Vector2f(130, 172));
-	IdleFbBodymnu.setScale(2.25, 2.25);
-	IdleFbBodymnu.setPosition(windowSize.x / 2 - 100, windowSize.y / 2 + 350);
+	IdleFbBodymnu.setScale(1.5, 1.5);
+	IdleFbBodymnu.setPosition(windowSize.x / 2 - 100, windowSize.y / 2 + 390);
 
-	ApplyTexture(IdleWgBodymnu, LoadTexture::water_body_idle_texture, Vector2f(130, 172));
-	IdleWgBodymnu.setScale(2.25, 2.25);
-	IdleWgBodymnu.setPosition(windowSize.x / 2 + 100, windowSize.y / 2 + 350);
+	ApplyTexture(IdleFbHeadmnu, LoadTexture::fire_idle_head_texture, Vector2f(2470, 300), Vector2f(1, 1), true, false);
+	IdleFbHeadmnu.setScale(1.25, 1.25);
+	IdleFbHeadmnu.setPosition(windowSize.x / 2 + 1362, windowSize.y / 2 + 390);
+
+	ApplyTexture(IdleWgBodymnu, LoadTexture::water_body_idle_texture, Vector2f(1100, 200));
+	IdleWgBodymnu.setScale(1.5, 1.5);
+	IdleWgBodymnu.setPosition(windowSize.x / 2 + 100, windowSize.y / 2 + 390);
+
+	ApplyTexture(IdleWgHeadmnu, LoadTexture::water_head_idle_texture, Vector2f(2470, 300), Vector2f(1, 1), true, false);
+	IdleWgHeadmnu.setScale(1.25, 1.25);
+	IdleWgHeadmnu.setPosition(windowSize.x / 2 + 2456, windowSize.y / 2 + 390);
 
 	//Pause menu
 	menu_box.setSmooth(true);
@@ -513,6 +521,15 @@ void HandleMenuInput(Event event)
 		MouseInput_mnu(event, SettingButton_mnu, SettingsButton0_texture, SettingsButton0_texture, ButtonClick, SETTINGS, false);
 		MouseInput_mnu(event, PlayButton_mnu, PlayButton_texture, PlayButton_texture, ButtonClick, GAME, true);
 		MouseInput_mnu(event, CreditsButton_mnu, CreditsButton_Texture, CreditsButton_Texture, ButtonClick, CREDITS, false);
+		if(event.type == Event::MouseButtonPressed && event.mouseButton.button == Mouse::Left)
+		{
+			if (ExitButton_mnu.getGlobalBounds().contains(mousePosition))
+			{
+				window.close();
+			}
+		}
+		
+
 		break;
 	case LEVEL_MENU:
 
@@ -557,6 +574,7 @@ void OnUpdatedGameStateMenu() {
 	{
 	case MAIN_MENU:
 		PlayMusic(MainMenu);
+
 		break;
 	case LEVEL_MENU:
 		PlayMusic(MainMenu);
@@ -589,6 +607,8 @@ void UpdateUI()
 	case MAIN_MENU:
 		// code for main menu
 		GameoverMenu_Movement(Target_Down_mnu);
+		UpdateAnimation(IdleFbHeadmnu, fire_idle_head_texture);
+		UpdateAnimation(IdleWgHeadmnu, water_head_idle_texture);
 		break;
 	case LEVEL_MENU:
 		if (PreviousMenu_State == GAMEOVER)
@@ -750,7 +770,9 @@ void DrawUI()
 		window.draw(ExitButton_mnu);
 		window.draw(SettingButton_mnu);
 		window.draw(IdleFbBodymnu);
+		window.draw(IdleFbHeadmnu);
 		window.draw(IdleWgBodymnu);
+		window.draw(IdleWgHeadmnu);
 
 		if (Current_position_mnu != Target_Down_mnu)
 		{
