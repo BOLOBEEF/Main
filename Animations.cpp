@@ -15,9 +15,10 @@
 
 
 // Functions
-
+Clock animClock1;
 void InitializeAnimations()
 {
+
 	// code for initializing menu variables and objects
 	// for example initialize timers or counters
 }
@@ -493,16 +494,14 @@ void UpdateAnimation(Sprite& sprite, LoadTexture texture) {
 		int frameCount = 8;
 		int width = 1024, height = 128;
 		int frameWidth = width / frameCount;
-
-		static sf::Clock animClock1; // separate clock
-		float speed = 30.0f;
-
-		float time = animClock1.getElapsedTime().asSeconds();
-		int index = (int)(time * speed);
+		
+		float speed = 5.f;
+	
+		int index = (int)(globalClock.getElapsedTime().asSeconds() * speed) ;
 
 		if (index >= frameCount) {
 			index = frameCount - 1;
-
+		
 		}
 
 		sprite.setTextureRect(sf::IntRect(index * frameWidth, 0, frameWidth, height));
@@ -513,15 +512,14 @@ void UpdateAnimation(Sprite& sprite, LoadTexture texture) {
 		int width = 1024, height = 128;
 		int frameWidth = width / frameCount;
 
-		static sf::Clock animClock1; // separate clock
-		float speed = 30.0f; 
+		
+		float speed = 5.f;
 
-		float time = animClock1.getElapsedTime().asSeconds();
-		int index = (int)(time * speed);
+		int index = (int)(globalClock.getElapsedTime().asSeconds() * speed);
 
 		if (index >= frameCount) {
 			index = frameCount - 1;
-			
+
 		}
 
 		sprite.setTextureRect(sf::IntRect(index * frameWidth, 0, frameWidth, height));
@@ -532,11 +530,10 @@ void UpdateAnimation(Sprite& sprite, LoadTexture texture) {
 		int width = 1024, height = 128;
 		int frameWidth = width / frameCount;
 
-		static sf::Clock animClock1; // separate clock
-		float speed = 30.0f;
+	    
+		float speed = 5.f;
 
-		float time = animClock1.getElapsedTime().asSeconds();
-		int index = (int)(time * speed);
+		int index = (int)(globalClock.getElapsedTime().asSeconds() * speed) ;
 
 		if (index >= frameCount) {
 			index = frameCount - 1;
