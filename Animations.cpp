@@ -448,6 +448,16 @@ void UpdateAnimation(Sprite& sprite, LoadTexture texture) {
 	case diamonds_purple_idle_texture:
 		sprite.setTextureRect(IntRect(0, 0, 128, 128));
 		break;
+	case dust_texture:
+	{
+		int speed = 15.f;
+		int frameCount = 60;
+		int width = 3240, height = 53;
+		int index = (int)(globalClock.getElapsedTime().asSeconds() * speed) % frameCount;
+		sprite.setTextureRect(IntRect(index * (width / frameCount), 0, (width / frameCount), height));
+		break;
+
+	}
 	case diamonds_green_texture: {
 		int frameCount = 8;
 		int width = 1024, height = 128;

@@ -129,7 +129,7 @@ enum LoadTexture
 	game_name_texture,
 	cursor_texture,
 	pointer_texture,
-
+	dust_texture,
 	arrow_icon0_texture,
 	arrow_icon1_texture,
 	x_icon_texture,
@@ -228,6 +228,7 @@ Texture DiamondSpeed1;
 Texture DiamondSpeed2;
 Texture DiamondSpeed3;
 Texture FxButton0;
+Texture dust;
 Texture FxButton1;
 Texture GoldLock0;
 Texture Lock0;
@@ -537,6 +538,10 @@ void ApplyTexture(Sprite& sprite, LoadTexture texture, Vector2f size = Vector2f(
 		sprite.setTexture(x_icon);
 		break;
 
+	case dust_texture:
+		sprite.setTexture(dust);
+		break;
+
 	case tick_icon_texture:
 		sprite.setTexture(tick_icon);
 		break;
@@ -774,6 +779,7 @@ void InitializeGameTextures() {
 
 void InitializeTextures()
 {// set smooth
+	dust.setSmooth(true);
 	fire_head_jumping.setSmooth(true);
 	death_smoke.setSmooth(true);
 	diamond_fire.setSmooth(true);
@@ -893,6 +899,7 @@ void InitializeTextures()
 	PlayButton.loadFromFile("Main/Assets/Animations/menu assets/PlayButton.png");
 	CreditsButton.loadFromFile("Main/Assets/Animations/menu assets/CreditsButton.png");
 	ExitButton.loadFromFile("Main/Assets/Animations/menu assets/ExitButton.png");
+	dust.loadFromFile("Main/Assets/Animations/menu assets/dust.png");
 	// divide the process into functions
 	InitializeMenuTextures();
 	InitializeGameTextures();
