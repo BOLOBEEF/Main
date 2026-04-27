@@ -16,7 +16,7 @@
 enum LoadTexture
 {
 	//texture for temporary_ground
-	
+
 	/*--------------------------------------------*/
 	TEMPORARY_GROUND,
 	/*--------------------------------------------*/
@@ -90,6 +90,7 @@ enum LoadTexture
 	//menu assets s
 	PlayButton_texture,
 	CreditsButton_Texture,
+	ExitButton_texture,
 	BackButton0_texture,
 	BackButtonFull0_texture,
 	Diamond0_texture,
@@ -207,6 +208,7 @@ Texture temporaryPlatform;
 //menu assets textures
 Texture PlayButton;
 Texture CreditsButton;
+Texture ExitButton;
 Texture BackButton0;
 Texture BackButtonFull0;
 Texture Diamond0;
@@ -517,6 +519,10 @@ void ApplyTexture(Sprite& sprite, LoadTexture texture, Vector2f size = Vector2f(
 
 	case CreditsButton_Texture:
 		sprite.setTexture(CreditsButton);
+		break;
+
+	case ExitButton_texture:
+		sprite.setTexture(ExitButton);
 		break;
 
 	case arrow_icon0_texture:
@@ -886,6 +892,7 @@ void InitializeTextures()
 	rating_timer.loadFromFile("Main/Assets/Animations/menu assets/rating_timer.png");
 	PlayButton.loadFromFile("Main/Assets/Animations/menu assets/PlayButton.png");
 	CreditsButton.loadFromFile("Main/Assets/Animations/menu assets/CreditsButton.png");
+	ExitButton.loadFromFile("Main/Assets/Animations/menu assets/ExitButton.png");
 	// divide the process into functions
 	InitializeMenuTextures();
 	InitializeGameTextures();

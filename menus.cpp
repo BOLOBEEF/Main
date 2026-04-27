@@ -51,6 +51,11 @@ Sprite MainMenuBackground_mnu;
 Sprite GameName_mnu;
 Sprite PlayButton_mnu;
 Sprite CreditsButton_mnu;
+Sprite ExitButton_mnu;
+Sprite IdleFbBodymnu;
+Sprite IdleFbHeadmnu;
+Sprite IdleWgBodymnu;
+Sprite IdleWgHeadmnu;
 
 Sprite GameOverbuttons_mnu[3];
 
@@ -309,13 +314,24 @@ void InitializeMenu()
 	}
 
 	ApplyTexture(GameName_mnu, LoadTexture::game_name_texture, Vector2f(860, 270));
-	GameName_mnu.setPosition(windowSize.x / 2, windowSize.y / 2 - 150);
+	GameName_mnu.setPosition(windowSize.x / 2, windowSize.y / 2 - 200);
 
 	ApplyTexture(PlayButton_mnu, LoadTexture::PlayButton_texture, Vector2f(240, 160));
-	PlayButton_mnu.setPosition(windowSize.x / 2, windowSize.y / 2 + 100);
+	PlayButton_mnu.setPosition(windowSize.x / 2, windowSize.y / 2 + 40);
 	
 	ApplyTexture(CreditsButton_mnu, LoadTexture::CreditsButton_Texture, Vector2f(260, 173));
-	CreditsButton_mnu.setPosition(windowSize.x / 2, windowSize.y / 2 + 300);
+	CreditsButton_mnu.setPosition(windowSize.x / 2 + 350, windowSize.y / 2 + 150);
+
+	ApplyTexture(ExitButton_mnu, LoadTexture::ExitButton_texture, Vector2f(240, 160));
+	ExitButton_mnu.setPosition(windowSize.x / 2 - 350, windowSize.y / 2 + 150);
+
+	ApplyTexture(IdleFbBodymnu, LoadTexture::fire_idle_body_texture, Vector2f(130, 172));
+	IdleFbBodymnu.setScale(2.25, 2.25);
+	IdleFbBodymnu.setPosition(windowSize.x / 2 - 100, windowSize.y / 2 + 350);
+
+	ApplyTexture(IdleWgBodymnu, LoadTexture::water_body_idle_texture, Vector2f(130, 172));
+	IdleWgBodymnu.setScale(2.25, 2.25);
+	IdleWgBodymnu.setPosition(windowSize.x / 2 + 100, windowSize.y / 2 + 350);
 
 	//Pause menu
 	menu_box.setSmooth(true);
@@ -495,7 +511,8 @@ void HandleMenuInput(Event event)
 	case MAIN_MENU:
 		// code for handling main menu input
 		MouseInput_mnu(event, SettingButton_mnu, SettingsButton0_texture, SettingsButton0_texture, ButtonClick, SETTINGS, false);
-		MouseInput_mnu(event, PlayButton_mnu, PlayButton_texture, PlayButton_texture, ButtonClick, GAME, false);
+		MouseInput_mnu(event, PlayButton_mnu, PlayButton_texture, PlayButton_texture, ButtonClick, GAME, true);
+		MouseInput_mnu(event, CreditsButton_mnu, CreditsButton_Texture, CreditsButton_Texture, ButtonClick, CREDITS, false);
 		break;
 	case LEVEL_MENU:
 
@@ -730,7 +747,10 @@ void DrawUI()
 		window.draw(GameName_mnu);
 		window.draw(PlayButton_mnu);
 		window.draw(CreditsButton_mnu);
+		window.draw(ExitButton_mnu);
 		window.draw(SettingButton_mnu);
+		window.draw(IdleFbBodymnu);
+		window.draw(IdleWgBodymnu);
 
 		if (Current_position_mnu != Target_Down_mnu)
 		{
