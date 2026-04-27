@@ -615,6 +615,7 @@ struct FinalDoor
 	float scale = 0.6f;
 	int currentFrame = 0;
 	Clock animationClock;
+	bool justEntered = false;
 
 	Sprite sprite;
 	Vector2f startPosition;
@@ -656,8 +657,10 @@ struct FinalDoor
 			player_on_door = false;
 		}
 		if (touched != player_on_door&& player_on_door==true) {
+			justEntered = true;
 			PlayGameSoundEffect(GameSoundEffect::Door_sound);
 		}
+		else justEntered = false;
 	}
 };
 
