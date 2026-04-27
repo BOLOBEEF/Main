@@ -292,9 +292,7 @@ void InitializeGame()
 	resultSprite.setTexture(resultTexture.getTexture());
 
 	water_door.Initialize();
-	water_door.sprite.setColor(Color::Blue);
 	fire_door.Initialize();
-	fire_door.sprite.setColor(Color::Red);
 
 	fan.Initialize();
 	fan.fan_sprite.setColor(Color::Red);
@@ -747,12 +745,6 @@ void UpdateGame()
 		waterGirl.hitbox.setColor(Color::Yellow);
 	else
 		waterGirl.hitbox.setColor(Color::Blue);
-
-	if (water_door.player_on_door && fire_door.player_on_door)
-	{
-		water_door.sprite.setColor(Color(128, 0, 128));
-		fire_door.sprite.setColor(Color(128, 0, 128));
-	}
 
 	fan.Update(fireBoy);
 	fan.Update(waterGirl);
