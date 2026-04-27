@@ -8,6 +8,7 @@ void InitializeTest() {
 	// for example test if a sound function is working here
 	// PlayMusic(BackgroundMusic::MainMenu);
 	// test push
+	
 }
 
 void HandleTestInput(Event event)
@@ -24,11 +25,14 @@ void OnUpdatedGameStateTest() {
 void UpdateTest()
 {
 	
+
+	
 }
 
 void DrawTest() {
 	
 	// for example test if a sound function is working here
 	// PlayMusic(BackgroundMusic::MainMenu);
+	
 	
 }

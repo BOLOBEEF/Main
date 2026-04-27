@@ -12,7 +12,6 @@
 // Runtime variables
 // Ex: clocks and timers for animations
 
-Clock animClock1; // separate clock
 
 
 // Functions
@@ -44,8 +43,36 @@ void HandleAnimationsInput(Event event)
 	}
 }
 
+void DoorUpdateAnimation(FinalDoor door) {
+	float speed = 20.0f;
+	
+		int frameCount = 5;
+		int width = 500, height = 200;
+		
+		if (door.justEntered) {
+			door.animationClock.restart(); // reset the animation when the door is not touched
+		}
+		door.currentFrame += (int)(door.animationClock.getElapsedTime().asSeconds() * speed) ;
+		if (door.currentFrame >= frameCount) {
+			 door.currentFrame = frameCount - 1; // stay on the last frame
+		}
+		door.sprite.setTextureRect(IntRect(door.currentFrame * (width / frameCount), 0, (width / frameCount), height));
 
-
+		if (door.player_on_door)
+		{
+			door.currentFrame += (int)(door.animationClock.getElapsedTime().asSeconds() * speed);
+	 }
+		else
+		{
+			door.currentFrame -= (int)(door.animationClock.getElapsedTime().asSeconds() * speed);
+		}
+		 if (door.currentFrame < 0) {
+			 door.currentFrame = 0; // stay on the first frame
+		 }
+	
+	
+	
+}
 
 void UpdateAnimation(Sprite& sprite, LoadTexture texture) {
 	float speed = 20.0f;
@@ -460,6 +487,7 @@ void UpdateAnimation(Sprite& sprite, LoadTexture texture) {
 		int index = (int)(globalClock.getElapsedTime().asSeconds() * speed) % frameCount;
 		sprite.setTextureRect(IntRect(index * (width / frameCount), 0, (width / frameCount), height));
 		break;
+
 	}
 	case diamonds_green_texture: {
 		int frameCount = 8;
@@ -485,6 +513,7 @@ void UpdateAnimation(Sprite& sprite, LoadTexture texture) {
 		int width = 1024, height = 128;
 		int frameWidth = width / frameCount;
 
+		static sf::Clock animClock1; // separate clock
 		float speed = 30.0f; 
 
 		float time = animClock1.getElapsedTime().asSeconds();
