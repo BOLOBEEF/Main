@@ -57,6 +57,7 @@ enum EditObjectMode
 	FireGem_mode,
 	WaterGem_mode,
 	Door_mode,
+	Door_Target_mode,
 	Door_Rotated_mode,
 	FirePond_mode,
 	WaterPond_mode,
@@ -449,6 +450,14 @@ void EditMode(Event event) {
 					objects.Add(Object(Object::DoorObject));
 					objects.GetLastElement().InitializeDoorObject(mousePosition, mousePosition + Vector2f(0, -100));
 					break;
+				case Door_Target_mode:
+					if (isEditingDoor)
+					{
+						Vector2f doorEndPos = mousePosition;
+						Allign(doorEndPos);
+						objects.elements[doorIndex].data.door.endPosition = doorEndPos;
+					}
+					break;
 				case Door_Rotated_mode:
 					objects.Add(Object(Object::DoorObject));
 					objects.GetLastElement().data.door.rotated = true;
@@ -657,6 +666,8 @@ void EditMode(Event event) {
 					editObjectMode = EditObjectMode::Button_mode;
 				if (event.key.code == Keyboard::Num2)
 					editObjectMode = EditObjectMode::Lever_mode;
+				if (event.key.code == Keyboard::Num3)
+					editObjectMode = EditObjectMode::Door_Target_mode;
 			}
 		}
 	}
