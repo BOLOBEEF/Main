@@ -13,6 +13,7 @@ float dt = 0.0f;
 Vector2f mousePosition;
 
 
+
 // Function Declarations
 
 // Audio
@@ -68,7 +69,7 @@ enum GameState
 
 
 // DO NOT CHANGE THIS DIRECTLY, USE UpdateGameState() INSTEAD
-GameState gameState = WIN_MENU;
+GameState gameState = MAIN_MENU;
 GameState lastGameState = gameState;	// used to keep track of the last game state
 
 
