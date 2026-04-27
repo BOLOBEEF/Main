@@ -735,20 +735,8 @@ void UpdateGame()
 	water_door.Update(waterGirl);
 	fire_door.Update(fireBoy);
 
-	if (fireBoy.isDead)
-		fireBoy.hitbox.setColor(Color::Yellow);
-	else 
-		fireBoy.hitbox.setColor(Color::Red);
-
-
-	if (waterGirl.isDead)
-		waterGirl.hitbox.setColor(Color::Yellow);
-	else
-		waterGirl.hitbox.setColor(Color::Blue);
-
 	fan.Update(fireBoy);
 	fan.Update(waterGirl);
-
 }
 
 

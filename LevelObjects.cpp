@@ -614,6 +614,7 @@ struct FinalDoor
 	bool player_on_door = false;
 	float scale = 0.6f;
 	int currentFrame = 0;
+	Clock animationClock;
 
 	Sprite sprite;
 	Vector2f startPosition;
