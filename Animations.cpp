@@ -44,35 +44,25 @@ void HandleAnimationsInput(Event event)
 	}
 }
 
-void DoorUpdateAnimation(FinalDoor door) {
-	float speed = 20.0f;
+void DoorUpdateAnimation(FinalDoor& door) {
+		float speed = 20.0f;
 	
-		int frameCount = 5;
-		int width = 500, height = 200;
+		int frameCount = 22;
+		int width = 3586, height = 138;
 		
-		if (door.justEntered) {
-			door.animationClock.restart(); // reset the animation when the door is not touched
-		}
-		door.currentFrame += (int)(door.animationClock.getElapsedTime().asSeconds() * speed) ;
-		if (door.currentFrame >= frameCount) {
-			 door.currentFrame = frameCount - 1; // stay on the last frame
-		}
-		door.sprite.setTextureRect(IntRect(door.currentFrame * (width / frameCount), 0, (width / frameCount), height));
-
 		if (door.player_on_door)
 		{
-			door.currentFrame += (int)(door.animationClock.getElapsedTime().asSeconds() * speed);
-	 }
+			door.currentFrame += speed * dt;
+		}
 		else
 		{
-			door.currentFrame -= (int)(door.animationClock.getElapsedTime().asSeconds() * speed);
+			door.currentFrame -= speed * dt;
 		}
-		 if (door.currentFrame < 0) {
-			 door.currentFrame = 0; // stay on the first frame
-		 }
-	
-	
-	
+
+		door.currentFrame = Clamp(door.currentFrame, 0.0f, frameCount - 1); // clamp the current frame to valid range
+		int displayFrame = (int)(door.currentFrame);
+
+		door.sprite.setTextureRect(IntRect(displayFrame * (width / frameCount), 0, (width / frameCount), height));
 }
 
 void UpdateAnimation(Sprite& sprite, LoadTexture texture) {

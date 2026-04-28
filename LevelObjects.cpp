@@ -1,17 +1,20 @@
 
 // STRUCTS for level objects
-void Allign(Sprite& sprite, Vector2f defaultSize = Vector2f(32, 32)) {
-	FloatRect bounds = sprite.getGlobalBounds();
-	Vector2f position = Vector2f(bounds.left, bounds.top);
-	position.x = round(position.x / defaultSize.x) * defaultSize.x;
-	position.y = round(position.y / defaultSize.y) * defaultSize.y;
-
-	sprite.setPosition(position + Vector2f(bounds.width / 2.0f, bounds.height / 2.0f));
+float Allign(float num, float defaultSize = 32.0f) {
+	return round(num / defaultSize) * defaultSize;
 }
 
 void Allign(Vector2f& position, Vector2f defaultSize = Vector2f(32, 32)) {
-	position.x = round(position.x / defaultSize.x) * defaultSize.x;
-	position.y = round(position.y / defaultSize.y) * defaultSize.y;
+	position.x = Allign(position.x, defaultSize.x);
+	position.y = Allign(position.y, defaultSize.y);
+}
+
+void Allign(Sprite& sprite, Vector2f defaultSize = Vector2f(32, 32)) {
+	FloatRect bounds = sprite.getGlobalBounds();
+	Vector2f position = Vector2f(bounds.left, bounds.top);
+	Allign(position, defaultSize);
+
+	sprite.setPosition(position + Vector2f(bounds.width / 2.0f, bounds.height / 2.0f));
 }
 
 
@@ -21,6 +24,9 @@ void Allign(Vector2f& position, Vector2f defaultSize = Vector2f(32, 32)) {
 void UpdateAnimation(Sprite&, LoadTexture);
 void UpdatePlayerTexture(Sprite&, PlayerType, PlayerState, bool);
 void UpdateAnimationPlayer(Sprite&, PlayerType, PlayerState, bool);
+
+struct FinalDoor;
+void DoorUpdateAnimation(FinalDoor&);
 
 struct Player
 {
@@ -613,8 +619,7 @@ struct FinalDoor
 	bool touched = false;
 	bool player_on_door = false;
 	float scale = 0.6f;
-	int currentFrame = 0;
-	Clock animationClock;
+	float currentFrame = 0;
 	bool justEntered = false;
 
 	Sprite sprite;
@@ -661,6 +666,8 @@ struct FinalDoor
 			PlayGameSoundEffect(GameSoundEffect::Door_sound);
 		}
 		else justEntered = false;
+
+		DoorUpdateAnimation(*this);
 	}
 };
 
