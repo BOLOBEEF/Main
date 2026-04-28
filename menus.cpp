@@ -610,6 +610,7 @@ void HandleMenuInput(Event event)
 		else if (MainMenuSettings)
 		MouseInput_mnu(event, OkButton_mnu, stone_button_0_texture, stone_button_1_texture, No_Sound_Buttons, MAIN_MENU, false, OkButtontxt);
 		
+
 		// code for handling settings menu input
 		break;
 	case GAMEOVER:
