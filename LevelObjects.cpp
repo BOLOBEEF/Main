@@ -24,6 +24,7 @@ enum PlayerState { Walk, Jump_Rise, Fall, Idle };
 void UpdateAnimation(Sprite&, LoadTexture);
 void UpdatePlayerTexture(Sprite&, PlayerType, PlayerState, bool);
 void UpdateAnimationPlayer(Sprite&, PlayerType, PlayerState, bool);
+void InitializeOneTimeAnimations();
 
 struct FinalDoor;
 void DoorUpdateAnimation(FinalDoor&);

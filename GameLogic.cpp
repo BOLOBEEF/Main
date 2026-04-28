@@ -87,11 +87,8 @@ void CheckCollision(Player& player) {
 
 void AllignColliders() {
 	for (int i = 0; i < colliders.count; i++)
-	{
-		if (colliders.elements[i].editable) {
+		if (colliders.elements[i].editable)
 			Allign(colliders.elements[i].sprite);
-		}
-	}
 }
 
 void LoadLevelData() {
@@ -151,8 +148,6 @@ void LoadLevelData() {
 	objects.GetLastElement().InitializeDoorObject(Vector2f(1696, 400), Vector2f(1696, 512));
 	objects.GetLastElement().data.door.button1 = Click(Vector2f(517, 500), true);
 	objects.GetLastElement().data.door.button2 = Click(Vector2f(1544, 340), true);
-	objects.Add(Object(Object::BoxObject));
-	objects.GetLastElement().InitializeBoxObject(Vector2f(498, 307));
 	objects.Add(Object(Object::GemObject));
 	objects.GetLastElement().InitializeGemObject(Gem::fireGem, Vector2f(1000, 904));
 	objects.Add(Object(Object::GemObject));
@@ -167,8 +162,8 @@ void LoadLevelData() {
 	objects.GetLastElement().InitializeGemObject(Gem::waterGem, Vector2f(1224, 136));
 	objects.Add(Object(Object::GemObject));
 	objects.GetLastElement().InitializeGemObject(Gem::fireGem, Vector2f(648, 72));
-	objects.Add(Object(Object::FanObject));
-	objects.GetLastElement().InitializeFanObject(center);
+	objects.Add(Object(Object::BoxObject));
+	objects.GetLastElement().InitializeBoxObject(Vector2f(1199, 243));
 }
 
 
@@ -269,8 +264,14 @@ void InitializeGame()
 	AllignColliders();
 	fireBoy.Initialize();
 	waterGirl.Initialize();
+	fireBoy.Update();
+	waterGirl.Update();
 
 
+	ground = Sprite();
+	background = Sprite();
+	outlineSprite = Sprite();
+	resultSprite = Sprite();
 
 	ApplyTexture(ground, LoadTexture::GROUND, Vector2f(256, 256));
 	ground.setTexture(groundTexture);
@@ -290,6 +291,8 @@ void InitializeGame()
 
 	water_door.Initialize();
 	fire_door.Initialize();
+	water_door.Update(fireBoy);
+	fire_door.Update(fireBoy);
 
 	UpdateGroundTexture();
 }
@@ -730,7 +733,7 @@ void RestartGame() {
 	objects = ObjectList();
 
 	// Load Data
-	LoadLevelData();
+	InitializeGame();
 }
 
 
@@ -799,11 +802,11 @@ void DrawGame(bool forceDraw)
 	for (int i = 0; i < objects.count; i++)
 		objects.elements[i].MidDraw();
 
-	fireBoy.Draw();
-	waterGirl.Draw();
-
 	window.draw(water_door.sprite);
 	window.draw(fire_door.sprite);
+
+	fireBoy.Draw();
+	waterGirl.Draw();
 
 
 	for (int i = 0; i < objects.count; i++)

@@ -16,6 +16,11 @@
 
 // Functions
 Clock animClock1;
+void InitializeOneTimeAnimations()
+{
+	animClock1.restart(); // so that the animation will start from the beginning when we open the win menu, and not from the middle if we win multiple times in a row without closing the game
+}
+
 void InitializeAnimations()
 {
 
@@ -67,7 +72,6 @@ void DoorUpdateAnimation(FinalDoor& door) {
 
 void UpdateAnimation(Sprite& sprite, LoadTexture texture) {
 	float speed = 20.0f;
-	
 
 	switch (texture)
 	{
@@ -530,9 +534,9 @@ void UpdateAnimation(Sprite& sprite, LoadTexture texture) {
 		int width = 1024, height = 128;
 		int frameWidth = width / frameCount;
 		
-		float speed = 5.f;
-	
-		int index = (int)(globalClock.getElapsedTime().asSeconds() * speed) ;
+		float speed = 30.f;
+
+		int index = (int)(animClock1.getElapsedTime().asSeconds() * speed);
 
 		if (index >= frameCount) {
 			index = frameCount - 1;
@@ -548,9 +552,9 @@ void UpdateAnimation(Sprite& sprite, LoadTexture texture) {
 		int frameWidth = width / frameCount;
 
 		
-		float speed = 5.f;
+		float speed = 30.f;
 
-		int index = (int)(globalClock.getElapsedTime().asSeconds() * speed);
+		int index = (int)(animClock1.getElapsedTime().asSeconds() * speed);
 
 		if (index >= frameCount) {
 			index = frameCount - 1;
@@ -566,9 +570,9 @@ void UpdateAnimation(Sprite& sprite, LoadTexture texture) {
 		int frameWidth = width / frameCount;
 
 	    
-		float speed = 5.f;
+		float speed = 30.f;
 
-		int index = (int)(globalClock.getElapsedTime().asSeconds() * speed) ;
+		int index = (int)(animClock1.getElapsedTime().asSeconds() * speed) ;
 
 		if (index >= frameCount) {
 			index = frameCount - 1;

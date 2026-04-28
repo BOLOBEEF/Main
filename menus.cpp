@@ -638,6 +638,9 @@ void UpdateUI()
 		if (ratingOrder >= 600)
 		{
 			ratingOrder = 600;
+			if (levelAndArrowIcon_turn == false) // do this one time only
+				InitializeOneTimeAnimations(); // to reset clock of diamond animation
+
 			levelAndArrowIcon_turn = true;
 			ApplyTexture(arrowIcon_Winmnu, LoadTexture::arrow_icon1_texture, Vector2f(150, 100));
 			UpdateAnimation(arrowIcon_Winmnu, arrow_icon1_texture);
