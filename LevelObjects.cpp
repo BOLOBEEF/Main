@@ -22,6 +22,7 @@ void UpdateAnimation(Sprite&, LoadTexture);
 void UpdatePlayerTexture(Sprite&, PlayerType, PlayerState, bool);
 void UpdateAnimationPlayer(Sprite&, PlayerType, PlayerState, bool);
 
+
 struct Player
 {
 	// Settings:
@@ -602,6 +603,7 @@ struct ColliderList {
 		delete[] elements;
 	}
 };
+
 struct FinalDoor
 {
 	enum door_type
@@ -662,8 +664,8 @@ struct FinalDoor
 		}
 		else justEntered = false;
 	}
+	
 };
-
 
 
 
