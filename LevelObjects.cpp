@@ -1368,7 +1368,7 @@ struct Fan
 	Sprite air_sprite;
 	Vector2f startPosition;
 	float scale = 1.0f;
-	float airForce = 600.0f;
+	float airForce = 300.0f;
 
 
 	Fan() {}
@@ -1390,10 +1390,15 @@ struct Fan
 	}
 
 	void Update(Player& player) {
+		int reduction = 30; //reducing the hitbox of the air effect to avoid pushing the player when just touching the edge of the effect
 		UpdateAnimation(fan_sprite, wind_base_texture);
 		UpdateAnimation(air_sprite, wind_effect_texture);
-
-		if (air_sprite.getGlobalBounds().intersects(player.hitbox.getGlobalBounds()))
+		FloatRect air_intersection=air_sprite.getGlobalBounds();
+		air_intersection.left +=reduction;
+		air_intersection.width -= reduction * 2;
+		air_intersection.top += reduction;
+		air_intersection.height -= reduction * 2;
+		if (air_intersection.intersects(player.hitbox.getGlobalBounds()))
 			player.velocity.y -= airForce * dt;
 	}
 
