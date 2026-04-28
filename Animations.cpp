@@ -255,10 +255,45 @@ void UpdateAnimation(Sprite& sprite, LoadTexture texture) {
 
 	case pusher_block_texture:
 	{
-		sprite.setTexture(pusher_block);
+		sprite.setTextureRect(IntRect(0, 0, 110, 86));
 		break;
 	}
-
+	case pusher_block_light_texture:
+	{
+		sprite.setTextureRect(IntRect(0, 0, 64, 62));
+		break;
+	}
+	case snow_flat_texture:
+	{
+		sprite.setTextureRect(IntRect(0, 0, 60, 60));
+		break;
+	}
+	case snow_slope_left_side_down_texture:
+	{
+		sprite.setTextureRect(IntRect(0, 0, 50, 51));
+		break;
+	}
+	case snow_slope_right_side_down_texture:
+	{
+		sprite.setTextureRect(IntRect(0, 0, 50, 51));
+		break;
+	}
+	case wind_base_texture:
+	{
+		int frameCount = 4;
+		int width = 472, height = 80;
+		int index = (int)(globalClock.getElapsedTime().asSeconds() * speed) % frameCount;
+		sprite.setTextureRect(IntRect(index* (width / frameCount), 0, (width / frameCount), height));
+		break;
+	}
+	case wind_effect_texture:
+	{
+		int frameCount = 30;
+		int width = 3840, height = 241;
+		int index = (int)(globalClock.getElapsedTime().asSeconds() * speed) % frameCount;
+		sprite.setTextureRect(IntRect(index * (width / frameCount), 0, (width / frameCount), height));
+		break;
+	}
 	case fire_door_open_texture:
 	{
 		int frameCount = 22;
