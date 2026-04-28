@@ -728,12 +728,14 @@ struct Lever {
 	bool initialized = false;
 	Sprite sprite;
 	Sprite baseSprite;
+	Sprite light_stick;
 	Vector2f initialPosition;
 
 	bool state = false;
 
 	void Initialize() {
 		ApplyTexture(sprite, LoadTexture::lever_stick_texture, Vector2f(85, 85));
+		ApplyTexture(light_stick, LoadTexture::lever_light_texture, Vector2f(1, 1), Vector2f(1, 1), true, false);
 		ApplyTexture(baseSprite, LoadTexture::lever_base_texture, Vector2f(85, 85));
 		initialized = true;
 	}
@@ -757,6 +759,7 @@ struct Lever {
 					{
 
 						PlayGameSoundEffect(GameSoundEffect::Lever_sound);
+					
 					}
 					else
 					{
@@ -768,13 +771,19 @@ struct Lever {
 		}
 	}
 	void leverDraw() {
-		if (state)sprite.setRotation(-30);
+	
+		window.draw(sprite);
+		if (state) {
+			sprite.setRotation(-30);
+			light_stick.setColor(Color::Yellow);
+			window.draw(light_stick);
+		}
 		else
 		{
 			sprite.setRotation(30);
 		}
-		window.draw(sprite);
 		baseSprite.setPosition(sprite.getPosition());
+		light_stick.setPosition(sprite.getPosition()+Vector2f(-17,12));
 		window.draw(baseSprite);
 	}
 
