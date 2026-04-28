@@ -75,6 +75,7 @@ Sprite checkOrCrossMaleOrFemale_icon_Winmnu, checkOrCrossDiamonds_icon_Winmnu, c
 float ratingOrder = 0, ratingOrder_Speed = 200;
 bool MaleAndFemale_turn = false, diamondRating_turn = false, timerRating_turn = false, levelAndArrowIcon_turn = false;
 bool isMaleAndFemaleSoundPlayed = false, isdiamondSoundPlayed = false, istimerSoundPlayed = false, islevelAndArrowSoundPlayed = false;
+bool MainMenuSettings = true;
 //because i want to play the sounds of each rating once in the game loop not to rerun it each iteration 
 
 
@@ -315,8 +316,8 @@ void SettingMenu_Movement(Vector2f Desired_Target)
 	Stone_mnu.setPosition(Current_position_mnu);
 	SoundButton_mnu.setPosition(Vector2f(700, 530) + Current_position_mnu - center);
 	MusicButton_mnu.setPosition(Vector2f(1200, 530) + Current_position_mnu - center);
-	OkButton_mnu.setPosition(Vector2f(1160, 750) + Current_position_mnu - center);
-	OkButtontxt.setPosition(Vector2f(908, 720) + Current_position_mnu - center);
+	OkButton_mnu.setPosition(Vector2f(1155, 750) + Current_position_mnu - center);
+	OkButtontxt.setPosition(Vector2f(903, 720) + Current_position_mnu - center);
 	// I Will Handle this After You finish Settings Menu
 }
 
@@ -564,7 +565,6 @@ void InitializeMenu()
 	// for example load sprites, set up text objects, etc.
 }
 
-
 void HandleMenuInput(Event event)
 {
 
@@ -603,7 +603,13 @@ void HandleMenuInput(Event event)
 	case SETTINGS:
 		MuteSound(event, SoundButton_mnu, MuteButton0_texture, MuteButton1_texture, ButtonClick, isSoundButtonClicked_mnu);
 		MuteMusic(event, MusicButton_mnu, MusicButton0_texture, MusicButton1_texture, ButtonClick, isMusicButtonClicked_mnu);
+
+		if (PreviousMenu_State == PAUSE_MENU)
+		MouseInput_mnu(event, OkButton_mnu, stone_button_0_texture, stone_button_1_texture, No_Sound_Buttons, PAUSE_MENU, false, OkButtontxt);
+		
+		else if (MainMenuSettings)
 		MouseInput_mnu(event, OkButton_mnu, stone_button_0_texture, stone_button_1_texture, No_Sound_Buttons, MAIN_MENU, false, OkButtontxt);
+		
 		// code for handling settings menu input
 		break;
 	case GAMEOVER:
@@ -663,9 +669,18 @@ void UpdateUI()
 	{
 	case MAIN_MENU:
 		// code for main menu
-		GameoverMenu_Movement(Target_Down_mnu);
+		MainMenuSettings = true;
 		UpdateAnimation(IdleFbHeadmnu, fire_idle_head_texture);
 		UpdateAnimation(IdleWgHeadmnu, water_head_idle_texture);
+		if (PreviousMenu_State == SETTINGS)
+		{
+			SettingMenu_Movement(Target_Down_mnu);
+		}
+		else if (PreviousMenu_State == GAMEOVER)
+		{
+			GameoverMenu_Movement(Target_Down_mnu);
+		}
+
 		break;
 	case LEVEL_MENU:
 		if (PreviousMenu_State == GAMEOVER)
@@ -683,6 +698,7 @@ void UpdateUI()
 		break;
 	case PAUSE_MENU:
 		PreviousMenu_State = PAUSE_MENU;
+		MainMenuSettings = false;
 		PauseMenu_Movement(Target_up_mnu);
 		currentDimState = DimmingUp;
 		break;
@@ -738,7 +754,9 @@ void UpdateUI()
 
 		break;
 	case SETTINGS:
+		PreviousMenu_State = SETTINGS;
 		SettingMenu_Movement(Target_up_mnu);
+		currentDimState = DimmingUp;
 		// code for settings menu
 		break;
 	case GAMEOVER:
@@ -850,6 +868,14 @@ void DrawUI()
 				window.draw(Levels_GOVERtxt);
 				window.draw(GameOver_txt);
 			}
+			else if (PreviousMenu_State == SETTINGS)
+			{
+				window.draw(Stone_mnu);
+				window.draw(SoundButton_mnu);
+				window.draw(MusicButton_mnu);
+				window.draw(OkButton_mnu);
+				window.draw(OkButtontxt);
+			}
 		}
 		//draw the things of the Main menu down here
 
@@ -953,12 +979,6 @@ void DrawUI()
 		// code for drawing settings menu
 		//DrawGame(true);
 		window.draw(Dimmed_Background);
-		window.draw(Stone_mnu);
-		window.draw(SoundButton_mnu);
-		window.draw(MusicButton_mnu);
-		window.draw(OkButton_mnu);
-		window.draw(OkButtontxt);
-
 		if (Current_position_mnu != Target_Down_mnu)
 		{
 
@@ -974,7 +994,26 @@ void DrawUI()
 				window.draw(Resume_Pausetxt);
 				window.draw(Pause_txt);
 			}
+			else if (MainMenuSettings)
+			{
+				window.draw(MainMenuBackground_mnu);
+				window.draw(GameName_mnu);
+				window.draw(PlayButton_mnu);
+				window.draw(CreditsButton_mnu);
+				window.draw(ExitButton_mnu);
+				window.draw(SettingButton_mnu);
+				window.draw(IdleFbBodymnu);
+				window.draw(IdleFbHeadmnu);
+				window.draw(IdleWgBodymnu);
+				window.draw(IdleWgHeadmnu);
+			}
 		}
+
+		window.draw(Stone_mnu);
+		window.draw(SoundButton_mnu);
+		window.draw(MusicButton_mnu);
+		window.draw(OkButton_mnu);
+		window.draw(OkButtontxt);
 		
 		break;
 
