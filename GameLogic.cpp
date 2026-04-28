@@ -8,23 +8,13 @@
 
 
 // Structs and enums
-enum ponds_type
-{
-	FIRE_POND,
-	WATER_SURFACE,
-	POISON_POND
-};
-
-
 
 
 // Runtime variables
-Player fireBoy = Player(Fireboy, center + Vector2f(-600, 200));
-Player waterGirl = Player(Watergirl, center + Vector2f(-550, 300));
-FinalDoor water_door = FinalDoor(FinalDoor::WATER_DOOR, Vector2f(1200, 25));
-FinalDoor fire_door = FinalDoor(FinalDoor::FIRE_DOOR, Vector2f(1300, 25));
-
-Fan fan = Fan(Vector2f(900, 468));
+Player fireBoy = Player(Fireboy, Vector2f());
+Player waterGirl = Player(Watergirl, Vector2f());
+FinalDoor water_door = FinalDoor(FinalDoor::WATER_DOOR, Vector2f());
+FinalDoor fire_door = FinalDoor(FinalDoor::FIRE_DOOR, Vector2f());
 
 Sprite ground;
 Sprite background;
@@ -65,7 +55,8 @@ enum EditObjectMode
 	Box_mode,
 	Button_mode,
 	Lever_mode,
-	TemporaryGround_mode
+	TemporaryGround_mode,
+	FanObject_mode
 } editObjectMode;
 bool isEditingDoor = false;
 int doorIndex = 0; // the door that is currently being edited
@@ -104,6 +95,10 @@ void AllignColliders() {
 }
 
 void LoadLevelData() {
+	fireBoy = Player(Fireboy, Vector2f(260, 931));
+	waterGirl = Player(Watergirl, Vector2f(257, 805));
+	water_door = FinalDoor(FinalDoor::WATER_DOOR, Vector2f(1576, 120));
+	fire_door = FinalDoor(FinalDoor::FIRE_DOOR, Vector2f(1500, 114));
 	colliders.Add(Collider(Collider::ColliderType::Rectangle, center + Vector2f(-432, 436), Vector2f(25, 1)));
 	colliders.Add(Collider(Collider::ColliderType::Rectangle, center + Vector2f(16, -524), Vector2f(53, 1)));
 	colliders.Add(Collider(Collider::ColliderType::Rectangle, center + Vector2f(752, 84), Vector2f(3, 1)));
@@ -150,10 +145,10 @@ void LoadLevelData() {
 	objects.Add(Object(Object::PondObject));
 	objects.GetLastElement().InitializePondObject(Pond::POISON_POND, Vector2f(1168, 784), 5);
 	objects.Add(Object(Object::DoorObject));
-	objects.GetLastElement().InitializeDoorObject(Vector2f(224, 518), Vector2f(224, 640));
+	objects.GetLastElement().InitializeDoorObject(Vector2f(224, 528), Vector2f(224, 640));
 	objects.GetLastElement().data.door.lever = Lever(Vector2f(515, 659), true);
 	objects.Add(Object(Object::DoorObject));
-	objects.GetLastElement().InitializeDoorObject(Vector2f(1696, 409), Vector2f(1696, 512));
+	objects.GetLastElement().InitializeDoorObject(Vector2f(1696, 400), Vector2f(1696, 512));
 	objects.GetLastElement().data.door.button1 = Click(Vector2f(517, 500), true);
 	objects.GetLastElement().data.door.button2 = Click(Vector2f(1544, 340), true);
 	objects.Add(Object(Object::BoxObject));
@@ -172,6 +167,8 @@ void LoadLevelData() {
 	objects.GetLastElement().InitializeGemObject(Gem::waterGem, Vector2f(1224, 136));
 	objects.Add(Object(Object::GemObject));
 	objects.GetLastElement().InitializeGemObject(Gem::fireGem, Vector2f(648, 72));
+	objects.Add(Object(Object::FanObject));
+	objects.GetLastElement().InitializeFanObject(center);
 }
 
 
@@ -272,8 +269,8 @@ void InitializeGame()
 	AllignColliders();
 	fireBoy.Initialize();
 	waterGirl.Initialize();
-	
-	
+
+
 
 	ApplyTexture(ground, LoadTexture::GROUND, Vector2f(256, 256));
 	ground.setTexture(groundTexture);
@@ -294,14 +291,16 @@ void InitializeGame()
 	water_door.Initialize();
 	fire_door.Initialize();
 
-	fan.Initialize();
-	//fan.fan_sprite.setColor(Color::Red);
-	//fan.air_sprite.setColor(Color::White);
-
 	UpdateGroundTexture();
 }
 
 void PrintLevelData() {
+	// player data
+	cout << "fireBoy = Player(Fireboy, Vector2f(" << (int)fireBoy.startPosition.x << ", " << (int)fireBoy.startPosition.y << "));" << endl;
+	cout << "waterGirl = Player(Watergirl, Vector2f(" << (int)waterGirl.startPosition.x << ", " << (int)waterGirl.startPosition.y << "));" << endl;
+	// door data
+	cout << "water_door = FinalDoor(FinalDoor::WATER_DOOR, Vector2f(" << (int)water_door.startPosition.x << ", " << (int)water_door.startPosition.y << "));" << endl;
+	cout << "fire_door = FinalDoor(FinalDoor::FIRE_DOOR, Vector2f(" << (int)fire_door.startPosition.x << ", " << (int)fire_door.startPosition.y << "));" << endl;
 	for (int i = 0; i < colliders.count; i++) {
 		string type = (colliders.elements[i].type == Collider::ColliderType::Rectangle ? "Rectangle" : colliders.elements[i].type == Collider::ColliderType::Triangle ? "Triangle" : "Triangle_Rotated");
 		string position = "Vector2f(" + to_string((int)(colliders.elements[i].sprite.getPosition().x - center.x)) + ", " + to_string((int)(colliders.elements[i].sprite.getPosition().y - center.y)) + ")";
@@ -353,6 +352,11 @@ void PrintLevelData() {
 		case Object::TemporaryGroundObject:
 			cout << "objects.Add(Object(Object::TemporaryGroundObject));" << endl;
 			cout << "objects.GetLastElement().InitializeTemporaryGroundObject(Vector2f(" << (int)objects.elements[i].data.temporaryGround.collider.sprite.getPosition().x << ", " << (int)objects.elements[i].data.temporaryGround.collider.sprite.getPosition().y << "));" << endl;
+			break;
+		case Object::FanObject:
+			cout << "objects.Add(Object(Object::FanObject));" << endl;
+			cout << "objects.GetLastElement().InitializeFanObject(Vector2f(" << (int)objects.elements[i].data.fan.startPosition.x << ", " << (int)objects.elements[i].data.fan.startPosition.y << "));" << endl;
+			break;
 		}
 	}
 }
@@ -485,6 +489,10 @@ void EditMode(Event event) {
 					objects.Add(Object(Object::TemporaryGroundObject));
 					objects.GetLastElement().InitializeTemporaryGroundObject(mousePosition);
 					break;
+				case FanObject_mode:
+					objects.Add(Object(Object::FanObject));
+					objects.GetLastElement().InitializeFanObject(mousePosition);
+					break;
 				case Button_mode:
 					if (isEditingDoor)
 						if (objects.elements[doorIndex].type == Object::DoorObject)
@@ -510,7 +518,7 @@ void EditMode(Event event) {
 							objects.elements[doorIndex].data.door.lever = Lever(mousePosition, true);
 					break;
 				}
-			
+
 			// check collision with other objects	
 			// Object.CheckCollisionWithObjects(objects);
 
@@ -564,6 +572,30 @@ void EditMode(Event event) {
 			PrintObjectsCode();
 		}
 
+		if (event.key.code == Keyboard::C) {
+			// set fireBoy position to mouse position
+			fireBoy = Player(Fireboy, mousePosition);
+			fireBoy.Initialize();
+		}
+
+		if (event.key.code == Keyboard::V) {
+			// set waterGirl position to mouse position
+			waterGirl = Player(Watergirl, mousePosition);
+			waterGirl.Initialize();
+		}
+
+		if (event.key.code == Keyboard::B) {
+			// set fireDoor position to mouse position
+			fire_door = FinalDoor(FinalDoor::FIRE_DOOR, mousePosition);
+			fire_door.Initialize();
+		}
+
+		if (event.key.code == Keyboard::N) {
+			// set waterDoor position to mouse position
+			water_door = FinalDoor(FinalDoor::WATER_DOOR, mousePosition);
+			water_door.Initialize();
+		}
+
 		if (editMode == EditMode::collider_mode)
 		{
 			isEditingDoor = false;
@@ -601,7 +633,7 @@ void EditMode(Event event) {
 				objects.RemoveAt(objects.count - 1);
 				if (shouldUpdateGroundTexture) UpdateGroundTexture();
 			}
-			
+
 			if (event.key.code == Keyboard::Numpad4)
 			{
 				editPondWidth--;
@@ -659,6 +691,8 @@ void EditMode(Event event) {
 
 				if (event.key.code == Keyboard::Num9)
 					editObjectMode = EditObjectMode::TemporaryGround_mode;
+				if (event.key.code == Keyboard::Num0)
+					editObjectMode = EditObjectMode::FanObject_mode;
 			}
 			else {
 				if (event.key.code == Keyboard::Num1)
@@ -691,13 +725,12 @@ void HandleGameInput(Event event)
 
 // temporary restart function
 void RestartGame() {
-	Vector2f fireBoyStartPos = center + Vector2f(-600, 200);
-	Vector2f waterGirlStartPos = center + Vector2f(-550, 300);
+	// Erase Data
+	colliders = ColliderList();
+	objects = ObjectList();
 
-	fireBoy.isDead = false;
-	waterGirl.isDead = false;
-	fireBoy.hitbox.setPosition(fireBoyStartPos);
-	waterGirl.hitbox.setPosition(waterGirlStartPos);
+	// Load Data
+	LoadLevelData();
 }
 
 
@@ -745,8 +778,6 @@ void UpdateGame()
 	water_door.Update(waterGirl);
 	fire_door.Update(fireBoy);
 
-	fan.Update(fireBoy);
-	fan.Update(waterGirl);
 
 	check_game_win();
 }
@@ -778,8 +809,6 @@ void DrawGame(bool forceDraw)
 	for (int i = 0; i < objects.count; i++)
 		objects.elements[i].PostDraw();
 
-	window.draw(fan.air_sprite);
-	window.draw(fan.fan_sprite);
 	//for (int i = 0; i < colliders.count; i++)
 		//window.draw(colliders.elements[i].sprite);
 }
