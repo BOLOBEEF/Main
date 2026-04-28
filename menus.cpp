@@ -668,19 +668,7 @@ void HandleMenuInput(Event event)
 		MouseInput_mnu(event, ContinueButton_Winmnu, stone_button_0_texture, stone_button_1_texture, ButtonClick, LEVEL_MENU, true, Continue_Wintxt);
 		break;
 	case SETTINGS:
-<<<<<<< Updated upstream
-		MuteSound(event, SoundButton_mnu, MuteButton0_texture, MuteButton1_texture, ButtonClick, isSoundButtonClicked_mnu);
-		MuteMusic(event, MusicButton_mnu, MusicButton0_texture, MusicButton1_texture, ButtonClick, isMusicButtonClicked_mnu);
-
-		if (PreviousMenu_State == PAUSE_MENU)
-		MouseInput_mnu(event, OkButton_mnu, stone_button_0_texture, stone_button_1_texture, No_Sound_Buttons, PAUSE_MENU, false, OkButtontxt);
-		
-		else if (MainMenuSettings)
-		MouseInput_mnu(event, OkButton_mnu, stone_button_0_texture, stone_button_1_texture, No_Sound_Buttons, MAIN_MENU, false, OkButtontxt);
-		
-
 		// code for handling settings menu input
-=======
 		if (Settings_from_MainMenu)
 		{
 			MuteSound(event, SoundButton_MainToSetting, MuteButton0_texture, MuteButton1_texture, ButtonClick, isSoundButtonClicked_MainToSetting);
@@ -693,7 +681,6 @@ void HandleMenuInput(Event event)
 			MuteMusic(event, MusicButton_PauseToSetting, MusicButton0_texture, MusicButton1_texture, ButtonClick, isMusicButtonClicked_PauseToSetting);
 			MouseInput_mnu(event, OkButton_PauseToSetting, stone_button_0_texture, stone_button_1_texture, No_Sound_Buttons, PAUSE_MENU, false, OkButtontxt_PauseToSetting);
 		}
->>>>>>> Stashed changes
 		break;
 	case GAMEOVER:
 		MouseInput_mnu(event, GameOverbuttons_mnu[0], stone_button_0_texture, stone_button_1_texture, ButtonClick, LEVEL_MENU, true, Levels_GOVERtxt);
