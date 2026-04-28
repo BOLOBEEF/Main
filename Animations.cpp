@@ -396,17 +396,16 @@ void UpdateAnimation(Sprite& sprite, LoadTexture texture) {
 
 	case lever_stick_texture:
 		break;
-	case bar_texture:
+	case moving_platform_texture:
+		sprite.setTextureRect(IntRect(0, 0, 1032, 234));
 		break;
-	case bar_cap_right_texture:
-		break;
-	case bar_cap_left_texture:
-		break;
+	
 	case ramp_1_texture:
 		break;
 	case slider_dot_texture:
 		break;
-	case slider_light_on_texture:
+	case lever_light_texture:
+		sprite.setTextureRect(IntRect(0, 0, 106, 164));
 		break;
 	case BackButton0_texture:
 		sprite.setTextureRect(IntRect(0, 0, 64, 109));

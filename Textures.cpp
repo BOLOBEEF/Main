@@ -71,19 +71,17 @@ enum LoadTexture
 	fire_pond_left_texture,
 	lever_stick_texture,
 	lever_base_texture,
-	bar_texture,
+      moving_platform_texture,
 	green_pond_texture,
 	green_pond_left_texture,
 	green_pond_right_texture,
-	bar_cap_right_texture,
-	bar_cap_left_texture,
 	ramp_1_texture,
 	water_pond_right_texture,
 	water_pond_texture,
 	water_pond_left_texture,
 	temporaryPlatform_texture,
 	slider_dot_texture,
-	slider_light_on_texture,
+    lever_light_texture,
 	DOOR_WATER,
 	DOOR_FIRE,
 	wind_base_texture,
@@ -197,15 +195,13 @@ Texture fire_pond_right;
 Texture fire_pond_left;
 Texture lever_stick;
 Texture lever_base;
-Texture bar;
-Texture bar_cap_right;
-Texture bar_cap_left;
+Texture moving_platform;
 Texture ramp_1;
 Texture water_pond_right;
 Texture water_pond;
 Texture water_pond_left;
 Texture slider_dot;
-Texture slider_light_on;
+Texture lever_light;
 Texture green_pond;
 Texture green_pond_right;
 Texture green_pond_left;
@@ -469,17 +465,10 @@ void ApplyTexture(Sprite& sprite, LoadTexture texture, Vector2f size = Vector2f(
 		sprite.setTexture(lever_base);
 		break;
 
-	case bar_texture:
-		sprite.setTexture(bar);
+	case moving_platform_texture:
+		sprite.setTexture(moving_platform);
 		break;
 
-	case bar_cap_right_texture:
-		sprite.setTexture(bar_cap_right);
-		break;
-
-	case bar_cap_left_texture:
-		sprite.setTexture(bar_cap_left);
-		break;
 
 	case ramp_1_texture:
 		sprite.setTexture(ramp_1);
@@ -501,8 +490,8 @@ void ApplyTexture(Sprite& sprite, LoadTexture texture, Vector2f size = Vector2f(
 		sprite.setTexture(slider_dot);
 		break;
 
-	case slider_light_on_texture:
-		sprite.setTexture(slider_light_on);
+	case lever_light_texture:
+		sprite.setTexture(lever_light);
 		break;
 
 	case green_pond_texture:
@@ -882,15 +871,14 @@ void InitializeTextures()
 	lever_base.loadFromFile("Main/Assets/Animations/map objects assets/lever base.png");
 	pusher_block_light.loadFromFile("Main/Assets/Animations/map objects assets/pusher_block_light.png");
 	temporaryPlatform.loadFromFile("Main/Assets/Animations/map objects assets/pulley_platform.png");
-	bar.loadFromFile("Main/Assets/Animations/map objects assets/bar center.png");
-	bar_cap_right.loadFromFile("Main/Assets/Animations/map objects assets/bar cap right.png");
-	bar_cap_left.loadFromFile("Main/Assets/Animations/map objects assets/bar cap left.png");
+	moving_platform.loadFromFile("Main/Assets/Animations/map objects assets/bar center.png");
+	
 	ramp_1.loadFromFile("Main/Assets/Animations/map objects assets/ramp_1.png");
 	water_pond_right.loadFromFile("Main/Assets/Animations/map objects assets/water box right.png");
 	water_pond.loadFromFile("Main/Assets/Animations/map objects assets/water box.png");
 	water_pond_left.loadFromFile("Main/Assets/Animations/map objects assets/water box left.png");
 	slider_dot.loadFromFile("Main/Assets/Animations/map objects assets/sliderdot.png");
-	slider_light_on.loadFromFile("Main/Assets/Animations/map objects assets/slider_light_on.png");
+	lever_light.loadFromFile("Main/Assets/Animations/map objects assets/lever stick light on.png");
 	green_pond.loadFromFile("Main/Assets/Animations/map objects assets/green box.png");
 	green_pond_left.loadFromFile("Main/Assets/Animations/map objects assets/green box left.png");
 	green_pond_right.loadFromFile("Main/Assets/Animations/map objects assets/green box right.png");
