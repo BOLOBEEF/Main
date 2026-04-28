@@ -1347,20 +1347,22 @@ struct Fan
 	Fan(Vector2f fan_position) {
 		fan_sprite.setPosition(fan_position);
 		Allign(fan_sprite);
-		air_sprite.setPosition(fan_sprite.getPosition() + Vector2f(0, -32 * 3));
+		air_sprite.setPosition(fan_sprite.getPosition() + Vector2f(0, -32 *6));
 		//Allign(air_sprite);
 	}
 	void Initialize() {
-		ApplyTexture(fan_sprite, LoadTexture::RECTANGLE, Vector2f(32*2, 32*2));
-		ApplyTexture(air_sprite, LoadTexture::RECTANGLE, Vector2f(32*2, 32 * 5));
+		ApplyTexture(fan_sprite, LoadTexture::wind_base_texture, Vector2f(32*2, 32*2), Vector2f(1, 1), true, false);
+		ApplyTexture(air_sprite, LoadTexture::wind_effect_texture, Vector2f(32*2, 32 * 5),Vector2f(1,1),true,false);
 		Allign(fan_sprite);
 		Allign(air_sprite);
 	}
 	void Update(Player& player) {
+		UpdateAnimation(fan_sprite, wind_base_texture);
+		UpdateAnimation(air_sprite, wind_effect_texture);
 		if (air_sprite.getGlobalBounds().intersects(player.hitbox.getGlobalBounds()))
 		{
 			if (player.hitbox.getPosition().y > air_sprite.getPosition().y)
-			player.velocity.y -=500.0f * dt;
+			player.velocity.y -=1000.0f * dt;
 		}
 	}
 };

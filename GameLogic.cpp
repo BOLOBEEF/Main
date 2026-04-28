@@ -24,7 +24,7 @@ Player waterGirl = Player(Watergirl, center + Vector2f(-550, 300));
 FinalDoor water_door = FinalDoor(FinalDoor::WATER_DOOR, Vector2f(1200, 25));
 FinalDoor fire_door = FinalDoor(FinalDoor::FIRE_DOOR, Vector2f(1300, 25));
 
-Fan fan = Fan(Vector2f(900, 368));
+Fan fan = Fan(Vector2f(900, 468));
 
 Sprite ground;
 Sprite background;
@@ -295,7 +295,7 @@ void InitializeGame()
 	fire_door.Initialize();
 
 	fan.Initialize();
-	fan.fan_sprite.setColor(Color::Red);
+	//fan.fan_sprite.setColor(Color::Red);
 	fan.air_sprite.setColor(Color::White);
 
 	UpdateGroundTexture();
