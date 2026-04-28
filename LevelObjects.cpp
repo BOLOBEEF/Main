@@ -670,7 +670,7 @@ struct FinalDoor
 		}
 		else justEntered = false;
 
-		DoorUpdateAnimation(*this);
+		
 	}
 	
 };
