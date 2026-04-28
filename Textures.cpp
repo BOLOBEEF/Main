@@ -851,8 +851,8 @@ void InitializeTextures()
 	Lock0.loadFromFile("Main/Assets/Animations/menu assets/Lock0000.png");
 	MusicButton0.loadFromFile("Main/Assets/Animations/menu assets/MusicButton0000.png");
 	MusicButton1.loadFromFile("Main/Assets/Animations/menu assets/MusicButton0001.png");
-	MuteButton0.loadFromFile("Main/Assets/Animations/menu assets/MuteButton0000.png");
-	MuteButton1.loadFromFile("Main/Assets/Animations/menu assets/MuteButton0001.png");
+	MuteButton0.loadFromFile("Main/Assets/Animations/menu assets/FxButton0000.png");
+	MuteButton1.loadFromFile("Main/Assets/Animations/menu assets/FxButton0001.png");
 	SettingsButton0.loadFromFile("Main/Assets/Animations/menu assets/SettingsButton0000.png");
 	sound_icon.loadFromFile("Main/Assets/Animations/menu assets/sound icon.png");
 	movingbox.loadFromFile("Main/Assets/Animations/map objects assets/movingbox.png");

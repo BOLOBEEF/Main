@@ -466,10 +466,10 @@ void UpdateAnimation(Sprite& sprite, LoadTexture texture) {
 		sprite.setTextureRect(IntRect(0, 0, 113, 109));
 		break;
 	case MuteButton0_texture:
-		sprite.setTextureRect(IntRect(0, 0, 49, 47));
+		sprite.setTextureRect(IntRect(0, 0, 113, 109));
 		break;
 	case MuteButton1_texture:
-		sprite.setTextureRect(IntRect(0, 0, 49, 47));
+		sprite.setTextureRect(IntRect(0, 0, 113, 109));
 		break;
 	case SettingsButton0_texture:
 		sprite.setTextureRect(IntRect(0, 0, 102, 102));
