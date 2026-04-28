@@ -296,7 +296,7 @@ void InitializeGame()
 
 	fan.Initialize();
 	//fan.fan_sprite.setColor(Color::Red);
-	fan.air_sprite.setColor(Color::White);
+	//fan.air_sprite.setColor(Color::White);
 
 	UpdateGroundTexture();
 }

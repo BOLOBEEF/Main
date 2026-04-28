@@ -783,6 +783,7 @@ struct Click
 	bool initialized = false;
 
 	Sprite sprite;
+	Sprite ligh_click;
 	bool isPressed = false;
 	Vector2f initialPosition;
 	Vector2f startPosition;
@@ -791,6 +792,7 @@ struct Click
 
 	void Initialize() {
 		ApplyTexture(sprite, LoadTexture::pusher_block_texture, Vector2f(75, 75));
+		ApplyTexture(ligh_click, LoadTexture::pusher_block_light_texture, Vector2f(1, 1), Vector2f(1, 1), true, false);
 		
 		initialized = true;
 	}
@@ -801,8 +803,10 @@ struct Click
 		if (initialize) Initialize();
 		startPosition = position;
 		sprite.setPosition(startPosition);
+		ligh_click.setPosition(sprite.getPosition() + Vector2f(0, 32));
+		ligh_click.setColor(Color::Green);
 		Allign(sprite);
-
+		
 		sprite.move(0, 20);
 		startPosition = sprite.getPosition();
 	}
@@ -824,6 +828,12 @@ struct Click
 		if (isPressed!=lastState) {
 			PlayGameSoundEffect(GameSoundEffect::Platform_sound);
 		}
+		
+	}
+	void draw_click() {
+	
+		window.draw(sprite);
+		window.draw(ligh_click);
 	}
 	
 
@@ -941,8 +951,8 @@ struct Door
 	void PreDraw() {
 		window.draw(displaySprite);
 
-		if (button1.initialized) window.draw(button1.sprite);
-		if (button2.initialized) window.draw(button2.sprite);
+		if (button1.initialized) button1.draw_click();
+		if (button2.initialized) button2.draw_click();
 	}
 
 	// draw the lever after the ground so it appears on top of the ground and players when the door is open
