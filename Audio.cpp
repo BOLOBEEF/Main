@@ -1,5 +1,9 @@
 
 // AUDIO:
+float MAinMenu_BackGround_Music = 40.0f;
+float GAME_BackGround_Music = 30.0f;
+float ButtonSound_Value = 40.0f;
+
 // sound effects and music
 
 
@@ -8,9 +12,6 @@
 
 
 // Structs and enums
-
-
-
 
 enum MenuSoundEffect
 {
@@ -148,7 +149,7 @@ void InitializeAudio()
 
 	for (int i = 0; i < 6; i++)
 	{
-		soundEffectsPlayers[i].setVolume(100.0f);
+		soundEffectsPlayers[i].setVolume(40.0f);
 	}
 }
 
@@ -159,19 +160,19 @@ void PlayMusic(BackgroundMusic music) {
 	{
 	case MainMenu:
 		musicPlayer.setBuffer(menuMusicSound);
-		musicPlayer.setVolume(100.0f);
+		musicPlayer.setVolume(MAinMenu_BackGround_Music);
 		break;
 	case Game_Slow:
 		musicPlayer.setBuffer(gameMusic_SlowSound);
-		musicPlayer.setVolume(100.0f);
+		musicPlayer.setVolume(GAME_BackGround_Music);
 		break;
 	case Game_Fast:
 		musicPlayer.setBuffer(gameMusic_FastSound);
-		musicPlayer.setVolume(100.0f);
+		musicPlayer.setVolume(GAME_BackGround_Music);
 		break;
 	case Game_Dark:
 		musicPlayer.setBuffer(gameMusic_DarkSound);
-		musicPlayer.setVolume(100.0f);
+		musicPlayer.setVolume(GAME_BackGround_Music);
 		break;
 	default:
 		cout << "Invalid background music" << endl;
@@ -192,17 +193,17 @@ void PlayMenuSoundEffect(MenuSoundEffect soundEffect) {
 	{
 	case ButtonClick:
 		Button.setBuffer(ButtonSound);
-		Button.setVolume(100.0f);
+		Button.setVolume(ButtonSound_Value);
 		Button.play();
 		break;
 	case Back:
 		Button.setBuffer(ButtonSound);
-		Button.setVolume(100.0f);
+		Button.setVolume(ButtonSound_Value);
 		Button.play();
 		break;
 	case Enter:
 		Button.setBuffer(ButtonSound);
-		Button.setVolume(100.0f);
+		Button.setVolume(ButtonSound_Value);
 		Button.play();
 		break;
 	case No_Sound_Buttons:
