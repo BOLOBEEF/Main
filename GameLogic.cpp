@@ -246,9 +246,9 @@ void UpdateGroundTexture() {
 
 void check_game_win()
 {
-	if (water_door.player_on_door && fire_door.player_on_door)
+	if (water_door.currentFrame == 21 && fire_door.currentFrame == 21)
 	{
-		// end game
+		UpdateGameState(WIN_MENU);
 	}
 }
 void check_game_lose()
@@ -747,6 +747,8 @@ void UpdateGame()
 
 	fan.Update(fireBoy);
 	fan.Update(waterGirl);
+
+	check_game_win();
 }
 
 
