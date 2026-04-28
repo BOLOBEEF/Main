@@ -86,7 +86,9 @@ enum LoadTexture
 	slider_light_on_texture,
 	DOOR_WATER,
 	DOOR_FIRE,
-
+	wind_base_texture,
+	wind_effect_texture,
+	pusher_block_light_texture,
 	//menu assets s
 	PlayButton_texture,
 	CreditsButton_Texture,
@@ -180,11 +182,14 @@ Texture water_stairs;
 Texture diamond_fire;
 Texture diamond_water;
 // map objects textures
+Texture wind_base;
+Texture wind_effect;
 Texture movingbox;
 Texture snow_flat;
 Texture snow_slope_right_side_down;
 Texture snow_slope_left_side_down;
 Texture pusher_block;
+Texture pusher_block_light;
 Texture fire_door_open;
 Texture water_door_open;
 Texture fire_pond;
@@ -414,7 +419,12 @@ void ApplyTexture(Sprite& sprite, LoadTexture texture, Vector2f size = Vector2f(
 		sprite.setTextureRect(IntRect(0, 0, 74, 76));
 		break;
 	
-
+	case wind_effect_texture:
+		sprite.setTexture(wind_effect);
+		break;
+	case wind_base_texture:
+		sprite.setTexture(wind_base);
+		break;
 	case snow_flat_texture:
 		sprite.setTexture(snow_flat);
 		break;
@@ -508,6 +518,9 @@ void ApplyTexture(Sprite& sprite, LoadTexture texture, Vector2f size = Vector2f(
 		break;
 
 
+	case pusher_block_light_texture:
+		sprite.setTexture(pusher_block_light);
+		break;
 
 
 
@@ -854,6 +867,8 @@ void InitializeTextures()
 	SettingsButton0.loadFromFile("Main/Assets/Animations/menu assets/SettingsButton0000.png");
 	sound_icon.loadFromFile("Main/Assets/Animations/menu assets/sound icon.png");
 	movingbox.loadFromFile("Main/Assets/Animations/map objects assets/movingbox.png");
+	wind_base.loadFromFile("Main/Assets/Animations/map objects assets/wind base.png");
+	wind_effect.loadFromFile("Main/Assets/Animations/map objects assets/wind effect.png");
 	snow_flat.loadFromFile("Main/Assets/Animations/map objects assets/snow flat.png");
 	snow_slope_right_side_down.loadFromFile("Main/Assets/Animations/map objects assets/snow slope right side down.png");
 	snow_slope_left_side_down.loadFromFile("Main/Assets/Animations/map objects assets/snow slope left side down.png");
@@ -865,6 +880,7 @@ void InitializeTextures()
 	fire_pond_left.loadFromFile("Main/Assets/Animations/map objects assets/fire box left.png");
 	lever_stick.loadFromFile("Main/Assets/Animations/map objects assets/lever stick.png");
 	lever_base.loadFromFile("Main/Assets/Animations/map objects assets/lever base.png");
+	pusher_block_light.loadFromFile("Main/Assets/Animations/map objects assets/pusher_block_light.png");
 	temporaryPlatform.loadFromFile("Main/Assets/Animations/map objects assets/pulley_platform.png");
 	bar.loadFromFile("Main/Assets/Animations/map objects assets/bar center.png");
 	bar_cap_right.loadFromFile("Main/Assets/Animations/map objects assets/bar cap right.png");

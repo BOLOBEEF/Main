@@ -15,9 +15,10 @@
 
 
 // Functions
-
+Clock animClock1;
 void InitializeAnimations()
 {
+
 	// code for initializing menu variables and objects
 	// for example initialize timers or counters
 }
@@ -43,35 +44,25 @@ void HandleAnimationsInput(Event event)
 	}
 }
 
-void DoorUpdateAnimation(FinalDoor door) {
-	float speed = 20.0f;
+void DoorUpdateAnimation(FinalDoor& door) {
+		float speed = 20.0f;
 	
-		int frameCount = 5;
-		int width = 500, height = 200;
+		int frameCount = 22;
+		int width = 3586, height = 138;
 		
-		if (door.justEntered) {
-			door.animationClock.restart(); // reset the animation when the door is not touched
-		}
-		door.currentFrame += (int)(door.animationClock.getElapsedTime().asSeconds() * speed) ;
-		if (door.currentFrame >= frameCount) {
-			 door.currentFrame = frameCount - 1; // stay on the last frame
-		}
-		door.sprite.setTextureRect(IntRect(door.currentFrame * (width / frameCount), 0, (width / frameCount), height));
-
 		if (door.player_on_door)
 		{
-			door.currentFrame += (int)(door.animationClock.getElapsedTime().asSeconds() * speed);
-	 }
+			door.currentFrame += speed * dt;
+		}
 		else
 		{
-			door.currentFrame -= (int)(door.animationClock.getElapsedTime().asSeconds() * speed);
+			door.currentFrame -= speed * dt;
 		}
-		 if (door.currentFrame < 0) {
-			 door.currentFrame = 0; // stay on the first frame
-		 }
-	
-	
-	
+
+		door.currentFrame = Clamp(door.currentFrame, 0.0f, frameCount - 1); // clamp the current frame to valid range
+		int displayFrame = (int)(door.currentFrame);
+
+		door.sprite.setTextureRect(IntRect(displayFrame * (width / frameCount), 0, (width / frameCount), height));
 }
 
 void UpdateAnimation(Sprite& sprite, LoadTexture texture) {
@@ -246,7 +237,12 @@ void UpdateAnimation(Sprite& sprite, LoadTexture texture) {
 	{
 		int frameCount = 30;
 		int width =2130, height = 103;
-		int index = (int)(globalClock.getElapsedTime().asSeconds() * speed) % frameCount;
+		int index = (int)(globalClock.getElapsedTime().asSeconds() * speed) ;
+		if (index >= frameCount) {
+			index = frameCount;
+
+
+		}
 		sprite.setTextureRect(IntRect(index * (width / frameCount), 0, (width / frameCount), height));
 		break;
 	}
@@ -254,7 +250,12 @@ void UpdateAnimation(Sprite& sprite, LoadTexture texture) {
 	{
 		int frameCount = 30;
 		int width =2100, height = 103;
-		int index = (int)(globalClock.getElapsedTime().asSeconds() * speed) % frameCount;
+		int index = (int)(globalClock.getElapsedTime().asSeconds() * speed) ;
+		if (index >= frameCount) {
+			index = frameCount;
+
+
+		}
 		sprite.setTextureRect(IntRect(index * (width / frameCount), 0, (width / frameCount), height));
 		break;
 	}
@@ -264,10 +265,45 @@ void UpdateAnimation(Sprite& sprite, LoadTexture texture) {
 
 	case pusher_block_texture:
 	{
-		sprite.setTexture(pusher_block);
+		sprite.setTextureRect(IntRect(0, 0, 110, 86));
 		break;
 	}
-
+	case pusher_block_light_texture:
+	{
+		sprite.setTextureRect(IntRect(0, 0, 64, 62));
+		break;
+	}
+	case snow_flat_texture:
+	{
+		sprite.setTextureRect(IntRect(0, 0, 60, 60));
+		break;
+	}
+	case snow_slope_left_side_down_texture:
+	{
+		sprite.setTextureRect(IntRect(0, 0, 50, 51));
+		break;
+	}
+	case snow_slope_right_side_down_texture:
+	{
+		sprite.setTextureRect(IntRect(0, 0, 50, 51));
+		break;
+	}
+	case wind_base_texture:
+	{
+		int frameCount = 4;
+		int width = 472, height = 80;
+		int index = (int)(globalClock.getElapsedTime().asSeconds() * speed) % frameCount;
+		sprite.setTextureRect(IntRect(index* (width / frameCount), 0, (width / frameCount), height));
+		break;
+	}
+	case wind_effect_texture:
+	{
+		int frameCount = 30;
+		int width = 3840, height = 241;
+		int index = (int)(globalClock.getElapsedTime().asSeconds() * speed) % frameCount;
+		sprite.setTextureRect(IntRect(index * (width / frameCount), 0, (width / frameCount), height));
+		break;
+	}
 	case fire_door_open_texture:
 	{
 		int frameCount = 22;
@@ -356,6 +392,7 @@ void UpdateAnimation(Sprite& sprite, LoadTexture texture) {
 		break;
 
 	}
+
 
 	case lever_stick_texture:
 		break;
@@ -493,16 +530,14 @@ void UpdateAnimation(Sprite& sprite, LoadTexture texture) {
 		int frameCount = 8;
 		int width = 1024, height = 128;
 		int frameWidth = width / frameCount;
-
-		static sf::Clock animClock1; // separate clock
-		float speed = 30.0f;
-
-		float time = animClock1.getElapsedTime().asSeconds();
-		int index = (int)(time * speed);
+		
+		float speed = 5.f;
+	
+		int index = (int)(globalClock.getElapsedTime().asSeconds() * speed) ;
 
 		if (index >= frameCount) {
 			index = frameCount - 1;
-
+		
 		}
 
 		sprite.setTextureRect(sf::IntRect(index * frameWidth, 0, frameWidth, height));
@@ -513,15 +548,14 @@ void UpdateAnimation(Sprite& sprite, LoadTexture texture) {
 		int width = 1024, height = 128;
 		int frameWidth = width / frameCount;
 
-		static sf::Clock animClock1; // separate clock
-		float speed = 30.0f; 
+		
+		float speed = 5.f;
 
-		float time = animClock1.getElapsedTime().asSeconds();
-		int index = (int)(time * speed);
+		int index = (int)(globalClock.getElapsedTime().asSeconds() * speed);
 
 		if (index >= frameCount) {
 			index = frameCount - 1;
-			
+
 		}
 
 		sprite.setTextureRect(sf::IntRect(index * frameWidth, 0, frameWidth, height));
@@ -532,11 +566,10 @@ void UpdateAnimation(Sprite& sprite, LoadTexture texture) {
 		int width = 1024, height = 128;
 		int frameWidth = width / frameCount;
 
-		static sf::Clock animClock1; // separate clock
-		float speed = 30.0f;
+	    
+		float speed = 5.f;
 
-		float time = animClock1.getElapsedTime().asSeconds();
-		int index = (int)(time * speed);
+		int index = (int)(globalClock.getElapsedTime().asSeconds() * speed) ;
 
 		if (index >= frameCount) {
 			index = frameCount - 1;

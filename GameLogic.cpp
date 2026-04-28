@@ -24,7 +24,7 @@ Player waterGirl = Player(Watergirl, center + Vector2f(-550, 300));
 FinalDoor water_door = FinalDoor(FinalDoor::WATER_DOOR, Vector2f(1200, 25));
 FinalDoor fire_door = FinalDoor(FinalDoor::FIRE_DOOR, Vector2f(1300, 25));
 
-Fan fan = Fan(Vector2f(900, 368));
+Fan fan = Fan(Vector2f(900, 468));
 
 Sprite ground;
 Sprite background;
@@ -140,9 +140,9 @@ void LoadLevelData() {
 	colliders.Add(Collider(Collider::ColliderType::Rectangle, center + Vector2f(256, -220), Vector2f(10, 2)));
 	colliders.Add(Collider(Collider::ColliderType::Triangle, center + Vector2f(448, -220), Vector2f(2, 2)));
 	colliders.Add(Collider(Collider::ColliderType::Rectangle, center + Vector2f(-224, -316), Vector2f(6, 2)));
-	colliders.Add(Collider(Collider::ColliderType::Rectangle, center + Vector2f(-336, -428), Vector2f(1, 1)));
-	colliders.Add(Collider(Collider::ColliderType::Triangle_Rotated, center + Vector2f(-368, -428), Vector2f(1, 1)));
 	colliders.Add(Collider(Collider::ColliderType::Rectangle, center + Vector2f(-736, -252), Vector2f(4, 4)));
+	colliders.Add(Collider(Collider::ColliderType::Rectangle, center + Vector2f(-640, -220), Vector2f(2, 2)));
+	colliders.Add(Collider(Collider::ColliderType::Triangle_Rotated, center + Vector2f(-352, -412), Vector2f(2, 2)));
 	objects.Add(Object(Object::PondObject));
 	objects.GetLastElement().InitializePondObject(Pond::FIRE_POND, Vector2f(1008, 976), 5);
 	objects.Add(Object(Object::PondObject));
@@ -150,15 +150,14 @@ void LoadLevelData() {
 	objects.Add(Object(Object::PondObject));
 	objects.GetLastElement().InitializePondObject(Pond::POISON_POND, Vector2f(1168, 784), 5);
 	objects.Add(Object(Object::DoorObject));
-	objects.GetLastElement().InitializeDoorObject(Vector2f(224, 518), Vector2f(224, 416));
-	objects.GetLastElement().data.door.button2 = Click(Vector2f(591, 502), true);
+	objects.GetLastElement().InitializeDoorObject(Vector2f(224, 518), Vector2f(224, 640));
 	objects.GetLastElement().data.door.lever = Lever(Vector2f(515, 659), true);
 	objects.Add(Object(Object::DoorObject));
-	objects.GetLastElement().InitializeDoorObject(Vector2f(1696, 400), Vector2f(1696, 320));
-	objects.GetLastElement().data.door.button1 = Click(Vector2f(1557, 337), true);
-	objects.GetLastElement().data.door.button2 = Click(Vector2f(492, 499), true);
+	objects.GetLastElement().InitializeDoorObject(Vector2f(1696, 409), Vector2f(1696, 512));
+	objects.GetLastElement().data.door.button1 = Click(Vector2f(517, 500), true);
+	objects.GetLastElement().data.door.button2 = Click(Vector2f(1544, 340), true);
 	objects.Add(Object(Object::BoxObject));
-	objects.GetLastElement().InitializeBoxObject(Vector2f(1154, 264));
+	objects.GetLastElement().InitializeBoxObject(Vector2f(498, 307));
 	objects.Add(Object(Object::GemObject));
 	objects.GetLastElement().InitializeGemObject(Gem::fireGem, Vector2f(1000, 904));
 	objects.Add(Object(Object::GemObject));
@@ -247,9 +246,9 @@ void UpdateGroundTexture() {
 
 void check_game_win()
 {
-	if (water_door.player_on_door && fire_door.player_on_door)
+	if (water_door.currentFrame == 21 && fire_door.currentFrame == 21)
 	{
-		// end game
+		UpdateGameState(WIN_MENU);
 	}
 }
 void check_game_lose()
@@ -296,7 +295,7 @@ void InitializeGame()
 	fire_door.Initialize();
 
 	fan.Initialize();
-	fan.fan_sprite.setColor(Color::Red);
+	//fan.fan_sprite.setColor(Color::Red);
 	fan.air_sprite.setColor(Color::White);
 
 	UpdateGroundTexture();
@@ -324,7 +323,7 @@ void PrintLevelData() {
 			break;
 		case Object::DoorObject:
 			type = (objects.elements[i].data.door.rotated ? "Door_Rotated_mode" : "Door_mode");
-			position = "Vector2f(" + to_string((int)objects.elements[i].data.door.displaySprite.getPosition().x) + ", " + to_string((int)objects.elements[i].data.door.displaySprite.getPosition().y) + ")";
+			position = "Vector2f(" + to_string((int)objects.elements[i].data.door.startPosition.x) + ", " + to_string((int)objects.elements[i].data.door.startPosition.y) + ")";
 			extraData = "Vector2f(" + to_string((int)(objects.elements[i].data.door.endPosition.x)) + ", " + to_string((int)(objects.elements[i].data.door.endPosition.y)) + ")";
 			cout << "objects.Add(Object(Object::DoorObject));" << endl;
 			cout << "objects.GetLastElement().InitializeDoorObject(" << position << ", " << extraData << ");" << endl;
@@ -748,6 +747,8 @@ void UpdateGame()
 
 	fan.Update(fireBoy);
 	fan.Update(waterGirl);
+
+	check_game_win();
 }
 
 

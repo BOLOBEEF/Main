@@ -1,17 +1,20 @@
 
 // STRUCTS for level objects
-void Allign(Sprite& sprite, Vector2f defaultSize = Vector2f(32, 32)) {
-	FloatRect bounds = sprite.getGlobalBounds();
-	Vector2f position = Vector2f(bounds.left, bounds.top);
-	position.x = round(position.x / defaultSize.x) * defaultSize.x;
-	position.y = round(position.y / defaultSize.y) * defaultSize.y;
-
-	sprite.setPosition(position + Vector2f(bounds.width / 2.0f, bounds.height / 2.0f));
+float Allign(float num, float defaultSize = 32.0f) {
+	return round(num / defaultSize) * defaultSize;
 }
 
 void Allign(Vector2f& position, Vector2f defaultSize = Vector2f(32, 32)) {
-	position.x = round(position.x / defaultSize.x) * defaultSize.x;
-	position.y = round(position.y / defaultSize.y) * defaultSize.y;
+	position.x = Allign(position.x, defaultSize.x);
+	position.y = Allign(position.y, defaultSize.y);
+}
+
+void Allign(Sprite& sprite, Vector2f defaultSize = Vector2f(32, 32)) {
+	FloatRect bounds = sprite.getGlobalBounds();
+	Vector2f position = Vector2f(bounds.left, bounds.top);
+	Allign(position, defaultSize);
+
+	sprite.setPosition(position + Vector2f(bounds.width / 2.0f, bounds.height / 2.0f));
 }
 
 
@@ -21,6 +24,10 @@ void Allign(Vector2f& position, Vector2f defaultSize = Vector2f(32, 32)) {
 void UpdateAnimation(Sprite&, LoadTexture);
 void UpdatePlayerTexture(Sprite&, PlayerType, PlayerState, bool);
 void UpdateAnimationPlayer(Sprite&, PlayerType, PlayerState, bool);
+
+
+struct FinalDoor;
+
 
 
 struct Player
@@ -615,8 +622,7 @@ struct FinalDoor
 	bool touched = false;
 	bool player_on_door = false;
 	float scale = 0.6f;
-	int currentFrame = 0;
-	Clock animationClock;
+	float currentFrame = 0;
 	bool justEntered = false;
 
 	Sprite sprite;
@@ -663,6 +669,8 @@ struct FinalDoor
 			PlayGameSoundEffect(GameSoundEffect::Door_sound);
 		}
 		else justEntered = false;
+
+		DoorUpdateAnimation(*this);
 	}
 	
 };
@@ -1342,20 +1350,22 @@ struct Fan
 	Fan(Vector2f fan_position) {
 		fan_sprite.setPosition(fan_position);
 		Allign(fan_sprite);
-		air_sprite.setPosition(fan_sprite.getPosition() + Vector2f(0, -32 * 3));
+		air_sprite.setPosition(fan_sprite.getPosition() + Vector2f(0, -32 *6));
 		//Allign(air_sprite);
 	}
 	void Initialize() {
-		ApplyTexture(fan_sprite, LoadTexture::RECTANGLE, Vector2f(32*2, 32*2));
-		ApplyTexture(air_sprite, LoadTexture::RECTANGLE, Vector2f(32*2, 32 * 5));
+		ApplyTexture(fan_sprite, LoadTexture::wind_base_texture, Vector2f(32*2, 32*2), Vector2f(1, 1), true, false);
+		ApplyTexture(air_sprite, LoadTexture::wind_effect_texture, Vector2f(32*2, 32 * 5),Vector2f(1,1),true,false);
 		Allign(fan_sprite);
 		Allign(air_sprite);
 	}
 	void Update(Player& player) {
+		UpdateAnimation(fan_sprite, wind_base_texture);
+		UpdateAnimation(air_sprite, wind_effect_texture);
 		if (air_sprite.getGlobalBounds().intersects(player.hitbox.getGlobalBounds()))
 		{
 			if (player.hitbox.getPosition().y > air_sprite.getPosition().y)
-			player.velocity.y -=500.0f * dt;
+			player.velocity.y -=1000.0f * dt;
 		}
 	}
 };
