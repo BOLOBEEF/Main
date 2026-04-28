@@ -39,6 +39,7 @@ RectangleShape FadingTransitionBackground;
 Vector2f Target_up_mnu = Vector2f(windowSize.x / 2, windowSize.y / 2);
 Vector2f Target_Down_mnu = Vector2f(windowSize.x / 2, windowSize.y / 2 + 1000);
 Vector2f Current_position_mnu = Target_Down_mnu;
+Vector2f Current_position_Settings_mnu = Target_Down_mnu;
 Vector2f Current_Target;
 
 Sprite Stone_mnu;
@@ -56,12 +57,24 @@ Sprite IdleFbBodymnu;
 Sprite IdleFbHeadmnu;
 Sprite IdleWgBodymnu;
 Sprite IdleWgHeadmnu;
-Sprite SoundButton_mnu;
-Sprite MusicButton_mnu;
-Sprite OkButton_mnu;
-Sprite SettingsMenuBox_mnu;
-bool isSoundButtonClicked_mnu = false;
-bool isMusicButtonClicked_mnu = false;
+
+//settings from main
+Sprite SoundButton_MainToSetting;
+Sprite MusicButton_MainToSetting;
+Sprite OkButton_MainToSetting;
+Sprite SettingsMenuBox_MainToSetting;
+bool isSoundButtonClicked_MainToSetting = false;
+bool isMusicButtonClicked_MainToSetting = false;
+
+//settings from pause
+Sprite SoundButton_PauseToSetting;
+Sprite MusicButton_PauseToSetting;
+Sprite OkButton_PauseToSetting;
+Sprite SettingsMenuBox_PauseToSetting;
+bool isSoundButtonClicked_PauseToSetting = false;
+bool isMusicButtonClicked_PauseToSetting = false;
+
+//gameover
 Sprite GameOverbuttons_mnu[3];
 
 
@@ -75,7 +88,9 @@ Sprite checkOrCrossMaleOrFemale_icon_Winmnu, checkOrCrossDiamonds_icon_Winmnu, c
 float ratingOrder = 0, ratingOrder_Speed = 200;
 bool MaleAndFemale_turn = false, diamondRating_turn = false, timerRating_turn = false, levelAndArrowIcon_turn = false;
 bool isMaleAndFemaleSoundPlayed = false, isdiamondSoundPlayed = false, istimerSoundPlayed = false, islevelAndArrowSoundPlayed = false;
-bool MainMenuSettings = true;
+bool MainMenuSettings = true, LastWasSettings = false;
+
+bool Settings_from_MainMenu = true;
 //because i want to play the sounds of each rating once in the game loop not to rerun it each iteration 
 
 
@@ -86,12 +101,30 @@ Text Menu_GOVERtxt, Retry_GOVERtxt, Levels_GOVERtxt, GameOver_txt;
 Text Continue_Wintxt;
 Text NoText; // to use it as a default value in the MouseInput_mnu function
 // cursor Variables
-Text OkButtontxt;
+Text OkButtontxt_MainToSetting;
+Text OkButtontxt_PauseToSetting;
 Sprite cursorAndpointerSprite;
 
 int finalScore = 0;
 // Functions
 
+void forceMainMenuDraw(bool forcedraw)
+{
+	if (!forcedraw) return;
+	else
+	{
+		window.draw(MainMenuBackground_mnu);
+		window.draw(GameName_mnu);
+		window.draw(PlayButton_mnu);
+		window.draw(CreditsButton_mnu);
+		window.draw(ExitButton_mnu);
+		window.draw(SettingButton_mnu);
+		window.draw(IdleFbBodymnu);
+		window.draw(IdleFbHeadmnu);
+		window.draw(IdleWgBodymnu);
+		window.draw(IdleWgHeadmnu);
+	}
+}
 void changeCursorColor(Event event)
 {
 	if (event.type == Event::MouseButtonPressed && event.mouseButton.button == Mouse::Left)
@@ -193,22 +226,22 @@ bool MouseInput_mnu(Event event, Sprite& ButtonClicked, LoadTexture Currnet_text
 bool MuteSound(Event event, Sprite& ButtonClicked, LoadTexture Unmuted ,LoadTexture Muted, MenuSoundEffect Sound_Played_mnu, bool SoundOn)
 {
 	
-	if (event.type == Event::MouseButtonPressed && event.mouseButton.button == Mouse::Left && !isSoundButtonClicked_mnu)
+	if (event.type == Event::MouseButtonPressed && event.mouseButton.button == Mouse::Left && !isSoundButtonClicked_MainToSetting)
 	{
 		if (ButtonClicked.getGlobalBounds().contains(mousePosition))
 		{
 			ApplyTexture(ButtonClicked, Muted, Vector2f(113, 109));
 			ButtonClicked.setScale(1.25, 1.25);
-			isSoundButtonClicked_mnu = true;
+			isSoundButtonClicked_MainToSetting = true;
 		}
 	}
-	else if (event.type == Event::MouseButtonPressed && event.mouseButton.button == Mouse::Left && isSoundButtonClicked_mnu)
+	else if (event.type == Event::MouseButtonPressed && event.mouseButton.button == Mouse::Left && isSoundButtonClicked_MainToSetting)
 	{
 		if (ButtonClicked.getGlobalBounds().contains(mousePosition))
 		{
 			ApplyTexture(ButtonClicked, Unmuted, Vector2f(113, 109));
 			ButtonClicked.setScale(1.25, 1.25);
-			isSoundButtonClicked_mnu = false;
+			isSoundButtonClicked_MainToSetting = false;
 		}
 	}
 	return true;
@@ -216,22 +249,22 @@ bool MuteSound(Event event, Sprite& ButtonClicked, LoadTexture Unmuted ,LoadText
 bool MuteMusic(Event event, Sprite& ButtonClicked, LoadTexture Unmuted ,LoadTexture Muted, MenuSoundEffect Sound_Played_mnu, bool MusicOn)
 {
 	
-	if (event.type == Event::MouseButtonPressed && event.mouseButton.button == Mouse::Left && !isMusicButtonClicked_mnu)
+	if (event.type == Event::MouseButtonPressed && event.mouseButton.button == Mouse::Left && !isMusicButtonClicked_MainToSetting)
 	{
 		if (ButtonClicked.getGlobalBounds().contains(mousePosition))
 		{
 			ApplyTexture(ButtonClicked, Muted, Vector2f(113, 109));
 			ButtonClicked.setScale(1.25, 1.25);
-			isMusicButtonClicked_mnu = true;
+			isMusicButtonClicked_MainToSetting = true;
 		}
 	}
-	else if (event.type == Event::MouseButtonPressed && event.mouseButton.button == Mouse::Left && isMusicButtonClicked_mnu)
+	else if (event.type == Event::MouseButtonPressed && event.mouseButton.button == Mouse::Left && isMusicButtonClicked_MainToSetting)
 	{
 		if (ButtonClicked.getGlobalBounds().contains(mousePosition))
 		{
 			ApplyTexture(ButtonClicked, Unmuted, Vector2f(113, 109));
 			ButtonClicked.setScale(1.25, 1.25);
-			isMusicButtonClicked_mnu = false;
+			isMusicButtonClicked_MainToSetting = false;
 		}
 	}
 	return true;
@@ -309,15 +342,26 @@ void GameoverMenu_Movement(Vector2f Desired_Target)
 	Levels_GOVERtxt.setPosition((GameOverbuttons_mnu[0].getGlobalBounds().left + GameOverbuttons_mnu[0].getGlobalBounds().width / 2), (GameOverbuttons_mnu[0].getGlobalBounds().top + GameOverbuttons_mnu[0].getGlobalBounds().height / 2) - 10);
 	GameOver_txt.setPosition((GameOverbuttons_mnu[1].getGlobalBounds().left + GameOverbuttons_mnu[1].getGlobalBounds().width / 2), (GameOverbuttons_mnu[1].getGlobalBounds().top + GameOverbuttons_mnu[1].getGlobalBounds().height / 2) - 270);
 }
-void SettingMenu_Movement(Vector2f Desired_Target)
+void SettingMenu_Movement(Vector2f Desired_Target, bool fromMain)
 {
 	Current_Target = Desired_Target;
-	Current_position_mnu = Damp(Current_position_mnu, Current_Target, 25, dt);
-	Stone_mnu.setPosition(Current_position_mnu);
-	SoundButton_mnu.setPosition(Vector2f(700, 530) + Current_position_mnu - center);
-	MusicButton_mnu.setPosition(Vector2f(1200, 530) + Current_position_mnu - center);
-	OkButton_mnu.setPosition(Vector2f(1155, 750) + Current_position_mnu - center);
-	OkButtontxt.setPosition(Vector2f(903, 720) + Current_position_mnu - center);
+	Current_position_Settings_mnu = Damp(Current_position_Settings_mnu, Current_Target, 25, dt);
+	if (fromMain)
+	{
+		SettingsMenuBox_MainToSetting.setPosition(Current_position_Settings_mnu);
+		SoundButton_MainToSetting.setPosition(Vector2f(700, 530) + Current_position_Settings_mnu - center);
+		MusicButton_MainToSetting.setPosition(Vector2f(1200, 530) + Current_position_Settings_mnu - center);
+		OkButton_MainToSetting.setPosition(Vector2f(1155, 750) + Current_position_Settings_mnu - center);
+		OkButtontxt_MainToSetting.setPosition(Vector2f(903, 720) + Current_position_Settings_mnu - center);
+	}
+	else
+	{
+		SettingsMenuBox_PauseToSetting.setPosition(Current_position_Settings_mnu);
+		SoundButton_PauseToSetting.setPosition(Vector2f(700, 530) + Current_position_Settings_mnu - center);
+		MusicButton_PauseToSetting.setPosition(Vector2f(1200, 530) + Current_position_Settings_mnu - center);
+		OkButton_PauseToSetting.setPosition(Vector2f(1155, 750) + Current_position_Settings_mnu - center);
+		OkButtontxt_PauseToSetting.setPosition(Vector2f(903, 720) + Current_position_Settings_mnu - center);
+	}
 	// I Will Handle this After You finish Settings Menu
 }
 
@@ -379,28 +423,53 @@ void InitializeMenu()
 	IdleWgHeadmnu.setScale(1.25, 1.25);
 	IdleWgHeadmnu.setPosition(windowSize.x / 2 + 2456, windowSize.y / 2 + 390);
 
-	//Settings menu
+	//Settings from main
+	menu_box.setSmooth(true);
+	ApplyTexture(SettingsMenuBox_MainToSetting, LoadTexture::menu_box_texture, Vector2f(windowSize.x - 600, windowSize.y - 250));
+	UpdateAnimation(SettingsMenuBox_MainToSetting, menu_box_texture);
+	SettingsMenuBox_MainToSetting.setPosition(windowSize.x / 2, windowSize.y / 2);
+
+	ApplyTexture(SoundButton_MainToSetting, LoadTexture::MuteButton0_texture, Vector2f(113, 109));
+	SoundButton_MainToSetting.setScale(1.25, 1.25);
 	
-	ApplyTexture(SoundButton_mnu, LoadTexture::MuteButton0_texture, Vector2f(113, 109));
-	SoundButton_mnu.setScale(1.25, 1.25);
-	
-	ApplyTexture(MusicButton_mnu, LoadTexture::MusicButton0_texture, Vector2f(113, 109));
-	MusicButton_mnu.setScale(1.25, 1.25);
+	ApplyTexture(MusicButton_MainToSetting, LoadTexture::MusicButton0_texture, Vector2f(113, 109));
+	MusicButton_MainToSetting.setScale(1.25, 1.25);
 
 	stone_button.setSmooth(true);
-	ApplyTexture(OkButton_mnu, LoadTexture::stone_button_0_texture, Vector2f(700, 170));
-	UpdateAnimation(OkButton_mnu, stone_button_0_texture);
-	OkButton_mnu.setPosition(windowSize.x / 2, windowSize.y / 2);
+	ApplyTexture(OkButton_MainToSetting, LoadTexture::stone_button_0_texture, Vector2f(700, 170));
+	UpdateAnimation(OkButton_MainToSetting, stone_button_0_texture);
+	OkButton_MainToSetting.setPosition(windowSize.x / 2, windowSize.y / 2);
 
-	OkButtontxt.setFont(font);
-	OkButtontxt.setCharacterSize(50);
-	OkButtontxt.setFillColor(Color(230, 194, 0));
-	OkButtontxt.setString("OK");
-	OkButtontxt.setOutlineColor(Color::Black);
-	OkButtontxt.setOutlineThickness(5);
+	OkButtontxt_MainToSetting.setFont(font);
+	OkButtontxt_MainToSetting.setCharacterSize(50);
+	OkButtontxt_MainToSetting.setFillColor(Color(230, 194, 0));
+	OkButtontxt_MainToSetting.setString("OK");
+	OkButtontxt_MainToSetting.setOutlineColor(Color::Black);
+	OkButtontxt_MainToSetting.setOutlineThickness(5);
+
+	//setting from pause
+	ApplyTexture(SettingsMenuBox_PauseToSetting, LoadTexture::menu_box_texture, Vector2f(windowSize.x - 600, windowSize.y - 250));
+	UpdateAnimation(SettingsMenuBox_PauseToSetting, menu_box_texture);
+	SettingsMenuBox_PauseToSetting.setPosition(windowSize.x / 2, windowSize.y / 2);
+
+	ApplyTexture(SoundButton_PauseToSetting, LoadTexture::MuteButton0_texture, Vector2f(113, 109));
+	SoundButton_PauseToSetting.setScale(1.25, 1.25);
+
+	ApplyTexture(MusicButton_PauseToSetting, LoadTexture::MusicButton0_texture, Vector2f(113, 109));
+	MusicButton_PauseToSetting.setScale(1.25, 1.25);
+
+	ApplyTexture(OkButton_PauseToSetting, LoadTexture::stone_button_0_texture, Vector2f(700, 170));
+	UpdateAnimation(OkButton_PauseToSetting, stone_button_0_texture);
+	OkButton_PauseToSetting.setPosition(windowSize.x / 2, windowSize.y / 2);
+
+	OkButtontxt_PauseToSetting.setFont(font);
+	OkButtontxt_PauseToSetting.setCharacterSize(50);
+	OkButtontxt_PauseToSetting.setFillColor(Color(230, 194, 0));
+	OkButtontxt_PauseToSetting.setString("OK");
+	OkButtontxt_PauseToSetting.setOutlineColor(Color::Black);
+	OkButtontxt_PauseToSetting.setOutlineThickness(5);
 
 	//Pause menu
-	menu_box.setSmooth(true);
 	ApplyTexture(Stone_mnu, LoadTexture::menu_box_texture, Vector2f(windowSize.x - 600, windowSize.y - 250));
 	UpdateAnimation(Stone_mnu, menu_box_texture);
 	Stone_mnu.setPosition(windowSize.x / 2, windowSize.y / 2);
@@ -582,8 +651,6 @@ void HandleMenuInput(Event event)
 				window.close();
 			}
 		}
-		
-
 		break;
 	case LEVEL_MENU:
 
@@ -601,6 +668,7 @@ void HandleMenuInput(Event event)
 		MouseInput_mnu(event, ContinueButton_Winmnu, stone_button_0_texture, stone_button_1_texture, ButtonClick, LEVEL_MENU, true, Continue_Wintxt);
 		break;
 	case SETTINGS:
+<<<<<<< Updated upstream
 		MuteSound(event, SoundButton_mnu, MuteButton0_texture, MuteButton1_texture, ButtonClick, isSoundButtonClicked_mnu);
 		MuteMusic(event, MusicButton_mnu, MusicButton0_texture, MusicButton1_texture, ButtonClick, isMusicButtonClicked_mnu);
 
@@ -612,6 +680,20 @@ void HandleMenuInput(Event event)
 		
 
 		// code for handling settings menu input
+=======
+		if (Settings_from_MainMenu)
+		{
+			MuteSound(event, SoundButton_MainToSetting, MuteButton0_texture, MuteButton1_texture, ButtonClick, isSoundButtonClicked_MainToSetting);
+			MuteMusic(event, MusicButton_MainToSetting, MusicButton0_texture, MusicButton1_texture, ButtonClick, isMusicButtonClicked_MainToSetting);
+			MouseInput_mnu(event, OkButton_MainToSetting, stone_button_0_texture, stone_button_1_texture, No_Sound_Buttons, MAIN_MENU, false, OkButtontxt_MainToSetting);
+		}
+		else
+		{
+			MuteSound(event, SoundButton_PauseToSetting, MuteButton0_texture, MuteButton1_texture, ButtonClick, isSoundButtonClicked_PauseToSetting);
+			MuteMusic(event, MusicButton_PauseToSetting, MusicButton0_texture, MusicButton1_texture, ButtonClick, isMusicButtonClicked_PauseToSetting);
+			MouseInput_mnu(event, OkButton_PauseToSetting, stone_button_0_texture, stone_button_1_texture, No_Sound_Buttons, PAUSE_MENU, false, OkButtontxt_PauseToSetting);
+		}
+>>>>>>> Stashed changes
 		break;
 	case GAMEOVER:
 		MouseInput_mnu(event, GameOverbuttons_mnu[0], stone_button_0_texture, stone_button_1_texture, ButtonClick, LEVEL_MENU, true, Levels_GOVERtxt);
@@ -673,15 +755,17 @@ void UpdateUI()
 		MainMenuSettings = true;
 		UpdateAnimation(IdleFbHeadmnu, fire_idle_head_texture);
 		UpdateAnimation(IdleWgHeadmnu, water_head_idle_texture);
-		if (PreviousMenu_State == SETTINGS)
+		if (LastWasSettings)
 		{
-			SettingMenu_Movement(Target_Down_mnu);
+			SettingMenu_Movement(Target_Down_mnu, true);
+			currentDimState = DimmingDown;
 		}
 		else if (PreviousMenu_State == GAMEOVER)
 		{
 			GameoverMenu_Movement(Target_Down_mnu);
+			currentDimState = DimmingDown;
 		}
-
+		Settings_from_MainMenu = true;
 		break;
 	case LEVEL_MENU:
 		if (PreviousMenu_State == GAMEOVER)
@@ -701,7 +785,12 @@ void UpdateUI()
 		PreviousMenu_State = PAUSE_MENU;
 		MainMenuSettings = false;
 		PauseMenu_Movement(Target_up_mnu);
+		if (LastWasSettings)
+		{
+			SettingMenu_Movement(Target_Down_mnu, false);
+		}
 		currentDimState = DimmingUp;
+		Settings_from_MainMenu = false;
 		break;
 	case WIN_MENU:
 		PreviousMenu_State = WIN_MENU;
@@ -755,9 +844,17 @@ void UpdateUI()
 
 		break;
 	case SETTINGS:
-		PreviousMenu_State = SETTINGS;
-		SettingMenu_Movement(Target_up_mnu);
-		currentDimState = DimmingUp;
+		//PreviousMenu_State = SETTINGS;
+		if (MainMenuSettings)
+		{
+			SettingMenu_Movement(Target_up_mnu, true);
+			currentDimState = DimmingUp;
+		}
+		else
+		{
+			SettingMenu_Movement(Target_up_mnu, false);
+		}
+		LastWasSettings = true;
 		// code for settings menu
 		break;
 	case GAMEOVER:
@@ -853,10 +950,10 @@ void DrawUI()
 		window.draw(IdleFbHeadmnu);
 		window.draw(IdleWgBodymnu);
 		window.draw(IdleWgHeadmnu);
+		window.draw(Dimmed_Background);
 		
 		if (Current_position_mnu != Target_Down_mnu)
 		{
-
 			if (PreviousMenu_State == GAMEOVER)
 			{
 				window.draw(Stone_mnu);
@@ -869,13 +966,16 @@ void DrawUI()
 				window.draw(Levels_GOVERtxt);
 				window.draw(GameOver_txt);
 			}
-			else if (PreviousMenu_State == SETTINGS)
+		}
+		if (Current_position_Settings_mnu != Target_Down_mnu)
+		{
+			if (LastWasSettings)
 			{
-				window.draw(Stone_mnu);
-				window.draw(SoundButton_mnu);
-				window.draw(MusicButton_mnu);
-				window.draw(OkButton_mnu);
-				window.draw(OkButtontxt);
+				window.draw(SettingsMenuBox_MainToSetting);
+				window.draw(SoundButton_MainToSetting);
+				window.draw(MusicButton_MainToSetting);
+				window.draw(OkButton_MainToSetting);
+				window.draw(OkButtontxt_MainToSetting);
 			}
 		}
 		//draw the things of the Main menu down here
@@ -940,6 +1040,17 @@ void DrawUI()
 		window.draw(Retry_Pausetxt);
 		window.draw(Resume_Pausetxt);
 		window.draw(Pause_txt);
+		if (Current_position_Settings_mnu != Target_Down_mnu)
+		{
+			if (LastWasSettings)
+			{
+				window.draw(SettingsMenuBox_PauseToSetting);
+				window.draw(SoundButton_PauseToSetting);
+				window.draw(MusicButton_PauseToSetting);
+				window.draw(OkButton_PauseToSetting);
+				window.draw(OkButtontxt_PauseToSetting);
+			}
+		}
 		break;
 
 	case WIN_MENU:
@@ -977,44 +1088,46 @@ void DrawUI()
 		break;
 
 	case SETTINGS:
-		// code for drawing settings menu
-		//DrawGame(true);
 		window.draw(Dimmed_Background);
-		if (Current_position_mnu != Target_Down_mnu)
+		if (MainMenuSettings && PreviousMenu_State != PAUSE_MENU)
 		{
+			window.draw(MainMenuBackground_mnu);
+			window.draw(GameName_mnu);
+			window.draw(PlayButton_mnu);
+			window.draw(CreditsButton_mnu);
+			window.draw(ExitButton_mnu);
+			window.draw(SettingButton_mnu);
+			window.draw(IdleFbBodymnu);
+			window.draw(IdleFbHeadmnu);
+			window.draw(IdleWgBodymnu);
+			window.draw(IdleWgHeadmnu);
 
-			if (PreviousMenu_State == PAUSE_MENU)
-			{
-				window.draw(Stone_mnu);
-				window.draw(EndButton_Pausemnu);
-				window.draw(RetryButton_Pausemnu);
-				window.draw(ResumeButton_Pausemnu);
-				window.draw(SettingButton_mnu);
-				window.draw(End_Pausetxt);
-				window.draw(Retry_Pausetxt);
-				window.draw(Resume_Pausetxt);
-				window.draw(Pause_txt);
-			}
-			else if (MainMenuSettings)
-			{
-				window.draw(MainMenuBackground_mnu);
-				window.draw(GameName_mnu);
-				window.draw(PlayButton_mnu);
-				window.draw(CreditsButton_mnu);
-				window.draw(ExitButton_mnu);
-				window.draw(SettingButton_mnu);
-				window.draw(IdleFbBodymnu);
-				window.draw(IdleFbHeadmnu);
-				window.draw(IdleWgBodymnu);
-				window.draw(IdleWgHeadmnu);
-			}
+			window.draw(SettingsMenuBox_MainToSetting);
+			window.draw(SoundButton_MainToSetting);
+			window.draw(MusicButton_MainToSetting);
+			window.draw(OkButton_MainToSetting);
+			window.draw(OkButtontxt_MainToSetting);
 		}
+		else if (PreviousMenu_State == PAUSE_MENU)
+		{
+			DrawGame(true);
+			cout << "t3baaaaaaaaaaaaaaaaan\n";
+			window.draw(Stone_mnu);
+			window.draw(EndButton_Pausemnu);
+			window.draw(RetryButton_Pausemnu);
+			window.draw(ResumeButton_Pausemnu);
+			window.draw(SettingButton_mnu);
+			window.draw(End_Pausetxt);
+			window.draw(Retry_Pausetxt);
+			window.draw(Resume_Pausetxt);
+			window.draw(Pause_txt);
 
-		window.draw(Stone_mnu);
-		window.draw(SoundButton_mnu);
-		window.draw(MusicButton_mnu);
-		window.draw(OkButton_mnu);
-		window.draw(OkButtontxt);
+			window.draw(SettingsMenuBox_PauseToSetting);
+			window.draw(SoundButton_PauseToSetting);
+			window.draw(MusicButton_PauseToSetting);
+			window.draw(OkButton_PauseToSetting);
+			window.draw(OkButtontxt_PauseToSetting);
+		}
 		
 		break;
 
