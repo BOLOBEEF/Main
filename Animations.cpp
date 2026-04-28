@@ -237,7 +237,12 @@ void UpdateAnimation(Sprite& sprite, LoadTexture texture) {
 	{
 		int frameCount = 30;
 		int width =2130, height = 103;
-		int index = (int)(globalClock.getElapsedTime().asSeconds() * speed) % frameCount;
+		int index = (int)(globalClock.getElapsedTime().asSeconds() * speed) ;
+		if (index >= frameCount) {
+			index = frameCount;
+
+
+		}
 		sprite.setTextureRect(IntRect(index * (width / frameCount), 0, (width / frameCount), height));
 		break;
 	}
@@ -245,7 +250,12 @@ void UpdateAnimation(Sprite& sprite, LoadTexture texture) {
 	{
 		int frameCount = 30;
 		int width =2100, height = 103;
-		int index = (int)(globalClock.getElapsedTime().asSeconds() * speed) % frameCount;
+		int index = (int)(globalClock.getElapsedTime().asSeconds() * speed) ;
+		if (index >= frameCount) {
+			index = frameCount;
+
+
+		}
 		sprite.setTextureRect(IntRect(index * (width / frameCount), 0, (width / frameCount), height));
 		break;
 	}
@@ -382,6 +392,7 @@ void UpdateAnimation(Sprite& sprite, LoadTexture texture) {
 		break;
 
 	}
+
 
 	case lever_stick_texture:
 		break;
