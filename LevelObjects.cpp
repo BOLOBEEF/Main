@@ -39,25 +39,37 @@ struct Player
 	float pushSpeed = slopeSpeed;
 	float gravity = 250.0f;
 	float jump = -250.0f;
-	Vector2f idleRange = Vector2f(30.0f, 30.0f); // the range of velocity in which the player is considered idle
+	float jumpOnSnow = -50.0f;
+	Vector2f idleRange = Vector2f(15.0f, 15.0f); // the range of velocity in which the player is considered idle
 	Vector2f colliderSize = Vector2f(15, 60);
 	float displayBodySize = 1.0f;
 	float displayHeadSize = 1.0f;
+	float girlSpeedOnSnow = 50.0f; // make girl slow on snow
+	float boyAccelerationOnSnow = 80.0f; // make fire slide on snow
+	Clock lastTouchedSlope;
+	float boySlopeFallTime = 0.3f; // the time interval after which fire will keep sliding down the slope if he is on it and on snow at the same time
+	float boySlopeFallAcceleration = 300.0f; // make fire accelerate down the slope when on snow and slope at the same time
 
 	// runtime variables
 	Sprite hitbox;
 	Sprite displayBodySprite;
 	Sprite displayHeadSprite;
+	float headRotation = 0.0f;
 	Vector2f velocity = { 0,0 };
 	PlayerType playertype;
 	PlayerState playerState = Idle, lastState = Idle;
 	bool justUpdatedPlayerState = false;
+	bool lastFacingRight = false;
 	float currentSpeed = speed;
+	float currentAccelration = accelration;
+	float currentDeccelration = deccelration;
 	bool isOnGround = false;
 	bool isOnSlope = false;
 	bool isPushing = false;
 	bool isDead = false;
+	bool isOnSnow = false;
 	Vector2f startPosition;
+	bool slopeDirectionRight = true; // true if slope goe1s down to the right, false if slope goes down to the left
 
 
 
@@ -82,28 +94,37 @@ struct Player
 
 
 	void Update() {
+		currentAccelration = accelration;
+		currentDeccelration = deccelration;
+		if (isOnSlope) lastTouchedSlope.restart();
+
 		if (playertype == Fireboy) {
+			if (isOnSnow)
+			{
+				currentAccelration = boyAccelerationOnSnow;
+				currentDeccelration = boyAccelerationOnSnow;
+			}
 
 			if (Keyboard::isKeyPressed(Keyboard::Right)) {
-				velocity.x += accelration * dt;
+				velocity.x += currentAccelration * dt;
 				//PlayGameSoundEffect(GameSoundEffect::Walking_boy_sound);
 			}
 			else if (Keyboard::isKeyPressed(Keyboard::Left)) {
-				velocity.x -= accelration * dt;
+				velocity.x -= currentAccelration * dt;
 				//PlayGameSoundEffect(GameSoundEffect::Walking_boy_sound);
 			}
 			else velocity.x -= velocity.x * deccelration * dt;
 		}
 		else if (playertype == Watergirl) {
 			if (Keyboard::isKeyPressed(Keyboard::D)) {
-				velocity.x += accelration * dt;
+				velocity.x += currentAccelration * dt;
 				//PlayGameSoundEffect(GameSoundEffect::Walking_girl_sound);
 			}
 			else if (Keyboard::isKeyPressed(Keyboard::A)) {
-				velocity.x -= accelration * dt;
+				velocity.x -= currentAccelration * dt;
 				//PlayGameSoundEffect(GameSoundEffect::Walking_girl_sound);
 			}
-			else velocity.x -= velocity.x * deccelration * dt;
+			else velocity.x -= velocity.x * currentDeccelration * dt;
 		}
 
 
@@ -130,10 +151,18 @@ struct Player
 
 		velocity.y += gravity * dt;
 
-		if (isOnSlope) currentSpeed = slopeSpeed;
+		if (isOnSnow && playertype == Watergirl)
+		{
+			currentSpeed = girlSpeedOnSnow;
+		}
+		else if (isOnSlope) currentSpeed = slopeSpeed;
 		else if (isPushing) currentSpeed = pushSpeed;
 		else currentSpeed = speed;
 
+
+		if (playertype == Fireboy && isOnSnow && lastTouchedSlope.getElapsedTime().asSeconds() < boySlopeFallTime)
+			velocity.x += slopeDirectionRight ? boySlopeFallAcceleration * dt : -boySlopeFallAcceleration * dt;
+		
 		velocity.x = Clamp(velocity.x, -currentSpeed, currentSpeed);
 
 		hitbox.move(velocity * dt);
@@ -141,6 +170,7 @@ struct Player
 		isOnGround = false;
 		isOnSlope = false;
 		isPushing = false;
+		isOnSnow = false;
 	}
 
 	void CheckInput(Event event) {
@@ -149,13 +179,13 @@ struct Player
 		if (event.type == Event::KeyPressed) {
 			if (playertype == Fireboy) {
 				if (event.key.code == Keyboard::Up) {
-					velocity.y = jump;
+					velocity.y = isOnSnow ? jumpOnSnow : jump;
 					PlayGameSoundEffect(GameSoundEffect::BoyJump_sound);
 				}
 			}
 			else if (playertype == Watergirl) {
 				if (event.key.code == Keyboard::W) {
-					velocity.y = jump;
+					velocity.y = isOnSnow ? jumpOnSnow : jump;
 					PlayGameSoundEffect(GameSoundEffect::GirlJump_sound);
 				}
 			}
@@ -176,13 +206,28 @@ struct Player
 		displayHeadSprite.move(0, -10);
 
 		// head rotation
-		if (playerState == PlayerState::Walk) {
-			float rotation = atan2(velocity.y, velocity.x) * 180 / 3.14159f;
-			if (velocity.x < 0) rotation += 180;
-			displayHeadSprite.setRotation(rotation);
+		if (playerState == PlayerState::Walk)
+		{
+			//displayHeadSprite.setRotation((headRotation < 0 ? headRotation + 180 : headRotation));
+
+			bool facingRight = velocity.x > 0;
+
+		    Vector2f scale = displayHeadSprite.getScale();
+			scale = facingRight ? Vector2f(abs(scale.x), abs(scale.y)) : Vector2f(abs(scale.x), -abs(scale.y));
+			displayHeadSprite.setScale(scale);
+
+			float targetRotation = atan2(velocity.y, velocity.x) * 180.f / 3.14159f;
+			headRotation = targetRotation;
+
+			cout << headRotation << endl;
+			displayHeadSprite.setRotation(headRotation);
 		}
 		else
+		{
 			displayHeadSprite.setRotation(0);
+			Vector2f scale = displayHeadSprite.getScale();
+			displayHeadSprite.setScale(Vector2f(abs(scale.x), abs(scale.y)));
+		}
 
 
 		if (playerState == PlayerState::Jump_Rise) {
@@ -621,7 +666,7 @@ struct FinalDoor
 
 	bool touched = false;
 	bool player_on_door = false;
-	float scale = 0.6f;
+	float scale = 0.8f;
 	float currentFrame = 0;
 	bool justEntered = false;
 
@@ -642,7 +687,7 @@ struct FinalDoor
 		}
 		sprite.setPosition(startPosition + Vector2f(sprite.getGlobalBounds().width / 2.0f - 50, 0));
 		Allign(sprite);
-		sprite.move(0, 12);
+		sprite.move(0, 16);
 	}
 
 	FinalDoor(door_type startType, Vector2f position) {
@@ -1196,6 +1241,9 @@ struct Box {
 	float scale = 2.8f;
 
 	float gravity = 500.0f;
+	Collider::CollisionData playerCollisionData1;
+	Collider::CollisionData playerCollisionData2;
+	bool blocked = false;
 
 	Box() {}
 	Box(Vector2f position) {
@@ -1226,9 +1274,16 @@ struct Box {
 		collider.sprite.move(velocity * dt);
 	}
 
-	void CheckCollision(Player& player, Collider::CollisionData* boxCollisionDatas, int colliderCount) {
+	void CheckCollision(Player& player, Collider::CollisionData* boxCollisionDatas, int colliderCount, Collider::CollisionData& playerCollisionData) {
 		Collider::CollisionData collisionData;
-		player.isOnGround |= collider.CheckCollision(player, collisionData, FloatRect(), 1.0f, false);
+		float moveRatio;
+		if (playerCollisionData1.collisionDirection == Collider::CollisionData::CollisionDirection::Left && playerCollisionData2.collisionDirection == Collider::CollisionData::CollisionDirection::Right) moveRatio = 0.0f;
+		else if(playerCollisionData1.collisionDirection == Collider::CollisionData::CollisionDirection::Right && playerCollisionData2.collisionDirection == Collider::CollisionData::CollisionDirection::Left) moveRatio = 0.0f;
+		else moveRatio = 1.0f;
+
+		player.isOnGround |= collider.CheckCollision(player, collisionData, FloatRect(), moveRatio, false);
+		playerCollisionData = collisionData;
+
 		if (collisionData.collisionDirection != Collider::CollisionData::CollisionDirection::None) player.isPushing = true;
 
 		bool resolvedVelocity = false;
@@ -1262,8 +1317,10 @@ struct Box {
 		UpdatePhysics();
 		Collider::CollisionData* boxCollisionDatas = new Collider::CollisionData[colliders.count];
 		CheckCollision(colliders, boxCollisionDatas);
-		CheckCollision(fireBoy, boxCollisionDatas, colliders.count);
-		CheckCollision(waterGirl, boxCollisionDatas, colliders.count);
+		
+
+		CheckCollision(fireBoy, boxCollisionDatas, colliders.count, playerCollisionData1);
+		CheckCollision(waterGirl, boxCollisionDatas, colliders.count, playerCollisionData2);
 		delete[] boxCollisionDatas;
 	}
 
@@ -1409,6 +1466,59 @@ struct Fan
 	}
 };
 
+struct Snow {
+	Sprite sprite;
+	Vector2f startPosition;
+	enum SnowState
+	{
+		Normal,
+		LeftDown,
+		RightDown
+	} type;
+
+	Snow(){}
+	Snow(Vector2f position, SnowState startState) {
+		startPosition = position;
+		type = startState;
+	}
+	void Initialize() {
+		sprite.setPosition(startPosition);
+
+		switch (type)
+		{
+		case Snow::Normal:
+			ApplyTexture(sprite, LoadTexture::snow_flat_texture, Vector2f(), Vector2f(), true, false);
+			break;
+		case Snow::LeftDown:
+			ApplyTexture(sprite, LoadTexture::snow_slope_left_side_down_texture, Vector2f(), Vector2f(), true, false);
+			break;
+		case Snow::RightDown:
+			ApplyTexture(sprite, LoadTexture::snow_slope_right_side_down_texture, Vector2f(), Vector2f(), true, false);
+			break;
+		}
+
+		Allign(sprite);
+		sprite.move(0, 10);
+
+		if (type == Normal) sprite.move(-10, 4);
+		if (type == LeftDown) sprite.move(-10, 10 - 32);
+		if (type == RightDown) sprite.move(-5, 10 - 32);
+	}
+
+	void Update(Player& someone) {
+		if (sprite.getGlobalBounds().intersects(someone.hitbox.getGlobalBounds())) {
+			someone.isOnSnow = true;
+		}
+	}
+
+	void Draw() {
+		window.draw(sprite);
+	}
+};
+
+
+
+
 // this is a generic object struct to have any level object
 // how to add a new object
 // 1. finish it's normal struct
@@ -1425,6 +1535,7 @@ struct ObjectData {
 	Box box;
 	Temporary_ground temporaryGround;
 	Fan fan;
+	Snow snow;
 
 
 	bool CheckContainsPoint(Vector2f point) {
@@ -1440,6 +1551,8 @@ struct ObjectData {
 			return true;
 		if (fan.fan_sprite.getGlobalBounds().contains(point))
 			return true;
+		if (snow.sprite.getGlobalBounds().contains(point))
+			return true;
 
 		return false;
 	}
@@ -1453,7 +1566,8 @@ struct Object {
 		PondObject,
 		BoxObject,
 		TemporaryGroundObject,
-		FanObject
+		FanObject,
+		SnowObject
 	} type;
 
 	ObjectData data;
@@ -1499,6 +1613,12 @@ struct Object {
 	void InitializeFanObject(Vector2f position) {
 		data.fan.startPosition = position;
 		data.fan.Initialize();
+	}
+
+	void InitializeSnowObject(Snow::SnowState state, Vector2f position) {
+		data.snow.type = state;
+		data.snow.startPosition = position;
+		data.snow.Initialize();
 	}
 
 	/*bool CheckObjectCollision(Object other) {
@@ -1566,6 +1686,10 @@ struct Object {
 			data.temporaryGround.Update(fireBoy);
 			data.temporaryGround.Update(waterGirl);
 			break;
+		case Object::SnowObject:
+			data.snow.Update(fireBoy);
+			data.snow.Update(waterGirl);
+			break;
 		case Object::FanObject:
 			data.fan.Update(fireBoy);
 			data.fan.Update(waterGirl);
@@ -1591,6 +1715,8 @@ struct Object {
 		switch (type)
 		{
 		case Object::GemObject: window.draw(data.gem.sprite);
+			break;
+		case Object::SnowObject: data.snow.Draw();
 			break;
 		}
 	}

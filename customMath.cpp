@@ -108,7 +108,12 @@ float DampAngle(float current, float target, float smoothing, float dt) {
 	else if (difference < -180) difference += 360;
 
 	float dampFactor = 1 - pow(smoothing, dt);
-	return current + dampFactor * difference;
+	float step = dampFactor * difference;
+
+	if (abs(step) > abs(difference))
+		return target;
+
+	return current + step;
 }
 float Dot(Vector2f a, Vector2f b) {
 	return a.x * b.x + a.y * b.y;

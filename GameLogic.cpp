@@ -56,7 +56,10 @@ enum EditObjectMode
 	Button_mode,
 	Lever_mode,
 	TemporaryGround_mode,
-	FanObject_mode
+	FanObject_mode,
+	SnowObject_Normal_mode,
+	SnowObject_LeftDown_mode,
+	SnowObject_RightDown_mode,
 } editObjectMode;
 bool isEditingDoor = false;
 int doorIndex = 0; // the door that is currently being edited
@@ -78,7 +81,11 @@ void CheckCollision(Player& player) {
 		Collider::CollisionData collisionData;
 		player.isOnGround |= colliders.elements[i].CheckCollision(player, collisionData);
 		if (collisionData.collisionDirection == Collider::CollisionData::CollisionDirection::Slope)
+		{
 			player.isOnSlope = true;
+			if (colliders.elements[i].type == Collider::Triangle) player.slopeDirectionRight = true;
+			else player.slopeDirectionRight = false;
+		}
 	}
 }
 
@@ -92,10 +99,10 @@ void AllignColliders() {
 }
 
 void LoadLevelData() {
-	fireBoy = Player(Fireboy, Vector2f(260, 931));
-	waterGirl = Player(Watergirl, Vector2f(257, 805));
-	water_door = FinalDoor(FinalDoor::WATER_DOOR, Vector2f(1576, 120));
-	fire_door = FinalDoor(FinalDoor::FIRE_DOOR, Vector2f(1500, 114));
+	fireBoy = Player(Fireboy, Vector2f(263, 934));
+	waterGirl = Player(Watergirl, Vector2f(264, 798));
+	water_door = FinalDoor(FinalDoor::WATER_DOOR, Vector2f(1547, 90));
+	fire_door = FinalDoor(FinalDoor::FIRE_DOOR, Vector2f(1433, 102));
 	colliders.Add(Collider(Collider::ColliderType::Rectangle, center + Vector2f(-432, 436), Vector2f(25, 1)));
 	colliders.Add(Collider(Collider::ColliderType::Rectangle, center + Vector2f(16, -524), Vector2f(53, 1)));
 	colliders.Add(Collider(Collider::ColliderType::Rectangle, center + Vector2f(752, 84), Vector2f(3, 1)));
@@ -115,7 +122,6 @@ void LoadLevelData() {
 	colliders.Add(Collider(Collider::ColliderType::Rectangle, center + Vector2f(624, 436), Vector2f(13, 1)));
 	colliders.Add(Collider(Collider::ColliderType::Rectangle, center + Vector2f(-592, 308), Vector2f(13, 1)));
 	colliders.Add(Collider(Collider::ColliderType::Rectangle, center + Vector2f(-480, 148), Vector2f(20, 1)));
-	colliders.Add(Collider(Collider::ColliderType::Triangle, center + Vector2f(-96, 180), Vector2f(4, 3)));
 	colliders.Add(Collider(Collider::ColliderType::Rectangle, center + Vector2f(-64, 244), Vector2f(2, 1)));
 	colliders.Add(Collider(Collider::ColliderType::Rectangle, center + Vector2f(48, 244), Vector2f(5, 1)));
 	colliders.Add(Collider(Collider::ColliderType::Rectangle, center + Vector2f(368, 244), Vector2f(5, 1)));
@@ -135,6 +141,7 @@ void LoadLevelData() {
 	colliders.Add(Collider(Collider::ColliderType::Rectangle, center + Vector2f(-736, -252), Vector2f(4, 4)));
 	colliders.Add(Collider(Collider::ColliderType::Rectangle, center + Vector2f(-640, -220), Vector2f(2, 2)));
 	colliders.Add(Collider(Collider::ColliderType::Triangle_Rotated, center + Vector2f(-352, -412), Vector2f(2, 2)));
+	colliders.Add(Collider(Collider::ColliderType::Triangle, center + Vector2f(-112, 180), Vector2f(3, 3)));
 	objects.Add(Object(Object::PondObject));
 	objects.GetLastElement().InitializePondObject(Pond::FIRE_POND, Vector2f(1008, 976), 5);
 	objects.Add(Object(Object::PondObject));
@@ -359,7 +366,17 @@ void PrintLevelData() {
 		case Object::FanObject:
 			cout << "objects.Add(Object(Object::FanObject));" << endl;
 			cout << "objects.GetLastElement().InitializeFanObject(Vector2f(" << (int)objects.elements[i].data.fan.startPosition.x << ", " << (int)objects.elements[i].data.fan.startPosition.y << "));" << endl;
-			break;
+			break; case Object::SnowObject:
+				string snowType;
+				if (objects.elements[i].data.snow.type == Snow::Normal)
+					snowType = "SnowObject_Normal_mode";
+				else if (objects.elements[i].data.snow.type == Snow::LeftDown)
+					snowType = "SnowObject_LeftDown_mode";
+				else
+					snowType = "SnowObject_RightDown_mode";
+				cout << "objects.Add(Object(Object::SnowObject));" << endl;
+				cout << "objects.GetLastElement().InitializeSnowObject(Snow::" << snowType << ", Vector2f(" << (int)objects.elements[i].data.snow.sprite.getPosition().x << ", " << (int)objects.elements[i].data.snow.sprite.getPosition().y << "));" << endl;
+				break;
 		}
 	}
 }
@@ -495,6 +512,18 @@ void EditMode(Event event) {
 				case FanObject_mode:
 					objects.Add(Object(Object::FanObject));
 					objects.GetLastElement().InitializeFanObject(mousePosition);
+					break;
+				case SnowObject_LeftDown_mode:
+					objects.Add(Object(Object::SnowObject));
+					objects.GetLastElement().InitializeSnowObject(Snow::LeftDown, mousePosition);
+					break;
+				case SnowObject_Normal_mode:
+					objects.Add(Object(Object::SnowObject));
+					objects.GetLastElement().InitializeSnowObject(Snow::Normal, mousePosition);
+					break;
+				case SnowObject_RightDown_mode:
+					objects.Add(Object(Object::SnowObject));
+					objects.GetLastElement().InitializeSnowObject(Snow::RightDown, mousePosition);
 					break;
 				case Button_mode:
 					if (isEditingDoor)
@@ -696,6 +725,13 @@ void EditMode(Event event) {
 					editObjectMode = EditObjectMode::TemporaryGround_mode;
 				if (event.key.code == Keyboard::Num0)
 					editObjectMode = EditObjectMode::FanObject_mode;
+
+				if (event.key.code == Keyboard::Q)
+					editObjectMode = EditObjectMode::SnowObject_LeftDown_mode;
+				if (event.key.code == Keyboard::W)
+					editObjectMode = EditObjectMode::SnowObject_Normal_mode;
+				if (event.key.code == Keyboard::E)
+					editObjectMode = EditObjectMode::SnowObject_RightDown_mode;
 			}
 			else {
 				if (event.key.code == Keyboard::Num1)
@@ -776,7 +812,6 @@ void UpdateGame()
 
 	for (int i = 0; i < objects.count; i++)
 		objects.elements[i].Update(fireBoy, waterGirl, colliders);
-
 
 	water_door.Update(waterGirl);
 	fire_door.Update(fireBoy);
