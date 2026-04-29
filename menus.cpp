@@ -40,6 +40,12 @@ float dimingSpeed, dimPercentage = 0;
 float settingAndCredits_DimmingSpeed, settingsAndCreditsDimPercentage = 0;
 float fadeSpeed = 155, fadePercentage = 0;
 float holdSpeed = 40, holdLimit = 50;
+
+int Minutes_clock = 0, Seconds_clock = 0;
+int tenth_min = 0, unit_min = 0;
+int tenth_sec = 0, unit_sec = 0;
+float totalTimePassed = 0;
+float clockTikingSpeed = 0;
 //Why hold? -> because when I make the fade transition, I change the game state when alpha becomes 255, so the pause menu won't move until this case, it will move when we start decrementing the alpha
 //which is not like the original game
 
@@ -119,6 +125,7 @@ Text NoText; // to use it as a default value in the MouseInput_mnu function
 // cursor Variables
 Text OkButtontxt_MainToSetting;
 Text OkButtontxt_PauseToSetting;
+Text stopwatch_txt;
 Sprite cursorAndpointerSprite;
 
 int finalScore = 0;
@@ -365,7 +372,6 @@ void SettingMenu_Movement(Vector2f Desired_Target, bool fromMain)
 }
 
 
-
 void InitializeMenu()
 {
 	font.loadFromFile("Main/Assets/Fonts/trajanpro-bold.otf");
@@ -390,7 +396,7 @@ void InitializeMenu()
 
 	//clock
 	clock_timer.setSmooth(true);
-	ApplyTexture(clockTiking_game, LoadTexture::clock_timer_texture, Vector2f(298, 112));
+	ApplyTexture(clockTiking_game, LoadTexture::clock_timer_texture, Vector2f(310, 112));
 	clockTiking_game.setPosition(windowSize.x / 2, (windowSize.y / 2) - 483);
 
 
@@ -549,6 +555,15 @@ void InitializeMenu()
 	x_icon.setSmooth(true);
 	tick_icon.setSmooth(true);
 	RatingCheck(true, true, true);
+
+	//Clock Text
+	stopwatch_txt.setFont(font);
+	stopwatch_txt.setCharacterSize(50);
+	stopwatch_txt.setFillColor(Color(230, 194, 0));
+	stopwatch_txt.setPosition((clockTiking_game.getGlobalBounds().left + clockTiking_game.getGlobalBounds().width / 2) - 66, (clockTiking_game.getGlobalBounds().top + clockTiking_game.getGlobalBounds().height / 2) - 60);
+	stopwatch_txt.setOrigin((stopwatch_txt.getLocalBounds().width / 2), stopwatch_txt.getLocalBounds().height / 2);
+	stopwatch_txt.setOutlineColor(Color::Black);
+	stopwatch_txt.setOutlineThickness(5);
 
 	//Pause menu text
 	End_Pausetxt.setFont(font);
@@ -741,10 +756,25 @@ void OnUpdatedGameStateMenu() {
 
 void UpdateUI()
 {
+	//clock logic
+	totalTimePassed += clockTikingSpeed * dt;
+
+	Minutes_clock = (int)totalTimePassed / 60;
+	Seconds_clock = (int)totalTimePassed % 60;
+
+	unit_sec = Seconds_clock % 10;
+	tenth_sec = Seconds_clock / 10;
+
+	unit_min = Minutes_clock % 10;
+	tenth_min = Minutes_clock / 10;
+
+	stopwatch_txt.setString(to_string(tenth_min) + to_string(unit_min) + ':' + to_string(tenth_sec) + to_string(unit_sec));
+
 	switch (gameState)
 	{
 	case MAIN_MENU:
 		// code for main menu
+		clockTikingSpeed = 0;
 		MainMenuSettings = true;
 		UpdateAnimation(IdleFbHeadmnu, fire_idle_head_texture);
 		UpdateAnimation(IdleWgHeadmnu, water_head_idle_texture);
@@ -761,6 +791,7 @@ void UpdateUI()
 		Settings_from_MainMenu = true;
 		break;
 	case LEVEL_MENU:
+		clockTikingSpeed = 0;
 		if (PreviousMenu_State == GAMEOVER)
 		{
 			GameoverMenu_Movement(Target_Down_mnu);
@@ -775,6 +806,7 @@ void UpdateUI()
 		}
 		break;
 	case PAUSE_MENU:
+		clockTikingSpeed = 0;
 		PreviousMenu_State = PAUSE_MENU;
 		MainMenuSettings = false;
 		PauseMenu_Movement(Target_up_mnu);
@@ -787,6 +819,7 @@ void UpdateUI()
 		Settings_from_MainMenu = false;
 		break;
 	case WIN_MENU:
+		clockTikingSpeed = 0;
 		PreviousMenu_State = WIN_MENU;
 		WinMenu_Movement(Target_up_mnu);
 		currentDimState = DimmingUp;
@@ -838,7 +871,7 @@ void UpdateUI()
 
 		break;
 	case SETTINGS:
-		//PreviousMenu_State = SETTINGS;
+		clockTikingSpeed = 0;
 		if (MainMenuSettings)
 		{
 			SettingMenu_Movement(Target_up_mnu, true);
@@ -853,12 +886,14 @@ void UpdateUI()
 		// code for settings menu
 		break;
 	case GAMEOVER:
+		clockTikingSpeed = 0;
 		PreviousMenu_State = GAMEOVER;
 		GameoverMenu_Movement(Target_up_mnu);
 		currentDimState = DimmingUp;
 		break;
 	case GAME:
 		// code for game UI
+		clockTikingSpeed = 1;
 		if (PreviousMenu_State == GAMEOVER)
 		{
 			GameoverMenu_Movement(Target_Down_mnu);
@@ -1053,6 +1088,8 @@ void DrawUI()
 
 	case PAUSE_MENU:
 		DrawGame(true);
+		window.draw(clockTiking_game);
+		window.draw(stopwatch_txt);
 		window.draw(Game_Dimmed_Background);
 		window.draw(Stone_mnu);
 		window.draw(EndButton_Pausemnu);
@@ -1079,6 +1116,8 @@ void DrawUI()
 
 	case WIN_MENU:
 		DrawGame(true);
+		window.draw(clockTiking_game);
+		window.draw(stopwatch_txt);
 		window.draw(Game_Dimmed_Background);
 		window.draw(Stone_mnu);
 		window.draw(ContinueButton_Winmnu);
@@ -1135,6 +1174,8 @@ void DrawUI()
 		else if (PreviousMenu_State == PAUSE_MENU)
 		{
 			DrawGame(true);
+			window.draw(clockTiking_game);
+			window.draw(stopwatch_txt);
 			window.draw(Game_Dimmed_Background);
 			window.draw(Stone_mnu);
 			window.draw(EndButton_Pausemnu);
@@ -1157,6 +1198,8 @@ void DrawUI()
 
 	case GAMEOVER:
 		DrawGame(true);
+		window.draw(clockTiking_game);
+		window.draw(stopwatch_txt);
 		window.draw(Game_Dimmed_Background);
 		window.draw(Stone_mnu);
 		for (int i = 0; i < 3; i++)
@@ -1171,9 +1214,10 @@ void DrawUI()
 
 	case GAME:
 		// code for drawing game UI
-		window.draw(Game_Dimmed_Background);
 		window.draw(PauseIcon_mnu);
 		window.draw(clockTiking_game);
+		window.draw(stopwatch_txt);
+		window.draw(Game_Dimmed_Background);
 		if (Current_position_mnu != Target_Down_mnu)
 		{
 
