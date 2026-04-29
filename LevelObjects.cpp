@@ -1795,7 +1795,11 @@ struct ObjectList {
 	}
 };
 
-struct Tutorial_txt{};
+struct Tutorial_txt
+{
+	RectangleShape textCollision;
+	Text text;
+};
 
 struct TutorialTxtList {
 	int count = 0;

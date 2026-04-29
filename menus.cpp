@@ -7,11 +7,6 @@
 
 
 // Structs and enums
-struct Tutorial_txt
-{
-	RectangleShape textCollision;
-	Text text;
-};
 
 enum FadeState 
 {
