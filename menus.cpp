@@ -58,7 +58,7 @@ Vector2f Current_Target;
 
 Sprite Stone_mnu;
 Sprite clockTiking_game;
-Sprite SettingButton_mnu;
+Sprite SettingButton_Pausemnu;
 Sprite EndButton_Pausemnu;
 Sprite RetryButton_Pausemnu;
 Sprite ResumeButton_Pausemnu;
@@ -68,6 +68,7 @@ Sprite GameName_mnu;
 Sprite PlayButton_mnu;
 Sprite CreditsButton_mnu;
 Sprite ExitButton_mnu;
+Sprite SettingsButton_Mainmnu;
 Sprite IdleFbBodymnu;
 Sprite IdleFbHeadmnu;
 Sprite IdleWgBodymnu;
@@ -123,23 +124,6 @@ Sprite cursorAndpointerSprite;
 int finalScore = 0;
 // Functions
 
-void forceMainMenuDraw(bool forcedraw)
-{
-	if (!forcedraw) return;
-	else
-	{
-		window.draw(MainMenuBackground_mnu);
-		window.draw(GameName_mnu);
-		window.draw(PlayButton_mnu);
-		window.draw(CreditsButton_mnu);
-		window.draw(ExitButton_mnu);
-		window.draw(SettingButton_mnu);
-		window.draw(IdleFbBodymnu);
-		window.draw(IdleFbHeadmnu);
-		window.draw(IdleWgBodymnu);
-		window.draw(IdleWgHeadmnu);
-	}
-}
 void changeCursorColor(Event event)
 {
 	if (event.type == Event::MouseButtonPressed && event.mouseButton.button == Mouse::Left)
@@ -293,7 +277,7 @@ void PauseMenu_Movement(Vector2f Desired_Target)
 	EndButton_Pausemnu.setPosition(Vector2f((windowSize.x / 2) - 35, (windowSize.y / 2) + 70) + Current_position_mnu - center);
 	RetryButton_Pausemnu.setPosition(Vector2f((windowSize.x / 2) + 435, (windowSize.y / 2) + 70) + Current_position_mnu - center);
 	ResumeButton_Pausemnu.setPosition(Vector2f((windowSize.x / 2 + 205), (windowSize.y / 2) + 220) + Current_position_mnu - center);
-	SettingButton_mnu.setPosition(Vector2f(Stone_mnu.getPosition().x + 485, Stone_mnu.getPosition().y - 240));
+	SettingButton_Pausemnu.setPosition(Vector2f(Stone_mnu.getPosition().x + 485, Stone_mnu.getPosition().y - 240));
 	End_Pausetxt.setPosition(Vector2f(EndButton_Pausemnu.getGlobalBounds().left + EndButton_Pausemnu.getGlobalBounds().width / 2, (EndButton_Pausemnu.getGlobalBounds().top + EndButton_Pausemnu.getGlobalBounds().height / 2) - 20));
 	Retry_Pausetxt.setPosition(Vector2f(RetryButton_Pausemnu.getGlobalBounds().left + RetryButton_Pausemnu.getGlobalBounds().width / 2, (RetryButton_Pausemnu.getGlobalBounds().top + RetryButton_Pausemnu.getGlobalBounds().height / 2) - 20));
 	Resume_Pausetxt.setPosition(Vector2f(ResumeButton_Pausemnu.getGlobalBounds().left + ResumeButton_Pausemnu.getGlobalBounds().width / 2, (ResumeButton_Pausemnu.getGlobalBounds().top + ResumeButton_Pausemnu.getGlobalBounds().height / 2) - 20));
@@ -405,18 +389,17 @@ void InitializeMenu()
 	FadingTransitionBackground.setPosition(window.getPosition().x / 2, window.getPosition().y / 2);
 
 	//clock
-	ApplyTexture(clockTiking_game, LoadTexture::clock_timer_texture, Vector2f(268, 100));
+	clock_timer.setSmooth(true);
+	ApplyTexture(clockTiking_game, LoadTexture::clock_timer_texture, Vector2f(298, 112));
+	clockTiking_game.setPosition(windowSize.x / 2, (windowSize.y / 2) - 483);
 
 
 	//Main menu
 	ApplyTexture(MainMenuBackground_mnu, LoadTexture::main_menu_background_texture, Vector2f(windowSize.x, windowSize.y));	
 	MainMenuBackground_mnu.setPosition(windowSize.x / 2 ,windowSize.y / 2);	
 
-	if (gameState == MAIN_MENU)
-	{
-		ApplyTexture(SettingButton_mnu, LoadTexture::SettingsButton0_texture, Vector2f(120, 120));
-		SettingButton_mnu.setPosition(150, 860);
-	}
+	ApplyTexture(SettingsButton_Mainmnu, LoadTexture::SettingsButton0_texture, Vector2f(120, 120));
+	SettingsButton_Mainmnu.setPosition(150, 860);
 
 	ApplyTexture(GameName_mnu, LoadTexture::game_name_texture, Vector2f(860, 270));
 	GameName_mnu.setPosition(windowSize.x / 2, windowSize.y / 2 - 200);
@@ -512,11 +495,10 @@ void InitializeMenu()
 	ApplyTexture(ResumeButton_Pausemnu, LoadTexture::stone_button_0_texture, Vector2f(700, 170));
 	UpdateAnimation(ResumeButton_Pausemnu, stone_button_0_texture);
 	ResumeButton_Pausemnu.setPosition((windowSize.x / 2 + 205), (windowSize.y / 2) + 220);
-	if (gameState == PAUSE_MENU)
-	{
-		ApplyTexture(SettingButton_mnu, LoadTexture::SettingsButton0_texture, Vector2f(105, 105));
-		SettingButton_mnu.setPosition((Stone_mnu.getGlobalBounds().left + Stone_mnu.getGlobalBounds().width / 2) + 485, Stone_mnu.getGlobalBounds().top + 170);
-	}
+
+	ApplyTexture(SettingButton_Pausemnu, LoadTexture::SettingsButton0_texture, Vector2f(105, 105));
+	SettingButton_Pausemnu.setPosition((Stone_mnu.getGlobalBounds().left + Stone_mnu.getGlobalBounds().width / 2) + 485, Stone_mnu.getGlobalBounds().top + 170);
+
 	//Game Over menu
 
 	// stone background has been already set
@@ -664,7 +646,7 @@ void HandleMenuInput(Event event)
 	{
 	case MAIN_MENU:
 		// code for handling main menu input
-		MouseInput_mnu(event, SettingButton_mnu, SettingsButton0_texture, SettingsButton0_texture, ButtonClick, SETTINGS, false);
+		MouseInput_mnu(event, SettingsButton_Mainmnu, SettingsButton0_texture, SettingsButton0_texture, ButtonClick, SETTINGS, false);
 		MouseInput_mnu(event, PlayButton_mnu, PlayButton_texture, PlayButton_texture, ButtonClick, GAME, true);
 		MouseInput_mnu(event, CreditsButton_mnu, CreditsButton_Texture, CreditsButton_Texture, ButtonClick, CREDITS, false);
 		if(event.type == Event::MouseButtonPressed && event.mouseButton.button == Mouse::Left)
@@ -685,7 +667,7 @@ void HandleMenuInput(Event event)
 			RestartGame();
 		}
 		MouseInput_mnu(event, EndButton_Pausemnu, stone_button_0_texture, stone_button_1_texture, ButtonClick, LEVEL_MENU, true, End_Pausetxt);
-		MouseInput_mnu(event, SettingButton_mnu, SettingsButton0_texture, SettingsButton0_texture, No_Sound_Buttons, SETTINGS, false);
+		MouseInput_mnu(event, SettingButton_Pausemnu, SettingsButton0_texture, SettingsButton0_texture, No_Sound_Buttons, SETTINGS, false);
 		break;
 	case WIN_MENU:
 		MouseInput_mnu(event, ContinueButton_Winmnu, stone_button_0_texture, stone_button_1_texture, ButtonClick, LEVEL_MENU, true, Continue_Wintxt);
@@ -1000,7 +982,7 @@ void DrawUI()
 		window.draw(PlayButton_mnu);
 		window.draw(CreditsButton_mnu);
 		window.draw(ExitButton_mnu);
-		window.draw(SettingButton_mnu);
+		window.draw(SettingsButton_Mainmnu);
 		window.draw(IdleFbBodymnu);
 		window.draw(IdleFbHeadmnu);
 		window.draw(IdleWgBodymnu);
@@ -1008,21 +990,6 @@ void DrawUI()
 
 		window.draw(settingsAndCredits_Dimmed_Background);
 		
-		if (Current_position_mnu != Target_Down_mnu)
-		{
-			if (PreviousMenu_State == GAMEOVER)
-			{
-				window.draw(Stone_mnu);
-				for (int i = 0; i < 3; i++)
-				{
-					window.draw(GameOverbuttons_mnu[i]);
-				}
-				window.draw(Menu_GOVERtxt);
-				window.draw(Retry_GOVERtxt);
-				window.draw(Levels_GOVERtxt);
-				window.draw(GameOver_txt);
-			}
-		}
 		if (Current_position_Settings_mnu != Target_Down_mnu)
 		{
 			if (LastWasSettings)
@@ -1059,7 +1026,7 @@ void DrawUI()
 				window.draw(EndButton_Pausemnu);
 				window.draw(RetryButton_Pausemnu);
 				window.draw(ResumeButton_Pausemnu);
-				window.draw(SettingButton_mnu);
+				window.draw(SettingButton_Pausemnu);
 				window.draw(End_Pausetxt);
 				window.draw(Retry_Pausetxt);
 				window.draw(Resume_Pausetxt);
@@ -1091,7 +1058,7 @@ void DrawUI()
 		window.draw(EndButton_Pausemnu);
 		window.draw(RetryButton_Pausemnu);
 		window.draw(ResumeButton_Pausemnu);
-		window.draw(SettingButton_mnu);
+		window.draw(SettingButton_Pausemnu);
 		window.draw(End_Pausetxt);
 		window.draw(Retry_Pausetxt);
 		window.draw(Resume_Pausetxt);
@@ -1152,7 +1119,7 @@ void DrawUI()
 			window.draw(PlayButton_mnu);
 			window.draw(CreditsButton_mnu);
 			window.draw(ExitButton_mnu);
-			window.draw(SettingButton_mnu);
+			window.draw(SettingsButton_Mainmnu);
 			window.draw(IdleFbBodymnu);
 			window.draw(IdleFbHeadmnu);
 			window.draw(IdleWgBodymnu);
@@ -1173,7 +1140,7 @@ void DrawUI()
 			window.draw(EndButton_Pausemnu);
 			window.draw(RetryButton_Pausemnu);
 			window.draw(ResumeButton_Pausemnu);
-			window.draw(SettingButton_mnu);
+			window.draw(SettingButton_Pausemnu);
 			window.draw(End_Pausetxt);
 			window.draw(Retry_Pausetxt);
 			window.draw(Resume_Pausetxt);
@@ -1206,6 +1173,7 @@ void DrawUI()
 		// code for drawing game UI
 		window.draw(Game_Dimmed_Background);
 		window.draw(PauseIcon_mnu);
+		window.draw(clockTiking_game);
 		if (Current_position_mnu != Target_Down_mnu)
 		{
 
@@ -1227,7 +1195,7 @@ void DrawUI()
 				window.draw(EndButton_Pausemnu);
 				window.draw(RetryButton_Pausemnu);
 				window.draw(ResumeButton_Pausemnu);
-				window.draw(SettingButton_mnu);
+				window.draw(SettingButton_Pausemnu);
 				window.draw(End_Pausetxt);
 				window.draw(Retry_Pausetxt);
 				window.draw(Resume_Pausetxt);
