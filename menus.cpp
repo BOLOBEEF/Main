@@ -7,6 +7,12 @@
 
 
 // Structs and enums
+struct Tutorial_txt
+{
+	RectangleShape textCollision;
+	Text text;
+};
+
 enum FadeState 
 {
 	NoFading,
@@ -700,14 +706,14 @@ void HandleMenuInput(Event event)
 		{
 			MuteSound(event, SoundButton_MainToSetting, MuteButton0_texture, MuteButton1_texture, ButtonClick, isSoundButtonClicked_MainToSetting);
 			MuteMusic(event, MusicButton_MainToSetting, MusicButton0_texture, MusicButton1_texture, ButtonClick, isMusicButtonClicked_MainToSetting);
-			MouseInput_mnu(event, OkButton_MainToSetting, stone_button_0_texture, stone_button_1_texture, No_Sound_Buttons, MAIN_MENU, false, OkButtontxt_MainToSetting);
+			MouseInput_mnu(event, OkButton_MainToSetting, stone_button_0_texture, stone_button_1_texture, ButtonClick, MAIN_MENU, false, OkButtontxt_MainToSetting);
 
 		}
 		else
 		{
 			MuteSound(event, SoundButton_PauseToSetting, MuteButton0_texture, MuteButton1_texture, ButtonClick, isSoundButtonClicked_PauseToSetting);
 			MuteMusic(event, MusicButton_PauseToSetting, MusicButton0_texture, MusicButton1_texture, ButtonClick, isMusicButtonClicked_PauseToSetting);
-			MouseInput_mnu(event, OkButton_PauseToSetting, stone_button_0_texture, stone_button_1_texture, No_Sound_Buttons, PAUSE_MENU, false, OkButtontxt_PauseToSetting);
+			MouseInput_mnu(event, OkButton_PauseToSetting, stone_button_0_texture, stone_button_1_texture, ButtonClick, PAUSE_MENU, false, OkButtontxt_PauseToSetting);
 		}
 		break;
 	case GAMEOVER:
