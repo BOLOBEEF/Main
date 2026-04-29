@@ -23,8 +23,21 @@ enum DimState
 };
 DimState currentDimState = NoDimming;
 
+enum settingDimState
+{
+	NoSettingsDimming,
+
+	PauseToSettingsDimmingUp,
+	MainTo_SettingsOtCredits_DimmingUp,
+
+	PauseToSettingsDimmingDown,
+	MainTo_SettingsOrCredits_DimmingDown
+};
+settingDimState currentSettingsDimState = NoSettingsDimming;
+
 // Runtime variables
 float dimingSpeed, dimPercentage = 0;
+float settingAndCredits_DimmingSpeed, settingsAndCreditsDimPercentage = 0;
 float fadeSpeed = 155, fadePercentage = 0;
 float holdSpeed = 40, holdLimit = 50;
 //Why hold? -> because when I make the fade transition, I change the game state when alpha becomes 255, so the pause menu won't move until this case, it will move when we start decrementing the alpha
@@ -33,7 +46,8 @@ float holdSpeed = 40, holdLimit = 50;
 
 GameState PreviousMenu_State = MAIN_MENU;
 GameState FadeTransitionMenuState = MAIN_MENU;
-RectangleShape Dimmed_Background;
+RectangleShape Game_Dimmed_Background;
+RectangleShape settingsAndCredits_Dimmed_Background;
 RectangleShape FadingTransitionBackground;
 
 Vector2f Target_up_mnu = Vector2f(windowSize.x / 2, windowSize.y / 2);
@@ -43,6 +57,7 @@ Vector2f Current_position_Settings_mnu = Target_Down_mnu;
 Vector2f Current_Target;
 
 Sprite Stone_mnu;
+Sprite clockTiking_game;
 Sprite SettingButton_mnu;
 Sprite EndButton_Pausemnu;
 Sprite RetryButton_Pausemnu;
@@ -352,7 +367,7 @@ void SettingMenu_Movement(Vector2f Desired_Target, bool fromMain)
 		SoundButton_MainToSetting.setPosition(Vector2f(700, 530) + Current_position_Settings_mnu - center);
 		MusicButton_MainToSetting.setPosition(Vector2f(1200, 530) + Current_position_Settings_mnu - center);
 		OkButton_MainToSetting.setPosition(Vector2f(1155, 750) + Current_position_Settings_mnu - center);
-		OkButtontxt_MainToSetting.setPosition(Vector2f(903, 720) + Current_position_Settings_mnu - center);
+		OkButtontxt_MainToSetting.setPosition(Vector2f(903, 710) + Current_position_Settings_mnu - center);
 	}
 	else
 	{
@@ -360,7 +375,7 @@ void SettingMenu_Movement(Vector2f Desired_Target, bool fromMain)
 		SoundButton_PauseToSetting.setPosition(Vector2f(700, 530) + Current_position_Settings_mnu - center);
 		MusicButton_PauseToSetting.setPosition(Vector2f(1200, 530) + Current_position_Settings_mnu - center);
 		OkButton_PauseToSetting.setPosition(Vector2f(1155, 750) + Current_position_Settings_mnu - center);
-		OkButtontxt_PauseToSetting.setPosition(Vector2f(903, 720) + Current_position_Settings_mnu - center);
+		OkButtontxt_PauseToSetting.setPosition(Vector2f(903, 710) + Current_position_Settings_mnu - center);
 	}
 	// I Will Handle this After You finish Settings Menu
 }
@@ -378,12 +393,20 @@ void InitializeMenu()
 	UpdateAnimation(cursorAndpointerSprite, cursor_texture);
 
 	//Dimmed Background
-	Dimmed_Background.setSize(Vector2f(window.getSize().x, window.getSize().y));
-	Dimmed_Background.setPosition(window.getPosition().x / 2, window.getPosition().y / 2);
+	Game_Dimmed_Background.setSize(Vector2f(window.getSize().x, window.getSize().y));
+	Game_Dimmed_Background.setPosition(window.getPosition().x / 2, window.getPosition().y / 2);
+
+	//Setting Dimmed Background
+	settingsAndCredits_Dimmed_Background.setSize(Vector2f(window.getSize().x, window.getSize().y));
+	settingsAndCredits_Dimmed_Background.setPosition(window.getPosition().x / 2, window.getPosition().y / 2);
 
 	//fading Transition Background
 	FadingTransitionBackground.setSize(Vector2f(window.getSize().x, window.getSize().y));
 	FadingTransitionBackground.setPosition(window.getPosition().x / 2, window.getPosition().y / 2);
+
+	//clock
+	ApplyTexture(clockTiking_game, LoadTexture::clock_timer_texture, Vector2f(268, 100));
+
 
 	//Main menu
 	ApplyTexture(MainMenuBackground_mnu, LoadTexture::main_menu_background_texture, Vector2f(windowSize.x, windowSize.y));	
@@ -674,6 +697,7 @@ void HandleMenuInput(Event event)
 			MuteSound(event, SoundButton_MainToSetting, MuteButton0_texture, MuteButton1_texture, ButtonClick, isSoundButtonClicked_MainToSetting);
 			MuteMusic(event, MusicButton_MainToSetting, MusicButton0_texture, MusicButton1_texture, ButtonClick, isMusicButtonClicked_MainToSetting);
 			MouseInput_mnu(event, OkButton_MainToSetting, stone_button_0_texture, stone_button_1_texture, No_Sound_Buttons, MAIN_MENU, false, OkButtontxt_MainToSetting);
+			
 		}
 		else
 		{
@@ -745,7 +769,7 @@ void UpdateUI()
 		if (LastWasSettings)
 		{
 			SettingMenu_Movement(Target_Down_mnu, true);
-			currentDimState = DimmingDown;
+			currentSettingsDimState = MainTo_SettingsOrCredits_DimmingDown;
 		}
 		else if (PreviousMenu_State == GAMEOVER)
 		{
@@ -775,6 +799,7 @@ void UpdateUI()
 		if (LastWasSettings)
 		{
 			SettingMenu_Movement(Target_Down_mnu, false);
+			currentSettingsDimState = PauseToSettingsDimmingDown;
 		}
 		currentDimState = DimmingUp;
 		Settings_from_MainMenu = false;
@@ -835,11 +860,12 @@ void UpdateUI()
 		if (MainMenuSettings)
 		{
 			SettingMenu_Movement(Target_up_mnu, true);
-			currentDimState = DimmingUp;
+			currentSettingsDimState = MainTo_SettingsOtCredits_DimmingUp;
 		}
 		else
 		{
 			SettingMenu_Movement(Target_up_mnu, false);
+			currentSettingsDimState = PauseToSettingsDimmingUp;
 		}
 		LastWasSettings = true;
 		// code for settings menu
@@ -915,8 +941,50 @@ void UpdateUI()
 			currentDimState = NoDimming;
 		}
 	}
-	Dimmed_Background.setFillColor(Color(0, 0, 0, dimPercentage));
 
+	if (currentSettingsDimState == PauseToSettingsDimmingUp)
+	{
+		settingAndCredits_DimmingSpeed = 35.0f;
+		settingsAndCreditsDimPercentage += settingAndCredits_DimmingSpeed * dt;
+		if (settingsAndCreditsDimPercentage >= 60)
+		{
+			settingsAndCreditsDimPercentage = 60;
+			currentSettingsDimState = NoSettingsDimming;
+		}
+	}
+	else if (currentSettingsDimState == PauseToSettingsDimmingDown)
+	{
+		settingAndCredits_DimmingSpeed = 55.0f;
+		settingsAndCreditsDimPercentage -= settingAndCredits_DimmingSpeed * dt;
+		if (settingsAndCreditsDimPercentage <= 0)
+		{
+			settingsAndCreditsDimPercentage = 0;
+			currentSettingsDimState = NoSettingsDimming;
+		}
+	}
+	else if (currentSettingsDimState == MainTo_SettingsOtCredits_DimmingUp)
+	{
+		settingAndCredits_DimmingSpeed = 155.0f;
+		settingsAndCreditsDimPercentage += settingAndCredits_DimmingSpeed * dt;
+		if (settingsAndCreditsDimPercentage >= 150)
+		{
+			settingsAndCreditsDimPercentage = 150;
+			currentSettingsDimState = NoSettingsDimming;
+		}
+	}
+	else if (currentSettingsDimState == MainTo_SettingsOrCredits_DimmingDown)
+	{
+		settingAndCredits_DimmingSpeed = 190.0f;
+		settingsAndCreditsDimPercentage -= settingAndCredits_DimmingSpeed * dt;
+		if (settingsAndCreditsDimPercentage <= 0)
+		{
+			settingsAndCreditsDimPercentage = 0;
+			currentSettingsDimState = NoSettingsDimming;
+		}
+	}
+
+	Game_Dimmed_Background.setFillColor(Color(0, 0, 0, dimPercentage + settingsAndCreditsDimPercentage));
+	settingsAndCredits_Dimmed_Background.setFillColor(Color(0, 0, 0, settingsAndCreditsDimPercentage));
 	cursorAndpointerSprite.setPosition(mousePosition + Vector2f(21, 13));
 }
 
@@ -937,7 +1005,8 @@ void DrawUI()
 		window.draw(IdleFbHeadmnu);
 		window.draw(IdleWgBodymnu);
 		window.draw(IdleWgHeadmnu);
-		window.draw(Dimmed_Background);
+
+		window.draw(settingsAndCredits_Dimmed_Background);
 		
 		if (Current_position_mnu != Target_Down_mnu)
 		{
@@ -1017,7 +1086,7 @@ void DrawUI()
 
 	case PAUSE_MENU:
 		DrawGame(true);
-		window.draw(Dimmed_Background);
+		window.draw(Game_Dimmed_Background);
 		window.draw(Stone_mnu);
 		window.draw(EndButton_Pausemnu);
 		window.draw(RetryButton_Pausemnu);
@@ -1031,6 +1100,7 @@ void DrawUI()
 		{
 			if (LastWasSettings)
 			{
+
 				window.draw(SettingsMenuBox_PauseToSetting);
 				window.draw(SoundButton_PauseToSetting);
 				window.draw(MusicButton_PauseToSetting);
@@ -1042,7 +1112,7 @@ void DrawUI()
 
 	case WIN_MENU:
 		DrawGame(true);
-		window.draw(Dimmed_Background);
+		window.draw(Game_Dimmed_Background);
 		window.draw(Stone_mnu);
 		window.draw(ContinueButton_Winmnu);
 		window.draw(MaleAndFemale_icon_Winmnu);
@@ -1075,7 +1145,6 @@ void DrawUI()
 		break;
 
 	case SETTINGS:
-		window.draw(Dimmed_Background);
 		if (MainMenuSettings && PreviousMenu_State != PAUSE_MENU)
 		{
 			window.draw(MainMenuBackground_mnu);
@@ -1088,6 +1157,7 @@ void DrawUI()
 			window.draw(IdleFbHeadmnu);
 			window.draw(IdleWgBodymnu);
 			window.draw(IdleWgHeadmnu);
+			window.draw(settingsAndCredits_Dimmed_Background);
 
 			window.draw(SettingsMenuBox_MainToSetting);
 			window.draw(SoundButton_MainToSetting);
@@ -1098,7 +1168,7 @@ void DrawUI()
 		else if (PreviousMenu_State == PAUSE_MENU)
 		{
 			DrawGame(true);
-			cout << "t3baaaaaaaaaaaaaaaaan\n";
+			window.draw(Game_Dimmed_Background);
 			window.draw(Stone_mnu);
 			window.draw(EndButton_Pausemnu);
 			window.draw(RetryButton_Pausemnu);
@@ -1120,7 +1190,7 @@ void DrawUI()
 
 	case GAMEOVER:
 		DrawGame(true);
-		window.draw(Dimmed_Background);
+		window.draw(Game_Dimmed_Background);
 		window.draw(Stone_mnu);
 		for (int i = 0; i < 3; i++)
 		{
@@ -1134,7 +1204,7 @@ void DrawUI()
 
 	case GAME:
 		// code for drawing game UI
-		window.draw(Dimmed_Background);
+		window.draw(Game_Dimmed_Background);
 		window.draw(PauseIcon_mnu);
 		if (Current_position_mnu != Target_Down_mnu)
 		{
