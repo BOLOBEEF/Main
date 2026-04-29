@@ -1794,3 +1794,60 @@ struct ObjectList {
 		delete[] elements;
 	}
 };
+
+struct Tutorial_txt{};
+
+struct TutorialTxtList {
+	int count = 0;
+	Tutorial_txt* elements;
+
+	TutorialTxtList() {
+		elements = new Tutorial_txt[count];
+	}
+
+	void Add(Tutorial_txt element) {
+		Tutorial_txt* temp = new Tutorial_txt[count];
+
+		for (int i = 0; i < count; i++)
+			temp[i] = elements[i];
+
+		count++;
+		elements = new Tutorial_txt[count];
+
+		if (count - 1 >= 0)
+			for (int i = 0; i < count - 1; i++)
+				elements[i] = temp[i];
+
+		delete[] temp;
+
+		elements[count - 1] = element;
+	}
+
+	void RemoveAt(int index) {
+		if (count <= 0 || index < 0 || index >= count) return;
+
+		Tutorial_txt* temp = new Tutorial_txt[count];
+
+		for (int i = 0; i < count; i++)
+			temp[i] = elements[i];
+
+		count--;
+		elements = new Tutorial_txt[count];
+
+		for (int i = 0; i < count; i++)
+			if (i < index)
+				elements[i] = temp[i];
+			else
+				elements[i] = temp[i + 1];
+
+		delete[] temp;
+	}
+
+	Tutorial_txt& GetLastElement() {
+		return elements[count - 1];
+	}
+
+	~TutorialTxtList() {
+		delete[] elements;
+	}
+};
