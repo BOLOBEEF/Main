@@ -626,7 +626,7 @@ void InitializeMenu()
 	Levels_GOVERtxt.setCharacterSize(50);
 	Levels_GOVERtxt.setFillColor(Color(230, 194, 0));
 	Levels_GOVERtxt.setString("LEVELS");
-	Levels_GOVERtxt.setPosition((GameOverbuttons_mnu[0].getGlobalBounds().left + GameOverbuttons_mnu[0].getGlobalBounds().width / 2) , (GameOverbuttons_mnu[0].getGlobalBounds().top + GameOverbuttons_mnu[0].getGlobalBounds().height / 2) - 10);
+	Levels_GOVERtxt.setPosition((GameOverbuttons_mnu[0].getGlobalBounds().left + GameOverbuttons_mnu[0].getGlobalBounds().width / 2), (GameOverbuttons_mnu[0].getGlobalBounds().top + GameOverbuttons_mnu[0].getGlobalBounds().height / 2) - 10);
 	Levels_GOVERtxt.setOrigin(Retry_GOVERtxt.getLocalBounds().width / 2, Retry_GOVERtxt.getLocalBounds().height / 2);
 	Levels_GOVERtxt.setOutlineColor(Color::Black);
 	Levels_GOVERtxt.setOutlineThickness(5);
@@ -664,7 +664,7 @@ void HandleMenuInput(Event event)
 		MouseInput_mnu(event, SettingsButton_Mainmnu, SettingsButton0_texture, SettingsButton0_texture, ButtonClick, SETTINGS, false);
 		MouseInput_mnu(event, PlayButton_mnu, PlayButton_texture, PlayButton_texture, ButtonClick, GAME, true);
 		MouseInput_mnu(event, CreditsButton_mnu, CreditsButton_Texture, CreditsButton_Texture, ButtonClick, CREDITS, false);
-		if(event.type == Event::MouseButtonPressed && event.mouseButton.button == Mouse::Left)
+		if (event.type == Event::MouseButtonPressed && event.mouseButton.button == Mouse::Left)
 		{
 			if (ExitButton_mnu.getGlobalBounds().contains(mousePosition))
 			{
@@ -680,12 +680,19 @@ void HandleMenuInput(Event event)
 		if (MouseInput_mnu(event, RetryButton_Pausemnu, stone_button_0_texture, stone_button_1_texture, ButtonClick, GAME, true, Retry_Pausetxt))
 		{
 			RestartGame();
+			totalTimePassed = 0;
 		}
-		MouseInput_mnu(event, EndButton_Pausemnu, stone_button_0_texture, stone_button_1_texture, ButtonClick, LEVEL_MENU, true, End_Pausetxt);
+		if (MouseInput_mnu(event, EndButton_Pausemnu, stone_button_0_texture, stone_button_1_texture, ButtonClick, LEVEL_MENU, true, End_Pausetxt))
+		{
+			totalTimePassed = 0;
+		}
 		MouseInput_mnu(event, SettingButton_Pausemnu, SettingsButton0_texture, SettingsButton0_texture, No_Sound_Buttons, SETTINGS, false);
 		break;
 	case WIN_MENU:
-		MouseInput_mnu(event, ContinueButton_Winmnu, stone_button_0_texture, stone_button_1_texture, ButtonClick, LEVEL_MENU, true, Continue_Wintxt);
+		if (MouseInput_mnu(event, ContinueButton_Winmnu, stone_button_0_texture, stone_button_1_texture, ButtonClick, LEVEL_MENU, true, Continue_Wintxt))
+		{
+			totalTimePassed = 0;
+		}
 		break;
 	case SETTINGS:
 		// code for handling settings menu input
@@ -694,7 +701,7 @@ void HandleMenuInput(Event event)
 			MuteSound(event, SoundButton_MainToSetting, MuteButton0_texture, MuteButton1_texture, ButtonClick, isSoundButtonClicked_MainToSetting);
 			MuteMusic(event, MusicButton_MainToSetting, MusicButton0_texture, MusicButton1_texture, ButtonClick, isMusicButtonClicked_MainToSetting);
 			MouseInput_mnu(event, OkButton_MainToSetting, stone_button_0_texture, stone_button_1_texture, No_Sound_Buttons, MAIN_MENU, false, OkButtontxt_MainToSetting);
-			
+
 		}
 		else
 		{
@@ -704,11 +711,18 @@ void HandleMenuInput(Event event)
 		}
 		break;
 	case GAMEOVER:
-		MouseInput_mnu(event, GameOverbuttons_mnu[0], stone_button_0_texture, stone_button_1_texture, ButtonClick, LEVEL_MENU, true, Levels_GOVERtxt);
-		MouseInput_mnu(event, GameOverbuttons_mnu[2], stone_button_0_texture, stone_button_1_texture, ButtonClick, MAIN_MENU, true, Menu_GOVERtxt);
+		if(MouseInput_mnu(event, GameOverbuttons_mnu[0], stone_button_0_texture, stone_button_1_texture, ButtonClick, LEVEL_MENU, true, Levels_GOVERtxt))
+		{
+			totalTimePassed = 0;
+		}
+		if (MouseInput_mnu(event, GameOverbuttons_mnu[2], stone_button_0_texture, stone_button_1_texture, ButtonClick, MAIN_MENU, true, Menu_GOVERtxt))
+		{
+			totalTimePassed = 0;
+		}
 		if (MouseInput_mnu(event, GameOverbuttons_mnu[1], stone_button_0_texture, stone_button_1_texture, ButtonClick, GAME, true, Retry_GOVERtxt))
 		{
 			RestartGame();
+			totalTimePassed = 0;
 		}
 		break;
 	case GAME:
