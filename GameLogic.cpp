@@ -17,7 +17,7 @@
 
 void InitializeGame()
 {
-	currentLevel.LoadNewLevel(2);
+	currentLevel.LoadNewLevel(1);
 }
 
 
@@ -39,14 +39,14 @@ void RestartGame() {
 void OnUpdatedGameStateGameLogic() {
 	// do stuff here exactly when the gameState is changed
 	if (gameState == GAMEOVER) {
-		RestartGame();
+		//RestartGame();
 		return;
 	}
 
 	if (gameState != GAME) return;
 
 	if (fireBoy.isDead || waterGirl.isDead) {
-		UpdateGameState(GAMEOVER);
+		//UpdateGameState(GAMEOVER);
 		return;
 	}
 }

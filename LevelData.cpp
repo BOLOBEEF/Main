@@ -67,6 +67,7 @@ struct Level
 
 	ColliderList colliders;
 	ObjectList objects;
+	bool isSnowLevel = false;
 
 	// logic functions
 	void CheckLevelCollision(Player& player) {
@@ -89,7 +90,28 @@ struct Level
 	}
 
 	// shader functions
+	void SetTheme(bool isSnowTheme) {
+		isSnowLevel = isSnowTheme;
 
+		ground = Sprite();
+		background = Sprite();
+
+		if (!isSnowTheme) {
+			ApplyTexture(ground, LoadTexture::GROUND, Vector2f(256, 256));
+			ground.setTexture(groundTexture);
+			ApplyTexture(background, LoadTexture::BACKGROUND, Vector2f(256, 256));
+			background.setTexture(backgroundTexture);
+		}
+		else {
+			ApplyTexture(background, LoadTexture::GROUND, Vector2f(256, 256));
+			background.setTexture(groundTexture);
+			ApplyTexture(ground, LoadTexture::BACKGROUND, Vector2f(256, 256));
+			ground.setTexture(backgroundTexture);
+		}
+
+		ground.setTextureRect(IntRect(0, 0, windowSize.x, windowSize.y));
+		background.setTextureRect(IntRect(0, 0, windowSize.x, windowSize.y));
+	}
 	void UpdateOutlinesTexture() {
 		const float outlineThickness = 5.0f;
 		const int iterations = 8 * 4;						// number of directions
@@ -170,6 +192,7 @@ struct Level
 	// LEVEL DATA :
 	void Level1()
 	{
+		isSnowLevel = false;
 		fireBoy = Player(Fireboy, Vector2f(263, 934));
 		waterGirl = Player(Watergirl, Vector2f(264, 798));
 		water_door = FinalDoor(FinalDoor::WATER_DOOR, Vector2f(1547, 90));
@@ -246,6 +269,7 @@ struct Level
 
 	void Level2()
 	{
+		isSnowLevel = true;
 		fireBoy = Player(Fireboy, Vector2f(394, 862));
 		waterGirl = Player(Watergirl, Vector2f(332, 868));
 		water_door = FinalDoor(FinalDoor::WATER_DOOR, Vector2f(465, 102));
@@ -366,14 +390,7 @@ struct Level
 		outlineSprite = Sprite();
 		resultSprite = Sprite();
 
-		ApplyTexture(ground, LoadTexture::GROUND, Vector2f(256, 256));
-		ground.setTexture(groundTexture);
-		ground.setTextureRect(IntRect(0, 0, windowSize.x, windowSize.y));
-
-		ApplyTexture(background, LoadTexture::BACKGROUND, Vector2f(256, 256));
-		background.setTexture(backgroundTexture);
-		background.setTextureRect(IntRect(0, 0, windowSize.x, windowSize.y));
-
+		SetTheme(isSnowLevel);
 
 		maskTexture.create(windowSize.x, windowSize.y);
 		outlineTexture.create(windowSize.x, windowSize.y);
@@ -419,6 +436,7 @@ struct Level
 	// printing
 	void PrintLevelData() {
 		// player data
+		cout << "isSnowLevel = " << (isSnowLevel ? "true;" : "false;") << endl;
 		cout << "fireBoy = Player(Fireboy, Vector2f(" << (int)fireBoy.startPosition.x << ", " << (int)fireBoy.startPosition.y << "));" << endl;
 		cout << "waterGirl = Player(Watergirl, Vector2f(" << (int)waterGirl.startPosition.x << ", " << (int)waterGirl.startPosition.y << "));" << endl;
 		// door data
@@ -711,6 +729,12 @@ struct Level
 				PrintLevelCode();
 			}
 
+			if (event.key.code == Keyboard::M) {
+				// switch level theme
+				SetTheme(!isSnowLevel);
+				UpdateGroundTexture();
+			}
+
 			if (event.key.code == Keyboard::C) {
 				// set fireBoy position to mouse position
 				fireBoy = Player(Fireboy, mousePosition);
@@ -881,10 +905,6 @@ struct Level
 	}
 
 	void Update() {
-		if (fireBoy.isDead || waterGirl.isDead) {
-			UpdateGameState(GAMEOVER);
-			return;
-		}
 
 		fireBoy.Update();
 		waterGirl.Update();
@@ -917,15 +937,15 @@ struct Level
 		window.draw(outlineSprite);
 		window.draw(resultSprite);
 
-
-		for (int i = 0; i < gameTutorials.count; i++)
-			gameTutorials.elements[i].Draw();
-
 		for (int i = 0; i < objects.count; i++)
 			objects.elements[i].MidDraw();
 
-		window.draw(water_door.sprite);
 		window.draw(fire_door.sprite);
+		window.draw(water_door.sprite);
+
+
+		for (int i = 0; i < gameTutorials.count; i++)
+			gameTutorials.elements[i].Draw();
 
 		fireBoy.Draw();
 		waterGirl.Draw();

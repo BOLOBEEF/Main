@@ -108,8 +108,7 @@ void UpdateAnimation(Sprite& sprite, LoadTexture texture) {
 		int width = 4590, height = 107;
 		int frameWidth = width / frameCount;
 
-		static sf::Clock animClock1; // separate clock
-		float speed = 30.0f;
+		float speed = 15.0f;
 
 		float time = animClock1.getElapsedTime().asSeconds();
 		int index = (int)(time * speed);
