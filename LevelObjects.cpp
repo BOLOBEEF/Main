@@ -386,7 +386,7 @@ struct Collider
 	}
 
 
-	Collider::CollisionData CheckTriangleCollision(FloatRect checkBounds, FloatRect triangleBounds, bool rotated) {
+	Collider::CollisionData CheckTriangleCollision(FloatRect checkBounds, FloatRect triangleBounds, bool rotated, FloatRect bias = FloatRect(5.0f, 5.0f, 0.0f, 0.0f)) {
 
 		FloatRect playerBounds = checkBounds;
 
@@ -411,7 +411,7 @@ struct Collider
 			Vector2f playerDownLeftPoint = Vector2f(playerBounds.left, playerBounds.top + playerBounds.height);
 			Vector2f playerDownRightPoint = Vector2f(playerBounds.left + playerBounds.width, playerBounds.top + playerBounds.height);
 
-			Collider::CollisionData boxCollisionData = CheckRectangleCollision(checkBounds, triangleBounds);
+			Collider::CollisionData boxCollisionData = CheckRectangleCollision(checkBounds, triangleBounds, bias);
 
 			if (!rotated) {
 				if (boxCollisionData.collisionDirection == Collider::CollisionData::CollisionDirection::Bottom)
@@ -527,7 +527,7 @@ struct Collider
 	}
 
 
-	bool IsOnGround(Player player, FloatRect groundCheckBounds) {
+	bool IsOnGround(Player player, FloatRect groundCheckBounds, FloatRect bias) {
 		CollisionData collisionData;
 
 		switch (type)
@@ -579,6 +579,10 @@ struct Collider
 	// check collision and return if player is grounded, also return collision data if needed (as a pointer or reference)
 	// bias is used to prefer one collision direction over the other when the overlaps are close, to avoid getting stuck on edges, it is applied like this: { topBias, bottomBias, leftBias, rightBias }
 	bool CheckCollision(Player& player, CollisionData& collisionData, FloatRect bias = FloatRect(5.0f, 5.0f, 0.0f, 0.0f), float thisMoveRatio = 0.0f, bool resolveVelocity = true) {
+		FloatRect playerBounds = player.hitbox.getGlobalBounds();
+		FloatRect colliderBounds = FloatRect(playerBounds.left, playerBounds.top, playerBounds.width, playerBounds.height + groundedDistance);
+
+		bool grounded = IsOnGround(player, colliderBounds, bias);
 
 		switch (type)
 		{
@@ -594,13 +598,8 @@ struct Collider
 		default:
 			break;
 		}
-
-
-		FloatRect playerBounds = player.hitbox.getGlobalBounds();
-		FloatRect colliderBounds = FloatRect(playerBounds.left, playerBounds.top + groundedDistance, playerBounds.width, playerBounds.height);
-
-
-		return IsOnGround(player, colliderBounds);
+		
+		return grounded || collisionData.collisionDirection == CollisionData::CollisionDirection::Top || collisionData.collisionDirection == CollisionData::CollisionDirection::Slope;
 	}
 
 	// function overload for when collision data is not needed
@@ -811,7 +810,10 @@ struct Lever {
 	void CheckInput(Player moroo, Player mora, Event event) {
 		if (event.type == Event::KeyPressed) {
 			if (event.key.code == Keyboard::Space) {
-				if (sprite.getGlobalBounds().intersects(moroo.hitbox.getGlobalBounds()) || sprite.getGlobalBounds().intersects(mora.hitbox.getGlobalBounds())) {
+				FloatRect bounds = sprite.getGlobalBounds();
+				bounds = FloatRect(bounds.left, bounds.top, bounds.width, max(bounds.height - 100, 0.0f));
+
+				if (bounds.intersects(moroo.hitbox.getGlobalBounds()) || bounds.intersects(mora.hitbox.getGlobalBounds())) {
 
 					state = !state;
 					if (state)

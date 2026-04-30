@@ -17,7 +17,7 @@
 
 void InitializeGame()
 {
-	currentLevel.LoadNewLevel(2);
+	currentLevel.LoadNewLevel(1);
 }
 
 
