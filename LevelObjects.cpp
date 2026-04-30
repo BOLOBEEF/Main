@@ -40,7 +40,7 @@ struct Player
 	float gravity = 250.0f;
 	float jump = -250.0f;
 	float jumpOnSnow = -50.0f;
-	Vector2f idleRange = Vector2f(15.0f, 15.0f); // the range of velocity in which the player is considered idle
+	Vector2f idleRange = Vector2f(15.0f, 40.0f); // the range of velocity in which the player is considered idle
 	Vector2f colliderSize = Vector2f(15, 60);
 	float displayBodySize = 1.0f;
 	float displayHeadSize = 1.0f;
@@ -96,13 +96,16 @@ struct Player
 	void Update() {
 		currentAccelration = accelration;
 		currentDeccelration = deccelration;
-		if (isOnSlope) lastTouchedSlope.restart();
+		if (isOnSlope)
+		{
+			lastTouchedSlope.restart();
+		}
 
 		if (playertype == Fireboy) {
 			if (isOnSnow)
 			{
 				currentAccelration = boyAccelerationOnSnow;
-				currentDeccelration = boyAccelerationOnSnow;
+				currentDeccelration = boyAccelerationOnSnow * -5.0f;
 			}
 
 			if (Keyboard::isKeyPressed(Keyboard::Right)) {
@@ -733,15 +736,17 @@ struct Gem
 	Gemtype type;
 	Sprite sprite;
 	bool isCollected = false;
+	float scale = 1.2f;
+	float colliderReduction = 20.0f; // reduce the collider/hitbox size of the gem
 
 	void Initialize() {
 
 
 		if (type == waterGem) {
-			ApplyTexture(sprite, LoadTexture::diamond_water_texture, Vector2f(80, 80));
+			ApplyTexture(sprite, LoadTexture::diamond_water_texture, Vector2f(80 * scale, 80 * scale));
 		}
 		else {
-			ApplyTexture(sprite, LoadTexture::diamond_fire_texture, Vector2f(80, 80));
+			ApplyTexture(sprite, LoadTexture::diamond_fire_texture, Vector2f(80 * scale, 80 * scale));
 		}
 	}
 
@@ -753,15 +758,23 @@ struct Gem
 	}
 
 	void Update(Player hamada) {
+		if (isCollected) return;
+
+		FloatRect hitbox = sprite.getGlobalBounds();
+		hitbox.left += colliderReduction;
+		hitbox.width -= colliderReduction * 2;
+		hitbox.top += colliderReduction;
+		hitbox.height -= colliderReduction * 2;
+
 		if (type == waterGem && hamada.playertype == Watergirl) {
-			if (sprite.getGlobalBounds().intersects(hamada.hitbox.getGlobalBounds())) {
+			if (hitbox.intersects(hamada.hitbox.getGlobalBounds())) {
 				PlayGameSoundEffect(GameSoundEffect::DiamondCollect_sound);
 				isCollected = true;
 				sprite.setScale(0, 0);
 			}
 		}
 		if (type == fireGem && hamada.playertype == Fireboy) {
-			if (sprite.getGlobalBounds().intersects(hamada.hitbox.getGlobalBounds())) {
+			if (hitbox.intersects(hamada.hitbox.getGlobalBounds())) {
 				PlayGameSoundEffect(GameSoundEffect::DiamondCollect_sound);
 				isCollected = true;
 				sprite.setScale(0, 0);
@@ -938,6 +951,13 @@ struct Door
 	Door(Vector2f start, Vector2f end) {
 		startPosition = start;
 		endPosition = end;
+	}
+
+	void SetEndPosition(Vector2f position) {
+		endPosition = position;
+		Allign(endPosition);
+		if (!rotated) endPosition += Vector2f(0, 16);
+		else endPosition -= Vector2f(16, 0);
 	}
 
 	// check if position is inside the door objects (button or lever)
@@ -1584,7 +1604,8 @@ struct Object {
 		Allign(data.gem.sprite);
 	}
 
-	void InitializeDoorObject(Vector2f Initialize, Vector2f end) {
+	void InitializeDoorObject(Vector2f Initialize, Vector2f end, bool rotated) {
+		data.door.rotated = rotated;
 		data.door.startPosition = Initialize;
 		data.door.Initialize();
 		data.door.startPosition = data.door.displaySprite.getPosition();
