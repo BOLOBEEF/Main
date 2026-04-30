@@ -49,11 +49,13 @@ struct Player
 	Clock lastTouchedSlope;
 	float boySlopeFallTime = 0.3f; // the time interval after which fire will keep sliding down the slope if he is on it and on snow at the same time
 	float boySlopeFallAcceleration = 300.0f; // make fire accelerate down the slope when on snow and slope at the same time
+	float waitTime = 2; //wait time after death and before turning gameState to gameover
 
 	// runtime variables
 	Sprite hitbox;
 	Sprite displayBodySprite;
 	Sprite displayHeadSprite;
+	Sprite deathsprite;
 	float headRotation = 0.0f;
 	Vector2f velocity = { 0,0 };
 	PlayerType playertype;
@@ -68,8 +70,10 @@ struct Player
 	bool isPushing = false;
 	bool isDead = false;
 	bool isOnSnow = false;
+	bool isStop = false;
 	Vector2f startPosition;
 	bool slopeDirectionRight = true; // true if slope goe1s down to the right, false if slope goes down to the left
+	Clock timeSinceDeath;
 
 
 
@@ -82,8 +86,11 @@ struct Player
 
 	void Initialize() {
 		ApplyTexture(hitbox, LoadTexture::RECTANGLE, colliderSize);
+		ApplyTexture(deathsprite, LoadTexture::death_smoke_texture, Vector2f(1, 1), Vector2f(1, 1), true, false);
 		UpdatePlayerTexture(displayBodySprite, playertype, playerState, false);
 		UpdatePlayerTexture(displayHeadSprite, playertype, playerState, true);
+		UpdateAnimation(deathsprite, death_smoke_texture);
+		SetSpriteOriginToCenter(deathsprite);
 		displayBodySprite.setScale(displayBodySize, displayBodySize);
 		displayHeadSprite.setScale(displayHeadSize, displayHeadSize);
 
@@ -110,22 +117,18 @@ struct Player
 
 			if (Keyboard::isKeyPressed(Keyboard::Right)) {
 				velocity.x += currentAccelration * dt;
-				//PlayGameSoundEffect(GameSoundEffect::Walking_boy_sound);
 			}
 			else if (Keyboard::isKeyPressed(Keyboard::Left)) {
 				velocity.x -= currentAccelration * dt;
-				//PlayGameSoundEffect(GameSoundEffect::Walking_boy_sound);
 			}
 			else velocity.x -= velocity.x * deccelration * dt;
 		}
 		else if (playertype == Watergirl) {
 			if (Keyboard::isKeyPressed(Keyboard::D)) {
 				velocity.x += currentAccelration * dt;
-				//PlayGameSoundEffect(GameSoundEffect::Walking_girl_sound);
 			}
 			else if (Keyboard::isKeyPressed(Keyboard::A)) {
 				velocity.x -= currentAccelration * dt;
-				//PlayGameSoundEffect(GameSoundEffect::Walking_girl_sound);
 			}
 			else velocity.x -= velocity.x * currentDeccelration * dt;
 		}
@@ -166,10 +169,13 @@ struct Player
 		if (playertype == Fireboy && isOnSnow && lastTouchedSlope.getElapsedTime().asSeconds() < boySlopeFallTime)
 			velocity.x += slopeDirectionRight ? boySlopeFallAcceleration * dt : -boySlopeFallAcceleration * dt;
 		
+		
 		velocity.x = Clamp(velocity.x, -currentSpeed, currentSpeed);
 
+		if (!isStop) {
+			
 		hitbox.move(velocity * dt);
-
+		}
 		isOnGround = false;
 		isOnSlope = false;
 		isPushing = false;
@@ -177,7 +183,7 @@ struct Player
 	}
 
 	void CheckInput(Event event) {
-		if (!isOnGround) return;
+		if (!isOnGround||isDead) return;
 
 		if (event.type == Event::KeyPressed) {
 			if (playertype == Fireboy) {
@@ -196,7 +202,6 @@ struct Player
 	}
 
 	void Draw() {
-		//window.draw(hitbox);
 		bool drawHeadFirst = true;
 		displayBodySprite.setPosition(hitbox.getPosition());
 		if (velocity.x > 0 && displayBodySprite.getScale().x < 0) displayBodySprite.scale(-1, 1);
@@ -232,15 +237,30 @@ struct Player
 			displayHeadSprite.setScale(Vector2f(abs(scale.x), abs(scale.y)));
 		}
 
+		if (!isDead) {
+			if (playerState == PlayerState::Jump_Rise) {
+				window.draw(displayHeadSprite);
+				window.draw(displayBodySprite);
+			}
+			else {
+				window.draw(displayBodySprite);
+				window.draw(displayHeadSprite);
+			}
+		}
+		if (isDead) {
+			UpdateAnimation(deathsprite, death_smoke_texture);
+			deathsprite.setPosition(hitbox.getPosition() + Vector2f(0, -32));
+			window.draw(deathsprite);
 
-		if (playerState == PlayerState::Jump_Rise) {
-			window.draw(displayHeadSprite);
-			window.draw(displayBodySprite);
+			if (timeSinceDeath.getElapsedTime().asSeconds() > waitTime)
+				UpdateGameState(GAMEOVER);
 		}
-		else {
-			window.draw(displayBodySprite);
-			window.draw(displayHeadSprite);
-		}
+	}
+	void die() {
+		if (isDead) return;
+		isDead = true;
+		InitializeOneTimeAnimations();
+		timeSinceDeath.restart();
 	}
 };
 struct Collider
@@ -915,7 +935,7 @@ struct Door
 	Vector2f startPosition;
 	Vector2f endPosition;
 	float speed = 100.0f;
-	Vector2f dimensions = Vector2f(32, 32 * 4);
+	Vector2f dimensions = Vector2f(32*2, 32 * 4);
 
 	Vector2f door_position = Vector2f(collider.sprite.getPosition());
 	bool rotated = false;
@@ -929,20 +949,21 @@ struct Door
 	void Initialize() {
 		collider = Collider(Collider::ColliderType::Rectangle, startPosition);
 
-		ApplyTexture(displaySprite, LoadTexture::RECTANGLE, dimensions);
+		ApplyTexture(displaySprite, LoadTexture::moving_platform_texture, dimensions,Vector2f(0.1,0.1),true,false);
+		displaySprite.setScale(0.125, 0.125);
 		displaySprite.setPosition(startPosition);
 
 		if (rotated)
 		{
 			ApplyTexture(collider.sprite, LoadTexture::RECTANGLE, dimensions);
+			displaySprite.rotate(90);
 		}
 		else {
 			ApplyTexture(collider.sprite, LoadTexture::RECTANGLE, Vector2f(dimensions.y, dimensions.x));
-			displaySprite.rotate(90);
 		}
 
 
-		displaySprite.setColor(Color::Yellow);
+		
 		Allign(displaySprite);
 		startPosition = displaySprite.getPosition();
 	}
@@ -975,7 +996,7 @@ struct Door
 
 	void UpdateMovement() {
 		if (isOpen) {
-			displaySprite.setColor(Color::Magenta);
+			
 
 			Vector2f direction = endPosition - displaySprite.getPosition();
 
@@ -985,7 +1006,7 @@ struct Door
 			displaySprite.move(direction * speed * dt);
 		}
 		else {
-			displaySprite.setColor(Color::Yellow);
+	
 
 			Vector2f direction = startPosition - displaySprite.getPosition();
 
@@ -1122,8 +1143,8 @@ struct Pond
 			case WATER_POND:
 
 
-				fireBoy.isDead = true;
-
+				fireBoy.die();
+				
 				if (lastState != fireBoyColliding && fireBoyColliding == true) {
 					PlayGameSoundEffect(GameSoundEffect::Death_sound);
 				}
@@ -1161,7 +1182,7 @@ struct Pond
 			case FIRE_POND:
 
 
-				waterGirl.isDead = true;
+				waterGirl.die();
 
 				if (lastState != waterGirlColliding && waterGirlColliding == true) {
 					PlayGameSoundEffect(GameSoundEffect::Death_sound);

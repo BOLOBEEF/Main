@@ -881,10 +881,6 @@ struct Level
 	}
 
 	void Update() {
-		if (fireBoy.isDead || waterGirl.isDead) {
-			UpdateGameState(GAMEOVER);
-			return;
-		}
 
 		fireBoy.Update();
 		waterGirl.Update();
@@ -917,15 +913,15 @@ struct Level
 		window.draw(outlineSprite);
 		window.draw(resultSprite);
 
-
-		for (int i = 0; i < gameTutorials.count; i++)
-			gameTutorials.elements[i].Draw();
-
 		for (int i = 0; i < objects.count; i++)
 			objects.elements[i].MidDraw();
 
-		window.draw(water_door.sprite);
 		window.draw(fire_door.sprite);
+		window.draw(water_door.sprite);
+
+
+		for (int i = 0; i < gameTutorials.count; i++)
+			gameTutorials.elements[i].Draw();
 
 		fireBoy.Draw();
 		waterGirl.Draw();
