@@ -909,7 +909,7 @@ void InitializeTextures()
 	lever_base.loadFromFile("Main/Assets/Animations/map objects assets/lever base.png");
 	pusher_block_light.loadFromFile("Main/Assets/Animations/map objects assets/pusher_block_light.png");
 	temporaryPlatform.loadFromFile("Main/Assets/Animations/map objects assets/pulley_platform.png");
-	moving_platform.loadFromFile("Main/Assets/Animations/map objects assets/bar center.png");
+	moving_platform.loadFromFile("Main/Assets/Animations/map objects assets/moving platform.png");
 	decor_1.loadFromFile("Main/Assets/Animations/map objects assets/decor_1.png");
 	decor_2.loadFromFile("Main/Assets/Animations/map objects assets/decor_2.png");
 	decor_3.loadFromFile("Main/Assets/Animations/map objects assets/decor_3.png");
