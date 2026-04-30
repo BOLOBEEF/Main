@@ -62,7 +62,7 @@ RectangleShape FadingTransitionBackground;
 Vector2f Target_up_mnu = Vector2f(windowSize.x / 2, windowSize.y / 2);
 Vector2f Target_Down_mnu = Vector2f(windowSize.x / 2, windowSize.y / 2 + 1000);
 Vector2f Current_position_mnu = Target_Down_mnu;
-Vector2f Current_position_Settings_mnu = Target_Down_mnu;
+Vector2f Current_position_SettingsOrCredits_mnu = Target_Down_mnu;
 Vector2f Current_Target;
 
 Sprite Stone_mnu;
@@ -102,6 +102,9 @@ bool isMusicButtonClicked_PauseToSetting = false;
 //gameover
 Sprite GameOverbuttons_mnu[3];
 
+//Credits
+Sprite BackButtonCredits_mnu;
+Sprite CreditsMenuBox_mnu;
 
 Sprite ContinueButton_Winmnu;
 Sprite MaleAndFemale_icon_Winmnu;
@@ -116,6 +119,7 @@ bool isMaleAndFemaleSoundPlayed = false, isdiamondSoundPlayed = false, istimerSo
 bool MainMenuSettings = true, LastWasSettings = false;
 
 bool Settings_from_MainMenu = true;
+
 //because i want to play the sounds of each rating once in the game loop not to rerun it each iteration 
 
 
@@ -129,6 +133,7 @@ Text NoText; // to use it as a default value in the MouseInput_mnu function
 Text OkButtontxt_MainToSetting;
 Text OkButtontxt_PauseToSetting;
 Text stopwatch_txt;
+Text MenusandSoundsCredits_txt[2], GamelogicCredits_txt[3], AnimationandTexturesCredits_txt[2];
 Sprite cursorAndpointerSprite;
 
 int finalScore = 0;
@@ -354,26 +359,42 @@ void GameoverMenu_Movement(Vector2f Desired_Target)
 void SettingMenu_Movement(Vector2f Desired_Target, bool fromMain)
 {
 	Current_Target = Desired_Target;
-	Current_position_Settings_mnu = Damp(Current_position_Settings_mnu, Current_Target, 25, dt);
+	Current_position_SettingsOrCredits_mnu = Damp(Current_position_SettingsOrCredits_mnu, Current_Target, 25, dt);
 	if (fromMain)
 	{
-		SettingsMenuBox_MainToSetting.setPosition(Current_position_Settings_mnu);
-		SoundButton_MainToSetting.setPosition(Vector2f(700, 530) + Current_position_Settings_mnu - center);
-		MusicButton_MainToSetting.setPosition(Vector2f(1200, 530) + Current_position_Settings_mnu - center);
-		OkButton_MainToSetting.setPosition(Vector2f(1155, 750) + Current_position_Settings_mnu - center);
-		OkButtontxt_MainToSetting.setPosition(Vector2f(903, 710) + Current_position_Settings_mnu - center);
+		SettingsMenuBox_MainToSetting.setPosition(Current_position_SettingsOrCredits_mnu);
+		SoundButton_MainToSetting.setPosition(Vector2f(700, 530) + Current_position_SettingsOrCredits_mnu - center);
+		MusicButton_MainToSetting.setPosition(Vector2f(1200, 530) + Current_position_SettingsOrCredits_mnu - center);
+		OkButton_MainToSetting.setPosition(Vector2f(1155, 750) + Current_position_SettingsOrCredits_mnu - center);
+		OkButtontxt_MainToSetting.setPosition(Vector2f(903, 710) + Current_position_SettingsOrCredits_mnu - center);
 	}
 	else
 	{
-		SettingsMenuBox_PauseToSetting.setPosition(Current_position_Settings_mnu);
-		SoundButton_PauseToSetting.setPosition(Vector2f(700, 530) + Current_position_Settings_mnu - center);
-		MusicButton_PauseToSetting.setPosition(Vector2f(1200, 530) + Current_position_Settings_mnu - center);
-		OkButton_PauseToSetting.setPosition(Vector2f(1155, 750) + Current_position_Settings_mnu - center);
-		OkButtontxt_PauseToSetting.setPosition(Vector2f(903, 710) + Current_position_Settings_mnu - center);
+		SettingsMenuBox_PauseToSetting.setPosition(Current_position_SettingsOrCredits_mnu);
+		SoundButton_PauseToSetting.setPosition(Vector2f(700, 530) + Current_position_SettingsOrCredits_mnu - center);
+		MusicButton_PauseToSetting.setPosition(Vector2f(1200, 530) + Current_position_SettingsOrCredits_mnu - center);
+		OkButton_PauseToSetting.setPosition(Vector2f(1155, 750) + Current_position_SettingsOrCredits_mnu - center);
+		OkButtontxt_PauseToSetting.setPosition(Vector2f(903, 710) + Current_position_SettingsOrCredits_mnu - center);
 	}
 	// I Will Handle this After You finish Settings Menu
 }
-
+void CreditsMenu_Movement(Vector2f Desired_Target)
+{
+	Current_Target = Desired_Target;
+	Current_position_SettingsOrCredits_mnu = Damp(Current_position_SettingsOrCredits_mnu, Current_Target, 25, dt);
+	CreditsMenuBox_mnu.setPosition(Current_position_SettingsOrCredits_mnu);
+	BackButtonCredits_mnu.setPosition(Vector2f((windowSize.x / 2) + 350, (windowSize.y / 2) + 150) + Current_position_SettingsOrCredits_mnu - center);
+	MenusandSoundsCredits_txt[0].setPosition(Vector2f(500, 100) + Current_position_SettingsOrCredits_mnu - center);
+	MenusandSoundsCredits_txt[1].setPosition(Vector2f(400, 200) + Current_position_SettingsOrCredits_mnu - center);
+	MenusandSoundsCredits_txt[2].setPosition(Vector2f(300, 300) + Current_position_SettingsOrCredits_mnu - center);
+	GamelogicCredits_txt[0].setPosition(Vector2f(1200, 100) + Current_position_SettingsOrCredits_mnu - center);
+	GamelogicCredits_txt[1].setPosition(Vector2f(1100, 200) + Current_position_SettingsOrCredits_mnu - center);
+	GamelogicCredits_txt[2].setPosition(Vector2f(1000, 300) + Current_position_SettingsOrCredits_mnu - center);
+	GamelogicCredits_txt[3].setPosition(Vector2f(900, 400) + Current_position_SettingsOrCredits_mnu - center);
+	AnimationandTexturesCredits_txt[0].setPosition(Vector2f(900, 500) + Current_position_SettingsOrCredits_mnu - center);
+	AnimationandTexturesCredits_txt[1].setPosition(Vector2f(800, 600) + Current_position_SettingsOrCredits_mnu - center);
+	AnimationandTexturesCredits_txt[2].setPosition(Vector2f(700, 700) + Current_position_SettingsOrCredits_mnu - center);
+}
 
 void InitializeMenu()
 {
@@ -437,6 +458,12 @@ void InitializeMenu()
 	ApplyTexture(IdleWgHeadmnu, LoadTexture::water_head_idle_texture, Vector2f(2470, 300), Vector2f(1, 1), true, false);
 	IdleWgHeadmnu.setScale(1.25, 1.25);
 	IdleWgHeadmnu.setPosition(windowSize.x / 2 + 2456, windowSize.y / 2 + 390);
+	
+	//Credits menu
+	ApplyTexture(CreditsMenuBox_mnu, LoadTexture::menu_box_texture, Vector2f(windowSize.x - 600, windowSize.y - 250));
+	
+	ApplyTexture(BackButtonCredits_mnu, LoadTexture::BackButtonFull0_texture, Vector2f(700, 170));
+	BackButtonCredits_mnu.setScale(1.1, 1.1);
 
 	//Settings from main
 	menu_box.setSmooth(true);
@@ -705,6 +732,41 @@ void InitializeMenu()
 	Continue_Wintxt.setOutlineColor(Color::Black);
 	Continue_Wintxt.setOutlineThickness(5);
 
+	//Credits Menu Text
+	MenusandSoundsCredits_txt[0].setString("Menus & Sounds");
+	MenusandSoundsCredits_txt[1].setString("Ali Elsha3r  Omar Ayman");
+	for (int i = 0; i < 2; i++)
+	{
+		MenusandSoundsCredits_txt[i].setFont(font);
+		MenusandSoundsCredits_txt[i].setCharacterSize(50);
+		MenusandSoundsCredits_txt[i].setFillColor(Color(230, 194, 0));
+		MenusandSoundsCredits_txt[i].setOutlineColor(Color::Black);
+		MenusandSoundsCredits_txt[i].setOutlineThickness(5);
+	}
+
+	GamelogicCredits_txt[0].setString("Game Logic");
+	GamelogicCredits_txt[1].setString("Omar Ahmed  Osama Abdelmomen");
+	GamelogicCredits_txt[2].setString("Stephano Ashraf");
+	for (int i = 0; i < 3; i++)
+	{
+		GamelogicCredits_txt[i].setFont(font);
+		GamelogicCredits_txt[i].setCharacterSize(50);
+		GamelogicCredits_txt[i].setFillColor(Color(230, 194, 0));
+		GamelogicCredits_txt[i].setOutlineColor(Color::Black);
+		GamelogicCredits_txt[i].setOutlineThickness(5);
+	}
+	
+	AnimationandTexturesCredits_txt[0].setString("Animation & Textures");
+	AnimationandTexturesCredits_txt[1].setString("Ahmed Maniea  Ali Shokry");
+	for (int i = 0; i < 2; i++)
+	{
+		AnimationandTexturesCredits_txt[i].setFont(font);
+		AnimationandTexturesCredits_txt[i].setCharacterSize(50);
+		AnimationandTexturesCredits_txt[i].setFillColor(Color(230, 194, 0));
+		AnimationandTexturesCredits_txt[i].setOutlineColor(Color::Black);
+		AnimationandTexturesCredits_txt[i].setOutlineThickness(5);
+	}
+
 	// code for initializing menu variables and objects
 	// for example load sprites, set up text objects, etc.
 }
@@ -756,7 +818,6 @@ void HandleMenuInput(Event event)
 			MuteSound(event, SoundButton_MainToSetting, MuteButton0_texture, MuteButton1_texture, ButtonClick, isSoundButtonClicked_MainToSetting);
 			MuteMusic(event, MusicButton_MainToSetting, MusicButton0_texture, MusicButton1_texture, ButtonClick, isMusicButtonClicked_MainToSetting);
 			MouseInput_mnu(event, OkButton_MainToSetting, stone_button_0_texture, stone_button_1_texture, ButtonClick, MAIN_MENU, false, OkButtontxt_MainToSetting);
-
 		}
 		else
 		{
@@ -783,6 +844,9 @@ void HandleMenuInput(Event event)
 	case GAME:
 		// code for handling game UI input
 		MouseInput_mnu(event, PauseIcon_mnu, pause_icon_texture, pause_icon_texture, No_Sound_Buttons, PAUSE_MENU, false);
+		break;
+	case CREDITS:
+		MouseInput_mnu(event, BackButtonCredits_mnu, BackButtonFull0_texture, BackButtonFull0_texture, ButtonClick, MAIN_MENU, false);
 		break;
 	default:
 		break;
@@ -856,6 +920,11 @@ void UpdateUI()
 		{
 			GameoverMenu_Movement(Target_Down_mnu);
 			currentDimState = DimmingDown;
+		}
+		else if (PreviousMenu_State == CREDITS)
+		{
+			CreditsMenu_Movement(Target_Down_mnu);
+			currentSettingsDimState = MainTo_SettingsOrCredits_DimmingDown;
 		}
 		Settings_from_MainMenu = true;
 		break;
@@ -952,6 +1021,7 @@ void UpdateUI()
 			currentSettingsDimState = PauseToSettingsDimmingUp;
 		}
 		LastWasSettings = true;
+		
 		// code for settings menu
 		break;
 	case GAMEOVER:
@@ -976,6 +1046,13 @@ void UpdateUI()
 			WinMenu_Movement(Target_Down_mnu);
 		}
 		currentDimState = DimmingDown;
+		break;
+	case CREDITS:
+		PreviousMenu_State = CREDITS;
+		clockTikingSpeed = 0;
+		CreditsMenu_Movement(Target_up_mnu);
+		currentSettingsDimState = MainTo_SettingsOtCredits_DimmingUp;
+		LastWasSettings = false;
 		break;
 	default:
 		break;
@@ -1094,7 +1171,7 @@ void DrawUI()
 
 		window.draw(settingsAndCredits_Dimmed_Background);
 		
-		if (Current_position_Settings_mnu != Target_Down_mnu)
+		if (Current_position_SettingsOrCredits_mnu != Target_Down_mnu)
 		{
 			if (LastWasSettings)
 			{
@@ -1104,7 +1181,26 @@ void DrawUI()
 				window.draw(OkButton_MainToSetting);
 				window.draw(OkButtontxt_MainToSetting);
 			}
+			else if (PreviousMenu_State == CREDITS)
+			{
+				window.draw(CreditsMenuBox_mnu);
+				window.draw(BackButtonCredits_mnu);
+				for (int i = 0; i < 2; i++)
+				{
+					window.draw(MenusandSoundsCredits_txt[i]);
+				}
+				for (int i = 0; i < 3; i++)
+				{
+					window.draw(GamelogicCredits_txt[i]);
+				}
+				for (int i = 0; i < 2; i++)
+				{
+					window.draw(AnimationandTexturesCredits_txt[i]);
+				}
+			}
 		}
+		
+		
 		//draw the things of the Main menu down here
 
 		break;
@@ -1169,7 +1265,7 @@ void DrawUI()
 		window.draw(Retry_Pausetxt);
 		window.draw(Resume_Pausetxt);
 		window.draw(Pause_txt);
-		if (Current_position_Settings_mnu != Target_Down_mnu)
+		if (Current_position_SettingsOrCredits_mnu != Target_Down_mnu)
 		{
 			if (LastWasSettings)
 			{
@@ -1323,6 +1419,37 @@ void DrawUI()
 				window.draw(Pause_txt);
 			}
 		}
+		break;
+
+	case CREDITS:
+		
+		window.draw(MainMenuBackground_mnu);
+		window.draw(GameName_mnu);
+		window.draw(PlayButton_mnu);
+		window.draw(CreditsButton_mnu);
+		window.draw(ExitButton_mnu);
+		window.draw(SettingsButton_Mainmnu);
+		window.draw(IdleFbBodymnu);
+		window.draw(IdleFbHeadmnu);
+		window.draw(IdleWgBodymnu);
+		window.draw(IdleWgHeadmnu);
+		
+		window.draw(settingsAndCredits_Dimmed_Background);
+		
+		window.draw(CreditsMenuBox_mnu);
+		window.draw(BackButtonCredits_mnu);
+			for (int i = 0; i < 2; i++)
+			{
+				window.draw(MenusandSoundsCredits_txt[i]);
+			}
+			for (int i = 0; i < 3; i++)
+			{
+				window.draw(GamelogicCredits_txt[i]);
+			}
+			for (int i = 0; i < 2; i++)
+			{
+				window.draw(AnimationandTexturesCredits_txt[i]);
+			}
 		break;
 	default:
 		break;
