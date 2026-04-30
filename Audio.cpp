@@ -115,6 +115,34 @@ Sound EndTaskPassAndFailSound;
 
 
 // Functions
+void MuteAudio()
+{
+		for (int i = 0; i < 6; i++)
+		{
+			soundEffectsPlayers[i].setVolume(0.0f);
+		}
+		Button.setVolume(0.0f);
+		EndDiamondSound.setVolume(0.0f);
+		EndTaskPassAndFailSound.setVolume(0.0f);
+}
+void UnmuteAudio()
+{
+	for (int i = 0; i < 6; i++)
+	{
+		soundEffectsPlayers[i].setVolume(40.0f);
+	}
+	Button.setVolume(ButtonSound_Value);
+	EndDiamondSound.setVolume(ButtonSound_Value);
+	EndTaskPassAndFailSound.setVolume(ButtonSound_Value);
+}
+void MuteMusic()
+{
+	musicPlayer.setVolume(0.0f);
+}
+void UnmuteMusic()
+{
+	musicPlayer.setVolume(MAinMenu_BackGround_Music);
+}
 
 void InitializeAudio()
 {
@@ -160,19 +188,19 @@ void PlayMusic(BackgroundMusic music) {
 	{
 	case MainMenu:
 		musicPlayer.setBuffer(menuMusicSound);
-		musicPlayer.setVolume(MAinMenu_BackGround_Music);
+		//musicPlayer.setVolume(MAinMenu_BackGround_Music);
 		break;
 	case Game_Slow:
 		musicPlayer.setBuffer(gameMusic_SlowSound);
-		musicPlayer.setVolume(GAME_BackGround_Music);
+		//musicPlayer.setVolume(GAME_BackGround_Music);
 		break;
 	case Game_Fast:
 		musicPlayer.setBuffer(gameMusic_FastSound);
-		musicPlayer.setVolume(GAME_BackGround_Music);
+		//musicPlayer.setVolume(GAME_BackGround_Music);
 		break;
 	case Game_Dark:
 		musicPlayer.setBuffer(gameMusic_DarkSound);
-		musicPlayer.setVolume(GAME_BackGround_Music);
+		//musicPlayer.setVolume(GAME_BackGround_Music);
 		break;
 	default:
 		cout << "Invalid background music" << endl;
@@ -193,17 +221,17 @@ void PlayMenuSoundEffect(MenuSoundEffect soundEffect) {
 	{
 	case ButtonClick:
 		Button.setBuffer(ButtonSound);
-		Button.setVolume(ButtonSound_Value);
+		//Button.setVolume(ButtonSound_Value);
 		Button.play();
 		break;
 	case Back:
 		Button.setBuffer(ButtonSound);
-		Button.setVolume(ButtonSound_Value);
+		//Button.setVolume(ButtonSound_Value);
 		Button.play();
 		break;
 	case Enter:
 		Button.setBuffer(ButtonSound);
-		Button.setVolume(ButtonSound_Value);
+		//Button.setVolume(ButtonSound_Value);
 		Button.play();
 		break;
 	case No_Sound_Buttons:
@@ -342,13 +370,13 @@ void PlayGameSoundEffect(GameSoundEffect soundEffect, bool loop = false) {
 	case EndDiamond_sound:
 		EndDiamondSound.setBuffer(EndDiamondSoundBF);
 		EndDiamondSound.setLoop(false);
-		EndDiamondSound.setVolume(100.0f);
+		//EndDiamondSound.setVolume(100.0f);
 		EndDiamondSound.play();
 		break;
 	case EndTaskPassAndFail_sound:
 		EndTaskPassAndFailSound.setBuffer(EndTaskPassAndFailSoundBF);
 		EndTaskPassAndFailSound.setLoop(false);
-		EndTaskPassAndFailSound.setVolume(100.0f);
+		//EndTaskPassAndFailSound.setVolume(100.0f);
 		EndTaskPassAndFailSound.play();
 		break;
 	default:

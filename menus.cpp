@@ -133,7 +133,7 @@ Text NoText; // to use it as a default value in the MouseInput_mnu function
 Text OkButtontxt_MainToSetting;
 Text OkButtontxt_PauseToSetting;
 Text stopwatch_txt;
-Text MenusandSoundsCredits_txt[2], GamelogicCredits_txt[3], AnimationandTexturesCredits_txt[2];
+Text MenusandSoundsCredits_txt[2], GamelogicCredits_txt[4], AnimationandTexturesCredits_txt[2];
 Sprite cursorAndpointerSprite;
 
 int finalScore = 0;
@@ -247,6 +247,7 @@ bool MuteSound(Event event, Sprite& ButtonClicked, LoadTexture Unmuted ,LoadText
 			ApplyTexture(ButtonClicked, Muted, Vector2f(113, 109));
 			ButtonClicked.setScale(1.25, 1.25);
 			isSoundButtonClicked_MainToSetting = true;
+			MuteAudio();
 		}
 	}
 	else if (event.type == Event::MouseButtonPressed && event.mouseButton.button == Mouse::Left && isSoundButtonClicked_MainToSetting)
@@ -256,6 +257,7 @@ bool MuteSound(Event event, Sprite& ButtonClicked, LoadTexture Unmuted ,LoadText
 			ApplyTexture(ButtonClicked, Unmuted, Vector2f(113, 109));
 			ButtonClicked.setScale(1.25, 1.25);
 			isSoundButtonClicked_MainToSetting = false;
+			UnmuteAudio();
 		}
 	}
 	return true;
@@ -270,6 +272,7 @@ bool MuteMusic(Event event, Sprite& ButtonClicked, LoadTexture Unmuted ,LoadText
 			ApplyTexture(ButtonClicked, Muted, Vector2f(113, 109));
 			ButtonClicked.setScale(1.25, 1.25);
 			isMusicButtonClicked_MainToSetting = true;
+			MuteMusic();
 		}
 	}
 	else if (event.type == Event::MouseButtonPressed && event.mouseButton.button == Mouse::Left && isMusicButtonClicked_MainToSetting)
@@ -279,6 +282,7 @@ bool MuteMusic(Event event, Sprite& ButtonClicked, LoadTexture Unmuted ,LoadText
 			ApplyTexture(ButtonClicked, Unmuted, Vector2f(113, 109));
 			ButtonClicked.setScale(1.25, 1.25);
 			isMusicButtonClicked_MainToSetting = false;
+			UnmuteMusic();
 		}
 	}
 	return true;
@@ -383,17 +387,15 @@ void CreditsMenu_Movement(Vector2f Desired_Target)
 	Current_Target = Desired_Target;
 	Current_position_SettingsOrCredits_mnu = Damp(Current_position_SettingsOrCredits_mnu, Current_Target, 25, dt);
 	CreditsMenuBox_mnu.setPosition(Current_position_SettingsOrCredits_mnu);
-	BackButtonCredits_mnu.setPosition(Vector2f((windowSize.x / 2) + 350, (windowSize.y / 2) + 150) + Current_position_SettingsOrCredits_mnu - center);
-	MenusandSoundsCredits_txt[0].setPosition(Vector2f(500, 100) + Current_position_SettingsOrCredits_mnu - center);
-	MenusandSoundsCredits_txt[1].setPosition(Vector2f(400, 200) + Current_position_SettingsOrCredits_mnu - center);
-	MenusandSoundsCredits_txt[2].setPosition(Vector2f(300, 300) + Current_position_SettingsOrCredits_mnu - center);
-	GamelogicCredits_txt[0].setPosition(Vector2f(1200, 100) + Current_position_SettingsOrCredits_mnu - center);
-	GamelogicCredits_txt[1].setPosition(Vector2f(1100, 200) + Current_position_SettingsOrCredits_mnu - center);
-	GamelogicCredits_txt[2].setPosition(Vector2f(1000, 300) + Current_position_SettingsOrCredits_mnu - center);
-	GamelogicCredits_txt[3].setPosition(Vector2f(900, 400) + Current_position_SettingsOrCredits_mnu - center);
-	AnimationandTexturesCredits_txt[0].setPosition(Vector2f(900, 500) + Current_position_SettingsOrCredits_mnu - center);
-	AnimationandTexturesCredits_txt[1].setPosition(Vector2f(800, 600) + Current_position_SettingsOrCredits_mnu - center);
-	AnimationandTexturesCredits_txt[2].setPosition(Vector2f(700, 700) + Current_position_SettingsOrCredits_mnu - center);
+	BackButtonCredits_mnu.setPosition(Vector2f(534, 790) + Current_position_SettingsOrCredits_mnu - center);
+	MenusandSoundsCredits_txt[0].setPosition(Vector2f(520, 250) + Current_position_SettingsOrCredits_mnu - center);
+	MenusandSoundsCredits_txt[1].setPosition(Vector2f(430, 320) + Current_position_SettingsOrCredits_mnu - center);
+	AnimationandTexturesCredits_txt[0].setPosition(Vector2f(975, 700) + Current_position_SettingsOrCredits_mnu - center);
+	AnimationandTexturesCredits_txt[1].setPosition(Vector2f(920, 770) + Current_position_SettingsOrCredits_mnu - center);
+	GamelogicCredits_txt[0].setPosition(Vector2f(830, 420) + Current_position_SettingsOrCredits_mnu - center);
+	GamelogicCredits_txt[1].setPosition(Vector2f(815, 490) + Current_position_SettingsOrCredits_mnu - center);
+	GamelogicCredits_txt[2].setPosition(Vector2f(765, 540) + Current_position_SettingsOrCredits_mnu - center);
+	GamelogicCredits_txt[3].setPosition(Vector2f(730, 590) + Current_position_SettingsOrCredits_mnu - center);
 }
 
 void InitializeMenu()
@@ -724,34 +726,35 @@ void InitializeMenu()
 
 	//Credits Menu Text
 	MenusandSoundsCredits_txt[0].setString("Menus & Sounds");
-	MenusandSoundsCredits_txt[1].setString("Ali Elsha3r  Omar Ayman");
+	MenusandSoundsCredits_txt[1].setString("Ali Elsha3r - Omar Ayman");
 	for (int i = 0; i < 2; i++)
 	{
 		MenusandSoundsCredits_txt[i].setFont(font);
-		MenusandSoundsCredits_txt[i].setCharacterSize(50);
+		MenusandSoundsCredits_txt[i].setCharacterSize(35);
 		MenusandSoundsCredits_txt[i].setFillColor(Color(230, 194, 0));
 		MenusandSoundsCredits_txt[i].setOutlineColor(Color::Black);
 		MenusandSoundsCredits_txt[i].setOutlineThickness(5);
 	}
 
 	GamelogicCredits_txt[0].setString("Game Logic");
-	GamelogicCredits_txt[1].setString("Omar Ahmed  Osama Abdelmomen");
+	GamelogicCredits_txt[1].setString("Omar Ahmed");
 	GamelogicCredits_txt[2].setString("Stephano Ashraf");
-	for (int i = 0; i < 3; i++)
+	GamelogicCredits_txt[3].setString("Osama Abdelmomen");
+	for (int i = 0; i < 4; i++)
 	{
 		GamelogicCredits_txt[i].setFont(font);
-		GamelogicCredits_txt[i].setCharacterSize(50);
+		GamelogicCredits_txt[i].setCharacterSize(40);
 		GamelogicCredits_txt[i].setFillColor(Color(230, 194, 0));
 		GamelogicCredits_txt[i].setOutlineColor(Color::Black);
 		GamelogicCredits_txt[i].setOutlineThickness(5);
 	}
 	
 	AnimationandTexturesCredits_txt[0].setString("Animation & Textures");
-	AnimationandTexturesCredits_txt[1].setString("Ahmed Maniea  Ali Shokry");
+	AnimationandTexturesCredits_txt[1].setString("Ahmed Maniea - Ali Shokry");
 	for (int i = 0; i < 2; i++)
 	{
 		AnimationandTexturesCredits_txt[i].setFont(font);
-		AnimationandTexturesCredits_txt[i].setCharacterSize(50);
+		AnimationandTexturesCredits_txt[i].setCharacterSize(35);
 		AnimationandTexturesCredits_txt[i].setFillColor(Color(230, 194, 0));
 		AnimationandTexturesCredits_txt[i].setOutlineColor(Color::Black);
 		AnimationandTexturesCredits_txt[i].setOutlineThickness(5);
@@ -1184,7 +1187,7 @@ void DrawUI()
 				{
 					window.draw(MenusandSoundsCredits_txt[i]);
 				}
-				for (int i = 0; i < 3; i++)
+				for (int i = 0; i < 4; i++)
 				{
 					window.draw(GamelogicCredits_txt[i]);
 				}
@@ -1430,7 +1433,7 @@ void DrawUI()
 			{
 				window.draw(MenusandSoundsCredits_txt[i]);
 			}
-			for (int i = 0; i < 3; i++)
+			for (int i = 0; i < 4; i++)
 			{
 				window.draw(GamelogicCredits_txt[i]);
 			}
