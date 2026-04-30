@@ -87,6 +87,14 @@ enum LoadTexture
 	wind_base_texture,
 	wind_effect_texture,
 	pusher_block_light_texture,
+	decor_1_texture,
+	decor_2_texture,
+	decor_3_texture,
+	decor_4_texture,
+	decor_5_texture,
+	decor_6_texture,
+	decor_7_texture,
+	decor_8_texture,
 	//menu assets s
 	PlayButton_texture,
 	CreditsButton_Texture,
@@ -180,6 +188,14 @@ Texture water_stairs;
 Texture diamond_fire;
 Texture diamond_water;
 // map objects textures
+Texture decor_1;
+Texture decor_2;
+Texture  decor_3;
+Texture  decor_4;
+Texture  decor_5;
+Texture decor_6;
+Texture  decor_7;
+Texture  decor_8;
 Texture wind_base;
 Texture wind_effect;
 Texture movingbox;
@@ -511,9 +527,31 @@ void ApplyTexture(Sprite& sprite, LoadTexture texture, Vector2f size = Vector2f(
 		sprite.setTexture(pusher_block_light);
 		break;
 
+	case decor_1_texture:
+		sprite.setTexture(decor_1);
+		break;
 
-
-
+	case decor_2_texture:
+		sprite.setTexture(decor_2);
+		break;
+	case decor_3_texture:
+		sprite.setTexture(decor_3);
+		break;
+	case decor_4_texture:
+		sprite.setTexture(decor_4);
+		break;
+	case decor_5_texture:
+		sprite.setTexture(decor_5);
+		break;
+	case decor_6_texture:
+		sprite.setTexture(decor_6);
+		break;
+	case decor_7_texture:
+		sprite.setTexture(decor_7);
+		break;
+	case decor_8_texture:
+		sprite.setTexture(decor_8);
+		break;
 		// menu assets
 
 	case PlayButton_texture:
@@ -872,7 +910,14 @@ void InitializeTextures()
 	pusher_block_light.loadFromFile("Main/Assets/Animations/map objects assets/pusher_block_light.png");
 	temporaryPlatform.loadFromFile("Main/Assets/Animations/map objects assets/pulley_platform.png");
 	moving_platform.loadFromFile("Main/Assets/Animations/map objects assets/bar center.png");
-	
+	decor_1.loadFromFile("Main/Assets/Animations/map objects assets/decor_1.png");
+	decor_2.loadFromFile("Main/Assets/Animations/map objects assets/decor_2.png");
+	decor_3.loadFromFile("Main/Assets/Animations/map objects assets/decor_3.png");
+	decor_4.loadFromFile("Main/Assets/Animations/map objects assets/decor_4.png");
+	decor_5.loadFromFile("Main/Assets/Animations/map objects assets/decor_5.png");
+	decor_6.loadFromFile("Main/Assets/Animations/map objects assets/decor_6.png");
+	decor_7.loadFromFile("Main/Assets/Animations/map objects assets/decor_7.png");
+	decor_8.loadFromFile("Main/Assets/Animations/map objects assets/decor_8.png");
 	ramp_1.loadFromFile("Main/Assets/Animations/map objects assets/ramp_1.png");
 	water_pond_right.loadFromFile("Main/Assets/Animations/map objects assets/water box right.png");
 	water_pond.loadFromFile("Main/Assets/Animations/map objects assets/water box.png");
