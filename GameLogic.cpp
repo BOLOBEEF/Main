@@ -834,6 +834,10 @@ void DrawGame(bool forceDraw)
 	window.draw(outlineSprite);
 	window.draw(resultSprite);
 
+	
+	for (int i = 0; i < gameTutorials.count; i++)
+		gameTutorials.elements[i].Draw();
+	
 	for (int i = 0; i < objects.count; i++)
 		objects.elements[i].MidDraw();
 

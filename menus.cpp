@@ -48,7 +48,7 @@ int tenth_sec = 0, unit_sec = 0;
 float totalTimePassed = 0;
 float clockTikingSpeed = 0;
 
-Tutorial_txt temporary_list;
+Tutorial_txt temporary_txt;
 //Why hold? -> because when I make the fade transition, I change the game state when alpha becomes 255, so the pause menu won't move until this case, it will move when we start decrementing the alpha
 //which is not like the original game
 
@@ -596,55 +596,45 @@ void InitializeMenu()
 	stopwatch_txt.setOutlineThickness(5);
 
 	//Tutorial Text
-	temporary_list.text.setString("\nUSE THE ARROW KEYS\n    TO MOVE FIREBOY\n");
-	temporary_list.text.setPosition(430, 900);
-	gameTutorials.Add(temporary_list);
+	temporary_txt.text.setString("\nUSE THE ARROW KEYS\n    TO MOVE FIREBOY\n");
+	temporary_txt.text.setPosition(430, 900);
+	gameTutorials.Add(temporary_txt);
 
-	temporary_list.text.setString("\nUSE A.W.D\nTO MOVE WATERGIRL\n");
-	temporary_list.text.setPosition(430, 750);
-	gameTutorials.Add(temporary_list);
+	temporary_txt.text.setString("\nUSE A.W.D\nTO MOVE WATERGIRL\n");
+	temporary_txt.text.setPosition(430, 750);
+	gameTutorials.Add(temporary_txt);
 
-	temporary_list.text.setString("\n\t\t\t\t  NEVER MIX FIRE & WATER!  \t\t\t\t\n         \n");
-	temporary_list.text.setPosition(1146, 870);
-	gameTutorials.Add(temporary_list);
+	temporary_txt.text.setString("\n\t\t\t\t  NEVER MIX FIRE & WATER!  \t\t\t\t\n         \n");
+	temporary_txt.text.setPosition(1146, 870);
+	gameTutorials.Add(temporary_txt);
 
-	temporary_list.text.setString("\nGREEN GOO\n    \tHURTS THEM BOTH\t\t\t\t\t\n\n");
-	temporary_list.text.setPosition(1200, 650);
-	gameTutorials.Add(temporary_list);
+	temporary_txt.text.setString("\nGREEN GOO\n    \tHURTS THEM BOTH\t\t\t\t\t\n\n");
+	temporary_txt.text.setPosition(1200, 650);
+	gameTutorials.Add(temporary_txt);
 
-	temporary_list.text.setString("\nLEVERS REMAIN AS\n\t\t    YOU LEAVE THEM\n");
-	temporary_list.text.setPosition(400, 580);
-	gameTutorials.Add(temporary_list);
+	temporary_txt.text.setString("\nLEVERS REMAIN AS\n\t\t    YOU LEAVE THEM\n");
+	temporary_txt.text.setPosition(400, 580);
+	gameTutorials.Add(temporary_txt);
 
-	temporary_list.text.setString("\nBUTTONS HOWEVER\n\t\t\t     MUST BE HELD\n");
-	temporary_list.text.setPosition(670, 430);
-	gameTutorials.Add(temporary_list);
+	temporary_txt.text.setString("\nBUTTONS HOWEVER\n\t\t\t     MUST BE HELD\n");
+	temporary_txt.text.setPosition(670, 430);
+	gameTutorials.Add(temporary_txt);
 
-	temporary_list.text.setString("\nTHEY CAN PUSH\n\t\t      BOXES AROUND\n");
-	temporary_list.text.setPosition(1465, 250);
-	gameTutorials.Add(temporary_list);
+	temporary_txt.text.setString("\nTHEY CAN PUSH\n\t\t      BOXES AROUND\n");
+	temporary_txt.text.setPosition(1465, 250);
+	gameTutorials.Add(temporary_txt);
 
-	temporary_list.text.setString("\nDONT'T FORGET TO\nGRAB SOME\nDIAMONDS!\n\n");
-	temporary_list.text.setPosition(350, 100);
-	gameTutorials.Add(temporary_list);
+	temporary_txt.text.setString("\nDONT'T FORGET TO\nGRAB SOME\nDIAMONDS!\n\n");
+	temporary_txt.text.setPosition(350, 100);
+	gameTutorials.Add(temporary_txt);
 
-	temporary_list.text.setString("\nOPEN THE FINISH DOORS\nBY STANDING IN FRONT OF THEM.\n");
-	temporary_list.text.setPosition(windowSize.x / 2 + 70, 95);
-	gameTutorials.Add(temporary_list);
+	temporary_txt.text.setString("\nOPEN THE FINISH DOORS\nBY STANDING IN FRONT OF THEM.\n");
+	temporary_txt.text.setPosition(windowSize.x / 2 + 70, 95);
+	gameTutorials.Add(temporary_txt);
 
 	for (int i = 0; i < gameTutorials.count; i++)
 	{
-		gameTutorials.elements[i].text.setFont(font);
-		gameTutorials.elements[i].text.setCharacterSize(25);
-		gameTutorials.elements[i].text.setFillColor(Color(230, 194, 0));
-		gameTutorials.elements[i].text.setOrigin(gameTutorials.elements[i].text.getLocalBounds().width / 2, gameTutorials.elements[i].text.getLocalBounds().height / 2);
-		gameTutorials.elements[i].text.setOutlineColor(Color::Black);
-		gameTutorials.elements[i].text.setOutlineThickness(5);
-
-		gameTutorials.elements[i].textCollision.setSize(Vector2f(gameTutorials.elements[i].text.getLocalBounds().width, gameTutorials.elements[i].text.getLocalBounds().height));
-		gameTutorials.elements[i].textCollision.setOrigin(gameTutorials.elements[i].text.getOrigin());
-		gameTutorials.elements[i].textCollision.setPosition(gameTutorials.elements[i].text.getPosition());
-		gameTutorials.elements[i].textCollision.setFillColor(Color::Red);
+		gameTutorials.elements[i].Initialize(font);
 	}
 
 	//Pause menu text
@@ -1032,6 +1022,11 @@ void UpdateUI()
 		break;
 	case GAME:
 		// code for game UI
+		for (int i = 0; i < gameTutorials.count; i++)
+		{
+			gameTutorials.elements[i].Update(fireBoy, waterGirl);
+		}
+
 		clockTikingSpeed = 1;
 		if (PreviousMenu_State == GAMEOVER)
 		{
@@ -1382,14 +1377,7 @@ void DrawUI()
 		window.draw(PauseIcon_mnu);
 		window.draw(clockTiking_game);
 		window.draw(stopwatch_txt);
-		for (int i = 0; i < gameTutorials.count; i++)
-		{
-			//window.draw(gameTutorials.elements[i].textCollision);
-			if (fireBoy.hitbox.getGlobalBounds().intersects(gameTutorials.elements[i].textCollision.getGlobalBounds()) || waterGirl.hitbox.getGlobalBounds().intersects(gameTutorials.elements[i].textCollision.getGlobalBounds()))
-			{
-				window.draw(gameTutorials.elements[i].text);
-			}
-		}
+		// gameTutorials is drawn in the actual DrawGame function
 		window.draw(Game_Dimmed_Background);
 		if (Current_position_mnu != Target_Down_mnu)
 		{

@@ -1797,8 +1797,46 @@ struct ObjectList {
 
 struct Tutorial_txt
 {
-	RectangleShape textCollision;
+	float fadeTime = 1.0f; // in seconds
+	bool isIntersecting = false;
+	float currentAlpha = 0;
+
 	Text text;
+
+	Tutorial_txt(){}
+
+	void Initialize(Font& font) {
+		text.setFont(font);
+		text.setCharacterSize(25);
+		text.setFillColor(Color(230, 194, 0));
+		text.setOrigin(text.getLocalBounds().width / 2, text.getLocalBounds().height / 2);
+		text.setOutlineColor(Color::Black);
+		text.setOutlineThickness(5);
+	}
+
+	void Update(Player& player1, Player& player2) {
+		isIntersecting = false;
+
+		if (text.getGlobalBounds().intersects(player1.hitbox.getGlobalBounds()))
+			isIntersecting = true;
+
+		if (text.getGlobalBounds().intersects(player2.hitbox.getGlobalBounds()))
+			isIntersecting = true;
+
+		if (isIntersecting)
+			currentAlpha = currentAlpha + 255 * fadeTime * dt;
+		else
+			currentAlpha = currentAlpha - 255 * fadeTime * dt;
+
+		currentAlpha = Clamp(currentAlpha, 0, 255);
+
+		text.setFillColor(SetColorAlpha(text.getFillColor(), currentAlpha));
+		text.setOutlineColor(SetColorAlpha(text.getOutlineColor(), currentAlpha));
+	}
+
+	void Draw() {
+		window.draw(text);
+	}
 };
 
 struct TutorialTxtList {
