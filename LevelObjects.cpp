@@ -1854,4 +1854,4 @@ struct TutorialTxtList {
 	~TutorialTxtList() {
 		delete[] elements;
 	}
-};
+}gameTutorials;
