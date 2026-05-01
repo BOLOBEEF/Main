@@ -59,6 +59,33 @@ enum EditColliderMode
 };
 EditColliderMode editColliderMode = EditColliderMode::Rectangle;
 
+
+struct LevelProgress
+{
+	bool isCompleted = false;    // if the player has completed the level before
+	bool collectedGems = false;  // if the player has collected all the gems in the level before
+	bool finishedOnTime = false; // if the player has finished the level on time
+};
+
+#define MAX_LEVELS 6
+
+LevelProgress levelProgress[MAX_LEVELS]; // progress for each level, can be used to show different icons in the level select screen
+
+void LoadLevelProgress() {
+	for (int i = 0; i < MAX_LEVELS; i++)
+	{
+		// load progress for each level from a file using fstream
+	}
+}
+
+void SaveLevelProgress() {
+	for (int i = 0; i < MAX_LEVELS; i++)
+	{
+		// save progress for each level to a file using fstream
+	}
+}
+
+
 struct Level
 {
 	// store all the variables related to a level here, for example:
@@ -269,9 +296,9 @@ struct Level
 
 	void Level2()
 	{
-		isSnowLevel = true;
-		fireBoy = Player(Fireboy, Vector2f(394, 862));
-		waterGirl = Player(Watergirl, Vector2f(332, 868));
+		isSnowLevel = false;
+		fireBoy = Player(Fireboy, Vector2f(337, 870));
+		waterGirl = Player(Watergirl, Vector2f(402, 860));
 		water_door = FinalDoor(FinalDoor::WATER_DOOR, Vector2f(465, 102));
 		fire_door = FinalDoor(FinalDoor::FIRE_DOOR, Vector2f(349, 86));
 		colliders.Add(Collider(Collider::ColliderType::Rectangle, center + Vector2f(0, -524), Vector2f(44, 1)));
@@ -300,6 +327,7 @@ struct Level
 		colliders.Add(Collider(Collider::ColliderType::Rectangle, center + Vector2f(-688, 244), Vector2f(1, 7)));
 		colliders.Add(Collider(Collider::ColliderType::Rectangle, center + Vector2f(-688, -444), Vector2f(1, 4)));
 		colliders.Add(Collider(Collider::ColliderType::Rectangle, center + Vector2f(-48, -44), Vector2f(1, 1)));
+		colliders.Add(Collider(Collider::ColliderType::Triangle, center + Vector2f(496, 116), Vector2f(1, 1)));
 		objects.Add(Object(Object::PondObject));
 		objects.GetLastElement().InitializePondObject(Pond::FIRE_POND, Vector2f(624, 912), 9);
 		objects.Add(Object(Object::PondObject));
@@ -347,18 +375,18 @@ struct Level
 		objects.Add(Object(Object::GemObject));
 		objects.GetLastElement().InitializeGemObject(Gem::fireGem, Vector2f(912, 112));
 		objects.Add(Object(Object::DoorObject));
-		objects.GetLastElement().InitializeDoorObject(Vector2f(1152, 176), Vector2f(896, 176), false);
+		objects.GetLastElement().InitializeDoorObject(Vector2f(1152, 174), Vector2f(896, 176), false);
 		objects.GetLastElement().data.door.button1 = Click(Vector2f(1214, 137), true);
 		objects.GetLastElement().data.door.button2 = Click(Vector2f(646, 138), true);
 		objects.Add(Object(Object::GemObject));
 		objects.GetLastElement().InitializeGemObject(Gem::waterGem, Vector2f(1008, 112));
 		objects.Add(Object(Object::DoorObject));
-		objects.GetLastElement().InitializeDoorObject(Vector2f(912, 576), Vector2f(912, 384), true);
+		objects.GetLastElement().InitializeDoorObject(Vector2f(910, 576), Vector2f(912, 448), true);
 		objects.GetLastElement().data.door.button1 = Click(Vector2f(459, 617), true);
 		objects.GetLastElement().data.door.button2 = Click(Vector2f(1385, 604), true);
 	}
 
-	void LoadLevelData(int levelIndex) {
+	bool LoadLevelData(int levelIndex) {
 		currentLevelIndex = levelIndex;
 		// based on the level index, fill the arrays with the actual data for each level
 		switch (levelIndex)
@@ -368,8 +396,10 @@ struct Level
 
 		default:
 			cout << "Invalid level index: " << levelIndex << endl;
-			break;
+			return false;
 		}
+
+		return true;
 	}
 
 	void Initialize() {
@@ -420,8 +450,11 @@ struct Level
 	{
 		// reset the level to its initial state, for example when the player dies or restarts the level
 		EraseData();
-		LoadLevelData(levelIndex);
-		Initialize();
+
+		levelLoadFailed = !LoadLevelData(levelIndex);
+		
+		if (!levelLoadFailed)
+			Initialize();
 	}
 
 	// RESTART CURRENT LEVEL
@@ -882,7 +915,9 @@ struct Level
 	void CheckWin() {
 		if (water_door.currentFrame == 21 && fire_door.currentFrame == 21)
 		{
-			UpdateGameState(WIN_MENU);
+			//UpdateGameState(WIN_MENU);
+			fireBoy.EnterDoor(Vector2f(fire_door.sprite.getGlobalBounds().left + fire_door.sprite.getGlobalBounds().width / 2.0f, fire_door.sprite.getGlobalBounds().top + fire_door.sprite.getGlobalBounds().height / 2.0f));
+			waterGirl.EnterDoor(Vector2f(water_door.sprite.getGlobalBounds().left + water_door.sprite.getGlobalBounds().width / 2.0f, water_door.sprite.getGlobalBounds().top + water_door.sprite.getGlobalBounds().height / 2.0f));
 		}
 	}
 	void CheckLoss()

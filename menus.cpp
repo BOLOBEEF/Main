@@ -48,7 +48,7 @@ int tenth_sec = 0, unit_sec = 0;
 float totalTimePassed = 0;
 float clockTikingSpeed = 0;
 
-Tutorial_txt temporary_txt;
+TutorialTxt temporary_txt;
 //Why hold? -> because when I make the fade transition, I change the game state when alpha becomes 255, so the pause menu won't move until this case, it will move when we start decrementing the alpha
 //which is not like the original game
 
@@ -890,6 +890,7 @@ void OnUpdatedGameStateMenu() {
 	case SETTINGS:
 		break;
 	case GAMEOVER:
+		PlayGameSoundEffect(GameOver_sound);
 		break;
 	case GAME:
 		PlayMusic(Game_Slow);

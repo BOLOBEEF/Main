@@ -11,6 +11,7 @@ Clock globalClock;
 Clock dtClock;
 float dt = 0.0f;
 Vector2f mousePosition;
+bool levelLoadFailed = false; // if true, return to main menu instead of loading level
 
 
 
@@ -102,7 +103,11 @@ void UpdateGameState(GameState newState, bool ForceUpdate = false)
 	if (newState == gameState && !ForceUpdate) return;
 
 	lastGameState = gameState;
-	gameState = newState;
+
+	if (!levelLoadFailed)
+		gameState = newState;
+	else
+		gameState = MAIN_MENU;
 
 	OnUpdatedGameStateMenu();
 	OnUpdatedGameStateGameLogic();

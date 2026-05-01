@@ -29,6 +29,8 @@ void InitializeOneTimeAnimations();
 struct FinalDoor;
 void DoorUpdateAnimation(FinalDoor&);
 
+
+
 struct Player
 {
 	// Settings:
@@ -49,13 +51,14 @@ struct Player
 	Clock lastTouchedSlope;
 	float boySlopeFallTime = 0.3f; // the time interval after which fire will keep sliding down the slope if he is on it and on snow at the same time
 	float boySlopeFallAcceleration = 300.0f; // make fire accelerate down the slope when on snow and slope at the same time
-	float waitTime = 2; //wait time after death and before turning gameState to gameover
+	float waitTime = 1; //wait time after death and before turning gameState to gameover
 
 	// runtime variables
 	Sprite hitbox;
 	Sprite displayBodySprite;
 	Sprite displayHeadSprite;
 	Sprite deathsprite;
+	Sprite playerEnterDoorSprite;
 	float headRotation = 0.0f;
 	Vector2f velocity = { 0,0 };
 	PlayerType playertype;
@@ -71,9 +74,10 @@ struct Player
 	bool isDead = false;
 	bool isOnSnow = false;
 	bool isStop = false;
+	bool enteringDoor = false;
 	Vector2f startPosition;
 	bool slopeDirectionRight = true; // true if slope goe1s down to the right, false if slope goes down to the left
-	Clock timeSinceDeath;
+	Clock timeSinceAnimation;		 // used to wait after death animation or enter door animation then switch the gameState to GAMEOVER or Win
 
 
 
@@ -86,11 +90,26 @@ struct Player
 
 	void Initialize() {
 		ApplyTexture(hitbox, LoadTexture::RECTANGLE, colliderSize);
+		
 		ApplyTexture(deathsprite, LoadTexture::death_smoke_texture, Vector2f(1, 1), Vector2f(1, 1), true, false);
-		UpdatePlayerTexture(displayBodySprite, playertype, playerState, false);
-		UpdatePlayerTexture(displayHeadSprite, playertype, playerState, true);
 		UpdateAnimation(deathsprite, death_smoke_texture);
 		SetSpriteOriginToCenter(deathsprite);
+
+		UpdatePlayerTexture(displayBodySprite, playertype, playerState, false);
+		UpdatePlayerTexture(displayHeadSprite, playertype, playerState, true);
+
+
+		if (playertype == Fireboy)
+		{
+			ApplyTexture(playerEnterDoorSprite, LoadTexture::fire_stairs_texture, Vector2f(1.0f, 1.0f), Vector2f(1.0f, 1.0f), false, false);
+			UpdateAnimation(playerEnterDoorSprite, LoadTexture::fire_stairs_texture);
+		}
+		else if (playertype == Watergirl)
+		{
+			ApplyTexture(playerEnterDoorSprite, LoadTexture::water_stairs_texture, Vector2f(1.0f, 1.0f), Vector2f(1.0f, 1.0f), false, false);
+			UpdateAnimation(playerEnterDoorSprite, LoadTexture::water_stairs_texture);
+		}
+
 		displayBodySprite.setScale(displayBodySize, displayBodySize);
 		displayHeadSprite.setScale(displayHeadSize, displayHeadSize);
 
@@ -227,7 +246,6 @@ struct Player
 			float targetRotation = atan2(velocity.y, velocity.x) * 180.f / 3.14159f;
 			headRotation = targetRotation;
 
-			cout << headRotation << endl;
 			displayHeadSprite.setRotation(headRotation);
 		}
 		else
@@ -237,7 +255,8 @@ struct Player
 			displayHeadSprite.setScale(Vector2f(abs(scale.x), abs(scale.y)));
 		}
 
-		if (!isDead) {
+		// if not dead and not entering door -> draw player normally
+		if (!isDead && !enteringDoor) {
 			if (playerState == PlayerState::Jump_Rise) {
 				window.draw(displayHeadSprite);
 				window.draw(displayBodySprite);
@@ -247,22 +266,45 @@ struct Player
 				window.draw(displayHeadSprite);
 			}
 		}
-		if (isDead) {
+		else if (isDead) {
 			UpdateAnimation(deathsprite, death_smoke_texture);
 			deathsprite.setPosition(hitbox.getPosition() + Vector2f(0, -32));
 			window.draw(deathsprite);
 
-			if (timeSinceDeath.getElapsedTime().asSeconds() > waitTime)
+			if (timeSinceAnimation.getElapsedTime().asSeconds() > waitTime)
 				UpdateGameState(GAMEOVER);
+		}
+		else if (enteringDoor && gameState == GAME) {
+			// play player enter door animation
+			UpdateAnimation(playerEnterDoorSprite, playertype == Fireboy ? LoadTexture::fire_stairs_texture : LoadTexture::water_stairs_texture);
+			playerEnterDoorSprite.setPosition(hitbox.getPosition() + Vector2f(-35, -50));
+			
+			if (playertype == Watergirl) playerEnterDoorSprite.move(10, 0);
+
+			window.draw(playerEnterDoorSprite);
+
+			if (timeSinceAnimation.getElapsedTime().asSeconds() > waitTime)
+				UpdateGameState(WIN_MENU);
 		}
 	}
 	void die() {
 		if (isDead) return;
 		isDead = true;
-		musicPlayer.stop();
-		PlayGameSoundEffect(GameOver_sound);
+		isStop = true;
+		
+		timeSinceAnimation.restart();
 		InitializeOneTimeAnimations();
-		timeSinceDeath.restart();
+		musicPlayer.stop();
+	}
+
+	void EnterDoor(Vector2f doorPosition) {
+		if (enteringDoor) return;
+		enteringDoor = true;
+		isStop = true;
+		hitbox.setPosition(doorPosition + Vector2f(0 , 20));
+		
+		timeSinceAnimation.restart();
+		InitializeOneTimeAnimations();
 	}
 };
 struct Collider
@@ -634,22 +676,24 @@ struct ColliderList {
 	int count = 0;
 	Collider* elements;
 
-	ColliderList() {
-		elements = new Collider[count];
-	}
-
 	void Add(Collider element) {
-		Collider* temp = new Collider[count];
 
-		for (int i = 0; i < count; i++)
-			temp[i] = elements[i];
+		if (count == 0)
+		{
+			count++;
+			elements = new Collider[count];
+			elements[0] = element;
+			return;
+		}
+
+		Collider* temp = elements;
 
 		count++;
+
 		elements = new Collider[count];
 
-		if (count - 1 >= 0)
-			for (int i = 0; i < count - 1; i++)
-				elements[i] = temp[i];
+		for (int i = 0; i < count - 1; i++)
+			elements[i] = temp[i];
 
 		delete[] temp;
 
@@ -659,12 +703,10 @@ struct ColliderList {
 	void RemoveAt(int index) {
 		if (count <= 0 || index < 0 || index >= count) return;
 
-		Collider* temp = new Collider[count];
-
-		for (int i = 0; i < count; i++)
-			temp[i] = elements[i];
+		Collider* temp = elements;
 
 		count--;
+
 		elements = new Collider[count];
 
 		for (int i = 0; i < count; i++)
@@ -674,6 +716,15 @@ struct ColliderList {
 				elements[i] = temp[i + 1];
 
 		delete[] temp;
+	}
+
+	Collider& GetLastElement() {
+		if (count == 0) {
+			cout << "ColliderList is empty" << endl;
+			exit(-2);
+		}
+
+		return elements[count - 1];
 	}
 
 	~ColliderList() {
@@ -939,7 +990,6 @@ struct Door
 	Vector2f startPosition;
 	Vector2f endPosition;
 	float speed = 100.0f;
-	Vector2f dimensions = Vector2f(32*2, 32 * 4);
 
 	Vector2f door_position = Vector2f(collider.sprite.getPosition());
 	bool rotated = false;
@@ -953,17 +1003,17 @@ struct Door
 	void Initialize() {
 		collider = Collider(Collider::ColliderType::Rectangle, startPosition);
 
-		ApplyTexture(displaySprite, LoadTexture::moving_platform_texture, dimensions,Vector2f(0.1,0.1),true,false);
+		ApplyTexture(displaySprite, LoadTexture::moving_platform_texture, Vector2f(), Vector2f(), true, false);
 		displaySprite.setScale(0.125, 0.125);
 		displaySprite.setPosition(startPosition);
 
 		if (rotated)
 		{
-			ApplyTexture(collider.sprite, LoadTexture::RECTANGLE, dimensions);
+			ApplyTexture(collider.sprite, LoadTexture::RECTANGLE, Vector2f(displaySprite.getGlobalBounds().height, displaySprite.getGlobalBounds().width));
 			displaySprite.rotate(90);
 		}
 		else {
-			ApplyTexture(collider.sprite, LoadTexture::RECTANGLE, Vector2f(dimensions.y, dimensions.x));
+			ApplyTexture(collider.sprite, LoadTexture::RECTANGLE, Vector2f(displaySprite.getGlobalBounds().width, displaySprite.getGlobalBounds().height));
 		}
 
 
@@ -972,17 +1022,26 @@ struct Door
 		startPosition = displaySprite.getPosition();
 	}
 
-	Door() {}
-	Door(Vector2f start, Vector2f end) {
-		startPosition = start;
-		endPosition = end;
-	}
-
-	void SetEndPosition(Vector2f position) {
+	void SetEndPosition(Vector2f position, bool forceSet = false) {
 		endPosition = position;
+
+		if (forceSet) {
+			endPosition = position;
+			if (!rotated) endPosition += Vector2f(0, -16);
+			else endPosition -= Vector2f(16, 0);
+			return;
+		}
+
 		Allign(endPosition);
 		if (!rotated) endPosition += Vector2f(0, 16);
 		else endPosition -= Vector2f(16, 0);
+	}
+
+
+	Door() {}
+	Door(Vector2f start, Vector2f end) {
+		startPosition = start;
+		SetEndPosition(end, true);
 	}
 
 	// check if position is inside the door objects (button or lever)
@@ -1635,7 +1694,7 @@ struct Object {
 		data.door.Initialize();
 		data.door.startPosition = data.door.displaySprite.getPosition();
 		Allign(end);
-		data.door.endPosition = end;
+		data.door.SetEndPosition(end, true);
 	}
 
 	void InitializePondObject(Pond::ponds_type startType, Vector2f position, int width) {
@@ -1790,22 +1849,24 @@ struct ObjectList {
 	int count = 0;
 	Object* elements;
 
-	ObjectList() {
-		elements = new Object[count];
-	}
-
 	void Add(Object element) {
-		Object* temp = new Object[count];
+		
+		if (count == 0)
+		{
+			count++;
+			elements = new Object[count];
+			elements[0] = element;
+			return;
+		}
 
-		for (int i = 0; i < count; i++)
-			temp[i] = elements[i];
+		Object* temp = elements;
 
 		count++;
+
 		elements = new Object[count];
 
-		if (count - 1 >= 0)
-			for (int i = 0; i < count - 1; i++)
-				elements[i] = temp[i];
+		for (int i = 0; i < count - 1; i++)
+			elements[i] = temp[i];
 
 		delete[] temp;
 
@@ -1815,12 +1876,10 @@ struct ObjectList {
 	void RemoveAt(int index) {
 		if (count <= 0 || index < 0 || index >= count) return;
 
-		Object* temp = new Object[count];
-
-		for (int i = 0; i < count; i++)
-			temp[i] = elements[i];
+		Object* temp = elements;
 
 		count--;
+
 		elements = new Object[count];
 
 		for (int i = 0; i < count; i++)
@@ -1833,6 +1892,11 @@ struct ObjectList {
 	}
 
 	Object& GetLastElement() {
+		if (count == 0) {
+			cout << "ObjectList is empty" << endl;
+			exit(-2);
+		}
+
 		return elements[count - 1];
 	}
 
@@ -1841,7 +1905,7 @@ struct ObjectList {
 	}
 };
 
-struct Tutorial_txt
+struct TutorialTxt
 {
 	float fadeTime = 1.0f; // in seconds
 	bool isIntersecting = false;
@@ -1849,7 +1913,7 @@ struct Tutorial_txt
 
 	Text text;
 
-	Tutorial_txt(){}
+	TutorialTxt(){}
 
 	void Initialize(Font& font) {
 		text.setFont(font);
@@ -1887,24 +1951,26 @@ struct Tutorial_txt
 
 struct TutorialTxtList {
 	int count = 0;
-	Tutorial_txt* elements;
+	TutorialTxt* elements;
 
-	TutorialTxtList() {
-		elements = new Tutorial_txt[count];
-	}
+	void Add(TutorialTxt element) {
 
-	void Add(Tutorial_txt element) {
-		Tutorial_txt* temp = new Tutorial_txt[count];
+		if (count == 0)
+		{
+			count++;
+			elements = new TutorialTxt[count];
+			elements[0] = element;
+			return;
+		}
 
-		for (int i = 0; i < count; i++)
-			temp[i] = elements[i];
+		TutorialTxt* temp = elements;
 
 		count++;
-		elements = new Tutorial_txt[count];
 
-		if (count - 1 >= 0)
-			for (int i = 0; i < count - 1; i++)
-				elements[i] = temp[i];
+		elements = new TutorialTxt[count];
+
+		for (int i = 0; i < count - 1; i++)
+			elements[i] = temp[i];
 
 		delete[] temp;
 
@@ -1914,13 +1980,11 @@ struct TutorialTxtList {
 	void RemoveAt(int index) {
 		if (count <= 0 || index < 0 || index >= count) return;
 
-		Tutorial_txt* temp = new Tutorial_txt[count];
-
-		for (int i = 0; i < count; i++)
-			temp[i] = elements[i];
+		TutorialTxt* temp = elements;
 
 		count--;
-		elements = new Tutorial_txt[count];
+
+		elements = new TutorialTxt[count];
 
 		for (int i = 0; i < count; i++)
 			if (i < index)
@@ -1931,11 +1995,16 @@ struct TutorialTxtList {
 		delete[] temp;
 	}
 
-	Tutorial_txt& GetLastElement() {
+	TutorialTxt& GetLastElement() {
+		if (count == 0) {
+			cout << "TutorialTxtList is empty" << endl;
+			exit(-2);
+		}
+
 		return elements[count - 1];
 	}
 
 	~TutorialTxtList() {
 		delete[] elements;
 	}
-}gameTutorials;
+} gameTutorials;

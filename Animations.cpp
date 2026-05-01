@@ -108,7 +108,7 @@ void UpdateAnimation(Sprite& sprite, LoadTexture texture) {
 		int width = 4590, height = 107;
 		int frameWidth = width / frameCount;
 
-		float speed = 15.0f;
+		float speed = 25.0f;
 
 		float time = animClock1.getElapsedTime().asSeconds();
 		int index = (int)(time * speed);
@@ -237,32 +237,20 @@ void UpdateAnimation(Sprite& sprite, LoadTexture texture) {
 	}
 
 	case fire_stairs_texture:
-	{
-		int frameCount = 30;
-		int width =2130, height = 103;
-		int index = (int)(globalClock.getElapsedTime().asSeconds() * speed) ;
-		if (index >= frameCount) {
-			index = frameCount;
-
-
-		}
-		sprite.setTextureRect(IntRect(index * (width / frameCount), 0, (width / frameCount), height));
-		break;
-	}
 	case water_stairs_texture:
 	{
 		int frameCount = 30;
-		int width =2100, height = 103;
-		int index = (int)(globalClock.getElapsedTime().asSeconds() * speed) ;
-		if (index >= frameCount) {
-			index = frameCount;
+		int width = 2130, height = 103;
+		int index;
+		
+		
+		index = (int)(animClock1.getElapsedTime().asSeconds() * speed);
+		if (index >= frameCount)
+			index = frameCount - 1;
 
-
-		}
-		sprite.setTextureRect(IntRect(index * (width / frameCount), 0, (width / frameCount), height));
+		sprite.setTextureRect(IntRect(index * (width / frameCount), 20, (width / frameCount), height));
 		break;
 	}
-	
 
 	// map objects animations
 
