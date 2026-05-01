@@ -859,6 +859,7 @@ void InitializeTextures()
 	water_running.setSmooth(true);
 	water_glow.setSmooth(true);
 	water_head_falling.setSmooth(true);
+	movingbox.setSmooth(true);
 	// load all texture here
 	// this functions maybe called again if reloading the textures is needed
 
