@@ -166,8 +166,8 @@ void initializeTutorialText()
 	temporary_txt.text.setPosition(1200, 650);
 	gameTutorials.Add(temporary_txt);
 
-	temporary_txt.text.setString("PRESS SPACE TO OPEN THE LEVER\nLEVERS REMAIN AS\n\t\t    YOU LEAVE THEM\n");
-	temporary_txt.text.setPosition(400, 580);
+	temporary_txt.text.setString("PRESS SPACE TO OPEN THE LEVER\n\t\t   LEVERS REMAIN AS\n\t\t    YOU LEAVE THEM\n");
+	temporary_txt.text.setPosition(500, 610);
 	gameTutorials.Add(temporary_txt);
 
 	temporary_txt.text.setString("\nBUTTONS HOWEVER\n\t\t\t     MUST BE HELD\n");
