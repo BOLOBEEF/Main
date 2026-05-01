@@ -813,7 +813,7 @@ void InitializeMenu()
 	}
 	
 	AnimationandTexturesCredits_txt[0].setString("Animation & Textures");
-	AnimationandTexturesCredits_txt[1].setString("Ahmed Maniea - Ali Shokry");
+	AnimationandTexturesCredits_txt[1].setString("Ahmed Manie3 - Ali Shokry");
 	for (int i = 0; i < 2; i++)
 	{
 		AnimationandTexturesCredits_txt[i].setFont(font);
