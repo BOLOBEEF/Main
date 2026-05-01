@@ -948,15 +948,16 @@ struct Click
 		startPosition = position;
 		sprite.setPosition(startPosition);
 		Allign(sprite);
-		ligh_click.setPosition(sprite.getPosition() + Vector2f(0, 32));
+		ligh_click.setPosition(sprite.getPosition() + Vector2f(0, 23));
 		ligh_click.setColor(Color::Green);
-
+		ligh_click.setScale(0.5f, 0.5f);
 		sprite.move(0, 20);
 		startPosition = sprite.getPosition();
 	}
 
 	void Update(Player anteel, Player anteela) {
 		bool lastState = isPressed;
+		ligh_click.setPosition(sprite.getPosition() + Vector2f(0, -5));
 		if (sprite.getGlobalBounds().intersects(anteel.hitbox.getGlobalBounds()) || sprite.getGlobalBounds().intersects(anteela.hitbox.getGlobalBounds())) {
 
 			isPressed = true;
@@ -1440,7 +1441,7 @@ struct TemporaryPlatform
 {
 	Collider collider;
 	Sprite displaySprite;
-	float displayScale = 0.8f;
+	float displayScale = 1.2f;
 	Vector2f startPosition;
 	Vector2f startScale;
 	bool collided = false;
@@ -1455,13 +1456,13 @@ struct TemporaryPlatform
 
 	void Initialize() {
 		collider = Collider(Collider::ColliderType::Rectangle, startPosition, Vector2f(32 * 2, 32));
-		ApplyTexture(collider.sprite, LoadTexture::RECTANGLE, Vector2f(32 * 3, 10), Vector2f(1, 1));
+		ApplyTexture(collider.sprite, LoadTexture::RECTANGLE, Vector2f(32 * 2, 10), Vector2f(1, 1));
 		ApplyTexture(displaySprite, LoadTexture::TEMPORARY_GROUND, Vector2f(1, 1), Vector2f(1, 1), true, false);
 		displaySprite.scale(displayScale, displayScale);
 		startScale = collider.sprite.getScale();
 		collider.sprite.setPosition(startPosition);
 		Allign(collider.sprite);
-		SetSpriteSize(collider.sprite, Vector2f(displaySprite.getGlobalBounds().width, displaySprite.getGlobalBounds().height));
+		SetSpriteSize(collider.sprite, Vector2f(displaySprite.getGlobalBounds().width-15, displaySprite.getGlobalBounds().height-15));
 	}
 
 	void ContinueTimer() {
@@ -1493,7 +1494,7 @@ struct TemporaryPlatform
 			// if player already collided, continue the timer and check if it's time to disappear
 			ContinueTimer();
 
-			if (timer >= 5.0f)
+			if (timer >= 1.5f)
 			{
 				collider.sprite.setScale(0, 0);
 				isVisible = false;
@@ -1508,7 +1509,7 @@ struct TemporaryPlatform
 				collider.sprite.setScale(startScale);
 				isVisible = true;
 				ResetTimer();
-				SetSpriteSize(collider.sprite, Vector2f(displaySprite.getGlobalBounds().width, displaySprite.getGlobalBounds().height));
+				SetSpriteSize(collider.sprite, Vector2f(displaySprite.getGlobalBounds().width - 15, displaySprite.getGlobalBounds().height - 15));
 			}
 		}
 	}
