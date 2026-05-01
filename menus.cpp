@@ -147,7 +147,50 @@ Sprite cursorAndpointerSprite;
 
 int finalScore = 0;
 // Functions
+void initializeTutorialText()
+{
+	temporary_txt.text.setString("\nUSE THE ARROW KEYS\n    TO MOVE FIREBOY\n");
+	temporary_txt.text.setPosition(430, 900);
+	gameTutorials.Add(temporary_txt);
 
+
+	temporary_txt.text.setString("\nUSE A.W.D\nTO MOVE WATERGIRL\n");
+	temporary_txt.text.setPosition(430, 750);
+	gameTutorials.Add(temporary_txt);
+
+	temporary_txt.text.setString("\n\t\t\t\t  NEVER MIX FIRE & WATER!  \t\t\t\t\n         \n");
+	temporary_txt.text.setPosition(1146, 870);
+	gameTutorials.Add(temporary_txt);
+
+	temporary_txt.text.setString("\nGREEN GOO\n    \tHURTS THEM BOTH\t\t\t\t\t\n\n");
+	temporary_txt.text.setPosition(1200, 650);
+	gameTutorials.Add(temporary_txt);
+
+	temporary_txt.text.setString("PRESS SPACE TO OPEN THE LEVER\nLEVERS REMAIN AS\n\t\t    YOU LEAVE THEM\n");
+	temporary_txt.text.setPosition(400, 580);
+	gameTutorials.Add(temporary_txt);
+
+	temporary_txt.text.setString("\nBUTTONS HOWEVER\n\t\t\t     MUST BE HELD\n");
+	temporary_txt.text.setPosition(670, 430);
+	gameTutorials.Add(temporary_txt);
+
+	temporary_txt.text.setString("\nTHEY CAN PUSH\n\t\t      BOXES AROUND\n");
+	temporary_txt.text.setPosition(1465, 250);
+	gameTutorials.Add(temporary_txt);
+
+	temporary_txt.text.setString("\nDONT'T FORGET TO\nGRAB SOME\nDIAMONDS!\n\n");
+	temporary_txt.text.setPosition(350, 100);
+	gameTutorials.Add(temporary_txt);
+
+	temporary_txt.text.setString("\nOPEN THE FINISH DOORS\nBY STANDING IN FRONT OF THEM.\n");
+	temporary_txt.text.setPosition(windowSize.x / 2 + 70, 95);
+	gameTutorials.Add(temporary_txt);
+
+	for (int i = 0; i < gameTutorials.count; i++)
+	{
+		gameTutorials.elements[i].Initialize(font);
+	}
+}
 void changeCursorColor(Event event)
 {
 	if (event.type == Event::MouseButtonPressed && event.mouseButton.button == Mouse::Left)
@@ -661,46 +704,6 @@ void InitializeMenu()
 	stopwatch_txt.setOutlineThickness(5);
 
 	//Tutorial Text
-	temporary_txt.text.setString("\nUSE THE ARROW KEYS\n    TO MOVE FIREBOY\n");
-	temporary_txt.text.setPosition(430, 900);
-	gameTutorials.Add(temporary_txt);
-
-	temporary_txt.text.setString("\nUSE A.W.D\nTO MOVE WATERGIRL\n");
-	temporary_txt.text.setPosition(430, 750);
-	gameTutorials.Add(temporary_txt);
-
-	temporary_txt.text.setString("\n\t\t\t\t  NEVER MIX FIRE & WATER!  \t\t\t\t\n         \n");
-	temporary_txt.text.setPosition(1146, 870);
-	gameTutorials.Add(temporary_txt);
-
-	temporary_txt.text.setString("\nGREEN GOO\n    \tHURTS THEM BOTH\t\t\t\t\t\n\n");
-	temporary_txt.text.setPosition(1200, 650);
-	gameTutorials.Add(temporary_txt);
-
-	temporary_txt.text.setString("\nLEVERS REMAIN AS\n\t\t    YOU LEAVE THEM\n");
-	temporary_txt.text.setPosition(400, 580);
-	gameTutorials.Add(temporary_txt);
-
-	temporary_txt.text.setString("\nBUTTONS HOWEVER\n\t\t\t     MUST BE HELD\n");
-	temporary_txt.text.setPosition(670, 430);
-	gameTutorials.Add(temporary_txt);
-
-	temporary_txt.text.setString("\nTHEY CAN PUSH\n\t\t      BOXES AROUND\n");
-	temporary_txt.text.setPosition(1465, 250);
-	gameTutorials.Add(temporary_txt);
-
-	temporary_txt.text.setString("\nDONT'T FORGET TO\nGRAB SOME\nDIAMONDS!\n\n");
-	temporary_txt.text.setPosition(350, 100);
-	gameTutorials.Add(temporary_txt);
-
-	temporary_txt.text.setString("\nOPEN THE FINISH DOORS\nBY STANDING IN FRONT OF THEM.\n");
-	temporary_txt.text.setPosition(windowSize.x / 2 + 70, 95);
-	gameTutorials.Add(temporary_txt);
-
-	for (int i = 0; i < gameTutorials.count; i++)
-	{
-		gameTutorials.elements[i].Initialize(font);
-	}
 
 	//Pause menu text
 	End_Pausetxt.setFont(font);
@@ -956,6 +959,11 @@ void OnUpdatedGameStateMenu() {
 		PlayGameSoundEffect(GameOver_sound);
 		break;
 	case GAME:
+		gameTutorials.Clear();
+		if (currentLevel.currentLevelIndex == 1)
+		{
+			initializeTutorialText();
+		}
 		PlayMusic(Game_Slow);
 		break;
 	default:
