@@ -72,6 +72,8 @@ Sprite EndButton_Pausemnu;
 Sprite RetryButton_Pausemnu;
 Sprite ResumeButton_Pausemnu;
 Sprite PauseIcon_mnu;
+
+//main menu
 Sprite MainMenuBackground_mnu;
 Sprite GameName_mnu;
 Sprite PlayButton_mnu;
@@ -98,6 +100,14 @@ Sprite OkButton_PauseToSetting;
 Sprite SettingsMenuBox_PauseToSetting;
 bool isSoundButtonClicked_PauseToSetting = false;
 bool isMusicButtonClicked_PauseToSetting = false;
+
+//Level menu
+Sprite LevelMenuBackground_mnu;
+Sprite LevelMenuBox_mnu[2][3];
+Sprite DiamondLevel_mnu[2][3];
+Sprite LevelSelection_mnu[2][3];
+Sprite BackButtonLevel_mnu;
+Text LevelNumber_mnu[2][3];
 
 //gameover
 Sprite GameOverbuttons_mnu[3];
@@ -474,6 +484,42 @@ void InitializeMenu()
 	IdleWgHeadmnu.setScale(1.25, 1.25);
 	IdleWgHeadmnu.setPosition(windowSize.x / 2 + 2456, windowSize.y / 2 + 390);
 	
+	//Level menu
+	LevelMenuBackground.setSmooth(true);
+	ApplyTexture(LevelMenuBackground_mnu, LoadTexture::LevelMenuBackground_texture, Vector2f(windowSize.x, windowSize.y));
+	LevelMenuBackground_mnu.setOrigin(LevelMenuBackground_mnu.getGlobalBounds().width / 2, LevelMenuBackground_mnu.getGlobalBounds().height / 2);
+	LevelMenuBackground_mnu.setPosition(windowSize.x / 2, windowSize.y / 2);
+
+	
+	LevelMenuBox.setSmooth(true);
+	for (int i = 0; i < 2; i++)
+	{
+		for (int j = 0; j < 3; j++)
+		{
+			ApplyTexture(LevelMenuBox_mnu[i][j], LoadTexture::LevelMenuBox_Texture, Vector2f(500, 500));
+			LevelMenuBox_mnu[i][j].setPosition(490 + (j * 500), 280 + (i * 500));
+
+			ApplyTexture(DiamondLevel_mnu[i][j], LoadTexture::Diamond0_texture, Vector2f(104, 104));
+			DiamondLevel_mnu[i][j].setPosition(500 + (j * 500), 300 + (i * 500));
+			DiamondLevel_mnu[i][j].setScale(1.25, 1.25);
+
+			LevelNumber_mnu[i][j].setFont(font);
+			LevelNumber_mnu[i][j].setCharacterSize(40);
+			LevelNumber_mnu[i][j].setFillColor(Color(230, 194, 0));
+			LevelNumber_mnu[i][j].setPosition(425 + (j * 500), 150 + (i * 500));
+			LevelNumber_mnu[i][j].setOutlineColor(Color::Black);
+			LevelNumber_mnu[i][j].setOutlineThickness(5);
+
+			ApplyTexture(LevelSelection_mnu[i][j], LoadTexture::SliderLightOn_texture, Vector2f(55, 57));
+			LevelSelection_mnu[i][j].setPosition(510 + (j * 500), 305 + (i * 500));
+			LevelSelection_mnu[i][j].setScale(5.5, 5.5);
+		}
+	}
+
+	ApplyTexture(BackButtonLevel_mnu, LoadTexture::BackButtonFull0_texture, Vector2f(259, 98));
+	BackButtonLevel_mnu.setScale(1.1, 1.1);
+	BackButtonLevel_mnu.setPosition(165, 525);
+
 	//Credits menu
 	ApplyTexture(CreditsMenuBox_mnu, LoadTexture::menu_box_texture, Vector2f(windowSize.x - 600, windowSize.y - 250));
 	
@@ -778,6 +824,13 @@ void InitializeMenu()
 		AnimationandTexturesCredits_txt[i].setOutlineThickness(5);
 	}
 
+	//Level Menu Text
+	LevelNumber_mnu[0][0].setString("LEVEL 1");
+	LevelNumber_mnu[0][1].setString("LEVEL 2");
+	LevelNumber_mnu[0][2].setString("LEVEL 3");
+	LevelNumber_mnu[1][0].setString("LEVEL 4");
+	LevelNumber_mnu[1][1].setString("LEVEL 5");
+	LevelNumber_mnu[1][2].setString("LEVEL 6");
 	// code for initializing menu variables and objects
 	// for example load sprites, set up text objects, etc.
 }
@@ -790,7 +843,7 @@ void HandleMenuInput(Event event)
 	case MAIN_MENU:
 		// code for handling main menu input
 		MouseInput_mnu(event, SettingsButton_Mainmnu, SettingsButton0_texture, SettingsButton0_texture, ButtonClick, SETTINGS, false);
-		MouseInput_mnu(event, PlayButton_mnu, PlayButton_texture, PlayButton_texture, ButtonClick, GAME, true);
+		MouseInput_mnu(event, PlayButton_mnu, PlayButton_texture, PlayButton_texture, ButtonClick, LEVEL_MENU, true);
 		MouseInput_mnu(event, CreditsButton_mnu, CreditsButton_Texture, CreditsButton_Texture, ButtonClick, CREDITS, false);
 		if (event.type == Event::MouseButtonPressed && event.mouseButton.button == Mouse::Left)
 		{
@@ -801,7 +854,18 @@ void HandleMenuInput(Event event)
 		}
 		break;
 	case LEVEL_MENU:
+		MouseInput_mnu(event, BackButtonLevel_mnu, BackButtonFull0_texture, BackButtonFull0_texture, ButtonClick, MAIN_MENU, true);
+		for (int i = 0; i < 2; i++)
+		{
+			for (int j = 0; j < 3; j++)
+			{
+				if (MouseInput_mnu(event, LevelMenuBox_mnu[i][j], LevelMenuBox_Texture, LevelMenuBox_Texture, ButtonClick, GAME, true))
+				{
+					currentLevel.LoadNewLevel((j + i * 3) + 1);
+				}
 
+			}
+		}
 		break;
 	case PAUSE_MENU:
 		MouseInput_mnu(event, ResumeButton_Pausemnu, stone_button_0_texture, stone_button_1_texture, ButtonClick, GAME, false, Resume_Pausetxt);
@@ -1223,6 +1287,21 @@ void DrawUI()
 
 		break;
 	case LEVEL_MENU:
+		window.draw(LevelMenuBackground_mnu);
+		for (int i = 0; i < 2; i++)
+		{
+			for (int j = 0; j < 3; j++)
+			{
+				window.draw(LevelMenuBox_mnu[i][j]);
+				if (DiamondLevel_mnu[i][j].getGlobalBounds().contains(mousePosition))
+				{
+					window.draw(LevelSelection_mnu[i][j]);
+				}
+				window.draw(DiamondLevel_mnu[i][j]);
+				window.draw(LevelNumber_mnu[i][j]);
+			}
+		}
+		window.draw(BackButtonLevel_mnu);
 		if (Current_position_mnu != Target_Down_mnu)
 		{
 
