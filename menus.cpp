@@ -53,7 +53,6 @@ TutorialTxt temporary_txt;
 //which is not like the original game
 
 
-GameState PreviousMenu_State = MAIN_MENU;
 GameState FadeTransitionMenuState = MAIN_MENU;
 RectangleShape Game_Dimmed_Background;
 RectangleShape settingsAndCredits_Dimmed_Background;
@@ -993,12 +992,12 @@ void UpdateUI()
 			SettingMenu_Movement(Target_Down_mnu, true);
 			currentSettingsDimState = MainTo_SettingsOrCredits_DimmingDown;
 		}
-		else if (PreviousMenu_State == GAMEOVER)
+		else if (lastGameState == GAMEOVER)
 		{
 			GameoverMenu_Movement(Target_Down_mnu);
 			currentDimState = DimmingDown;
 		}
-		else if (PreviousMenu_State == CREDITS)
+		else if (lastGameState == CREDITS)
 		{
 			CreditsMenu_Movement(Target_Down_mnu);
 			currentSettingsDimState = MainTo_SettingsOrCredits_DimmingDown;
@@ -1007,22 +1006,22 @@ void UpdateUI()
 		break;
 	case LEVEL_MENU:
 		clockTikingSpeed = 0;
-		if (PreviousMenu_State == GAMEOVER)
+		if (lastGameState == GAMEOVER)
 		{
 			GameoverMenu_Movement(Target_Down_mnu);
 		}
-		else if (PreviousMenu_State == PAUSE_MENU)
+		else if (lastGameState == PAUSE_MENU)
 		{
 			PauseMenu_Movement(Target_Down_mnu);
 		}
-		else if (PreviousMenu_State == WIN_MENU)
+		else if (lastGameState == WIN_MENU)
 		{
 			WinMenu_Movement(Target_Down_mnu);
 		}
 		break;
 	case PAUSE_MENU:
 		clockTikingSpeed = 0;
-		PreviousMenu_State = PAUSE_MENU;
+		lastGameState = PAUSE_MENU;
 		MainMenuSettings = false;
 		PauseMenu_Movement(Target_up_mnu);
 		if (LastWasSettings)
@@ -1035,7 +1034,7 @@ void UpdateUI()
 		break;
 	case WIN_MENU:
 		clockTikingSpeed = 0;
-		PreviousMenu_State = WIN_MENU;
+		lastGameState = WIN_MENU;
 		WinMenu_Movement(Target_up_mnu);
 		currentDimState = DimmingUp;
 
@@ -1103,7 +1102,7 @@ void UpdateUI()
 		break;
 	case GAMEOVER:
 		clockTikingSpeed = 0;
-		PreviousMenu_State = GAMEOVER;
+		lastGameState = GAMEOVER;
 		GameoverMenu_Movement(Target_up_mnu);
 		currentDimState = DimmingUp;
 		break;
@@ -1115,22 +1114,22 @@ void UpdateUI()
 		}
 
 		clockTikingSpeed = 1;
-		if (PreviousMenu_State == GAMEOVER)
+		if (lastGameState == GAMEOVER)
 		{
 			GameoverMenu_Movement(Target_Down_mnu);
 		}
-		else if (PreviousMenu_State == PAUSE_MENU)
+		else if (lastGameState == PAUSE_MENU)
 		{
 			PauseMenu_Movement(Target_Down_mnu);
 		}
-		else if (PreviousMenu_State == WIN_MENU)
+		else if (lastGameState == WIN_MENU)
 		{
 			WinMenu_Movement(Target_Down_mnu);
 		}
 		currentDimState = DimmingDown;
 		break;
 	case CREDITS:
-		PreviousMenu_State = CREDITS;
+		lastGameState = CREDITS;
 		clockTikingSpeed = 0;
 		CreditsMenu_Movement(Target_up_mnu);
 		currentSettingsDimState = MainTo_SettingsOtCredits_DimmingUp;
@@ -1263,7 +1262,7 @@ void DrawUI()
 				window.draw(OkButton_MainToSetting);
 				window.draw(OkButtontxt_MainToSetting);
 			}
-			else if (PreviousMenu_State == CREDITS)
+			else if (lastGameState == CREDITS)
 			{
 				window.draw(CreditsMenuBox_mnu);
 				window.draw(BackButtonCredits_mnu);
@@ -1305,7 +1304,7 @@ void DrawUI()
 		if (Current_position_mnu != Target_Down_mnu)
 		{
 
-			if (PreviousMenu_State == GAMEOVER)
+			if (lastGameState == GAMEOVER)
 			{
 				window.draw(Stone_mnu);
 				for (int i = 0; i < 3; i++)
@@ -1317,7 +1316,7 @@ void DrawUI()
 				window.draw(Levels_GOVERtxt);
 				window.draw(GameOver_txt);
 			}
-			else if (PreviousMenu_State == PAUSE_MENU)
+			else if (lastGameState == PAUSE_MENU)
 			{
 				window.draw(Stone_mnu);
 				window.draw(EndButton_Pausemnu);
@@ -1329,7 +1328,7 @@ void DrawUI()
 				window.draw(Resume_Pausetxt);
 				window.draw(Pause_txt);
 			}
-			else if (PreviousMenu_State == WIN_MENU)
+			else if (lastGameState == WIN_MENU)
 			{
 				window.draw(Stone_mnu);
 				window.draw(ContinueButton_Winmnu);
@@ -1413,7 +1412,7 @@ void DrawUI()
 		break;
 
 	case SETTINGS:
-		if (MainMenuSettings && PreviousMenu_State != PAUSE_MENU)
+		if (MainMenuSettings && lastGameState != PAUSE_MENU)
 		{
 			window.draw(MainMenuBackground_mnu);
 			window.draw(GameName_mnu);
@@ -1433,7 +1432,7 @@ void DrawUI()
 			window.draw(OkButton_MainToSetting);
 			window.draw(OkButtontxt_MainToSetting);
 		}
-		else if (PreviousMenu_State == PAUSE_MENU)
+		else if (lastGameState == PAUSE_MENU)
 		{
 			DrawGame(true);
 			window.draw(clockTiking_game);
@@ -1484,7 +1483,7 @@ void DrawUI()
 		if (Current_position_mnu != Target_Down_mnu)
 		{
 
-			if (PreviousMenu_State == GAMEOVER)
+			if (lastGameState == GAMEOVER)
 			{
 				window.draw(Stone_mnu);
 				for (int i = 0; i < 3; i++)
@@ -1496,7 +1495,7 @@ void DrawUI()
 				window.draw(Levels_GOVERtxt);
 				window.draw(GameOver_txt);
 			}
-			else if (PreviousMenu_State == PAUSE_MENU)
+			else if (lastGameState == PAUSE_MENU)
 			{
 				window.draw(Stone_mnu);
 				window.draw(EndButton_Pausemnu);
