@@ -947,9 +947,9 @@ struct Click
 		if (initialize) Initialize();
 		startPosition = position;
 		sprite.setPosition(startPosition);
+		Allign(sprite);
 		ligh_click.setPosition(sprite.getPosition() + Vector2f(0, 32));
 		ligh_click.setColor(Color::Green);
-		Allign(sprite);
 
 		sprite.move(0, 20);
 		startPosition = sprite.getPosition();
@@ -1436,7 +1436,7 @@ struct Box {
 };
 
 
-struct Temporary_ground
+struct TemporaryPlatform
 {
 	Collider collider;
 	Sprite displaySprite;
@@ -1447,8 +1447,8 @@ struct Temporary_ground
 	bool isVisible = true;
 	float timer = 0.0f;
 
-	Temporary_ground() {}
-	Temporary_ground(Vector2f position) {
+	TemporaryPlatform() {}
+	TemporaryPlatform(Vector2f position) {
 		startPosition = position;
 	}
 
@@ -1637,7 +1637,7 @@ struct ObjectData {
 	Door door;
 	Pond pond;
 	Box box;
-	Temporary_ground temporaryGround;
+	TemporaryPlatform temporaryGround;
 	Fan fan;
 	Snow snow;
 
