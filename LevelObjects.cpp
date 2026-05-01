@@ -259,6 +259,8 @@ struct Player
 	void die() {
 		if (isDead) return;
 		isDead = true;
+		musicPlayer.stop();
+		PlayGameSoundEffect(GameOver_sound);
 		InitializeOneTimeAnimations();
 		timeSinceDeath.restart();
 	}

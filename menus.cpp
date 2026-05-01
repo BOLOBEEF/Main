@@ -435,21 +435,26 @@ void InitializeMenu()
 
 
 	//Main menu
+	main_menu_background.setSmooth(true);
 	ApplyTexture(MainMenuBackground_mnu, LoadTexture::main_menu_background_texture, Vector2f(windowSize.x, windowSize.y));	
 	MainMenuBackground_mnu.setPosition(windowSize.x / 2 ,windowSize.y / 2);	
 
 	ApplyTexture(SettingsButton_Mainmnu, LoadTexture::SettingsButton0_texture, Vector2f(120, 120));
 	SettingsButton_Mainmnu.setPosition(150, 860);
 
+	game_name.setSmooth(true);
 	ApplyTexture(GameName_mnu, LoadTexture::game_name_texture, Vector2f(860, 270));
 	GameName_mnu.setPosition(windowSize.x / 2, windowSize.y / 2 - 200);
 
+	PlayButton.setSmooth(true);
 	ApplyTexture(PlayButton_mnu, LoadTexture::PlayButton_texture, Vector2f(240, 160));
 	PlayButton_mnu.setPosition(windowSize.x / 2, windowSize.y / 2 + 40);
 	
+	CreditsButton.setSmooth(true);
 	ApplyTexture(CreditsButton_mnu, LoadTexture::CreditsButton_Texture, Vector2f(260, 173));
 	CreditsButton_mnu.setPosition(windowSize.x / 2 + 350, windowSize.y / 2 + 150);
 
+	ExitButton.setSmooth(true);
 	ApplyTexture(ExitButton_mnu, LoadTexture::ExitButton_texture, Vector2f(240, 160));
 	ExitButton_mnu.setPosition(windowSize.x / 2 - 350, windowSize.y / 2 + 150);
 
@@ -477,6 +482,11 @@ void InitializeMenu()
 
 	//Settings from main
 	menu_box.setSmooth(true);
+	MuteButton0.setSmooth(true);
+	MuteButton1.setSmooth(true);
+	MusicButton0.setSmooth(true);
+	MusicButton1.setSmooth(true);
+
 	ApplyTexture(SettingsMenuBox_MainToSetting, LoadTexture::menu_box_texture, Vector2f(windowSize.x - 600, windowSize.y - 250));
 	UpdateAnimation(SettingsMenuBox_MainToSetting, menu_box_texture);
 	SettingsMenuBox_MainToSetting.setPosition(windowSize.x / 2, windowSize.y / 2);
@@ -802,6 +812,7 @@ void HandleMenuInput(Event event)
 		}
 		if (MouseInput_mnu(event, EndButton_Pausemnu, stone_button_0_texture, stone_button_1_texture, ButtonClick, LEVEL_MENU, true, End_Pausetxt))
 		{
+			RestartGame();
 			totalTimePassed = 0;
 		}
 		MouseInput_mnu(event, SettingButton_Pausemnu, SettingsButton0_texture, SettingsButton0_texture, No_Sound_Buttons, SETTINGS, false);
@@ -809,6 +820,7 @@ void HandleMenuInput(Event event)
 	case WIN_MENU:
 		if (MouseInput_mnu(event, ContinueButton_Winmnu, stone_button_0_texture, stone_button_1_texture, ButtonClick, LEVEL_MENU, true, Continue_Wintxt))
 		{
+			RestartGame();
 			totalTimePassed = 0;
 		}
 		break;
@@ -830,10 +842,12 @@ void HandleMenuInput(Event event)
 	case GAMEOVER:
 		if(MouseInput_mnu(event, GameOverbuttons_mnu[0], stone_button_0_texture, stone_button_1_texture, ButtonClick, LEVEL_MENU, true, Levels_GOVERtxt))
 		{
+			RestartGame();
 			totalTimePassed = 0;
 		}
 		if (MouseInput_mnu(event, GameOverbuttons_mnu[2], stone_button_0_texture, stone_button_1_texture, ButtonClick, MAIN_MENU, true, Menu_GOVERtxt))
 		{
+			RestartGame();
 			totalTimePassed = 0;
 		}
 		if (MouseInput_mnu(event, GameOverbuttons_mnu[1], stone_button_0_texture, stone_button_1_texture, ButtonClick, GAME, true, Retry_GOVERtxt))
@@ -862,7 +876,6 @@ void OnUpdatedGameStateMenu() {
 	{
 	case MAIN_MENU:
 		PlayMusic(MainMenu);
-
 		break;
 	case LEVEL_MENU:
 		PlayMusic(MainMenu);
@@ -877,8 +890,6 @@ void OnUpdatedGameStateMenu() {
 	case SETTINGS:
 		break;
 	case GAMEOVER:
-		musicPlayer.stop();
-		PlayGameSoundEffect(GameOver_sound);
 		break;
 	case GAME:
 		PlayMusic(Game_Slow);
