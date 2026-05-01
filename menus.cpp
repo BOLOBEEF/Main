@@ -237,7 +237,7 @@ bool MouseInput_mnu(Event event, Sprite& ButtonClicked, LoadTexture Currnet_text
 
 	return false;
 }
-bool MuteSound(Event event, Sprite& ButtonClicked, LoadTexture Unmuted ,LoadTexture Muted, MenuSoundEffect Sound_Played_mnu, bool SoundOn)
+bool MuteSound(Event event, Sprite& ButtonClicked, Sprite& SameButton, LoadTexture Unmuted ,LoadTexture Muted, MenuSoundEffect Sound_Played_mnu, bool SoundOn)
 {
 	
 	if (event.type == Event::MouseButtonPressed && event.mouseButton.button == Mouse::Left && !isSoundButtonClicked_MainToSetting)
@@ -245,7 +245,9 @@ bool MuteSound(Event event, Sprite& ButtonClicked, LoadTexture Unmuted ,LoadText
 		if (ButtonClicked.getGlobalBounds().contains(mousePosition))
 		{
 			ApplyTexture(ButtonClicked, Muted, Vector2f(113, 109));
+			ApplyTexture(SameButton, Muted, Vector2f(113, 109));
 			ButtonClicked.setScale(1.25, 1.25);
+			SameButton.setScale(1.25, 1.25);
 			isSoundButtonClicked_MainToSetting = true;
 			MuteAudio();
 		}
@@ -255,14 +257,16 @@ bool MuteSound(Event event, Sprite& ButtonClicked, LoadTexture Unmuted ,LoadText
 		if (ButtonClicked.getGlobalBounds().contains(mousePosition))
 		{
 			ApplyTexture(ButtonClicked, Unmuted, Vector2f(113, 109));
+			ApplyTexture(SameButton, Unmuted, Vector2f(113, 109));
 			ButtonClicked.setScale(1.25, 1.25);
+			SameButton.setScale(1.25, 1.25);
 			isSoundButtonClicked_MainToSetting = false;
 			UnmuteAudio();
 		}
 	}
 	return true;
 }
-bool MuteMusic(Event event, Sprite& ButtonClicked, LoadTexture Unmuted ,LoadTexture Muted, MenuSoundEffect Sound_Played_mnu, bool MusicOn)
+bool MuteMusic(Event event, Sprite& ButtonClicked, Sprite& SameButton, LoadTexture Unmuted ,LoadTexture Muted, MenuSoundEffect Sound_Played_mnu, bool MusicOn)
 {
 	
 	if (event.type == Event::MouseButtonPressed && event.mouseButton.button == Mouse::Left && !isMusicButtonClicked_MainToSetting)
@@ -270,7 +274,9 @@ bool MuteMusic(Event event, Sprite& ButtonClicked, LoadTexture Unmuted ,LoadText
 		if (ButtonClicked.getGlobalBounds().contains(mousePosition))
 		{
 			ApplyTexture(ButtonClicked, Muted, Vector2f(113, 109));
+			ApplyTexture(SameButton, Muted, Vector2f(113, 109));
 			ButtonClicked.setScale(1.25, 1.25);
+			SameButton.setScale(1.25, 1.25);
 			isMusicButtonClicked_MainToSetting = true;
 			MuteMusic();
 		}
@@ -280,7 +286,9 @@ bool MuteMusic(Event event, Sprite& ButtonClicked, LoadTexture Unmuted ,LoadText
 		if (ButtonClicked.getGlobalBounds().contains(mousePosition))
 		{
 			ApplyTexture(ButtonClicked, Unmuted, Vector2f(113, 109));
+			ApplyTexture(SameButton, Unmuted, Vector2f(113, 109));
 			ButtonClicked.setScale(1.25, 1.25);
+			SameButton.setScale(1.25, 1.25);
 			isMusicButtonClicked_MainToSetting = false;
 			UnmuteMusic();
 		}
@@ -808,14 +816,14 @@ void HandleMenuInput(Event event)
 		// code for handling settings menu input
 		if (Settings_from_MainMenu)
 		{
-			MuteSound(event, SoundButton_MainToSetting, MuteButton0_texture, MuteButton1_texture, ButtonClick, isSoundButtonClicked_MainToSetting);
-			MuteMusic(event, MusicButton_MainToSetting, MusicButton0_texture, MusicButton1_texture, ButtonClick, isMusicButtonClicked_MainToSetting);
+			MuteSound(event, SoundButton_MainToSetting, SoundButton_PauseToSetting, MuteButton0_texture, MuteButton1_texture, ButtonClick, isSoundButtonClicked_MainToSetting);
+			MuteMusic(event, MusicButton_MainToSetting, MusicButton_PauseToSetting, MusicButton0_texture, MusicButton1_texture, ButtonClick, isMusicButtonClicked_MainToSetting);
 			MouseInput_mnu(event, OkButton_MainToSetting, stone_button_0_texture, stone_button_1_texture, ButtonClick, MAIN_MENU, false, OkButtontxt_MainToSetting);
 		}
 		else
 		{
-			MuteSound(event, SoundButton_PauseToSetting, MuteButton0_texture, MuteButton1_texture, ButtonClick, isSoundButtonClicked_PauseToSetting);
-			MuteMusic(event, MusicButton_PauseToSetting, MusicButton0_texture, MusicButton1_texture, ButtonClick, isMusicButtonClicked_PauseToSetting);
+			MuteSound(event, SoundButton_PauseToSetting, SoundButton_MainToSetting, MuteButton0_texture, MuteButton1_texture, ButtonClick, isSoundButtonClicked_PauseToSetting);
+			MuteMusic(event, MusicButton_PauseToSetting, MusicButton_MainToSetting, MusicButton0_texture, MusicButton1_texture, ButtonClick, isMusicButtonClicked_PauseToSetting);
 			MouseInput_mnu(event, OkButton_PauseToSetting, stone_button_0_texture, stone_button_1_texture, ButtonClick, PAUSE_MENU, false, OkButtontxt_PauseToSetting);
 		}
 		break;
