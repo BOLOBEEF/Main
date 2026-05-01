@@ -2009,11 +2009,6 @@ struct TutorialTxtList {
 		return elements[count - 1];
 	}
 
-	void Clear() {
-		if (count > 0)
-			delete[] elements;
-	}
-
 	~TutorialTxtList() {
 		delete[] elements;
 	}

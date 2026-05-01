@@ -959,7 +959,7 @@ void OnUpdatedGameStateMenu() {
 		PlayGameSoundEffect(GameOver_sound);
 		break;
 	case GAME:
-		gameTutorials.Clear();
+		gameTutorials = TutorialTxtList();
 		if (currentLevel.currentLevelIndex == 1)
 		{
 			initializeTutorialText();
