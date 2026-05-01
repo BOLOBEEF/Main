@@ -101,6 +101,9 @@ enum LoadTexture
 	ExitButton_texture,
 	BackButton0_texture,
 	BackButtonFull0_texture,
+	LevelMenuBackground_texture,
+	LevelMenuBox_Texture,
+	SliderLightOn_texture,
 	Diamond0_texture,
 	Diamond1_texture,
 	Diamond2_texture,
@@ -228,6 +231,9 @@ Texture CreditsButton;
 Texture ExitButton;
 Texture BackButton0;
 Texture BackButtonFull0;
+Texture LevelMenuBackground;
+Texture LevelMenuBox;
+Texture SliderLightOn;
 Texture Diamond0;
 Texture Diamond1;
 Texture Diamond2;
@@ -564,6 +570,18 @@ void ApplyTexture(Sprite& sprite, LoadTexture texture, Vector2f size = Vector2f(
 
 	case ExitButton_texture:
 		sprite.setTexture(ExitButton);
+		break;
+
+	case LevelMenuBackground_texture:
+		sprite.setTexture(LevelMenuBackground);
+		break;
+
+	case LevelMenuBox_Texture:
+		sprite.setTexture(LevelMenuBox);
+		break;
+
+	case SliderLightOn_texture:
+		sprite.setTexture(SliderLightOn);
 		break;
 
 	case arrow_icon0_texture:
@@ -949,6 +967,9 @@ void InitializeTextures()
 	CreditsButton.loadFromFile("Main/Assets/Animations/menu assets/CreditsButton.png");
 	ExitButton.loadFromFile("Main/Assets/Animations/menu assets/ExitButton.png");
 	dust.loadFromFile("Main/Assets/Animations/menu assets/dust.png");
+	LevelMenuBackground.loadFromFile("Main/Assets/Animations/menu assets/LevelMenuBackground.png");
+	LevelMenuBox.loadFromFile("Main/Assets/Animations/menu assets/LevelMenuBox.png");
+	SliderLightOn.loadFromFile("Main/Assets/Animations/map objects assets/slider_light_on.png");
 	// divide the process into functions
 	InitializeMenuTextures();
 	InitializeGameTextures();
