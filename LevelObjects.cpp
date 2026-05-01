@@ -591,13 +591,16 @@ struct Collider
 	}
 
 
-	bool IsOnGround(Player player, FloatRect groundCheckBounds, FloatRect bias) {
+	bool IsOnGround(Player player, FloatRect groundCheckBounds) {
 		CollisionData collisionData;
+		float boundsReduction = 5;
+		FloatRect bounds = sprite.getGlobalBounds();
 
 		switch (type)
 		{
 		case Collider::Rectangle:
-			return groundCheckBounds.intersects(sprite.getGlobalBounds());
+			bounds = FloatRect(bounds.left + boundsReduction, bounds.top + boundsReduction, bounds.width - 2 * boundsReduction, bounds.height - boundsReduction);
+			return groundCheckBounds.intersects(bounds);
 		case Collider::Triangle:
 			collisionData = CheckTriangleCollision(groundCheckBounds, sprite.getGlobalBounds(), false);
 			return collisionData.collisionDirection == CollisionData::CollisionDirection::Top || collisionData.collisionDirection == CollisionData::CollisionDirection::Slope;
@@ -646,7 +649,6 @@ struct Collider
 		FloatRect playerBounds = player.hitbox.getGlobalBounds();
 		FloatRect colliderBounds = FloatRect(playerBounds.left, playerBounds.top, playerBounds.width, playerBounds.height + groundedDistance);
 
-		bool grounded = IsOnGround(player, colliderBounds, bias);
 
 		switch (type)
 		{
@@ -663,6 +665,14 @@ struct Collider
 			break;
 		}
 		
+		bool grounded = IsOnGround(player, colliderBounds);
+
+		if (grounded) {
+			// do some shi
+			int somevar;
+			cout << "Some shit" << endl;
+		}
+
 		return grounded || collisionData.collisionDirection == CollisionData::CollisionDirection::Top || collisionData.collisionDirection == CollisionData::CollisionDirection::Slope;
 	}
 
@@ -2003,6 +2013,11 @@ struct TutorialTxtList {
 		}
 
 		return elements[count - 1];
+	}
+
+	void Clear() {
+		if (count > 0)
+			delete[] elements;
 	}
 
 	~TutorialTxtList() {

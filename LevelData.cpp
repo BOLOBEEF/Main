@@ -388,8 +388,8 @@ struct Level
 
 	void Level3() {
 		isSnowLevel = false;
-		fireBoy = Player(Fireboy, Vector2f(1544, 869));
-		waterGirl = Player(Watergirl, Vector2f(345, 874));
+		fireBoy = Player(Fireboy, Vector2f(1546, 876));
+		waterGirl = Player(Watergirl, Vector2f(354, 877));
 		water_door = FinalDoor(FinalDoor::WATER_DOOR, Vector2f(1289, 443));
 		fire_door = FinalDoor(FinalDoor::FIRE_DOOR, Vector2f(594, 447));
 		colliders.Add(Collider(Collider::ColliderType::Rectangle, center + Vector2f(0, -524), Vector2f(44, 1)));
@@ -431,6 +431,8 @@ struct Level
 		colliders.Add(Collider(Collider::ColliderType::Triangle, center + Vector2f(80, -268), Vector2f(3, 3)));
 		colliders.Add(Collider(Collider::ColliderType::Triangle_Rotated, center + Vector2f(-80, -268), Vector2f(3, 3)));
 		colliders.Add(Collider(Collider::ColliderType::Rectangle, center + Vector2f(0, -316), Vector2f(2, 2)));
+		colliders.Add(Collider(Collider::ColliderType::Triangle_Rotated, center + Vector2f(-208, 372), Vector2f(1, 1)));
+		colliders.Add(Collider(Collider::ColliderType::Triangle, center + Vector2f(208, 372), Vector2f(1, 1)));
 		objects.Add(Object(Object::PondObject));
 		objects.GetLastElement().InitializePondObject(Pond::FIRE_POND, Vector2f(608, 720), 8);
 		objects.Add(Object(Object::PondObject));
