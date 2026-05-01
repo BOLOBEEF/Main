@@ -103,11 +103,7 @@ void UpdateGameState(GameState newState, bool ForceUpdate = false)
 	if (newState == gameState && !ForceUpdate) return;
 
 	lastGameState = gameState;
-
-	if (!levelLoadFailed)
-		gameState = newState;
-	else
-		gameState = MAIN_MENU;
+	gameState = newState;
 
 	OnUpdatedGameStateMenu();
 	OnUpdatedGameStateGameLogic();
