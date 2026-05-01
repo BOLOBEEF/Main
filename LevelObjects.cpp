@@ -667,12 +667,6 @@ struct Collider
 		
 		bool grounded = IsOnGround(player, colliderBounds);
 
-		if (grounded) {
-			// do some shi
-			int somevar;
-			cout << "Some shit" << endl;
-		}
-
 		return grounded || collisionData.collisionDirection == CollisionData::CollisionDirection::Top || collisionData.collisionDirection == CollisionData::CollisionDirection::Slope;
 	}
 
