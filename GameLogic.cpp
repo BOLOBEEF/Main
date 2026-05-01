@@ -56,6 +56,12 @@ void OnUpdatedGameStateGameLogic() {
 void UpdateGame()
 {
 	if (gameState != GAME) return;
+
+	if (levelLoadFailed) {
+		UpdateGameState(MAIN_MENU);
+		return;
+	}
+
 	currentLevel.Update();
 }
 
@@ -64,6 +70,12 @@ void DrawGame(bool forceDraw)
 {
 	if (!forceDraw && gameState != GAME) return;
 	// no need for window.clear or window.display
+
+	if (!forceDraw && levelLoadFailed)
+	{
+		UpdateGameState(MAIN_MENU);
+		return;
+	}
 
 	currentLevel.Draw();
 
