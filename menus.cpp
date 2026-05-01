@@ -372,7 +372,7 @@ void WinMenu_Movement(Vector2f Desired_Target)
 	diamondRating_icon_Winmnu.setPosition(Vector2f(windowSize.x / 2 - 330, windowSize.y / 2 - 80) + Current_position_mnu - center);
 	timerRating_icon_Winmnu.setPosition(Vector2f(windowSize.x / 2 - 330, windowSize.y / 2 + 20) + Current_position_mnu - center);
 	arrowIcon_Winmnu.setPosition(Vector2f(windowSize.x / 2, windowSize.y / 2 - 95) + Current_position_mnu - center);
-	levelDiamond_Winmnu.setPosition(Vector2f(windowSize.x / 2 + 748, windowSize.y / 2 - 95) + Current_position_mnu - center);
+	levelDiamond_Winmnu.setPosition(Vector2f(windowSize.x / 2 + 225, windowSize.y / 2 - 95) + Current_position_mnu - center);
 
 	checkOrCrossMaleOrFemale_icon_Winmnu.setPosition(Vector2f(windowSize.x / 2 - 205, windowSize.y / 2 - 190) + Current_position_mnu - center);
 	checkOrCrossDiamonds_icon_Winmnu.setPosition(Vector2f(windowSize.x / 2 - 205, windowSize.y / 2 - 90) + Current_position_mnu - center);
@@ -463,6 +463,7 @@ void InitializeMenu()
 	font.loadFromFile("Main/Assets/Fonts/trajanpro-bold.otf");
 	fpsDisplay.setFont(font);
 	fpsDisplay.setCharacterSize(24);
+
 	//Cursor 
 	CursorAndPointer.setSmooth(true);
 	ApplyTexture(cursorAndpointerSprite, LoadTexture::cursor_texture, Vector2f(45, 30));
@@ -534,6 +535,8 @@ void InitializeMenu()
 
 	
 	LevelMenuBox.setSmooth(true);
+	Diamond0.setSmooth(true);
+	SliderLightOn.setSmooth(true);
 	for (int i = 0; i < 2; i++)
 	{
 		for (int j = 0; j < 3; j++)
@@ -833,6 +836,14 @@ void InitializeMenu()
 	LevelNumber_mnu[1][0].setString("LEVEL 4");
 	LevelNumber_mnu[1][1].setString("LEVEL 5");
 	LevelNumber_mnu[1][2].setString("LEVEL 6");
+
+	PauseMenu_Movement(Target_Down_mnu);
+	WinMenu_Movement(Target_Down_mnu);
+	GameoverMenu_Movement(Target_Down_mnu);
+
+	ApplyTexture(levelDiamond_Winmnu, LoadTexture::diamonds_purple_texture, Vector2f(150, 150));
+	UpdateAnimation(levelDiamond_Winmnu, diamonds_purple_texture);
+	SetSpriteOriginToCenter(levelDiamond_Winmnu, true);
 	// code for initializing menu variables and objects
 	// for example load sprites, set up text objects, etc.
 }
@@ -857,6 +868,21 @@ void HandleMenuInput(Event event)
 		break;
 	case LEVEL_MENU:
 		MouseInput_mnu(event, BackButtonLevel_mnu, BackButtonFull0_texture, BackButtonFull0_texture, ButtonClick, MAIN_MENU, true);
+
+		arrowIcon_Winmnu.setTexture(arrow_icon0);
+		levelDiamond_Winmnu.setTexture(diamonds_green);
+		levelDiamond_Winmnu.setTextureRect(IntRect(0, 0, 128, 128));
+		ratingOrder = 0;
+		MaleAndFemale_turn = false;
+		diamondRating_turn = false;
+		timerRating_turn = false;
+		levelAndArrowIcon_turn = false;
+		isMaleAndFemaleSoundPlayed = false;
+		isdiamondSoundPlayed = false;
+		istimerSoundPlayed = false;
+		islevelAndArrowSoundPlayed = false;
+		WinMenu_Movement(Target_Down_mnu);
+
 		for (int i = 0; i < 2; i++)
 		{
 			for (int j = 0; j < 3; j++)
