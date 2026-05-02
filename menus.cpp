@@ -106,8 +106,8 @@ Sprite LevelMenuBackground_mnu;
 Sprite LevelMenuBox_mnu[2][3];
 Sprite DiamondLevel_mnu[2][3];
 Sprite LevelSelection_mnu[2][3];
-Sprite BackButtonLevel_mnu;
 Sprite LevelEntry_mnu[2][3];
+Sprite BackButtonLevel_mnu;
 Text LevelNumber_mnu[2][3];
 
 //gameover
