@@ -899,12 +899,10 @@ void HandleMenuInput(Event event)
 		MouseInput_mnu(event, ResumeButton_Pausemnu, stone_button_0_texture, stone_button_1_texture, ButtonClick, GAME, false, Resume_Pausetxt);
 		if (MouseInput_mnu(event, RetryButton_Pausemnu, stone_button_0_texture, stone_button_1_texture, ButtonClick, GAME, true, Retry_Pausetxt))
 		{
-			RestartGame();
 			totalTimePassed = 0;
 		}
 		if (MouseInput_mnu(event, EndButton_Pausemnu, stone_button_0_texture, stone_button_1_texture, ButtonClick, LEVEL_MENU, true, End_Pausetxt))
 		{
-			RestartGame();
 			totalTimePassed = 0;
 		}
 		MouseInput_mnu(event, SettingButton_Pausemnu, SettingsButton0_texture, SettingsButton0_texture, No_Sound_Buttons, SETTINGS, false);
@@ -912,7 +910,6 @@ void HandleMenuInput(Event event)
 	case WIN_MENU:
 		if (MouseInput_mnu(event, ContinueButton_Winmnu, stone_button_0_texture, stone_button_1_texture, ButtonClick, LEVEL_MENU, true, Continue_Wintxt))
 		{
-			RestartGame();
 			totalTimePassed = 0;
 		}
 		break;
@@ -934,17 +931,14 @@ void HandleMenuInput(Event event)
 	case GAMEOVER:
 		if(MouseInput_mnu(event, GameOverbuttons_mnu[0], stone_button_0_texture, stone_button_1_texture, ButtonClick, LEVEL_MENU, true, Levels_GOVERtxt))
 		{
-			RestartGame();
 			totalTimePassed = 0;
 		}
 		if (MouseInput_mnu(event, GameOverbuttons_mnu[2], stone_button_0_texture, stone_button_1_texture, ButtonClick, MAIN_MENU, true, Menu_GOVERtxt))
 		{
-			RestartGame();
 			totalTimePassed = 0;
 		}
 		if (MouseInput_mnu(event, GameOverbuttons_mnu[1], stone_button_0_texture, stone_button_1_texture, ButtonClick, GAME, true, Retry_GOVERtxt))
 		{
-			RestartGame();
 			totalTimePassed = 0;
 		}
 		break;

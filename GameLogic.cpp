@@ -38,17 +38,9 @@ void RestartGame() {
 
 void OnUpdatedGameStateGameLogic() {
 	// do stuff here exactly when the gameState is changed
-	if (gameState == GAMEOVER) {
-		//RestartGame();
-		return;
-	}
 
-	if (gameState != GAME) return;
-
-	if (fireBoy.isDead || waterGirl.isDead) {
-		//UpdateGameState(GAMEOVER);
-		return;
-	}
+	if (gameState == GAME)
+		RestartGame();
 }
 
 
