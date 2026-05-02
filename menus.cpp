@@ -964,7 +964,7 @@ void OnUpdatedGameStateMenu() {
 		PlayMusic(MainMenu);
 		break;
 	case LEVEL_MENU:
-		PlayMusic(MainMenu);
+		//PlayMusic(MainMenu); // don't play this, it is already played from the main menu
 		break;
 	case PAUSE_MENU:
 		musicPlayer.stop();
