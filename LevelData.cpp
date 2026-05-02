@@ -659,6 +659,10 @@ struct Level
 		cout << message << endl;
 	}
 
+	void ChangeTheme() {
+
+	}
+
 	void EditMode(Event event) {
 		// EDITING MANUAL:
 		// left click to add object, right click to remove object
