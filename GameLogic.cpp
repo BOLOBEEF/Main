@@ -29,7 +29,7 @@ void RestartGame() {
 void OnUpdatedGameStateGameLogic() {
 	// do stuff here exactly when the gameState is changed
 
-	if (gameState == GAME)
+	if (gameState == GAME && lastGameState != PAUSE_MENU)
 	{
 		RestartGame();
 		currentLevel.LoadNewLevel();

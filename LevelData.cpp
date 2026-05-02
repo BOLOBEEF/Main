@@ -136,7 +136,6 @@ struct Level
 {
 	// store all the variables related to a level here, for example:
 	int currentLevelIndex = 0;
-	int nextLevelToBeLoaded = 0;
 
 
 	ColliderList colliders;
@@ -542,17 +541,16 @@ struct Level
 		objects.GetLastElement().InitializeGemObject(Gem::waterGem, Vector2f(1584, 144));
 	}
 
-	bool LoadLevelData(int levelIndex) {
-		currentLevelIndex = levelIndex;
+	bool LoadLevelData() {
 		// based on the level index, fill the arrays with the actual data for each level
-		switch (levelIndex)
+		switch (currentLevelIndex)
 		{
 		case 0:	Level1();	break;
 		case 1: Level2();	break;
 		case 2: Level3();   break;
 
 		default:
-			cout << "Invalid level index: " << levelIndex << endl;
+			cout << "Invalid level index: " << currentLevelIndex << endl;
 			return false;
 		}
 
@@ -611,7 +609,7 @@ struct Level
 
 	// Initialize next level index
 	void SetLevel(int levelIndex) {
-		nextLevelToBeLoaded = levelIndex;
+		currentLevelIndex = levelIndex;
 	}
 
 	// Actually load the level
@@ -620,7 +618,7 @@ struct Level
 		// reset the level to its initial state, for example when the player dies or restarts the level
 		EraseData();
 
-		levelLoadFailed = !LoadLevelData(nextLevelToBeLoaded);
+		levelLoadFailed = !LoadLevelData();
 		
 		if (!levelLoadFailed)
 			Initialize();
@@ -631,7 +629,7 @@ struct Level
 	{
 		// reset the level to its initial state, for example when the player dies or restarts the level
 		EraseData();
-		LoadLevelData(currentLevelIndex);
+		LoadLevelData();
 		Initialize();
 	}
 
