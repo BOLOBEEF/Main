@@ -1,5 +1,6 @@
 // all levels data here
 // Runtime variables
+
 Player fireBoy = Player(Fireboy, Vector2f());
 Player waterGirl = Player(Watergirl, Vector2f());
 FinalDoor water_door = FinalDoor(FinalDoor::WATER_DOOR, Vector2f());
@@ -140,6 +141,7 @@ struct Level
 	ColliderList colliders;
 	ObjectList objects;
 	bool isSnowLevel = false;
+	Clock timeSinceLevelLoad;	// used to delay the start of updating the gameCamera
 
 	// logic functions
 	void CheckLevelCollision(Player& player) {
@@ -226,7 +228,7 @@ struct Level
 
 
 		// --- Step 2: Apply mask to background ---
-		resultTexture.clear(Color::Transparent);
+		resultTexture.clear(Color::Red);
 		resultTexture.draw(ground);
 
 		// Draw mask using alpha blending to reveal background
@@ -541,9 +543,9 @@ struct Level
 		// based on the level index, fill the arrays with the actual data for each level
 		switch (levelIndex)
 		{
-		case 1:	Level1();	break;
-		case 2: Level2();	break;
-		case 3: Level3();   break;
+		case 0:	Level1();	break;
+		case 1: Level2();	break;
+		case 2: Level3();   break;
 
 		default:
 			cout << "Invalid level index: " << levelIndex << endl;
@@ -575,9 +577,12 @@ struct Level
 
 		maskTexture.create(windowSize.x, windowSize.y);
 		outlineTexture.create(windowSize.x, windowSize.y);
-		resultTexture.create(windowSize.x, windowSize.y);
+
 		outlineSprite.setTexture(outlineTexture.getTexture());
 		outlineSprite.setColor(Color::Black);
+
+		int bonusPixels = 5000;
+		resultTexture.create(windowSize.x, windowSize.y);
 		resultSprite.setTexture(resultTexture.getTexture());
 
 		water_door.Initialize();
@@ -586,6 +591,7 @@ struct Level
 		fire_door.Update(fireBoy);
 
 		UpdateGroundTexture();
+		timeSinceLevelLoad.restart();
 	}
 
 	void EraseData()
@@ -731,15 +737,15 @@ struct Level
 					switch (editColliderMode)
 					{
 					case Rectangle:
-						collider = Collider(Collider::ColliderType::Rectangle, mousePosition, editScale);
+						collider = Collider(Collider::ColliderType::Rectangle, cameraMousePosition, editScale);
 						collider.Initialize();
 						break;
 					case Triangle:
-						collider = Collider(Collider::ColliderType::Triangle, mousePosition, editScale);
+						collider = Collider(Collider::ColliderType::Triangle, cameraMousePosition, editScale);
 						collider.Initialize();
 						break;
 					case Triangle_Rotated:
-						collider = Collider(Collider::ColliderType::Triangle_Rotated, mousePosition, editScale);
+						collider = Collider(Collider::ColliderType::Triangle_Rotated, cameraMousePosition, editScale);
 						collider.Initialize();
 						break;
 					default:
@@ -765,7 +771,7 @@ struct Level
 				else if (event.mouseButton.button == Mouse::Right) {
 					// remove object
 					for (int i = 0; i < colliders.count; i++) {
-						if (colliders.elements[i].sprite.getGlobalBounds().contains(mousePosition) && colliders.elements[i].editable) {
+						if (colliders.elements[i].sprite.getGlobalBounds().contains(cameraMousePosition) && colliders.elements[i].editable) {
 							colliders.RemoveAt(i);
 							UpdateGroundTexture();
 						}
@@ -779,76 +785,76 @@ struct Level
 					{
 					case FireGem_mode:
 						objects.Add(Object(Object::GemObject));
-						objects.GetLastElement().InitializeGemObject(Gem::fireGem, mousePosition);
+						objects.GetLastElement().InitializeGemObject(Gem::fireGem, cameraMousePosition);
 						break;
 					case WaterGem_mode:
 						objects.Add(Object(Object::GemObject));
-						objects.GetLastElement().InitializeGemObject(Gem::waterGem, mousePosition);
+						objects.GetLastElement().InitializeGemObject(Gem::waterGem, cameraMousePosition);
 						break;
 					case Door_mode:
 						objects.Add(Object(Object::DoorObject));
-						objects.GetLastElement().InitializeDoorObject(mousePosition, mousePosition + Vector2f(0, -100), false);
+						objects.GetLastElement().InitializeDoorObject(cameraMousePosition, cameraMousePosition + Vector2f(0, -100), false);
 						break;
 					case Door_Target_mode:
 						if (isEditingDoor)
 						{
-							objects.elements[doorIndex].data.door.SetEndPosition(mousePosition);
+							objects.elements[doorIndex].data.door.SetEndPosition(cameraMousePosition);
 						}
 						break;
 					case Door_Rotated_mode:
 						objects.Add(Object(Object::DoorObject));
-						objects.GetLastElement().InitializeDoorObject(mousePosition, mousePosition + Vector2f(0, -100), true);
+						objects.GetLastElement().InitializeDoorObject(cameraMousePosition, cameraMousePosition + Vector2f(0, -100), true);
 						break;
 					case FirePond_mode:
 						objects.Add(Object(Object::PondObject));
-						objects.GetLastElement().InitializePondObject(Pond::FIRE_POND, mousePosition, editPondWidth);
+						objects.GetLastElement().InitializePondObject(Pond::FIRE_POND, cameraMousePosition, editPondWidth);
 						UpdateGroundTexture(); // update ground texture to add the pond mask
 						break;
 					case WaterPond_mode:
 						objects.Add(Object(Object::PondObject));
-						objects.GetLastElement().InitializePondObject(Pond::WATER_POND, mousePosition, editPondWidth);
+						objects.GetLastElement().InitializePondObject(Pond::WATER_POND, cameraMousePosition, editPondWidth);
 						UpdateGroundTexture(); // update ground texture to add the pond mask
 						break;
 					case PoisonPond_mode:
 						objects.Add(Object(Object::PondObject));
-						objects.GetLastElement().InitializePondObject(Pond::POISON_POND, mousePosition, editPondWidth);
+						objects.GetLastElement().InitializePondObject(Pond::POISON_POND, cameraMousePosition, editPondWidth);
 						UpdateGroundTexture(); // update ground texture to add the pond mask
 						break;
 					case Box_mode:
 						objects.Add(Object(Object::BoxObject));
-						objects.GetLastElement().InitializeBoxObject(mousePosition);
+						objects.GetLastElement().InitializeBoxObject(cameraMousePosition);
 						break;
 					case TemporaryGround_mode:
 						objects.Add(Object(Object::TemporaryGroundObject));
-						objects.GetLastElement().InitializeTemporaryGroundObject(mousePosition);
+						objects.GetLastElement().InitializeTemporaryGroundObject(cameraMousePosition);
 						break;
 					case FanObject_mode:
 						objects.Add(Object(Object::FanObject));
-						objects.GetLastElement().InitializeFanObject(mousePosition);
+						objects.GetLastElement().InitializeFanObject(cameraMousePosition);
 						break;
 					case SnowObject_LeftDown_mode:
 						objects.Add(Object(Object::SnowObject));
-						objects.GetLastElement().InitializeSnowObject(Snow::LeftDown, mousePosition);
+						objects.GetLastElement().InitializeSnowObject(Snow::LeftDown, cameraMousePosition);
 						break;
 					case SnowObject_Normal_mode:
 						objects.Add(Object(Object::SnowObject));
-						objects.GetLastElement().InitializeSnowObject(Snow::Normal, mousePosition);
+						objects.GetLastElement().InitializeSnowObject(Snow::Normal, cameraMousePosition);
 						break;
 					case SnowObject_RightDown_mode:
 						objects.Add(Object(Object::SnowObject));
-						objects.GetLastElement().InitializeSnowObject(Snow::RightDown, mousePosition);
+						objects.GetLastElement().InitializeSnowObject(Snow::RightDown, cameraMousePosition);
 						break;
 					case Button_mode:
 						if (isEditingDoor)
 							if (objects.elements[doorIndex].type == Object::DoorObject)
 								if (objects.elements[doorIndex].data.door.lastButtonAdded)
 								{
-									objects.elements[doorIndex].data.door.button1 = Click(mousePosition, true);
+									objects.elements[doorIndex].data.door.button1 = Click(cameraMousePosition, true);
 									objects.elements[doorIndex].data.door.lastButtonAdded = false;
 								}
 								else
 								{
-									objects.elements[doorIndex].data.door.button2 = Click(mousePosition, true);
+									objects.elements[doorIndex].data.door.button2 = Click(cameraMousePosition, true);
 									objects.elements[doorIndex].data.door.lastButtonAdded = true;
 								}
 							else
@@ -860,7 +866,7 @@ struct Level
 					case Lever_mode:
 						if (isEditingDoor)
 							if (objects.elements[doorIndex].type == Object::DoorObject)
-								objects.elements[doorIndex].data.door.lever = Lever(mousePosition, true);
+								objects.elements[doorIndex].data.door.lever = Lever(cameraMousePosition, true);
 						break;
 					}
 
@@ -873,7 +879,7 @@ struct Level
 					{
 						if (objects.elements[i].type == Object::DoorObject) {
 							// also check the lever and buttons of the door
-							int colliderIndex = objects.elements[i].data.door.CheckDoorObjects(mousePosition); // returns the index that means if button1 or 2 or lever is clicked
+							int colliderIndex = objects.elements[i].data.door.CheckDoorObjects(cameraMousePosition); // returns the index that means if button1 or 2 or lever is clicked
 							if (colliderIndex != 0) {
 								switch (colliderIndex)
 								{
@@ -893,7 +899,7 @@ struct Level
 							}
 						}
 
-						if (objects.elements[i].data.CheckContainsPoint(mousePosition))
+						if (objects.elements[i].data.CheckContainsPoint(cameraMousePosition))
 						{
 							bool shouldUpdateGroundTexture = (objects.elements[i].type == Object::PondObject); // only update ground texture if a pond is removed since ponds affect the ground texture
 							objects.RemoveAt(i);
@@ -925,25 +931,25 @@ struct Level
 
 			if (event.key.code == Keyboard::C) {
 				// set fireBoy position to mouse position
-				fireBoy = Player(Fireboy, mousePosition);
+				fireBoy = Player(Fireboy, cameraMousePosition);
 				fireBoy.Initialize();
 			}
 
 			if (event.key.code == Keyboard::V) {
 				// set waterGirl position to mouse position
-				waterGirl = Player(Watergirl, mousePosition);
+				waterGirl = Player(Watergirl, cameraMousePosition);
 				waterGirl.Initialize();
 			}
 
 			if (event.key.code == Keyboard::B) {
 				// set fireDoor position to mouse position
-				fire_door = FinalDoor(FinalDoor::FIRE_DOOR, mousePosition);
+				fire_door = FinalDoor(FinalDoor::FIRE_DOOR, cameraMousePosition);
 				fire_door.Initialize();
 			}
 
 			if (event.key.code == Keyboard::N) {
 				// set waterDoor position to mouse position
-				water_door = FinalDoor(FinalDoor::WATER_DOOR, mousePosition);
+				water_door = FinalDoor(FinalDoor::WATER_DOOR, cameraMousePosition);
 				water_door.Initialize();
 			}
 
@@ -998,7 +1004,7 @@ struct Level
 				if (event.key.code == Keyboard::U) {
 					// add button or lever to door
 					for (int i = 0; i < objects.count; i++)
-						if (objects.elements[i].data.CheckContainsPoint(mousePosition) && objects.elements[i].type == Object::DoorObject)
+						if (objects.elements[i].data.CheckContainsPoint(cameraMousePosition) && objects.elements[i].type == Object::DoorObject)
 						{
 							isEditingDoor = true;
 							editObjectMode = EditObjectMode::Button_mode;
@@ -1118,7 +1124,53 @@ struct Level
 		CheckWin();
 	}
 
+
+	void UpdateCamera() {
+		// Camera Settings
+		float cameraWaitTime = 3.0f;
+		Vector2f cameraStartOffset = Vector2f(0, -100);
+		float distanceToZoom = 700.0f;		// when players distance between each other is less than 100 then start zooming the camera
+		float distanceToMaxZoom = 400.0f;	// distance at which camera can't zoom in anymore
+		float minZoom = 0.8f;				// default zoom
+		float maxZoom = 1.0f;				// max zoom
+		float zoomSpeed = 5.0f;
+
+		// move background texture (depth effect)
+		float backgroundMovementRatio = 0.3f;
+		background.setTextureRect(IntRect(gameCamera.getCenter().x * backgroundMovementRatio, gameCamera.getCenter().y * backgroundMovementRatio, windowSize.x, windowSize.y));
+		
+		// CAMERA LOGIC
+		if (timeSinceLevelLoad.getElapsedTime().asSeconds() < cameraWaitTime) {
+			gameCamera.setCenter(center + cameraStartOffset);
+			gameCamera.setSize(window.getDefaultView().getSize() * maxZoom);
+		}
+
+		// Cam Movement
+		Vector2f PlayerAveragePos = Lerp(fireBoy.hitbox.getPosition(), waterGirl.hitbox.getPosition(), 0.5f);
+		Vector2f cameraTarget = Lerp(center, PlayerAveragePos, 0.4f);
+		gameCamera.setCenter(Damp(gameCamera.getCenter(), cameraTarget, 10.0f, dt));
+
+		// Cam zoom
+		float playersDistance = Distance(fireBoy.hitbox.getPosition(), waterGirl.hitbox.getPosition());
+		float zoomRatio = (playersDistance - distanceToMaxZoom) / (distanceToZoom - distanceToMaxZoom);
+		zoomRatio = Clamp(zoomRatio, 0.0f, 1.0f);
+
+		float finalZoom = Lerp(minZoom, maxZoom, zoomRatio);
+		finalZoom = Clamp(finalZoom, minZoom, maxZoom);
+
+		float currentSize = gameCamera.getSize().x / window.getDefaultView().getSize().x;
+		gameCamera.setSize(window.getDefaultView().getSize() * Damp(currentSize, finalZoom, zoomSpeed, dt));
+	}
+
 	void Draw() {
+
+		UpdateCamera();
+
+		// Draw the next stuff using the camera
+		window.setView(gameCamera);
+
+
+
 		window.draw(background);
 
 		for (int i = 0; i < objects.count; i++)
@@ -1143,6 +1195,9 @@ struct Level
 
 		for (int i = 0; i < objects.count; i++)
 			objects.elements[i].PostDraw();
+
+		// stop using the camera for drawing
+		window.setView(window.getDefaultView());
 	}
 };
 

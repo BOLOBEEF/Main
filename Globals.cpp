@@ -5,12 +5,14 @@
 
 RenderWindow window = { VideoMode::getDesktopMode(), "SFML" , Style::Fullscreen};
 Vector2u windowSize = window.getSize();
+View gameCamera = window.getDefaultView();
 Vector2f center = Vector2f(windowSize.x / 2.0f, windowSize.y / 2.0f);
 
 Clock globalClock;
 Clock dtClock;
 float dt = 0.0f;
 Vector2f mousePosition;
+Vector2f cameraMousePosition;
 bool levelLoadFailed = false; // if true, return to main menu instead of loading level
 
 
@@ -118,6 +120,7 @@ void UpdateGlobals() {
 
 	Vector2i pixelPos = Mouse::getPosition(window);
 	mousePosition = window.mapPixelToCoords(pixelPos);	// fix mouse position not updating when the window is resized by using mapPixelToCoords instead of getPosition
+	cameraMousePosition = window.mapPixelToCoords(pixelPos, gameCamera);
 
 
 	UpdateUI();

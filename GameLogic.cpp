@@ -3,16 +3,6 @@
 
 
 
-// Settings :
-
-
-
-// Structs and enums
-
-
-
-
-// Object object;
 
 
 void InitializeGame()
@@ -68,6 +58,7 @@ void DrawGame(bool forceDraw)
 		UpdateGameState(MAIN_MENU);
 		return;
 	}
+
 
 	currentLevel.Draw();
 
