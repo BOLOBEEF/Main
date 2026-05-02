@@ -107,6 +107,7 @@ Sprite LevelMenuBox_mnu[2][3];
 Sprite DiamondLevel_mnu[2][3];
 Sprite LevelSelection_mnu[2][3];
 Sprite BackButtonLevel_mnu;
+Sprite LevelEntry_mnu[2][3];
 Text LevelNumber_mnu[2][3];
 
 //gameover
@@ -538,7 +539,6 @@ void InitializeMenu()
 	LevelMenuBackground_mnu.setOrigin(LevelMenuBackground_mnu.getGlobalBounds().width / 2, LevelMenuBackground_mnu.getGlobalBounds().height / 2);
 	LevelMenuBackground_mnu.setPosition(windowSize.x / 2, windowSize.y / 2);
 
-	
 	LevelMenuBox.setSmooth(true);
 	Diamond0.setSmooth(true);
 	SliderLightOn.setSmooth(true);
@@ -549,7 +549,7 @@ void InitializeMenu()
 			ApplyTexture(LevelMenuBox_mnu[i][j], LoadTexture::LevelMenuBox_Texture, Vector2f(500, 500));
 			LevelMenuBox_mnu[i][j].setPosition(490 + (j * 500), 280 + (i * 500));
 
-			ApplyTexture(DiamondLevel_mnu[i][j], LoadTexture::Diamond0_texture, Vector2f(104, 104));
+			ApplyTexture(DiamondLevel_mnu[i][j], LoadTexture::Diamond0_texture, Vector2f(69, 80));
 			DiamondLevel_mnu[i][j].setPosition(500 + (j * 500), 300 + (i * 500));
 			DiamondLevel_mnu[i][j].setScale(1.25, 1.25);
 
@@ -563,6 +563,9 @@ void InitializeMenu()
 			ApplyTexture(LevelSelection_mnu[i][j], LoadTexture::SliderLightOn_texture, Vector2f(55, 57));
 			LevelSelection_mnu[i][j].setPosition(510 + (j * 500), 305 + (i * 500));
 			LevelSelection_mnu[i][j].setScale(5.5, 5.5);
+			
+			ApplyTexture(LevelEntry_mnu[i][j], LoadTexture::LevelEntry_texture, Vector2f(85, 85));
+			LevelEntry_mnu[i][j].setPosition(501 + (j * 500), 300 + (i * 500));
 		}
 	}
 
@@ -895,7 +898,7 @@ void HandleMenuInput(Event event)
 		{
 			for (int j = 0; j < 3; j++)
 			{
-				if (MouseInput_mnu(event, LevelMenuBox_mnu[i][j], LevelMenuBox_Texture, LevelMenuBox_Texture, ButtonClick, GAME, true))
+				if (MouseInput_mnu(event, LevelEntry_mnu[i][j], LevelEntry_texture, LevelEntry_texture, ButtonClick, GAME, true))
 				{
 					currentLevel.SetLevel(j + i * 3);
 				}
@@ -1340,6 +1343,7 @@ void DrawUI()
 		{
 			for (int j = 0; j < 3; j++)
 			{
+				window.draw(LevelEntry_mnu[i][j]);
 				window.draw(LevelMenuBox_mnu[i][j]);
 				if (DiamondLevel_mnu[i][j].getGlobalBounds().contains(mousePosition))
 				{

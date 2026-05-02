@@ -107,6 +107,7 @@ enum LoadTexture
 	BackButtonFull0_texture,
 	LevelMenuBackground_texture,
 	LevelMenuBox_Texture,
+	LevelEntry_texture,
 	SliderLightOn_texture,
 	Diamond0_texture,
 	Diamond1_texture,
@@ -242,6 +243,7 @@ Texture BackButton0;
 Texture BackButtonFull0;
 Texture LevelMenuBackground;
 Texture LevelMenuBox;
+Texture LevelEntry;
 Texture SliderLightOn;
 Texture Diamond0;
 Texture Diamond1;
@@ -600,6 +602,10 @@ void ApplyTexture(Sprite& sprite, LoadTexture texture, Vector2f size = Vector2f(
 		sprite.setTexture(SliderLightOn);
 		break;
 
+	case LevelEntry_texture:
+		sprite.setTexture(LevelEntry);
+
+		break;
 	case arrow_icon0_texture:
 		sprite.setTexture(arrow_icon0);
 		break;
@@ -1004,6 +1010,7 @@ void InitializeTextures()
 	LevelMenuBackground.loadFromFile("Main/Assets/Animations/menu assets/LevelMenuBackground.png");
 	LevelMenuBox.loadFromFile("Main/Assets/Animations/menu assets/LevelMenuBox.png");
 	SliderLightOn.loadFromFile("Main/Assets/Animations/map objects assets/slider_light_on.png");
+	LevelEntry.loadFromFile("Main/Assets/Animations/menu assets/LevelEntry.png");
 	// divide the process into functions
 	InitializeMenuTextures();
 	InitializeGameTextures();
