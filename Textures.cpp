@@ -34,6 +34,8 @@ enum LoadTexture
 	RECTANGLE,
 	GROUND,
 	BACKGROUND,
+	GROUND_ice,
+	BACKGROUND_ice,
 
 	// char assets s
 	death_smoke_texture,
@@ -66,6 +68,8 @@ enum LoadTexture
 	pusher_block_texture,
 	fire_door_open_texture,
 	water_door_open_texture,
+	fire_door_open_ice_texture,
+	water_door_open_ice_texture,
 	fire_pond_texture,
 	fire_pond_right_texture,
 	fire_pond_left_texture,
@@ -134,6 +138,7 @@ enum LoadTexture
 	menu_box_texture,
 	pause_icon_texture,
 	clock_timer_texture,
+	clock_timer_ice_texture,
 	stone_button_0_texture,
 	stone_button_1_texture,
 	main_menu_background_texture,
@@ -167,6 +172,8 @@ Texture firedoor, waterdoor;
 Texture cubeTexture;
 Texture groundTexture;
 Texture backgroundTexture;
+Texture groundTexture_ice;
+Texture backgroundTexture_ice;
 
 // char assets textures
 Texture death_smoke;
@@ -209,6 +216,8 @@ Texture pusher_block;
 Texture pusher_block_light;
 Texture fire_door_open;
 Texture water_door_open;
+Texture fire_door_open_ice;
+Texture water_door_open_ice;
 Texture fire_pond;
 Texture fire_pond_right;
 Texture fire_pond_left;
@@ -265,6 +274,7 @@ Texture loading_icon;
 Texture pause_icon;
 Texture menu_box;
 Texture clock_timer;
+Texture clock_timer_ice;
 Texture stone_button;
 Texture main_menu_background;
 Texture game_name;
@@ -466,7 +476,13 @@ void ApplyTexture(Sprite& sprite, LoadTexture texture, Vector2f size = Vector2f(
 	case water_door_open_texture:
 		sprite.setTexture(water_door_open);
 		break;
+	case fire_door_open_ice_texture:
+		sprite.setTexture(fire_door_open_ice);
+		break;
 
+	case water_door_open_ice_texture:
+		sprite.setTexture(water_door_open_ice);
+		break;
 	case fire_pond_texture:
 		sprite.setTexture(fire_pond);
 		break;
@@ -735,6 +751,9 @@ void ApplyTexture(Sprite& sprite, LoadTexture texture, Vector2f size = Vector2f(
 	case clock_timer_texture:
 		sprite.setTexture(clock_timer);
 		break;
+	case clock_timer_ice_texture:
+		sprite.setTexture(clock_timer_ice);
+		break;
 	case stone_button_0_texture:
 		sprite.setTexture(stone_button);
 		break;
@@ -791,6 +810,13 @@ void ApplyTexture(Sprite& sprite, LoadTexture texture, Vector2f size = Vector2f(
 		sprite.setTexture(backgroundTexture);
 		centerOrigin = false;
 		break;
+	case GROUND_ice:
+		sprite.setTexture(groundTexture_ice);
+		centerOrigin = false;
+	case BACKGROUND_ice:
+		sprite.setTexture(backgroundTexture_ice);
+		centerOrigin = false;
+		break;
 	case DOOR_FIRE:
 		sprite.setTexture(firedoor);
 		sprite.setColor(Color::Red);
@@ -832,6 +858,10 @@ void InitializeGameTextures() {
 	groundTexture.setRepeated(true);
 	backgroundTexture.loadFromFile("Main/Assets/Textures/backGround.png");
 	backgroundTexture.setRepeated(true);
+	groundTexture_ice.loadFromFile("Main/Assets/Textures/Ground ice.png");
+	groundTexture_ice.setRepeated(true);
+	backgroundTexture_ice.loadFromFile("Main/Assets/Textures/backGround ice.png");
+	backgroundTexture_ice.setRepeated(true);
 }
 
 
@@ -921,6 +951,8 @@ void InitializeTextures()
 	pusher_block.loadFromFile("Main/Assets/Animations/map objects assets/pusher_block.png");
 	fire_door_open.loadFromFile("Main/Assets/Animations/map objects assets/fire door open.png");
 	water_door_open.loadFromFile("Main/Assets/Animations/map objects assets/water door open.png");
+	fire_door_open_ice.loadFromFile("Main/Assets/Animations/map objects assets/fire door ice open.png");
+	water_door_open_ice.loadFromFile("Main/Assets/Animations/map objects assets/water door ice open.png");
 	fire_pond.loadFromFile("Main/Assets/Animations/map objects assets/fire box.png");
 	fire_pond_right.loadFromFile("Main/Assets/Animations/map objects assets/fire box right.png");
 	fire_pond_left.loadFromFile("Main/Assets/Animations/map objects assets/fire box left.png");
@@ -951,6 +983,7 @@ void InitializeTextures()
 	menu_box.loadFromFile("Main/Assets/Animations/menu assets/menu box.png");
 	CursorAndPointer.loadFromFile("Main/Assets/Animations/cursor assets/CursorAndPOinter.png");
 	clock_timer.loadFromFile("Main/Assets/Animations/menu assets/clock timer.png");
+	clock_timer_ice.loadFromFile("Main/Assets/Animations/menu assets/clock timer ice.png");
 	stone_button.loadFromFile("Main/Assets/Animations/menu assets/stone button.png");
 	main_menu_background.loadFromFile("Main/Assets/Animations/menu assets/main menu background.png");
 	game_name.loadFromFile("Main/Assets/Animations/menu assets/GameNameForest.png");

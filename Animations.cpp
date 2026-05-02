@@ -311,7 +311,22 @@ void UpdateAnimation(Sprite& sprite, LoadTexture texture) {
 		sprite.setTextureRect(IntRect(index * (width / frameCount), 0, (width / frameCount), height));
 		break;
 	}
-
+	case fire_door_open_ice_texture:
+	{
+		int frameCount = 22;
+		int width = 3586, height = 138;
+		int index = (int)(globalClock.getElapsedTime().asSeconds() * speed) % frameCount;
+		sprite.setTextureRect(IntRect(index * (width / frameCount), 0, (width / frameCount), height));
+		break;
+	}
+	case water_door_open_ice_texture:
+	{
+		int frameCount = 22;
+		int width = 3586, height = 138;
+		int index = (int)(globalClock.getElapsedTime().asSeconds() * speed) % frameCount;
+		sprite.setTextureRect(IntRect(index * (width / frameCount), 0, (width / frameCount), height));
+		break;
+	}
 	case fire_pond_texture: {
 		int frameCount = 15;
 		int index = (int)(globalClock.getElapsedTime().asSeconds() * speed) % frameCount;
