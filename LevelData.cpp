@@ -136,6 +136,7 @@ struct Level
 {
 	// store all the variables related to a level here, for example:
 	int currentLevelIndex = 0;
+	int nextLevelToBeLoaded = 0;
 
 
 	ColliderList colliders;
@@ -143,6 +144,7 @@ struct Level
 	bool isSnowLevel = false;
 	Clock timeSinceLevelLoad;	// used to delay the start of updating the gameCamera
 	LevelProgress currentLevelProgress;
+	float currentTimeRequirement = 1000.0f; // time in seconds to be considered good per level
 
 	// logic functions
 	void CheckLevelCollision(Player& player) {
@@ -267,6 +269,7 @@ struct Level
 	// LEVEL DATA :
 	void Level1()
 	{
+		currentTimeRequirement = 10.0f;
 		isSnowLevel = false;
 		fireBoy = Player(Fireboy, Vector2f(263, 934));
 		waterGirl = Player(Watergirl, Vector2f(264, 798));
@@ -601,15 +604,23 @@ struct Level
 		// reset all arrays to be empty
 		colliders = ColliderList();
 		objects = ObjectList();
+		currentLevelProgress = LevelProgress();
+		gemsCounter = 0;
+		currentGemsCount = 0;
 	}
 
-	// LOAD A NEW LEVEL
-	void LoadNewLevel(int levelIndex)
+	// Initialize next level index
+	void SetLevel(int levelIndex) {
+		nextLevelToBeLoaded = levelIndex;
+	}
+
+	// Actually load the level
+	void LoadNewLevel()
 	{
 		// reset the level to its initial state, for example when the player dies or restarts the level
 		EraseData();
 
-		levelLoadFailed = !LoadLevelData(levelIndex);
+		levelLoadFailed = !LoadLevelData(nextLevelToBeLoaded);
 		
 		if (!levelLoadFailed)
 			Initialize();
@@ -626,8 +637,10 @@ struct Level
 
 	// printing
 	void PrintLevelData() {
-		// player data
+		// level data
+		cout << "currentTimeRequirement = " << (int)currentTimeRequirement << ".0f;" << endl;
 		cout << "isSnowLevel = " << (isSnowLevel ? "true;" : "false;") << endl;
+		// player data
 		cout << "fireBoy = Player(Fireboy, Vector2f(" << (int)fireBoy.startPosition.x << ", " << (int)fireBoy.startPosition.y << "));" << endl;
 		cout << "waterGirl = Player(Watergirl, Vector2f(" << (int)waterGirl.startPosition.x << ", " << (int)waterGirl.startPosition.y << "));" << endl;
 		// door data
@@ -954,6 +967,18 @@ struct Level
 				water_door.Initialize();
 			}
 
+			if (event.key.code == Keyboard::Apostrophe) {
+				// update time requirement for this level
+				currentTimeRequirement -= 10.0f;
+				cout << "set time requirement to " << currentTimeRequirement << endl;
+			}
+
+			if (event.key.code == Keyboard::Period) {
+				// update time requirement for this level
+				currentTimeRequirement += 10.0f;
+				cout << "set time requirement to " << currentTimeRequirement << endl;
+			}
+
 			if (editMode == EditMode::collider_mode)
 			{
 				isEditingDoor = false;
@@ -1072,7 +1097,13 @@ struct Level
 
 	}
 
-
+	void AssignLevelProgress() {
+		// update and save level progress where using the function
+		// UpdateAndSaveLevelProgress();
+		// completed is true
+		// if gemsCounter == currentGemsCount
+		// if TimeSinceLevelLoad.elasped < currentTimeRequirement
+	}
 
 	void CheckWin() {
 		if (water_door.currentFrame == 21 && fire_door.currentFrame == 21)
@@ -1080,6 +1111,7 @@ struct Level
 			//UpdateGameState(WIN_MENU);
 			fireBoy.EnterDoor(Vector2f(fire_door.sprite.getGlobalBounds().left + fire_door.sprite.getGlobalBounds().width / 2.0f, fire_door.sprite.getGlobalBounds().top + fire_door.sprite.getGlobalBounds().height / 2.0f));
 			waterGirl.EnterDoor(Vector2f(water_door.sprite.getGlobalBounds().left + water_door.sprite.getGlobalBounds().width / 2.0f, water_door.sprite.getGlobalBounds().top + water_door.sprite.getGlobalBounds().height / 2.0f));
+			AssignLevelProgress();
 		}
 	}
 	void CheckLoss()

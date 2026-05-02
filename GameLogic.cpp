@@ -7,7 +7,7 @@
 
 void InitializeGame()
 {
-	currentLevel.LoadNewLevel(2);
+
 }
 
 
@@ -30,7 +30,10 @@ void OnUpdatedGameStateGameLogic() {
 	// do stuff here exactly when the gameState is changed
 
 	if (gameState == GAME)
+	{
 		RestartGame();
+		currentLevel.LoadNewLevel();
+	}
 }
 
 

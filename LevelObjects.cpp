@@ -827,7 +827,8 @@ struct FinalDoor
 
 // Generic struct for all level objects exculding colliders and players
 
-
+int gemsCounter = 0;
+int currentGemsCount;
 struct Gem
 {
 	enum Gemtype { waterGem, fireGem };
@@ -846,6 +847,8 @@ struct Gem
 		else {
 			ApplyTexture(sprite, LoadTexture::diamond_fire_texture, Vector2f(80 * scale, 80 * scale));
 		}
+
+		currentGemsCount++;
 	}
 
 	Gem() {}
@@ -868,6 +871,7 @@ struct Gem
 			if (hitbox.intersects(hamada.hitbox.getGlobalBounds())) {
 				PlayGameSoundEffect(GameSoundEffect::DiamondCollect_sound);
 				isCollected = true;
+				gemsCounter++;
 				sprite.setScale(0, 0);
 			}
 		}
@@ -875,6 +879,7 @@ struct Gem
 			if (hitbox.intersects(hamada.hitbox.getGlobalBounds())) {
 				PlayGameSoundEffect(GameSoundEffect::DiamondCollect_sound);
 				isCollected = true;
+				gemsCounter++;
 				sprite.setScale(0, 0);
 			}
 		}

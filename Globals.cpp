@@ -3,7 +3,7 @@
 
 // variables that are used across multiple files and functions
 
-RenderWindow window = { VideoMode::getDesktopMode(), "SFML" , Style::Fullscreen};
+RenderWindow window = { VideoMode::getDesktopMode(), "SFML" };// , Style::Fullscreen};
 Vector2u windowSize = window.getSize();
 View gameCamera = window.getDefaultView();
 Vector2f center = Vector2f(windowSize.x / 2.0f, windowSize.y / 2.0f);
