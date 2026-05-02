@@ -894,7 +894,7 @@ void HandleMenuInput(Event event)
 			{
 				if (MouseInput_mnu(event, LevelMenuBox_mnu[i][j], LevelMenuBox_Texture, LevelMenuBox_Texture, ButtonClick, GAME, true))
 				{
-					currentLevel.LoadNewLevel((j + i * 3) + 1);
+					currentLevel.LoadNewLevel(j + i * 3);
 				}
 
 			}
