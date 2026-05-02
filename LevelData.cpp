@@ -388,8 +388,8 @@ struct Level
 
 	void Level3() {
 		isSnowLevel = false;
-		fireBoy = Player(Fireboy, Vector2f(1544, 869));
-		waterGirl = Player(Watergirl, Vector2f(345, 874));
+		fireBoy = Player(Fireboy, Vector2f(1546, 876));
+		waterGirl = Player(Watergirl, Vector2f(354, 877));
 		water_door = FinalDoor(FinalDoor::WATER_DOOR, Vector2f(1289, 443));
 		fire_door = FinalDoor(FinalDoor::FIRE_DOOR, Vector2f(594, 447));
 		colliders.Add(Collider(Collider::ColliderType::Rectangle, center + Vector2f(0, -524), Vector2f(44, 1)));
