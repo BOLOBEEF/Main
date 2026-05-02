@@ -431,6 +431,8 @@ struct Level
 		colliders.Add(Collider(Collider::ColliderType::Triangle, center + Vector2f(80, -268), Vector2f(3, 3)));
 		colliders.Add(Collider(Collider::ColliderType::Triangle_Rotated, center + Vector2f(-80, -268), Vector2f(3, 3)));
 		colliders.Add(Collider(Collider::ColliderType::Rectangle, center + Vector2f(0, -316), Vector2f(2, 2)));
+		colliders.Add(Collider(Collider::ColliderType::Triangle_Rotated, center + Vector2f(-208, 372), Vector2f(1, 1)));
+		colliders.Add(Collider(Collider::ColliderType::Triangle, center + Vector2f(208, 372), Vector2f(1, 1)));
 		objects.Add(Object(Object::PondObject));
 		objects.GetLastElement().InitializePondObject(Pond::FIRE_POND, Vector2f(608, 720), 8);
 		objects.Add(Object(Object::PondObject));
