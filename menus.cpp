@@ -492,6 +492,7 @@ void InitializeMenu()
 	ApplyTexture(MainMenuBackground_mnu, LoadTexture::main_menu_background_texture, Vector2f(windowSize.x, windowSize.y));	
 	MainMenuBackground_mnu.setPosition(windowSize.x / 2 ,windowSize.y / 2);	
 
+	SettingsButton0.setSmooth(true);
 	ApplyTexture(SettingsButton_Mainmnu, LoadTexture::SettingsButton0_texture, Vector2f(120, 120));
 	SettingsButton_Mainmnu.setPosition(150, 860);
 
@@ -967,15 +968,19 @@ void OnUpdatedGameStateMenu() {
 		//PlayMusic(MainMenu); // don't play this, it is already played from the main menu
 		break;
 	case PAUSE_MENU:
-		musicPlayer.stop();
+		PauseMusic();
 		break;
 	case WIN_MENU:
-		musicPlayer.stop();
+		PauseMusic();
 		PlayGameSoundEffect(Win_sound);
 		break;
 	case SETTINGS:
 		break;
+	case CREDITS:
+		PauseMusic();
+		break;
 	case GAMEOVER:
+		PauseMusic();
 		PlayGameSoundEffect(GameOver_sound);
 		break;
 	case GAME:
@@ -984,7 +989,14 @@ void OnUpdatedGameStateMenu() {
 		{
 			initializeTutorialText();
 		}
-		PlayMusic(Game_Slow);
+		if (currentLevel.currentLevelIndex == 3)
+		{
+			PlayMusic(Game_Fast);
+		}
+		else
+		{
+			PlayMusic(Game_Slow);
+		}
 		break;
 	default:
 		break;

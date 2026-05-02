@@ -62,12 +62,13 @@ enum GameSoundEffect
 
 enum BackgroundMusic {
 	// only for long music
+	None,
 	MainMenu,
 	Game_Slow,
 	Game_Fast,
 	Game_Dark,
 };
-
+BackgroundMusic CurrentMusicPLaying = None;
 
 // make a buffer for each possible audio file
 SoundBuffer menuMusicSound;
@@ -143,6 +144,13 @@ void UnmuteMusic()
 {
 	musicPlayer.setVolume(MAinMenu_BackGround_Music);
 }
+void PauseMusic()
+{
+	if (musicPlayer.getStatus() == Sound::Playing)
+	{
+		musicPlayer.pause();
+	}
+}
 
 void InitializeAudio()
 {
@@ -182,35 +190,45 @@ void InitializeAudio()
 }
 
 void PlayMusic(BackgroundMusic music) {
+	SoundBuffer* selectedBuffer = nullptr;
+	// when i call this function with specific music, it setBuffer of the desired music i want to play and setBuffer play the music from the beginning
+	// what i want to do instead is to only setBuffer when i change the music playing only, 
+
 	bool validMusic = true;
 
 	switch (music)
 	{
 	case MainMenu:
-		musicPlayer.setBuffer(menuMusicSound);
-		//musicPlayer.setVolume(MAinMenu_BackGround_Music);
+		//musicPlayer.setBuffer(menuMusicSound);
+		selectedBuffer = &menuMusicSound;
 		break;
 	case Game_Slow:
-		musicPlayer.setBuffer(gameMusic_SlowSound);
-		//musicPlayer.setVolume(GAME_BackGround_Music);
+		//musicPlayer.setBuffer(gameMusic_SlowSound);
+		selectedBuffer = &gameMusic_SlowSound;
 		break;
 	case Game_Fast:
-		musicPlayer.setBuffer(gameMusic_FastSound);
-		//musicPlayer.setVolume(GAME_BackGround_Music);
+		//musicPlayer.setBuffer(gameMusic_FastSound);
+		selectedBuffer = &gameMusic_FastSound;
 		break;
 	case Game_Dark:
-		musicPlayer.setBuffer(gameMusic_DarkSound);
-		//musicPlayer.setVolume(GAME_BackGround_Music);
+		//musicPlayer.setBuffer(gameMusic_DarkSound);
+		selectedBuffer = &gameMusic_DarkSound;
 		break;
 	default:
 		cout << "Invalid background music" << endl;
 		validMusic = false;
 		break;
 	}
-
-
-	if (validMusic) {
+	// now we set the new Buffer
+	if (CurrentMusicPLaying != music)
+	{
+		musicPlayer.stop();
+		musicPlayer.setBuffer(*selectedBuffer);
 		musicPlayer.setLoop(true);
+		CurrentMusicPLaying = music;
+	}
+	if (validMusic && musicPlayer.getStatus() != Sound::Playing) 
+	{
 		musicPlayer.play();
 	}
 }
