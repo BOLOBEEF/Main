@@ -65,25 +65,70 @@ struct LevelProgress
 	bool isCompleted = false;    // if the player has completed the level before
 	bool collectedGems = false;  // if the player has collected all the gems in the level before
 	bool finishedOnTime = false; // if the player has finished the level on time
+	int lowestTime = 100000;			// the lowest time the player has achieved in this level, used to show different icons in the level select screen
 };
+
+
+
 
 #define MAX_LEVELS 6
 
 LevelProgress levelProgress[MAX_LEVELS]; // progress for each level, can be used to show different icons in the level select screen
 
+
+
 void LoadLevelProgress() {
-	for (int i = 0; i < MAX_LEVELS; i++)
+
+	ifstream loadfile("saveData.txt"); // load progress for each level from a file using fstream, if the file does not exist, start with default progress (all false and 0)
+	
+	if(loadfile.is_open())
 	{
-		// load progress for each level from a file using fstream
+		for (int i = 0; i < MAX_LEVELS; i++)
+		{
+			loadfile >> levelProgress[i].isCompleted;
+			loadfile >> levelProgress[i].collectedGems;
+			loadfile >> levelProgress[i].finishedOnTime;
+			loadfile >> levelProgress[i].lowestTime;
+		}
+		loadfile.close();
 	}
+	else
+	{
+		cout << "No save data found, starting with default progress." << endl;
+	}
+	
 }
 
 void SaveLevelProgress() {
-	for (int i = 0; i < MAX_LEVELS; i++)
+	
+	ofstream savefile("saveData.txt"); // save progress for each level to a file using fstream, if the file does not exist, create it
+	
+	if(savefile.is_open())
 	{
-		// save progress for each level to a file using fstream
+		for (int i = 0; i < MAX_LEVELS; i++)
+		{
+			savefile << levelProgress[i].isCompleted << endl;
+			savefile << levelProgress[i].collectedGems << endl;
+			savefile << levelProgress[i].finishedOnTime << endl;
+			savefile << levelProgress[i].lowestTime << endl;
+		}
+		savefile.close();
+	}
+	else
+	{
+		cout << "Error saving progress!" << endl;
 	}
 }
+void UpdateLevelProgress(int levelIndex, LevelProgress progress) {
+	if (levelIndex < 0 || levelIndex >= MAX_LEVELS) return;
+	levelProgress[levelIndex].isCompleted = progress.isCompleted;
+	levelProgress[levelIndex].collectedGems = progress.collectedGems;
+	levelProgress[levelIndex].finishedOnTime = progress.finishedOnTime;
+	if (progress.lowestTime < levelProgress[levelIndex].lowestTime)
+		levelProgress[levelIndex].lowestTime = progress.lowestTime;
+	SaveLevelProgress(); // save progress after updating
+}
+
 
 
 struct Level

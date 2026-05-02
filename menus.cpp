@@ -700,6 +700,9 @@ void InitializeMenu()
 	
 	x_icon.setSmooth(true);
 	tick_icon.setSmooth(true);
+
+
+
 	RatingCheck(true, true, false);
 
 	//Clock Text
