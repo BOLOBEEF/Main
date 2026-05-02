@@ -142,6 +142,7 @@ struct Level
 	ObjectList objects;
 	bool isSnowLevel = false;
 	Clock timeSinceLevelLoad;	// used to delay the start of updating the gameCamera
+	LevelProgress currentLevelProgress;
 
 	// logic functions
 	void CheckLevelCollision(Player& player) {

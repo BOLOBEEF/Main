@@ -992,11 +992,11 @@ void OnUpdatedGameStateMenu() {
 		break;
 	case GAME:
 		gameTutorials = TutorialTxtList();
-		if (currentLevel.currentLevelIndex == 1)
+		if (currentLevel.currentLevelIndex == 0)
 		{
 			initializeTutorialText();
 		}
-		if (currentLevel.currentLevelIndex == 3)
+		if (currentLevel.currentLevelIndex == 2)
 		{
 			PlayMusic(Game_Fast);
 		}
