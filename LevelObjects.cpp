@@ -591,16 +591,13 @@ struct Collider
 	}
 
 
-	bool IsOnGround(Player player, FloatRect groundCheckBounds) {
+	bool IsOnGround(Player player, FloatRect groundCheckBounds, FloatRect bias) {
 		CollisionData collisionData;
-		float boundsReduction = 5;
-		FloatRect bounds = sprite.getGlobalBounds();
 
 		switch (type)
 		{
 		case Collider::Rectangle:
-			bounds = FloatRect(bounds.left + boundsReduction, bounds.top + boundsReduction, bounds.width - 2 * boundsReduction, bounds.height - boundsReduction);
-			return groundCheckBounds.intersects(bounds);
+			return groundCheckBounds.intersects(sprite.getGlobalBounds());
 		case Collider::Triangle:
 			collisionData = CheckTriangleCollision(groundCheckBounds, sprite.getGlobalBounds(), false);
 			return collisionData.collisionDirection == CollisionData::CollisionDirection::Top || collisionData.collisionDirection == CollisionData::CollisionDirection::Slope;
@@ -649,6 +646,7 @@ struct Collider
 		FloatRect playerBounds = player.hitbox.getGlobalBounds();
 		FloatRect colliderBounds = FloatRect(playerBounds.left, playerBounds.top, playerBounds.width, playerBounds.height + groundedDistance);
 
+		bool grounded = IsOnGround(player, colliderBounds, bias);
 
 		switch (type)
 		{
@@ -665,8 +663,6 @@ struct Collider
 			break;
 		}
 		
-		bool grounded = IsOnGround(player, colliderBounds);
-
 		return grounded || collisionData.collisionDirection == CollisionData::CollisionDirection::Top || collisionData.collisionDirection == CollisionData::CollisionDirection::Slope;
 	}
 
