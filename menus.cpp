@@ -41,6 +41,8 @@ float dimingSpeed, dimPercentage = 0;
 float settingAndCredits_DimmingSpeed, settingsAndCreditsDimPercentage = 0;
 float fadeSpeed = 155, fadePercentage = 0;
 float holdSpeed = 40, holdLimit = 50;
+//Why hold? -> because when I make the fade transition, I change the game state when alpha becomes 255, so the pause menu won't move until this case, it will move when we start decrementing the alpha
+//which is not like the original game
 
 int Minutes_clock = 0, Seconds_clock = 0;
 int tenth_min = 0, unit_min = 0;
@@ -49,8 +51,6 @@ float totalTimePassed = 0;
 float clockTikingSpeed = 0;
 
 TutorialTxt temporary_txt;
-//Why hold? -> because when I make the fade transition, I change the game state when alpha becomes 255, so the pause menu won't move until this case, it will move when we start decrementing the alpha
-//which is not like the original game
 
 
 GameState FadeTransitionMenuState = MAIN_MENU;
@@ -83,6 +83,7 @@ Sprite IdleFbBodymnu;
 Sprite IdleFbHeadmnu;
 Sprite IdleWgBodymnu;
 Sprite IdleWgHeadmnu;
+//Sprite dustAnimation;
 
 //settings from main
 Sprite SoundButton_MainToSetting;
@@ -152,7 +153,6 @@ void initializeTutorialText()
 	temporary_txt.text.setString("\nUSE THE ARROW KEYS\n    TO MOVE FIREBOY\n");
 	temporary_txt.text.setPosition(430, 900);
 	gameTutorials.Add(temporary_txt);
-
 
 	temporary_txt.text.setString("\nUSE A.W.D\nTO MOVE WATERGIRL\n");
 	temporary_txt.text.setPosition(430, 750);
@@ -504,6 +504,10 @@ void InitializeMenu()
 	ApplyTexture(PlayButton_mnu, LoadTexture::PlayButton_texture, Vector2f(240, 160));
 	PlayButton_mnu.setPosition(windowSize.x / 2, windowSize.y / 2 + 40);
 	
+	//dust.setSmooth(true);
+	//ApplyTexture(dustAnimation, LoadTexture::dust_texture, Vector2f(2240, 98));
+	//dustAnimation.setPosition(windowSize.x / 2 + 10, windowSize.y / 2 + 40);
+
 	CreditsButton.setSmooth(true);
 	ApplyTexture(CreditsButton_mnu, LoadTexture::CreditsButton_Texture, Vector2f(260, 173));
 	CreditsButton_mnu.setPosition(windowSize.x / 2 + 350, windowSize.y / 2 + 150);
@@ -965,7 +969,7 @@ void OnUpdatedGameStateMenu() {
 		PlayMusic(MainMenu);
 		break;
 	case LEVEL_MENU:
-		//PlayMusic(MainMenu); // don't play this, it is already played from the main menu
+		PlayMusic(MainMenu);
 		break;
 	case PAUSE_MENU:
 		PauseMusic();
@@ -1027,6 +1031,7 @@ void UpdateUI()
 		MainMenuSettings = true;
 		UpdateAnimation(IdleFbHeadmnu, fire_idle_head_texture);
 		UpdateAnimation(IdleWgHeadmnu, water_head_idle_texture);
+		//UpdateAnimation(dustAnimation, dust_texture);
 		if (LastWasSettings)
 		{
 			SettingMenu_Movement(Target_Down_mnu, true);
@@ -1289,6 +1294,7 @@ void DrawUI()
 		window.draw(IdleFbHeadmnu);
 		window.draw(IdleWgBodymnu);
 		window.draw(IdleWgHeadmnu);
+		//window.draw(dustAnimation);
 
 		window.draw(settingsAndCredits_Dimmed_Background);
 		

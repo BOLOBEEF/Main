@@ -193,6 +193,7 @@ void PlayMusic(BackgroundMusic music) {
 	SoundBuffer* selectedBuffer = nullptr;
 	// when i call this function with specific music, it setBuffer of the desired music i want to play and setBuffer play the music from the beginning
 	// what i want to do instead is to only setBuffer when i change the music playing only, 
+	// Why Pointers ? Only For Marks ¬_¬
 
 	bool validMusic = true;
 
