@@ -73,11 +73,17 @@ struct Player
 	bool isPushing = false;
 	bool isDead = false;
 	bool isOnSnow = false;
-	bool isStop = false;
+	bool isStopped = false;
 	bool enteringDoor = false;
 	Vector2f startPosition;
 	bool slopeDirectionRight = true; // true if slope goe1s down to the right, false if slope goes down to the left
 	Clock timeSinceAnimation;		 // used to wait after death animation or enter door animation then switch the gameState to GAMEOVER or Win
+	Clock timeSinceOnGround;		 // used to keep the player isOnGround state for some more frames after stopped being grounded
+	float bonusOnGroundTime = 0.1f;	
+	bool consideredOnGround = false;
+	bool shouldUpdateConsideredOnGround = true;
+	Clock lastJumpTime;
+	float jumpCooldown = 0.3f;
 
 
 
@@ -120,6 +126,15 @@ struct Player
 
 
 	void Update() {
+		if (isOnGround)
+		{
+			timeSinceOnGround.restart();
+			shouldUpdateConsideredOnGround = true;
+		}
+		
+		if (shouldUpdateConsideredOnGround)
+			consideredOnGround = (timeSinceOnGround.getElapsedTime().asSeconds() < bonusOnGroundTime);
+
 		currentAccelration = accelration;
 		currentDeccelration = deccelration;
 		if (isOnSlope)
@@ -191,10 +206,9 @@ struct Player
 		
 		velocity.x = Clamp(velocity.x, -currentSpeed, currentSpeed);
 
-		if (!isStop) {
-			
-		hitbox.move(velocity * dt);
-		}
+		if (!isStopped)
+			hitbox.move(velocity * dt);
+
 		isOnGround = false;
 		isOnSlope = false;
 		isPushing = false;
@@ -202,19 +216,27 @@ struct Player
 	}
 
 	void CheckInput(Event event) {
-		if (!isOnGround||isDead) return;
+		if (isDead) return;
+		if (!isOnGround && !consideredOnGround) return;
+		if (lastJumpTime.getElapsedTime().asSeconds() < jumpCooldown) return;
 
 		if (event.type == Event::KeyPressed) {
 			if (playertype == Fireboy) {
 				if (event.key.code == Keyboard::Up) {
 					velocity.y = isOnSnow ? jumpOnSnow : jump;
 					PlayGameSoundEffect(GameSoundEffect::BoyJump_sound);
+					consideredOnGround = false;
+					shouldUpdateConsideredOnGround = false;
+					lastJumpTime.restart();
 				}
 			}
 			else if (playertype == Watergirl) {
 				if (event.key.code == Keyboard::W) {
 					velocity.y = isOnSnow ? jumpOnSnow : jump;
 					PlayGameSoundEffect(GameSoundEffect::GirlJump_sound);
+					consideredOnGround = false;
+					shouldUpdateConsideredOnGround = false;
+					lastJumpTime.restart();
 				}
 			}
 		}
@@ -290,7 +312,7 @@ struct Player
 	void die() {
 		if (isDead) return;
 		isDead = true;
-		isStop = true;
+		isStopped = true;
 		
 		timeSinceAnimation.restart();
 		InitializeOneTimeAnimations();
@@ -300,7 +322,7 @@ struct Player
 	void EnterDoor(Vector2f doorPosition) {
 		if (enteringDoor) return;
 		enteringDoor = true;
-		isStop = true;
+		isStopped = true;
 		hitbox.setPosition(doorPosition + Vector2f(0 , 20));
 		
 		timeSinceAnimation.restart();
@@ -599,8 +621,8 @@ struct Collider
 		switch (type)
 		{
 		case Collider::Rectangle:
-			bounds = FloatRect(bounds.left + boundsReduction, bounds.top + boundsReduction, bounds.width - 2 * boundsReduction, bounds.height - boundsReduction);
-			return groundCheckBounds.intersects(bounds);
+			collisionData = CheckRectangleCollision(groundCheckBounds, sprite.getGlobalBounds());
+			return collisionData.collisionDirection == CollisionData::CollisionDirection::Top || collisionData.collisionDirection == CollisionData::CollisionDirection::Slope;
 		case Collider::Triangle:
 			collisionData = CheckTriangleCollision(groundCheckBounds, sprite.getGlobalBounds(), false);
 			return collisionData.collisionDirection == CollisionData::CollisionDirection::Top || collisionData.collisionDirection == CollisionData::CollisionDirection::Slope;
