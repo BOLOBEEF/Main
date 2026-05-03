@@ -25,7 +25,6 @@ void OnUpdatedGameStateTest() {
 void UpdateTest()
 {
 	
-
 	
 }
 

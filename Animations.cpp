@@ -398,8 +398,7 @@ void UpdateAnimation(Sprite& sprite, LoadTexture texture) {
 		break;
 
 	}
-
-
+	
 	case lever_stick_texture:
 		break;
 	case moving_platform_texture:
