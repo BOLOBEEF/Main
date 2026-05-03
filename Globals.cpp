@@ -8,11 +8,28 @@ Vector2u windowSize = window.getSize();
 View gameCamera = window.getDefaultView();
 Vector2f center = Vector2f(windowSize.x / 2.0f, windowSize.y / 2.0f);
 
+void InitializeWindow() {
+	// input issues: key repeat is enabled by default, which causes problems with our input handling, so we disable it
+	window.setKeyRepeatEnabled(false);
+	window.setVerticalSyncEnabled(true); // makes the game feel more consistent, not needed as all our logic is framerate-independent
+	window.setMouseCursorVisible(false); // hides the original cursor
+}
+void ToggleFullscreen() {
+	isFullscreen = !isFullscreen;
+	if (isFullscreen)
+		window.create(VideoMode::getDesktopMode(), "SFML", Style::Fullscreen);
+	else
+		window.create(VideoMode::getDesktopMode(), "SFML");
+
+	InitializeWindow();
+}
+
 Clock globalClock;
 Clock dtClock;
 float dt = 0.0f;
 Vector2f mousePosition;
 Vector2f cameraMousePosition;
+bool isFullscreen = true;
 bool levelLoadFailed = false; // if true, return to main menu instead of loading level
 
 
@@ -82,6 +99,7 @@ void UpdateGameState(GameState newState, bool ForceUpdate);
 
 void Initialize()
 {
+	InitializeWindow();
 	InitializeTextures();
 	InitializeAnimations();
 	InitializeAudio();
@@ -93,6 +111,11 @@ void Initialize()
 
 void HandleInput(Event event)
 {
+	if (event.type == Event::KeyPressed)
+		if (event.key.code == Keyboard::F11)
+			ToggleFullscreen();
+
+
 	HandleMenuInput(event);
 	HandleGameInput(event);
 	HandleAnimationsInput(event);

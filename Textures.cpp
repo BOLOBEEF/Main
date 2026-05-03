@@ -314,9 +314,9 @@ void StrechSprite(Sprite& sprite, Vector2f startPoint, Vector2f endPoint, bool r
 	sprite.setOrigin(origin);
 }
 
-void DrawSpriteWithOffset(Sprite sprite, Vector2f offset, RenderTarget& renderTarget) {
+void DrawSpriteWithOffset(Sprite sprite, Vector2f offset, RenderTarget& renderTarget, RenderStates renderStates = RenderStates::Default) {
 	sprite.move(offset);
-	renderTarget.draw(sprite);
+	renderTarget.draw(sprite, renderStates);
 }
 
 void FlipSprite(Sprite& sprite) {
@@ -331,6 +331,7 @@ void SetSpriteOriginToCenter(Sprite& sprite, bool dontMove = false) {
 	// instead accept any origin
 	if (dontMove) sprite.move(-Vector2f((oldOrigin.x - bounds.width / 2.0f) * sprite.getScale().x, (oldOrigin.y - bounds.height / 2.0f) * sprite.getScale().y));
 }
+
 Color SetColorAlpha(Color color, float alpha) {
 	color.a = alpha;
 	return color;

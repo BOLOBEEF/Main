@@ -12,6 +12,7 @@ Sprite background;
 RenderTexture maskTexture;
 RenderTexture resultTexture;
 RenderTexture outlineTexture;
+Sprite maskSprite;
 Sprite outlineSprite;
 Sprite resultSprite;
 
@@ -175,18 +176,22 @@ struct Level
 		if (!isSnowTheme) {
 			ApplyTexture(ground, LoadTexture::GROUND, Vector2f(256, 256));
 			ground.setTexture(groundTexture);
+			groundTexture.setRepeated(true);
 			ApplyTexture(background, LoadTexture::BACKGROUND, Vector2f(256, 256));
 			background.setTexture(backgroundTexture);
+			backgroundTexture.setRepeated(true);
 		}
 		else {
-			ApplyTexture(background, LoadTexture::GROUND, Vector2f(256, 256));
-			background.setTexture(groundTexture);
-			ApplyTexture(ground, LoadTexture::BACKGROUND, Vector2f(256, 256));
-			ground.setTexture(backgroundTexture);
+			ApplyTexture(ground, LoadTexture::GROUND_ice, Vector2f(256, 256));
+			ground.setTexture(groundTexture_ice);
+			groundTexture_ice.setRepeated(true);
+			ApplyTexture(background, LoadTexture::BACKGROUND_ice, Vector2f(256, 256));
+			background.setTexture(backgroundTexture_ice);
+			backgroundTexture_ice.setRepeated(true);
 		}
 
-		ground.setTextureRect(IntRect(0, 0, windowSize.x, windowSize.y));
-		background.setTextureRect(IntRect(0, 0, windowSize.x, windowSize.y));
+		ground.setTextureRect(IntRect(0, 0, resultTexture.getSize().x, resultTexture.getSize().y));
+		background.setTextureRect(IntRect(0, 0, resultTexture.getSize().x, resultTexture.getSize().y));
 	}
 	void UpdateOutlinesTexture() {
 		const float outlineThickness = 5.0f;
@@ -242,7 +247,6 @@ struct Level
 		// finalColor = (srcColor * 0) + (dstColor * srcAlpha)
 		// finalAlpha = (srcAlpha * 0) + (dstAlpha * srcAlpha)
 
-		Sprite mask(maskTexture.getTexture());
 		RenderStates maskStates;
 		maskStates.blendMode = BlendMode(
 			BlendMode::Factor::Zero,       // colorSrcFactor
@@ -252,7 +256,7 @@ struct Level
 			BlendMode::Factor::SrcAlpha,   // alphaDstFactor
 			BlendMode::Equation::Add       // alphaEquation
 		);
-		resultTexture.draw(mask, maskStates);
+		resultTexture.draw(maskSprite, maskStates);
 		resultTexture.display();
 	}
 
@@ -269,7 +273,7 @@ struct Level
 	void Level1()
 	{
 		currentTimeRequirement = 10.0f;
-		isSnowLevel = false;
+		isSnowLevel = true;
 		fireBoy = Player(Fireboy, Vector2f(263, 934));
 		waterGirl = Player(Watergirl, Vector2f(264, 798));
 		water_door = FinalDoor(FinalDoor::WATER_DOOR, Vector2f(1547, 90));
@@ -570,22 +574,25 @@ struct Level
 		waterGirl.Update();
 
 
-		ground = Sprite();
-		background = Sprite();
 		outlineSprite = Sprite();
 		resultSprite = Sprite();
 
 		SetTheme(isSnowLevel);
 
-		maskTexture.create(windowSize.x, windowSize.y);
+
+		// Create textures
 		outlineTexture.create(windowSize.x, windowSize.y);
-
-		outlineSprite.setTexture(outlineTexture.getTexture());
-		outlineSprite.setColor(Color::Black);
-
-		int bonusPixels = 5000;
 		resultTexture.create(windowSize.x, windowSize.y);
+		maskTexture.create(windowSize.x, windowSize.y);
+
+		// Set textures
+		outlineSprite.setTexture(outlineTexture.getTexture());
 		resultSprite.setTexture(resultTexture.getTexture());
+		maskSprite.setTexture(maskTexture.getTexture());
+
+		// Optional styling
+		outlineSprite.setColor(sf::Color::Black);
+
 
 		water_door.Initialize();
 		fire_door.Initialize();
@@ -594,6 +601,7 @@ struct Level
 
 		UpdateGroundTexture();
 		timeSinceLevelLoad.restart();
+		gameCamera.setCenter(center);
 	}
 
 	void EraseData()
@@ -1153,6 +1161,8 @@ struct Level
 
 
 		CheckWin();
+		ground.setTextureRect(IntRect(0, 0, 500, 500));
+		background.setTextureRect(IntRect(0, 0, resultTexture.getSize().x, resultTexture.getSize().y));
 	}
 
 
@@ -1167,19 +1177,30 @@ struct Level
 		float zoomSpeed = 5.0f;
 
 		// move background texture (depth effect)
-		float backgroundMovementRatio = 0.3f;
-		background.setTextureRect(IntRect(gameCamera.getCenter().x * backgroundMovementRatio, gameCamera.getCenter().y * backgroundMovementRatio, windowSize.x, windowSize.y));
+		float backgroundMovementRatio = -0.3f;
+		background.setTextureRect(IntRect(gameCamera.getCenter().x * backgroundMovementRatio, gameCamera.getCenter().y * backgroundMovementRatio, resultTexture.getSize().x, resultTexture.getSize().y));
 		
 		// CAMERA LOGIC
 		if (timeSinceLevelLoad.getElapsedTime().asSeconds() < cameraWaitTime) {
-			gameCamera.setCenter(center + cameraStartOffset);
+
+			Vector2f startPosition = center + cameraStartOffset;
+
+			float halfW = gameCamera.getSize().x / 2.0f;
+			float halfH = gameCamera.getSize().y / 2.0f;
+
+			// clamp
+			startPosition.x = Clamp(startPosition.x, halfW, windowSize.x - halfW);
+			startPosition.y = Clamp(startPosition.y, halfH, windowSize.y - halfH);
+
+			gameCamera.setCenter(startPosition);
 			gameCamera.setSize(window.getDefaultView().getSize() * maxZoom);
+
+			return;
 		}
 
 		// Cam Movement
 		Vector2f PlayerAveragePos = Lerp(fireBoy.hitbox.getPosition(), waterGirl.hitbox.getPosition(), 0.5f);
 		Vector2f cameraTarget = Lerp(center, PlayerAveragePos, 0.4f);
-		gameCamera.setCenter(Damp(gameCamera.getCenter(), cameraTarget, 10.0f, dt));
 
 		// Cam zoom
 		float playersDistance = Distance(fireBoy.hitbox.getPosition(), waterGirl.hitbox.getPosition());
@@ -1191,6 +1212,21 @@ struct Level
 
 		float currentSize = gameCamera.getSize().x / window.getDefaultView().getSize().x;
 		gameCamera.setSize(window.getDefaultView().getSize() * Damp(currentSize, finalZoom, zoomSpeed, dt));
+
+		// Camera collision with bounds of level
+		Vector2f camSize = gameCamera.getSize();
+
+		float halfW = camSize.x / 2.0f;
+		float halfH = camSize.y / 2.0f;
+
+		// Clamp target
+		cameraTarget.x = Clamp(cameraTarget.x, halfW, windowSize.x - halfW);
+		cameraTarget.y = Clamp(cameraTarget.y, halfH, windowSize.y - halfH);
+
+		// move smoothly
+		gameCamera.setCenter(
+			Damp(gameCamera.getCenter(), cameraTarget, 10.0f, dt)
+		);
 	}
 
 	void Draw() {
