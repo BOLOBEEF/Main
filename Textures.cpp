@@ -863,12 +863,16 @@ void InitializeGameTextures() {
 	cubeTexture.loadFromFile("Main/Assets/Textures/Cube.png");
 	groundTexture.loadFromFile("Main/Assets/Textures/Ground.png");
 	groundTexture.setRepeated(true);
+	groundTexture.setSmooth(true);
 	backgroundTexture.loadFromFile("Main/Assets/Textures/backGround.png");
 	backgroundTexture.setRepeated(true);
+	backgroundTexture.setSmooth(true);
 	groundTexture_ice.loadFromFile("Main/Assets/Textures/Ground ice.png");
 	groundTexture_ice.setRepeated(true);
+	groundTexture_ice.setSmooth(true);
 	backgroundTexture_ice.loadFromFile("Main/Assets/Textures/backGround ice.png");
 	backgroundTexture_ice.setRepeated(true);
+	backgroundTexture_ice.setSmooth(true);
 }
 
 

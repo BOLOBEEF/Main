@@ -791,6 +791,42 @@ struct FinalDoor
 		sprite.move(0, 16);
 	}
 
+	void SetTheme(bool isSnow) {
+		sprite = Sprite();
+
+		if (!isSnow) {
+			switch (type)
+			{
+			case WATER_DOOR:
+				ApplyTexture(sprite, LoadTexture::water_door_open_texture, Vector2f(3586, 138));
+				sprite.scale(scale, scale);
+				break;
+			case FIRE_DOOR:
+				ApplyTexture(sprite, LoadTexture::fire_door_open_texture, Vector2f(3586, 138));
+				sprite.scale(scale, scale);
+				break;
+			}
+		}
+		else
+		{
+			switch (type)
+			{
+			case WATER_DOOR:
+				ApplyTexture(sprite, LoadTexture::water_door_open_ice_texture, Vector2f(3586, 138));
+				sprite.scale(scale, scale);
+				break;
+			case FIRE_DOOR:
+				ApplyTexture(sprite, LoadTexture::fire_door_open_ice_texture, Vector2f(3586, 138));
+				sprite.scale(scale, scale);
+				break;
+			}
+		}
+
+		sprite.setPosition(startPosition + Vector2f(sprite.getGlobalBounds().width / 2.0f - 50, 0));
+		Allign(sprite);
+		sprite.move(0, 16);
+	}
+
 	FinalDoor(door_type startType, Vector2f position) {
 		type = startType;
 		startPosition = position;

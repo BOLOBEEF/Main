@@ -9,6 +9,7 @@ FinalDoor fire_door = FinalDoor(FinalDoor::FIRE_DOOR, Vector2f());
 Sprite ground;
 Sprite background;
 
+
 RenderTexture maskTexture;
 RenderTexture resultTexture;
 RenderTexture outlineTexture;
@@ -137,6 +138,7 @@ struct Level
 {
 	// store all the variables related to a level here, for example:
 	int currentLevelIndex = 0;
+	bool forceRestart = false;
 
 
 	ColliderList colliders;
@@ -176,22 +178,23 @@ struct Level
 		if (!isSnowTheme) {
 			ApplyTexture(ground, LoadTexture::GROUND, Vector2f(256, 256));
 			ground.setTexture(groundTexture);
-			groundTexture.setRepeated(true);
 			ApplyTexture(background, LoadTexture::BACKGROUND, Vector2f(256, 256));
 			background.setTexture(backgroundTexture);
-			backgroundTexture.setRepeated(true);
 		}
 		else {
-			ApplyTexture(ground, LoadTexture::GROUND_ice, Vector2f(256, 256));
-			ground.setTexture(groundTexture_ice);
-			groundTexture_ice.setRepeated(true);
-			ApplyTexture(background, LoadTexture::BACKGROUND_ice, Vector2f(256, 256));
-			background.setTexture(backgroundTexture_ice);
-			backgroundTexture_ice.setRepeated(true);
+			ApplyTexture(background, LoadTexture::GROUND_ice, Vector2f(256, 256));
+			background.setTexture(groundTexture_ice);
+			ApplyTexture(ground, LoadTexture::BACKGROUND_ice, Vector2f(256, 256));
+			ground.setTexture(backgroundTexture_ice);
 		}
+
+		fire_door.SetTheme(isSnowTheme);
+		water_door.SetTheme(isSnowTheme);
 
 		ground.setTextureRect(IntRect(0, 0, resultTexture.getSize().x, resultTexture.getSize().y));
 		background.setTextureRect(IntRect(0, 0, resultTexture.getSize().x, resultTexture.getSize().y));
+		SetSpriteSize(ground, Vector2f(resultTexture.getSize().x, resultTexture.getSize().y));
+		SetSpriteSize(background, Vector2f(resultTexture.getSize().x, resultTexture.getSize().y));
 	}
 	void UpdateOutlinesTexture() {
 		const float outlineThickness = 5.0f;
@@ -273,7 +276,7 @@ struct Level
 	void Level1()
 	{
 		currentTimeRequirement = 10.0f;
-		isSnowLevel = true;
+		isSnowLevel = false;
 		fireBoy = Player(Fireboy, Vector2f(263, 934));
 		waterGirl = Player(Watergirl, Vector2f(264, 798));
 		water_door = FinalDoor(FinalDoor::WATER_DOOR, Vector2f(1547, 90));
@@ -577,7 +580,6 @@ struct Level
 		outlineSprite = Sprite();
 		resultSprite = Sprite();
 
-		SetTheme(isSnowLevel);
 
 
 		// Create textures
@@ -599,7 +601,9 @@ struct Level
 		water_door.Update(fireBoy);
 		fire_door.Update(fireBoy);
 
+		SetTheme(isSnowLevel);
 		UpdateGroundTexture();
+
 		timeSinceLevelLoad.restart();
 		gameCamera.setCenter(center);
 	}
@@ -613,6 +617,7 @@ struct Level
 		currentLevelProgress = LevelProgress();
 		gemsCounter = 0;
 		currentGemsCount = 0;
+		forceRestart = false;
 	}
 
 	// Initialize next level index
@@ -635,10 +640,14 @@ struct Level
 	// RESTART CURRENT LEVEL
 	void ResetLevel()
 	{
-		// reset the level to its initial state, for example when the player dies or restarts the level
-		EraseData();
-		LoadLevelData();
-		Initialize();
+		forceRestart = true;
+	}
+
+	void OnUpdatedGameState() {
+		if (gameState == GAME && (lastGameState != PAUSE_MENU || forceRestart))
+		{
+			LoadNewLevel();
+		}
 	}
 
 	// printing

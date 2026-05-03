@@ -19,21 +19,11 @@ void HandleGameInput(Event event)
 	currentLevel.CheckInput(event);
 }
 
-// temporary restart function
-void RestartGame() {
-	// Load Data
-	currentLevel.ResetLevel();
-}
-
 
 void OnUpdatedGameStateGameLogic() {
 	// do stuff here exactly when the gameState is changed
 
-	if (gameState == GAME && lastGameState != PAUSE_MENU)
-	{
-		RestartGame();
-		currentLevel.LoadNewLevel();
-	}
+	currentLevel.OnUpdatedGameState();
 }
 
 

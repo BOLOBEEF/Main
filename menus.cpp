@@ -911,6 +911,7 @@ void HandleMenuInput(Event event)
 		if (MouseInput_mnu(event, RetryButton_Pausemnu, stone_button_0_texture, stone_button_1_texture, ButtonClick, GAME, true, Retry_Pausetxt))
 		{
 			totalTimePassed = 0;
+			currentLevel.ResetLevel();
 		}
 		if (MouseInput_mnu(event, EndButton_Pausemnu, stone_button_0_texture, stone_button_1_texture, ButtonClick, LEVEL_MENU, true, End_Pausetxt))
 		{
