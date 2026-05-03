@@ -1607,11 +1607,11 @@ void DrawUI()
 		break;
 	}
 	
+	window.draw(cursorAndpointerSprite);
 	if (currentFadeState != NoFading)
 	{
 		window.draw(FadingTransitionBackground);
 	}
-	window.draw(cursorAndpointerSprite);
 	fpsDisplay.setString(to_string((int)round(1.0f / dt)));
 	window.draw(fpsDisplay);
 }
