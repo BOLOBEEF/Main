@@ -774,23 +774,6 @@ struct FinalDoor
 	Sprite sprite;
 	Vector2f startPosition;
 
-	void Initialize() {
-		switch (type)
-		{
-		case WATER_DOOR:
-			ApplyTexture(sprite, LoadTexture::water_door_open_texture, Vector2f(3586, 138));
-			sprite.scale(scale, scale);
-			break;
-		case FIRE_DOOR:
-			ApplyTexture(sprite, LoadTexture::fire_door_open_texture, Vector2f(3586, 138));
-			sprite.scale(scale, scale);
-			break;
-		}
-		sprite.setPosition(startPosition + Vector2f(sprite.getGlobalBounds().width / 2.0f - 50, 0));
-		Allign(sprite);
-		sprite.move(0, 16);
-	}
-
 	void SetTheme(bool isSnow) {
 		sprite = Sprite();
 
@@ -825,6 +808,10 @@ struct FinalDoor
 		sprite.setPosition(startPosition + Vector2f(sprite.getGlobalBounds().width / 2.0f - 50, 0));
 		Allign(sprite);
 		sprite.move(0, 16);
+	}
+
+	void Initialize(bool isSnow = false) {
+		SetTheme(isSnow);
 	}
 
 	FinalDoor(door_type startType, Vector2f position) {

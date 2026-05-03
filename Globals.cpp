@@ -56,6 +56,9 @@ void OnUpdatedGameStateGameLogic();
 void UpdateGame();
 void DrawGame(bool forceDraw);
 
+// Progress loading
+void LoadPlayerProgress();
+
 // Animations
 void InitializeAnimations();
 void HandleAnimationsInput(Event event);
@@ -109,6 +112,7 @@ void Initialize()
 	InitializeGame();
 	InitializeTest();
 	UpdateGameState(gameState, true);
+	LoadPlayerProgress();
 }
 
 void HandleInput(Event event)

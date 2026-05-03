@@ -65,10 +65,17 @@ EditColliderMode editColliderMode = EditColliderMode::Rectangle;
 
 struct LevelProgress
 {
-	bool isCompleted = false;    // if the player has completed the level before
-	bool collectedGems = false;  // if the player has collected all the gems in the level before
-	bool finishedOnTime = false; // if the player has finished the level on time
-	int lowestTime = 100000;			// the lowest time the player has achieved in this level, used to show different icons in the level select screen
+	bool isCompleted = false;
+	bool collectedGems = false;
+	bool finishedOnTime = false;
+	int lowestTime = 100000;
+
+	void Print() {
+		cout << "isCompleted = " << isCompleted << endl;
+		cout << "collectedGems = " << collectedGems << endl;
+		cout << "finishedOnTime = " << finishedOnTime << endl;
+		cout << "lowestTime = " << lowestTime << endl;
+	}
 };
 
 
@@ -80,7 +87,7 @@ LevelProgress levelProgress[MAX_LEVELS]; // progress for each level, can be used
 
 
 
-void LoadLevelProgress() {
+void LoadPlayerProgress() {
 
 	ifstream loadfile("saveData.txt"); // load progress for each level from a file using fstream, if the file does not exist, start with default progress (all false and 0)
 	
@@ -101,8 +108,7 @@ void LoadLevelProgress() {
 	}
 	
 }
-
-void SaveLevelProgress() {
+void SavePlayerProgress() {
 	
 	ofstream savefile("saveData.txt"); // save progress for each level to a file using fstream, if the file does not exist, create it
 	
@@ -122,14 +128,15 @@ void SaveLevelProgress() {
 		cout << "Error saving progress!" << endl;
 	}
 }
-void UpdateLevelProgress(int levelIndex, LevelProgress progress) {
+
+void UpdatePlayerProgress(int levelIndex, LevelProgress progress) {
 	if (levelIndex < 0 || levelIndex >= MAX_LEVELS) return;
 	levelProgress[levelIndex].isCompleted = progress.isCompleted;
 	levelProgress[levelIndex].collectedGems = progress.collectedGems;
 	levelProgress[levelIndex].finishedOnTime = progress.finishedOnTime;
 	if (progress.lowestTime < levelProgress[levelIndex].lowestTime)
 		levelProgress[levelIndex].lowestTime = progress.lowestTime;
-	SaveLevelProgress(); // save progress after updating
+	SavePlayerProgress(); // save progress after updating
 }
 
 
@@ -145,8 +152,8 @@ struct Level
 	ObjectList objects;
 	bool isSnowLevel = false;
 	Clock timeSinceLevelLoad;	// used to delay the start of updating the gameCamera
-	LevelProgress currentLevelProgress;
-	float currentTimeRequirement = 1000.0f; // time in seconds to be considered good per level
+	LevelProgress progress;
+	float currentTimeRequirement = 60.0f; // time in seconds to be considered good per level
 
 	// logic functions
 	void CheckLevelCollision(Player& player) {
@@ -213,6 +220,7 @@ struct Level
 		outlineTexture.display();
 	}
 	void UpdateGroundTexture() {
+		SetTheme(isSnowLevel);
 
 		// --- Step 1: Draw mask (small sprites) ---
 		maskTexture.clear(Color::Transparent);
@@ -275,7 +283,7 @@ struct Level
 	// LEVEL DATA :
 	void Level1()
 	{
-		currentTimeRequirement = 10.0f;
+		currentTimeRequirement = 60.0f;
 		isSnowLevel = false;
 		fireBoy = Player(Fireboy, Vector2f(263, 934));
 		waterGirl = Player(Watergirl, Vector2f(264, 798));
@@ -601,7 +609,6 @@ struct Level
 		water_door.Update(fireBoy);
 		fire_door.Update(fireBoy);
 
-		SetTheme(isSnowLevel);
 		UpdateGroundTexture();
 
 		timeSinceLevelLoad.restart();
@@ -614,10 +621,11 @@ struct Level
 		// reset all arrays to be empty
 		colliders = ColliderList();
 		objects = ObjectList();
-		currentLevelProgress = LevelProgress();
+		progress = LevelProgress();
 		gemsCounter = 0;
 		currentGemsCount = 0;
 		forceRestart = false;
+		timeSinceLevelLoad.restart();
 	}
 
 	// Initialize next level index
@@ -737,10 +745,6 @@ struct Level
 	}
 	void Print(string message) {
 		cout << message << endl;
-	}
-
-	void ChangeTheme() {
-
 	}
 
 	void EditMode(Event event) {
@@ -973,13 +977,13 @@ struct Level
 			if (event.key.code == Keyboard::B) {
 				// set fireDoor position to mouse position
 				fire_door = FinalDoor(FinalDoor::FIRE_DOOR, cameraMousePosition);
-				fire_door.Initialize();
+				fire_door.Initialize(isSnowLevel);
 			}
 
 			if (event.key.code == Keyboard::N) {
 				// set waterDoor position to mouse position
 				water_door = FinalDoor(FinalDoor::WATER_DOOR, cameraMousePosition);
-				water_door.Initialize();
+				water_door.Initialize(isSnowLevel);
 			}
 
 			if (event.key.code == Keyboard::Apostrophe) {
@@ -1112,12 +1116,21 @@ struct Level
 
 	}
 
+	LevelProgress GetBestProgress() {
+		return levelProgress[currentLevelIndex];
+	}
+
+	LevelProgress GetCurrentProgress() {
+		return progress;
+	}
+
 	void AssignLevelProgress() {
-		// update and save level progress where using the function
-		// UpdateAndSaveLevelProgress();
-		// completed is true
-		// if gemsCounter == currentGemsCount
-		// if TimeSinceLevelLoad.elasped < currentTimeRequirement
+		progress.isCompleted = true;
+		progress.finishedOnTime = (timeSinceLevelLoad.getElapsedTime().asSeconds() <= currentTimeRequirement);
+		progress.collectedGems = (gemsCounter >= currentGemsCount);
+		progress.lowestTime = timeSinceLevelLoad.getElapsedTime().asSeconds();
+
+		UpdatePlayerProgress(currentLevelIndex, progress);
 	}
 
 	void CheckWin() {
