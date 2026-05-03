@@ -28,6 +28,7 @@ enum GameSoundEffect
 	// add a type for each possible sound effect (NOT LOOPING MUSIC) we have
 
 	//index[o]
+	button_Click,
 	GameOver_sound,
 	Win_sound,
 
@@ -105,7 +106,7 @@ Sound musicPlayer;
 
 int currentSoundEffectPlayer = 0;
 
-Sound soundEffectsPlayers[6];
+Sound soundEffectsPlayers[8];
 //Sound Clock;
 Sound Button;
 Sound EndDiamondSound;
@@ -268,6 +269,11 @@ void PlayGameSoundEffect(GameSoundEffect soundEffect, bool loop = false) {
 
 	switch (soundEffect)
 	{
+	case button_Click:
+		Button.setBuffer(ButtonSound);
+		Button.setLoop(false);
+		Button.play();
+		break;
 	case GameOver_sound:
 		soundEffectsPlayers[0].setBuffer(LevelGameoverSound);
 		soundEffectsPlayers[0].setLoop(false);
@@ -352,14 +358,14 @@ void PlayGameSoundEffect(GameSoundEffect soundEffect, bool loop = false) {
 		soundEffectsPlayers[3].play();
 		break;
 	case Lever_sound:
-		soundEffectsPlayers[3].setBuffer(LeverSound);
-		soundEffectsPlayers[3].setLoop(false);
-		soundEffectsPlayers[3].play();
+		soundEffectsPlayers[6].setBuffer(LeverSound);
+		soundEffectsPlayers[6].setLoop(false);
+		soundEffectsPlayers[6].play();
 		break;
 	case Platform_sound:
-		soundEffectsPlayers[3].setBuffer(PlatformSound);
-		soundEffectsPlayers[3].setLoop(false);
-		soundEffectsPlayers[3].play();
+		soundEffectsPlayers[7].setBuffer(PlatformSound);
+		soundEffectsPlayers[7].setLoop(false);
+		soundEffectsPlayers[7].play();
 		break;
 
 	case pondFreeze_sound:

@@ -902,6 +902,8 @@ void InitializeTextures()
 	water_head_falling.setSmooth(true);
 	movingbox.setSmooth(true);
 	// load all texture here
+	wind_base.setSmooth(true);
+	wind_effect.setSmooth(true);
 	// this functions maybe called again if reloading the textures is needed
 
 	death_smoke.loadFromFile("Main/Assets/Animations/characters assets/death smoke.png");

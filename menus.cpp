@@ -706,7 +706,7 @@ void InitializeMenu()
 
 
 
-	RatingCheck(true, true, false);
+	//RatingCheck(true, true, false);
 
 	//Clock Text
 	stopwatch_txt.setFont(font);
@@ -1086,6 +1086,7 @@ void UpdateUI()
 		Settings_from_MainMenu = false;
 		break;
 	case WIN_MENU:
+		RatingCheck(currentLevel.GetCurrentProgress().isCompleted, currentLevel.GetCurrentProgress().collectedGems, currentLevel.GetCurrentProgress().finishedOnTime);
 		clockTikingSpeed = 0;
 		lastGameState = WIN_MENU;
 		WinMenu_Movement(Target_up_mnu);
