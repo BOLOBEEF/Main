@@ -1651,7 +1651,7 @@ struct Snow {
 		Allign(sprite);
 		sprite.move(0, 10);
 
-		if (type == Normal) sprite.move(-10, 4);
+		if (type == Normal) sprite.move(-10, 4 - 32);
 		if (type == LeftDown) sprite.move(-10, 10 - 32);
 		if (type == RightDown) sprite.move(-5, 10 - 32);
 	}

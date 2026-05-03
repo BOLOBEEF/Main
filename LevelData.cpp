@@ -131,9 +131,9 @@ void SavePlayerProgress() {
 
 void UpdatePlayerProgress(int levelIndex, LevelProgress progress) {
 	if (levelIndex < 0 || levelIndex >= MAX_LEVELS) return;
-	levelProgress[levelIndex].isCompleted = progress.isCompleted;
-	levelProgress[levelIndex].collectedGems = progress.collectedGems;
-	levelProgress[levelIndex].finishedOnTime = progress.finishedOnTime;
+	levelProgress[levelIndex].isCompleted |= progress.isCompleted;
+	levelProgress[levelIndex].collectedGems |= progress.collectedGems;
+	levelProgress[levelIndex].finishedOnTime |= progress.finishedOnTime;
 	if (progress.lowestTime < levelProgress[levelIndex].lowestTime)
 		levelProgress[levelIndex].lowestTime = progress.lowestTime;
 	SavePlayerProgress(); // save progress after updating
@@ -556,13 +556,301 @@ struct Level
 		objects.GetLastElement().InitializeGemObject(Gem::waterGem, Vector2f(1584, 144));
 	}
 
+	void Level4()
+	{
+		currentTimeRequirement = 60.0f;
+		isSnowLevel = true;
+		fireBoy = Player(Fireboy, Vector2f(393, 950));
+		waterGirl = Player(Watergirl, Vector2f(498, 942));
+		water_door = FinalDoor(FinalDoor::WATER_DOOR, Vector2f(861, 122));
+		fire_door = FinalDoor(FinalDoor::FIRE_DOOR, Vector2f(711, 121));
+		colliders.Add(Collider(Collider::ColliderType::Rectangle, center + Vector2f(0, -492), Vector2f(44, 1)));
+		colliders.Add(Collider(Collider::ColliderType::Rectangle, center + Vector2f(0, 436), Vector2f(44, 1)));
+		colliders.Add(Collider(Collider::ColliderType::Rectangle, center + Vector2f(688, -28), Vector2f(1, 28)));
+		colliders.Add(Collider(Collider::ColliderType::Rectangle, center + Vector2f(-688, -28), Vector2f(1, 28)));
+		colliders.Add(Collider(Collider::ColliderType::Rectangle, center + Vector2f(336, 180), Vector2f(1, 9)));
+		colliders.Add(Collider(Collider::ColliderType::Triangle_Rotated, center + Vector2f(480, 356), Vector2f(4, 4)));
+		colliders.Add(Collider(Collider::ColliderType::Rectangle, center + Vector2f(608, 356), Vector2f(4, 4)));
+		colliders.Add(Collider(Collider::ColliderType::Rectangle, center + Vector2f(-112, 52), Vector2f(27, 1)));
+		colliders.Add(Collider(Collider::ColliderType::Rectangle, center + Vector2f(-112, -332), Vector2f(27, 1)));
+		colliders.Add(Collider(Collider::ColliderType::Triangle, center + Vector2f(368, 52), Vector2f(1, 1)));
+		colliders.Add(Collider(Collider::ColliderType::Rectangle, center + Vector2f(-496, -172), Vector2f(1, 1)));
+		colliders.Add(Collider(Collider::ColliderType::Rectangle, center + Vector2f(-464, -172), Vector2f(1, 1)));
+		colliders.Add(Collider(Collider::ColliderType::Rectangle, center + Vector2f(-528, -140), Vector2f(1, 11)));
+		colliders.Add(Collider(Collider::ColliderType::Rectangle, center + Vector2f(-496, -60), Vector2f(1, 6)));
+		colliders.Add(Collider(Collider::ColliderType::Rectangle, center + Vector2f(-464, 20), Vector2f(1, 1)));
+		colliders.Add(Collider(Collider::ColliderType::Rectangle, center + Vector2f(-64, 20), Vector2f(4, 1)));
+		colliders.Add(Collider(Collider::ColliderType::Rectangle, center + Vector2f(448, 84), Vector2f(6, 1)));
+		colliders.Add(Collider(Collider::ColliderType::Triangle, center + Vector2f(336, 20), Vector2f(1, 1)));
+		colliders.Add(Collider(Collider::ColliderType::Rectangle, center + Vector2f(224, 20), Vector2f(6, 1)));
+		colliders.Add(Collider(Collider::ColliderType::Rectangle, center + Vector2f(416, -172), Vector2f(16, 1)));
+		colliders.Add(Collider(Collider::ColliderType::Rectangle, center + Vector2f(-48, 244), Vector2f(15, 1)));
+		colliders.Add(Collider(Collider::ColliderType::Rectangle, center + Vector2f(-560, 244), Vector2f(7, 1)));
+		colliders.Add(Collider(Collider::ColliderType::Rectangle, center + Vector2f(144, -172), Vector2f(1, 1)));
+		colliders.Add(Collider(Collider::ColliderType::Rectangle, center + Vector2f(592, -332), Vector2f(5, 1)));
+		colliders.Add(Collider(Collider::ColliderType::Triangle_Rotated, center + Vector2f(496, -332), Vector2f(1, 1)));
+		colliders.Add(Collider(Collider::ColliderType::Rectangle, center + Vector2f(560, -300), Vector2f(7, 1)));
+		objects.Add(Object(Object::DoorObject));
+		objects.GetLastElement().InitializeDoorObject(Vector2f(1216, 782), Vector2f(1216, 880), false);
+		objects.GetLastElement().data.door.button2 = Click(Vector2f(1410, 586), true);
+		objects.Add(Object(Object::SnowObject));
+		objects.GetLastElement().InitializeSnowObject(Snow::LeftDown, Vector2f(1391, 941));
+		objects.Add(Object(Object::SnowObject));
+		objects.GetLastElement().InitializeSnowObject(Snow::LeftDown, Vector2f(1423, 909));
+		objects.Add(Object(Object::SnowObject));
+		objects.GetLastElement().InitializeSnowObject(Snow::LeftDown, Vector2f(1455, 877));
+		objects.Add(Object(Object::SnowObject));
+		objects.GetLastElement().InitializeSnowObject(Snow::LeftDown, Vector2f(1487, 845));
+		objects.Add(Object(Object::DoorObject));
+		objects.GetLastElement().InitializeDoorObject(Vector2f(352, 750), Vector2f(352, 208), false);
+		objects.GetLastElement().data.door.button1 = Click(Vector2f(480, 337), true);
+		objects.Add(Object(Object::TemporaryGroundObject));
+		objects.GetLastElement().InitializeTemporaryGroundObject(Vector2f(672, 421));
+		objects.Add(Object(Object::PondObject));
+		objects.GetLastElement().InitializePondObject(Pond::POISON_POND, Vector2f(672, 560), 10);
+		objects.Add(Object(Object::PondObject));
+		objects.GetLastElement().InitializePondObject(Pond::POISON_POND, Vector2f(1024, 560), 4);
+		objects.Add(Object(Object::FanObject));
+		objects.GetLastElement().InitializeFanObject(Vector2f(898, 546));
+		objects.Add(Object(Object::DoorObject));
+		objects.GetLastElement().InitializeDoorObject(Vector2f(1262, 288), Vector2f(848, 288), true);
+		objects.GetLastElement().data.door.button1 = Click(Vector2f(548, 167), true);
+		objects.Add(Object(Object::SnowObject));
+		objects.GetLastElement().InitializeSnowObject(Snow::Normal, Vector2f(1140, 364));
+		objects.Add(Object(Object::SnowObject));
+		objects.GetLastElement().InitializeSnowObject(Snow::Normal, Vector2f(1204, 364));
+		objects.Add(Object(Object::SnowObject));
+		objects.GetLastElement().InitializeSnowObject(Snow::Normal, Vector2f(1172, 364));
+		objects.Add(Object(Object::SnowObject));
+		objects.GetLastElement().InitializeSnowObject(Snow::Normal, Vector2f(1236, 364));
+		objects.Add(Object(Object::PondObject));
+		objects.GetLastElement().InitializePondObject(Pond::POISON_POND, Vector2f(592, 784), 5);
+		objects.Add(Object(Object::SnowObject));
+		objects.GetLastElement().InitializeSnowObject(Snow::Normal, Vector2f(756, 780));
+		objects.Add(Object(Object::SnowObject));
+		objects.GetLastElement().InitializeSnowObject(Snow::Normal, Vector2f(820, 780));
+		objects.Add(Object(Object::SnowObject));
+		objects.GetLastElement().InitializeSnowObject(Snow::Normal, Vector2f(788, 780));
+		objects.Add(Object(Object::SnowObject));
+		objects.GetLastElement().InitializeSnowObject(Snow::Normal, Vector2f(724, 780));
+		objects.Add(Object(Object::DoorObject));
+		objects.GetLastElement().InitializeDoorObject(Vector2f(1568, 622), Vector2f(1440, 624), false);
+		objects.GetLastElement().data.door.button2 = Click(Vector2f(1090, 948), true);
+		objects.Add(Object(Object::FanObject));
+		objects.GetLastElement().InitializeFanObject(Vector2f(1568, 830));
+		objects.Add(Object(Object::SnowObject));
+		objects.GetLastElement().InitializeSnowObject(Snow::Normal, Vector2f(1108, 364));
+		objects.Add(Object(Object::DoorObject));
+		objects.GetLastElement().InitializeDoorObject(Vector2f(1262, 128), Vector2f(1456, 128), true);
+		objects.GetLastElement().data.door.lever = Lever(Vector2f(1094, 168), true);
+		objects.Add(Object(Object::GemObject));
+		objects.GetLastElement().InitializeGemObject(Gem::waterGem, Vector2f(1520, 144));
+		objects.Add(Object(Object::GemObject));
+		objects.GetLastElement().InitializeGemObject(Gem::waterGem, Vector2f(912, 880));
+		objects.Add(Object(Object::GemObject));
+		objects.GetLastElement().InitializeGemObject(Gem::fireGem, Vector2f(752, 880));
+		objects.Add(Object(Object::GemObject));
+		objects.GetLastElement().InitializeGemObject(Gem::fireGem, Vector2f(592, 688));
+		objects.Add(Object(Object::GemObject));
+		objects.GetLastElement().InitializeGemObject(Gem::waterGem, Vector2f(1584, 688));
+		objects.Add(Object(Object::GemObject));
+		objects.GetLastElement().InitializeGemObject(Gem::waterGem, Vector2f(880, 432));
+		objects.Add(Object(Object::GemObject));
+		objects.GetLastElement().InitializeGemObject(Gem::waterGem, Vector2f(1136, 304));
+		objects.Add(Object(Object::GemObject));
+		objects.GetLastElement().InitializeGemObject(Gem::fireGem, Vector2f(336, 336));
+		objects.Add(Object(Object::GemObject));
+		objects.GetLastElement().InitializeGemObject(Gem::fireGem, Vector2f(1520, 304));
+		objects.Add(Object(Object::GemObject));
+		objects.GetLastElement().InitializeGemObject(Gem::fireGem, Vector2f(336, 560));
+		objects.Add(Object(Object::SnowObject));
+		objects.GetLastElement().InitializeSnowObject(Snow::Normal, Vector2f(1076, 364));
+		objects.Add(Object(Object::SnowObject));
+		objects.GetLastElement().InitializeSnowObject(Snow::Normal, Vector2f(692, 780));
+	}
+
+	void Level5()
+	{
+		currentTimeRequirement = 60.0f;
+		isSnowLevel = true;
+		fireBoy = Player(Fireboy, Vector2f(510, 941));
+		waterGirl = Player(Watergirl, Vector2f(1532, 166));
+		water_door = FinalDoor(FinalDoor::WATER_DOOR, Vector2f(499, 701));
+		fire_door = FinalDoor(FinalDoor::FIRE_DOOR, Vector2f(595, 685));
+		colliders.Add(Collider(Collider::ColliderType::Rectangle, center + Vector2f(0, -492), Vector2f(44, 1)));
+		colliders.Add(Collider(Collider::ColliderType::Rectangle, center + Vector2f(0, 436), Vector2f(44, 1)));
+		colliders.Add(Collider(Collider::ColliderType::Rectangle, center + Vector2f(688, -28), Vector2f(1, 28)));
+		colliders.Add(Collider(Collider::ColliderType::Rectangle, center + Vector2f(-688, -28), Vector2f(1, 28)));
+		colliders.Add(Collider(Collider::ColliderType::Rectangle, center + Vector2f(-416, 260), Vector2f(8, 2)));
+		colliders.Add(Collider(Collider::ColliderType::Rectangle, center + Vector2f(-320, 356), Vector2f(2, 4)));
+		colliders.Add(Collider(Collider::ColliderType::Rectangle, center + Vector2f(512, 388), Vector2f(10, 2)));
+		colliders.Add(Collider(Collider::ColliderType::Triangle_Rotated, center + Vector2f(528, 340), Vector2f(1, 1)));
+		colliders.Add(Collider(Collider::ColliderType::Rectangle, center + Vector2f(560, 340), Vector2f(1, 1)));
+		colliders.Add(Collider(Collider::ColliderType::Rectangle, center + Vector2f(624, 308), Vector2f(3, 3)));
+		colliders.Add(Collider(Collider::ColliderType::Rectangle, center + Vector2f(208, -220), Vector2f(1, 16)));
+		colliders.Add(Collider(Collider::ColliderType::Rectangle, center + Vector2f(512, -332), Vector2f(10, 1)));
+		colliders.Add(Collider(Collider::ColliderType::Rectangle, center + Vector2f(352, 52), Vector2f(10, 1)));
+		colliders.Add(Collider(Collider::ColliderType::Rectangle, center + Vector2f(368, -204), Vector2f(1, 7)));
+		colliders.Add(Collider(Collider::ColliderType::Rectangle, center + Vector2f(640, -44), Vector2f(2, 1)));
+		colliders.Add(Collider(Collider::ColliderType::Rectangle, center + Vector2f(416, -108), Vector2f(2, 1)));
+		colliders.Add(Collider(Collider::ColliderType::Triangle, center + Vector2f(464, -108), Vector2f(1, 1)));
+		colliders.Add(Collider(Collider::ColliderType::Triangle_Rotated, center + Vector2f(592, -44), Vector2f(1, 1)));
+		colliders.Add(Collider(Collider::ColliderType::Rectangle, center + Vector2f(-480, -236), Vector2f(2, 1)));
+		colliders.Add(Collider(Collider::ColliderType::Rectangle, center + Vector2f(-208, -236), Vector2f(5, 1)));
+		colliders.Add(Collider(Collider::ColliderType::Rectangle, center + Vector2f(-80, -332), Vector2f(5, 1)));
+		colliders.Add(Collider(Collider::ColliderType::Rectangle, center + Vector2f(-144, -284), Vector2f(1, 2)));
+		colliders.Add(Collider(Collider::ColliderType::Triangle_Rotated, center + Vector2f(-528, -236), Vector2f(1, 1)));
+		colliders.Add(Collider(Collider::ColliderType::Rectangle, center + Vector2f(-208, -92), Vector2f(1, 8)));
+		colliders.Add(Collider(Collider::ColliderType::Rectangle, center + Vector2f(160, -140), Vector2f(2, 1)));
+		colliders.Add(Collider(Collider::ColliderType::Rectangle, center + Vector2f(32, -12), Vector2f(2, 1)));
+		colliders.Add(Collider(Collider::ColliderType::Rectangle, center + Vector2f(-176, 52), Vector2f(3, 1)));
+		colliders.Add(Collider(Collider::ColliderType::Rectangle, center + Vector2f(-144, 340), Vector2f(3, 1)));
+		colliders.Add(Collider(Collider::ColliderType::Triangle, center + Vector2f(-112, 52), Vector2f(1, 1)));
+		colliders.Add(Collider(Collider::ColliderType::Rectangle, center + Vector2f(-400, -364), Vector2f(3, 1)));
+		colliders.Add(Collider(Collider::ColliderType::Triangle, center + Vector2f(-336, -364), Vector2f(1, 1)));
+		colliders.Add(Collider(Collider::ColliderType::Rectangle, center + Vector2f(-576, -364), Vector2f(6, 1)));
+		colliders.Add(Collider(Collider::ColliderType::Rectangle, center + Vector2f(-528, 100), Vector2f(1, 8)));
+		colliders.Add(Collider(Collider::ColliderType::Rectangle, center + Vector2f(-400, -12), Vector2f(7, 1)));
+		colliders.Add(Collider(Collider::ColliderType::Triangle, center + Vector2f(-272, -12), Vector2f(1, 1)));
+		colliders.Add(Collider(Collider::ColliderType::Rectangle, center + Vector2f(-272, 36), Vector2f(1, 2)));
+		colliders.Add(Collider(Collider::ColliderType::Rectangle, center + Vector2f(256, 308), Vector2f(2, 1)));
+		objects.Add(Object(Object::DoorObject));
+		objects.GetLastElement().InitializeDoorObject(Vector2f(352, 942), Vector2f(352, 336), false);
+		objects.GetLastElement().data.door.button2 = Click(Vector2f(1414, 161), true);
+		objects.Add(Object(Object::DoorObject));
+		objects.GetLastElement().InitializeDoorObject(Vector2f(1248, 206), Vector2f(1376, 208), false);
+		objects.GetLastElement().data.door.button1 = Click(Vector2f(713, 267), true);
+		objects.Add(Object(Object::PondObject));
+		objects.GetLastElement().InitializePondObject(Pond::POISON_POND, Vector2f(992, 944), 20);
+		objects.Add(Object(Object::PondObject));
+		objects.GetLastElement().InitializePondObject(Pond::FIRE_POND, Vector2f(592, 304), 5);
+		objects.Add(Object(Object::DoorObject));
+		objects.GetLastElement().InitializeDoorObject(Vector2f(494, 128), Vector2f(496, 224), true);
+		objects.GetLastElement().data.door.button1 = Click(Vector2f(1377, 392), true);
+		objects.Add(Object(Object::DoorObject));
+		objects.GetLastElement().InitializeDoorObject(Vector2f(686, 768), Vector2f(688, 832), true);
+		objects.GetLastElement().data.door.lever = Lever(Vector2f(405, 150), true);
+		objects.Add(Object(Object::TemporaryGroundObject));
+		objects.GetLastElement().InitializeTemporaryGroundObject(Vector2f(1024, 773));
+		objects.Add(Object(Object::FanObject));
+		objects.GetLastElement().InitializeFanObject(Vector2f(1251, 576));
+		objects.Add(Object(Object::GemObject));
+		objects.GetLastElement().InitializeGemObject(Gem::fireGem, Vector2f(336, 848));
+		objects.Add(Object(Object::GemObject));
+		objects.GetLastElement().InitializeGemObject(Gem::fireGem, Vector2f(688, 464));
+		objects.Add(Object(Object::GemObject));
+		objects.GetLastElement().InitializeGemObject(Gem::fireGem, Vector2f(336, 112));
+		objects.Add(Object(Object::GemObject));
+		objects.GetLastElement().InitializeGemObject(Gem::fireGem, Vector2f(816, 496));
+		objects.Add(Object(Object::GemObject));
+		objects.GetLastElement().InitializeGemObject(Gem::fireGem, Vector2f(1008, 688));
+		objects.Add(Object(Object::GemObject));
+		objects.GetLastElement().InitializeGemObject(Gem::waterGem, Vector2f(816, 816));
+		objects.Add(Object(Object::GemObject));
+		objects.GetLastElement().InitializeGemObject(Gem::waterGem, Vector2f(1264, 496));
+		objects.Add(Object(Object::GemObject));
+		objects.GetLastElement().InitializeGemObject(Gem::waterGem, Vector2f(1584, 400));
+		objects.Add(Object(Object::GemObject));
+		objects.GetLastElement().InitializeGemObject(Gem::waterGem, Vector2f(1584, 720));
+		objects.Add(Object(Object::GemObject));
+		objects.GetLastElement().InitializeGemObject(Gem::waterGem, Vector2f(1232, 784));
+		objects.Add(Object(Object::SnowObject));
+		objects.GetLastElement().InitializeSnowObject(Snow::Normal, Vector2f(1396 - 32, 908));
+		objects.Add(Object(Object::SnowObject));
+		objects.GetLastElement().InitializeSnowObject(Snow::Normal, Vector2f(1428 - 32, 908));
+		objects.Add(Object(Object::SnowObject));
+		objects.GetLastElement().InitializeSnowObject(Snow::Normal, Vector2f(1364 - 32, 908));
+		objects.Add(Object(Object::SnowObject));
+		objects.GetLastElement().InitializeSnowObject(Snow::Normal, Vector2f(1460 - 32, 908));
+		objects.Add(Object(Object::SnowObject));
+		objects.GetLastElement().InitializeSnowObject(Snow::Normal, Vector2f(820 - 32, 588));
+		objects.Add(Object(Object::SnowObject));
+		objects.GetLastElement().InitializeSnowObject(Snow::RightDown, Vector2f(852 - 32, 589));
+		objects.Add(Object(Object::SnowObject));
+		objects.GetLastElement().InitializeSnowObject(Snow::Normal, Vector2f(980 - 32, 524));
+		objects.Add(Object(Object::SnowObject));
+		objects.GetLastElement().InitializeSnowObject(Snow::RightDown, Vector2f(692 - 32, 525));
+		objects.Add(Object(Object::SnowObject));
+		objects.GetLastElement().InitializeSnowObject(Snow::Normal, Vector2f(660 - 32, 524));
+		objects.Add(Object(Object::SnowObject));
+		objects.GetLastElement().InitializeSnowObject(Snow::Normal, Vector2f(628 - 32, 524));
+		objects.Add(Object(Object::SnowObject));
+		objects.GetLastElement().InitializeSnowObject(Snow::Normal, Vector2f(596 - 32, 524));
+		objects.Add(Object(Object::SnowObject));
+		objects.GetLastElement().InitializeSnowObject(Snow::Normal, Vector2f(916 - 32, 204));
+		objects.Add(Object(Object::SnowObject));
+		objects.GetLastElement().InitializeSnowObject(Snow::Normal, Vector2f(884 - 32, 204));
+		objects.Add(Object(Object::SnowObject));
+		objects.GetLastElement().InitializeSnowObject(Snow::Normal, Vector2f(948 - 32, 204));
+	}
+
+	void Level6(){
+		currentTimeRequirement = 60.0f;
+		isSnowLevel = true;
+		fireBoy = Player(Fireboy, Vector2f(392, 945));
+		waterGirl = Player(Watergirl, Vector2f(403, 167));
+		water_door = FinalDoor(FinalDoor::WATER_DOOR, Vector2f(1324, 595));
+		fire_door = FinalDoor(FinalDoor::FIRE_DOOR, Vector2f(1326, 433));
+		colliders.Add(Collider(Collider::ColliderType::Rectangle, center + Vector2f(0, -492), Vector2f(44, 1)));
+		colliders.Add(Collider(Collider::ColliderType::Rectangle, center + Vector2f(0, 436), Vector2f(44, 1)));
+		colliders.Add(Collider(Collider::ColliderType::Rectangle, center + Vector2f(688, -28), Vector2f(1, 28)));
+		colliders.Add(Collider(Collider::ColliderType::Rectangle, center + Vector2f(-688, -28), Vector2f(1, 28)));
+		colliders.Add(Collider(Collider::ColliderType::Rectangle, center + Vector2f(-496, 276), Vector2f(11, 1)));
+		colliders.Add(Collider(Collider::ColliderType::Rectangle, center + Vector2f(-144, 340), Vector2f(1, 5)));
+		colliders.Add(Collider(Collider::ColliderType::Rectangle, center + Vector2f(-496, -332), Vector2f(11, 1)));
+		colliders.Add(Collider(Collider::ColliderType::Rectangle, center + Vector2f(-496, 84), Vector2f(11, 1)));
+		colliders.Add(Collider(Collider::ColliderType::Rectangle, center + Vector2f(-336, 4), Vector2f(1, 4)));
+		colliders.Add(Collider(Collider::ColliderType::Rectangle, center + Vector2f(-144, 212), Vector2f(1, 3)));
+		colliders.Add(Collider(Collider::ColliderType::Triangle_Rotated, center + Vector2f(-144, 148), Vector2f(1, 1)));
+		colliders.Add(Collider(Collider::ColliderType::Rectangle, center + Vector2f(-336, -76), Vector2f(1, 1)));
+		colliders.Add(Collider(Collider::ColliderType::Triangle_Rotated, center + Vector2f(-400, 20), Vector2f(3, 3)));
+		colliders.Add(Collider(Collider::ColliderType::Triangle, center + Vector2f(-560, -140), Vector2f(3, 3)));
+		colliders.Add(Collider(Collider::ColliderType::Rectangle, center + Vector2f(-640, -140), Vector2f(2, 3)));
+		colliders.Add(Collider(Collider::ColliderType::Rectangle, center + Vector2f(-64, -76), Vector2f(4, 1)));
+		colliders.Add(Collider(Collider::ColliderType::Rectangle, center + Vector2f(-16, -188), Vector2f(1, 6)));
+		colliders.Add(Collider(Collider::ColliderType::Rectangle, center + Vector2f(32, 148), Vector2f(10, 1)));
+		colliders.Add(Collider(Collider::ColliderType::Rectangle, center + Vector2f(304, 20), Vector2f(1, 17)));
+		colliders.Add(Collider(Collider::ColliderType::Rectangle, center + Vector2f(400, 148), Vector2f(5, 1)));
+		colliders.Add(Collider(Collider::ColliderType::Rectangle, center + Vector2f(400, -12), Vector2f(5, 1)));
+		colliders.Add(Collider(Collider::ColliderType::Rectangle, center + Vector2f(224, -268), Vector2f(14, 1)));
+		colliders.Add(Collider(Collider::ColliderType::Triangle, center + Vector2f(464, -268), Vector2f(1, 1)));
+		colliders.Add(Collider(Collider::ColliderType::Triangle_Rotated, center + Vector2f(624, -108), Vector2f(1, 1)));
+		colliders.Add(Collider(Collider::ColliderType::Rectangle, center + Vector2f(656, -108), Vector2f(1, 1)));
+		colliders.Add(Collider(Collider::ColliderType::Rectangle, center + Vector2f(656, 244), Vector2f(1, 1)));
+		colliders.Add(Collider(Collider::ColliderType::Triangle_Rotated, center + Vector2f(624, 244), Vector2f(1, 1)));
+		objects.Add(Object(Object::PondObject));
+		objects.GetLastElement().InitializePondObject(Pond::FIRE_POND, Vector2f(736, 464), 6);
+		objects.Add(Object(Object::FanObject));
+		objects.GetLastElement().InitializeFanObject(Vector2f(891, 451));
+		objects.Add(Object(Object::FanObject));
+		objects.GetLastElement().InitializeFanObject(Vector2f(1092, 675));
+		objects.Add(Object(Object::DoorObject));
+		objects.GetLastElement().InitializeDoorObject(Vector2f(1262, 896), Vector2f(1232, 800), true);
+		objects.Add(Object(Object::SnowObject));
+		objects.GetLastElement().InitializeSnowObject(Snow::RightDown, Vector2f(1396, 269));
+		objects.Add(Object(Object::PondObject));
+		objects.GetLastElement().InitializePondObject(Pond::WATER_POND, Vector2f(1536, 976), 6);
+		objects.Add(Object(Object::SnowObject));
+		objects.GetLastElement().InitializeSnowObject(Snow::LeftDown, Vector2f(1583, 429));
+		objects.Add(Object(Object::SnowObject));
+		objects.GetLastElement().InitializeSnowObject(Snow::Normal, Vector2f(1588, 428));
+		objects.Add(Object(Object::SnowObject));
+		objects.GetLastElement().InitializeSnowObject(Snow::LeftDown, Vector2f(1583, 781));
+		objects.Add(Object(Object::SnowObject));
+		objects.GetLastElement().InitializeSnowObject(Snow::Normal, Vector2f(1588, 780));
+	}
+
+
 	bool LoadLevelData() {
 		// based on the level index, fill the arrays with the actual data for each level
 		switch (currentLevelIndex)
 		{
-		case 0:	Level1();	break;
-		case 1: Level2();	break;
-		case 2: Level3();   break;
+			case 0:	Level1();	break;
+			case 1: Level2();	break;
+			case 2: Level3();   break;
+			case 3: Level4();	break;
+			case 4: Level5();	break;
+			case 5: Level6();	break;
 
 		default:
 			cout << "Invalid level index: " << currentLevelIndex << endl;
@@ -727,13 +1015,13 @@ struct Level
 			break; case Object::SnowObject:
 				string snowType;
 				if (objects.elements[i].data.snow.type == Snow::Normal)
-					snowType = "SnowObject_Normal_mode";
+					snowType = "Normal";
 				else if (objects.elements[i].data.snow.type == Snow::LeftDown)
-					snowType = "SnowObject_LeftDown_mode";
+					snowType = "LeftDown";
 				else
-					snowType = "SnowObject_RightDown_mode";
+					snowType = "RightDown";
 				cout << "objects.Add(Object(Object::SnowObject));" << endl;
-				cout << "objects.GetLastElement().InitializeSnowObject(Snow::" << snowType << ", Vector2f(" << (int)objects.elements[i].data.snow.sprite.getPosition().x << ", " << (int)objects.elements[i].data.snow.sprite.getPosition().y << "));" << endl;
+				cout << "objects.GetLastElement().InitializeSnowObject(Snow::" << snowType << ", Vector2f(" << (int)objects.elements[i].data.snow.sprite.getPosition().x - (objects.elements[i].data.snow.type == Snow::LeftDown ? 0 : 32) << ", " << (int)objects.elements[i].data.snow.sprite.getPosition().y << "));" << endl;
 				break;
 			}
 		}
