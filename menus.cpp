@@ -109,6 +109,7 @@ Sprite LevelSelection_mnu[2][3];
 Sprite LevelEntry_mnu[2][3];
 Sprite BackButtonLevel_mnu;
 Text LevelNumber_mnu[2][3];
+Text LevelTimeRate[2][3];
 
 //gameover
 Sprite GameOverbuttons_mnu[3];
@@ -145,6 +146,7 @@ Text OkButtontxt_MainToSetting;
 Text OkButtontxt_PauseToSetting;
 Text stopwatch_txt;
 Text MenusandSoundsCredits_txt[2], GamelogicCredits_txt[4], AnimationandTexturesCredits_txt[2];
+
 Sprite cursorAndpointerSprite;
 
 int finalScore = 0;
@@ -550,8 +552,7 @@ void InitializeMenu()
 			LevelMenuBox_mnu[i][j].setPosition(490 + (j * 500), 280 + (i * 500));
 
 			ApplyTexture(DiamondLevel_mnu[i][j], LoadTexture::Diamond0_texture, Vector2f(69, 80));
-			DiamondLevel_mnu[i][j].setPosition(500 + (j * 500), 300 + (i * 500));
-			DiamondLevel_mnu[i][j].setScale(1.25, 1.25);
+			DiamondLevel_mnu[i][j].setPosition(500 + (j * 500), 280 + (i * 500));
 
 			LevelNumber_mnu[i][j].setFont(font);
 			LevelNumber_mnu[i][j].setCharacterSize(40);
@@ -560,12 +561,20 @@ void InitializeMenu()
 			LevelNumber_mnu[i][j].setOutlineColor(Color::Black);
 			LevelNumber_mnu[i][j].setOutlineThickness(5);
 
+			LevelTimeRate[i][j].setFont(font);
+			LevelTimeRate[i][j].setCharacterSize(40);
+			LevelTimeRate[i][j].setFillColor(Color(230, 194, 0));
+			LevelTimeRate[i][j].setPosition(350 + (j * 500), 350 + (i * 500));
+			LevelTimeRate[i][j].setOutlineColor(Color::Black);
+			LevelTimeRate[i][j].setOutlineThickness(5);
+
 			ApplyTexture(LevelSelection_mnu[i][j], LoadTexture::SliderLightOn_texture, Vector2f(55, 57));
-			LevelSelection_mnu[i][j].setPosition(510 + (j * 500), 305 + (i * 500));
+			LevelSelection_mnu[i][j].setPosition(510 + (j * 500), 284 + (i * 500));
 			LevelSelection_mnu[i][j].setScale(5.5, 5.5);
 			
 			ApplyTexture(LevelEntry_mnu[i][j], LoadTexture::LevelEntry_texture, Vector2f(85, 85));
 			LevelEntry_mnu[i][j].setPosition(501 + (j * 500), 300 + (i * 500));
+			LevelEntry_mnu[i][j].setScale(0.8, 0.8);
 		}
 	}
 
@@ -848,6 +857,14 @@ void InitializeMenu()
 	LevelNumber_mnu[1][1].setString("LEVEL 5");
 	LevelNumber_mnu[1][2].setString("LEVEL 6");
 
+	for (int i = 0; i < 2; i++)
+	{
+		for (int j = 0; j < 3; j++)
+		{
+			LevelTimeRate[i][j].setString("Time : " + to_string(levelProgress[i * 3 + j].lowestTime));
+		}
+	}
+
 	PauseMenu_Movement(Target_Down_mnu);
 	WinMenu_Movement(Target_Down_mnu);
 	GameoverMenu_Movement(Target_Down_mnu);
@@ -1070,6 +1087,25 @@ void UpdateUI()
 		else if (lastGameState == WIN_MENU)
 		{
 			WinMenu_Movement(Target_Down_mnu);
+		}
+
+		for (int i = 0; i < 2; i++)
+		{
+			for (int j = 0; j < 3; j++)
+			{
+				if (levelProgress[j + i * 3].isCompleted && levelProgress[j + i * 3].collectedGems && levelProgress[j + i * 3].finishedOnTime)
+				{
+					ApplyTexture(DiamondLevel_mnu[i][j], LoadTexture::Diamond3_texture, Vector2f(69, 80));
+				}
+				else if (levelProgress[j + i * 3].isCompleted && (levelProgress[j + i * 3].collectedGems || levelProgress[j + i * 3].finishedOnTime))
+				{
+					ApplyTexture(DiamondLevel_mnu[i][j], LoadTexture::Diamond2_texture, Vector2f(69, 80));
+				}
+				else if (levelProgress[j + i * 3].isCompleted)
+				{
+					ApplyTexture(DiamondLevel_mnu[i][j], LoadTexture::Diamond1_texture, Vector2f(69, 80));
+				}
+			}
 		}
 		break;
 	case PAUSE_MENU:
@@ -1354,6 +1390,10 @@ void DrawUI()
 				}
 				window.draw(DiamondLevel_mnu[i][j]);
 				window.draw(LevelNumber_mnu[i][j]);
+				if (levelProgress[j + i * 3].isCompleted)
+				{
+					window.draw(LevelTimeRate[i][j]);
+				}
 			}
 		}
 		window.draw(BackButtonLevel_mnu);
