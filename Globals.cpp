@@ -111,8 +111,8 @@ void Initialize()
 	InitializeMenu();
 	InitializeGame();
 	InitializeTest();
-	UpdateGameState(gameState, true);
 	LoadPlayerProgress();
+	UpdateGameState(gameState, true);
 }
 
 void HandleInput(Event event)
