@@ -109,7 +109,8 @@ Sprite LevelSelection_mnu[2][3];
 Sprite LevelEntry_mnu[2][3];
 Sprite BackButtonLevel_mnu;
 Text LevelNumber_mnu[2][3];
-Text LevelTimeRate[2][3];
+Text LevelTimeRate1[2][3];
+Text LevelTimeRate2[2][3];
 
 //gameover
 Sprite GameOverbuttons_mnu[3];
@@ -199,7 +200,22 @@ void UpdateTimeCounters() {
 	{
 		for (int j = 0; j < 3; j++)
 		{
-			LevelTimeRate[i][j].setString("Time : " + to_string(levelProgress[i * 3 + j].lowestTime));
+			if ((levelProgress[i * 3 + j].lowestTime / 60) < 10)
+			{
+				LevelTimeRate1[i][j].setString("Time  0" + (to_string((levelProgress[i * 3 + j].lowestTime + 1) / 60)));
+			}
+			else
+			{
+				LevelTimeRate1[i][j].setString("Time  " + (to_string((levelProgress[i * 3 + j].lowestTime + 1) / 60)));
+			}
+			if ((levelProgress[i * 3 + j].lowestTime % 60) < 10)
+			{
+				LevelTimeRate2[i][j].setString(" :0" + (to_string((levelProgress[i * 3 + j].lowestTime + 1) % 60)));
+			}
+			else
+			{
+				LevelTimeRate2[i][j].setString(" :" + to_string((levelProgress[i * 3 + j].lowestTime + 1) % 60));
+			}
 		}
 	}
 }
@@ -570,12 +586,19 @@ void InitializeMenu()
 			LevelNumber_mnu[i][j].setOutlineColor(Color::Black);
 			LevelNumber_mnu[i][j].setOutlineThickness(5);
 
-			LevelTimeRate[i][j].setFont(font);
-			LevelTimeRate[i][j].setCharacterSize(40);
-			LevelTimeRate[i][j].setFillColor(Color(230, 194, 0));
-			LevelTimeRate[i][j].setPosition(350 + (j * 500), 350 + (i * 500));
-			LevelTimeRate[i][j].setOutlineColor(Color::Black);
-			LevelTimeRate[i][j].setOutlineThickness(5);
+			LevelTimeRate1[i][j].setFont(font);
+			LevelTimeRate1[i][j].setCharacterSize(40);
+			LevelTimeRate1[i][j].setFillColor(Color(230, 194, 0));
+			LevelTimeRate1[i][j].setPosition(350 + (j * 500), 350 + (i * 500));
+			LevelTimeRate1[i][j].setOutlineColor(Color::Black);
+			LevelTimeRate1[i][j].setOutlineThickness(5);
+
+			LevelTimeRate2[i][j].setFont(font);
+			LevelTimeRate2[i][j].setCharacterSize(40);
+			LevelTimeRate2[i][j].setFillColor(Color(230, 194, 0));
+			LevelTimeRate2[i][j].setPosition(516 + (j * 500), 350 + (i * 500));
+			LevelTimeRate2[i][j].setOutlineColor(Color::Black);
+			LevelTimeRate2[i][j].setOutlineThickness(5);
 
 			ApplyTexture(LevelSelection_mnu[i][j], LoadTexture::SliderLightOn_texture, Vector2f(55, 57));
 			LevelSelection_mnu[i][j].setPosition(510 + (j * 500), 284 + (i * 500));
@@ -1396,7 +1419,8 @@ void DrawUI()
 				window.draw(LevelNumber_mnu[i][j]);
 				if (levelProgress[j + i * 3].isCompleted)
 				{
-					window.draw(LevelTimeRate[i][j]);
+					window.draw(LevelTimeRate1[i][j]);
+					window.draw(LevelTimeRate2[i][j]);
 				}
 			}
 		}
