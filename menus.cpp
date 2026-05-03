@@ -152,7 +152,7 @@ Sprite cursorAndpointerSprite;
 
 int finalScore = 0;
 // Functions
-void initializeTutorialText()
+void initializeTutorialText_level1()
 {
 	temporary_txt.text.setString("\nUSE THE ARROW KEYS\n    TO MOVE FIREBOY\n");
 	temporary_txt.text.setPosition(430, 900);
@@ -195,6 +195,26 @@ void initializeTutorialText()
 		gameTutorials.elements[i].Initialize(font);
 	}
 }
+void initializeTutorialText_level2()
+{
+	temporary_txt.text.setString("PLATFORM CRASHES\n AFTER A WHILE \nOF STANDING ON IT!");
+	temporary_txt.text.setPosition(windowSize.x / 2 - 410, 360);
+	gameTutorials.Add(temporary_txt);
+	for (int i = 0; i < gameTutorials.count; i++)
+	{
+		gameTutorials.elements[i].Initialize(font);
+	}
+}
+void initializeTutorialText_level4()
+{
+	temporary_txt.text.setString("FIREBOY SLIDES ON SNOW,\n \t\t\tWATERGIRL IS SLOWED...");
+	temporary_txt.text.setPosition(540, 880);
+	gameTutorials.Add(temporary_txt);
+	for (int i = 0; i < gameTutorials.count; i++)
+	{
+		gameTutorials.elements[i].Initialize(font);
+	}
+}
 void UpdateTimeCounters() {
 	for (int i = 0; i < 2; i++)
 	{
@@ -219,15 +239,33 @@ void UpdateTimeCounters() {
 		}
 	}
 }
-void changeCursorColor(Event event)
+void changeCursorColor(Event event, bool inForestTemple)
 {
-	if (event.type == Event::MouseButtonPressed && event.mouseButton.button == Mouse::Left)
+	if (inForestTemple)
 	{
-		UpdateAnimation(cursorAndpointerSprite, pointer_texture);
-	}
-	if (event.type == Event::MouseButtonReleased && event.mouseButton.button == Mouse::Left)
-	{
+		ApplyTexture(cursorAndpointerSprite, LoadTexture::cursor_texture, Vector2f(25, 30));
 		UpdateAnimation(cursorAndpointerSprite, cursor_texture);
+		if (event.type == Event::MouseButtonPressed && event.mouseButton.button == Mouse::Left)
+		{
+			UpdateAnimation(cursorAndpointerSprite, pointer_texture);
+		}
+		if (event.type == Event::MouseButtonReleased && event.mouseButton.button == Mouse::Left)
+		{
+			UpdateAnimation(cursorAndpointerSprite, cursor_texture);
+		}
+	}
+	else
+	{
+		ApplyTexture(cursorAndpointerSprite, LoadTexture::pointer_texture, Vector2f(25, 30));
+		UpdateAnimation(cursorAndpointerSprite, pointer_texture);
+		if (event.type == Event::MouseButtonPressed && event.mouseButton.button == Mouse::Left)
+		{
+			UpdateAnimation(cursorAndpointerSprite, cursor_texture);
+		}
+		if (event.type == Event::MouseButtonReleased && event.mouseButton.button == Mouse::Left)
+		{
+			UpdateAnimation(cursorAndpointerSprite, pointer_texture);
+		}
 	}
 }
 void RatingCheck(bool maleAndFemale_case = false, bool DiamondCollection_case = false, bool BeforeTimeOut_case = false)
@@ -512,7 +550,7 @@ void InitializeMenu()
 	//clock
 	clock_timer.setSmooth(true);
 	ApplyTexture(clockTiking_game, LoadTexture::clock_timer_texture, Vector2f(310, 112));
-	clockTiking_game.setPosition(windowSize.x / 2, (windowSize.y / 2) - 483);
+	clockTiking_game.setPosition(windowSize.x / 2, (windowSize.y / 2) - 485);
 
 
 	//Main menu
@@ -919,6 +957,7 @@ void HandleMenuInput(Event event)
 				window.close();
 			}
 		}
+		changeCursorColor(event, true);
 		break;
 	case LEVEL_MENU:
 		MouseInput_mnu(event, BackButtonLevel_mnu, BackButtonFull0_texture, BackButtonFull0_texture, ButtonClick, MAIN_MENU, true);
@@ -948,6 +987,7 @@ void HandleMenuInput(Event event)
 
 			}
 		}
+		changeCursorColor(event, true);
 		break;
 	case PAUSE_MENU:
 		MouseInput_mnu(event, ResumeButton_Pausemnu, stone_button_0_texture, stone_button_1_texture, ButtonClick, GAME, false, Resume_Pausetxt);
@@ -961,12 +1001,14 @@ void HandleMenuInput(Event event)
 			totalTimePassed = 0;
 		}
 		MouseInput_mnu(event, SettingButton_Pausemnu, SettingsButton0_texture, SettingsButton0_texture, No_Sound_Buttons, SETTINGS, false);
+		changeCursorColor(event, true);
 		break;
 	case WIN_MENU:
 		if (MouseInput_mnu(event, ContinueButton_Winmnu, stone_button_0_texture, stone_button_1_texture, ButtonClick, LEVEL_MENU, true, Continue_Wintxt))
 		{
 			totalTimePassed = 0;
 		}
+		changeCursorColor(event, true);
 		break;
 	case SETTINGS:
 		// code for handling settings menu input
@@ -982,6 +1024,7 @@ void HandleMenuInput(Event event)
 			MuteMusic(event, MusicButton_PauseToSetting, MusicButton_MainToSetting, MusicButton0_texture, MusicButton1_texture, ButtonClick, isMusicButtonClicked_PauseToSetting);
 			MouseInput_mnu(event, OkButton_PauseToSetting, stone_button_0_texture, stone_button_1_texture, ButtonClick, PAUSE_MENU, false, OkButtontxt_PauseToSetting);
 		}
+		changeCursorColor(event, true);
 		break;
 	case GAMEOVER:
 		if(MouseInput_mnu(event, GameOverbuttons_mnu[0], stone_button_0_texture, stone_button_1_texture, ButtonClick, LEVEL_MENU, true, Levels_GOVERtxt))
@@ -996,18 +1039,24 @@ void HandleMenuInput(Event event)
 		{
 			totalTimePassed = 0;
 		}
+		changeCursorColor(event, true);
 		break;
 	case GAME:
 		// code for handling game UI input
 		MouseInput_mnu(event, PauseIcon_mnu, pause_icon_texture, pause_icon_texture, No_Sound_Buttons, PAUSE_MENU, false);
+		if (currentLevel.currentLevelIndex < 3)
+			changeCursorColor(event, true);
+		else
+			changeCursorColor(event, false);
 		break;
 	case CREDITS:
 		MouseInput_mnu(event, BackButtonCredits_mnu, BackButtonFull0_texture, BackButtonFull0_texture, ButtonClick, MAIN_MENU, false);
+		changeCursorColor(event, true);
 		break;
 	default:
 		break;
 	}
-	changeCursorColor(event);
+	//changeCursorColor(event, true);
 }
 
 void OnUpdatedGameStateMenu() {
@@ -1043,11 +1092,19 @@ void OnUpdatedGameStateMenu() {
 		gameTutorials = TutorialTxtList();
 		if (currentLevel.currentLevelIndex == 0)
 		{
-			initializeTutorialText();
+			initializeTutorialText_level1();
 		}
-		if (currentLevel.currentLevelIndex == 2)
+		else if (currentLevel.currentLevelIndex == 1)
+		{
+			initializeTutorialText_level2();
+		}
+		else if (currentLevel.currentLevelIndex == 2)
 		{
 			PlayMusic(Game_Fast);
+		}
+		else if (currentLevel.currentLevelIndex == 3)
+		{
+			initializeTutorialText_level4();
 		}
 		else
 		{
@@ -1229,7 +1286,14 @@ void UpdateUI()
 		{
 			gameTutorials.elements[i].Update(fireBoy, waterGirl);
 		}
-
+		if (currentLevel.currentLevelIndex >= 3)
+		{
+			ApplyTexture(clockTiking_game, LoadTexture::clock_timer_ice_texture, Vector2f(310, 112));
+		}
+		else
+		{
+			ApplyTexture(clockTiking_game, LoadTexture::clock_timer_texture, Vector2f(310, 112));
+		}
 		clockTikingSpeed = 1;
 		if (lastGameState == GAMEOVER)
 		{
