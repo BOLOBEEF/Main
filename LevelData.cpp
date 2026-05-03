@@ -139,6 +139,12 @@ void UpdatePlayerProgress(int levelIndex, LevelProgress progress) {
 	SavePlayerProgress(); // save progress after updating
 }
 
+void ClearData() {
+	ofstream savefile("saveData.txt");
+	if (savefile.is_open())
+		savefile.close();
+}
+
 
 
 struct Level

@@ -194,6 +194,15 @@ void initializeTutorialText()
 		gameTutorials.elements[i].Initialize(font);
 	}
 }
+void UpdateTimeCounters() {
+	for (int i = 0; i < 2; i++)
+	{
+		for (int j = 0; j < 3; j++)
+		{
+			LevelTimeRate[i][j].setString("Time : " + to_string(levelProgress[i * 3 + j].lowestTime));
+		}
+	}
+}
 void changeCursorColor(Event event)
 {
 	if (event.type == Event::MouseButtonPressed && event.mouseButton.button == Mouse::Left)
@@ -857,13 +866,7 @@ void InitializeMenu()
 	LevelNumber_mnu[1][1].setString("LEVEL 5");
 	LevelNumber_mnu[1][2].setString("LEVEL 6");
 
-	for (int i = 0; i < 2; i++)
-	{
-		for (int j = 0; j < 3; j++)
-		{
-			LevelTimeRate[i][j].setString("Time : " + to_string(levelProgress[i * 3 + j].lowestTime));
-		}
-	}
+	UpdateTimeCounters();
 
 	PauseMenu_Movement(Target_Down_mnu);
 	WinMenu_Movement(Target_Down_mnu);
@@ -993,6 +996,7 @@ void OnUpdatedGameStateMenu() {
 		PlayMusic(MainMenu);
 		break;
 	case LEVEL_MENU:
+		UpdateTimeCounters();
 		PlayMusic(MainMenu);
 		break;
 	case PAUSE_MENU:
