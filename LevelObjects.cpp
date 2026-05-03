@@ -943,17 +943,8 @@ struct Lever {
 				if (bounds.intersects(moroo.hitbox.getGlobalBounds()) || bounds.intersects(mora.hitbox.getGlobalBounds())) {
 
 					state = !state;
-					if (state)
-					{
-
-						PlayGameSoundEffect(GameSoundEffect::Lever_sound);
-					
-					}
-					else
-					{
-
-						PlayGameSoundEffect(GameSoundEffect::Lever_sound);
-					}
+					PlayGameSoundEffect(GameSoundEffect::Lever_sound);
+					PlayGameSoundEffect(GameSoundEffect::Platform_sound);
 				}
 			}
 		}
@@ -1025,6 +1016,7 @@ struct Click
 				sprite.move(0, -speed * dt);
 		}
 		if (isPressed != lastState) {
+			//PlayMenuSoundEffect(MenuSoundEffect::ButtonClick);
 			PlayGameSoundEffect(GameSoundEffect::Platform_sound);
 		}
 		
@@ -1044,7 +1036,7 @@ struct Door
 	Collider collider;
 	Vector2f startPosition;
 	Vector2f endPosition;
-	float speed = 100.0f;
+	float speed = 60.0f;
 
 	Vector2f door_position = Vector2f(collider.sprite.getPosition());
 	bool rotated = false;

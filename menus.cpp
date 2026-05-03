@@ -984,14 +984,6 @@ void OnUpdatedGameStateMenu() {
 	case WIN_MENU:
 		PauseMusic();
 		PlayGameSoundEffect(Win_sound);
-		//currentLevel.GetBestProgress().Print();    // get current level best progress ever performed on this level
-		//currentLevel.GetCurrentProgress().Print();    // get current level progress that you just performed on this level
-		
-		for (int i = 0; i < MAX_LEVELS; i++)
-		{
-			cout << "For level index " << i << endl;
-			levelProgress[i].Print();
-		}
 
 		break;
 	case SETTINGS:
