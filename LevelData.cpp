@@ -678,7 +678,7 @@ struct Level
 
 	void Level5()
 	{
-		currentTimeRequirement = 70.0f;
+		currentTimeRequirement = 60.0f;
 		isSnowLevel = true;
 		fireBoy = Player(Fireboy, Vector2f(510, 941));
 		waterGirl = Player(Watergirl, Vector2f(1532, 166));
@@ -793,7 +793,7 @@ struct Level
 
 	void Level6()
 	{
-		currentTimeRequirement = 70.0f;
+		currentTimeRequirement = 60.0f;
 		isSnowLevel = true;
 		fireBoy = Player(Fireboy, Vector2f(378, 951));
 		waterGirl = Player(Watergirl, Vector2f(378, 188));

@@ -1016,7 +1016,7 @@ struct Click
 				sprite.move(0, -speed * dt);
 		}
 		if (isPressed != lastState) {
-			//PlayMenuSoundEffect(MenuSoundEffect::ButtonClick);
+			PlayGameSoundEffect(GameSoundEffect::button_Click);
 			PlayGameSoundEffect(GameSoundEffect::Platform_sound);
 		}
 		
