@@ -94,7 +94,7 @@ enum GameState
 
 
 // DO NOT CHANGE THIS DIRECTLY, USE UpdateGameState() INSTEAD
-GameState gameState = MAIN_MENU;
+GameState gameState = LEVEL_MENU;
 GameState lastGameState = gameState;	// used to keep track of the last game state
 
 
