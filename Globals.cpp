@@ -61,8 +61,6 @@ void LoadPlayerProgress();
 
 // Animations
 void InitializeAnimations();
-void HandleAnimationsInput(Event event);
-void UpdateAnimations();
 
 // Textures
 void InitializeTextures();
@@ -124,7 +122,6 @@ void HandleInput(Event event)
 
 	HandleMenuInput(event);
 	HandleGameInput(event);
-	HandleAnimationsInput(event);
 	HandleTestInput(event);
 }
 

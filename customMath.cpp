@@ -22,6 +22,7 @@ float RandomRangeF(float start, float end, int decimalPoints = 1) {
 	float random = rand() % (int)(end + 1 - start) + start;
 	return random / multiplier;
 }
+
 float Magnitude(Vector2f vector)
 {
 	return sqrt(vector.x * vector.x + vector.y * vector.y);

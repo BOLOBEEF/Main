@@ -22,12 +22,12 @@ enum PlayerType { Fireboy, Watergirl };
 enum PlayerState { Walk, Jump_Rise, Fall, Idle };
 
 void UpdateAnimation(Sprite&, LoadTexture);
-void UpdatePlayerTexture(Sprite&, PlayerType, PlayerState, bool);
+void UpdateTexturePlayer(Sprite&, PlayerType, PlayerState, bool);
 void UpdateAnimationPlayer(Sprite&, PlayerType, PlayerState, bool);
 void InitializeOneTimeAnimations();
 
 struct FinalDoor;
-void DoorUpdateAnimation(FinalDoor&);
+void UpdateAnimationDoor(FinalDoor&);
 
 
 
@@ -42,16 +42,16 @@ struct Player
 	float gravity = 250.0f;
 	float jump = -250.0f;
 	float jumpOnSnow = -50.0f;
-	Vector2f idleRange = Vector2f(15.0f, 40.0f); // the range of velocity in which the player is considered idle
+	Vector2f idleRange = Vector2f(15.0f, 40.0f);	// the range of velocity in which the player is considered idle
 	Vector2f colliderSize = Vector2f(15, 60);
 	float displayBodySize = 1.0f;
 	float displayHeadSize = 1.0f;
-	float girlSpeedOnSnow = 50.0f; // make girl slow on snow
-	float boyAccelerationOnSnow = 80.0f; // make fire slide on snow
+	float girlSpeedOnSnow = 50.0f;					// make girl slow on snow
+	float boyAccelerationOnSnow = 80.0f;			// make fire slide on snow
 	Clock lastTouchedSlope;
-	float boySlopeFallTime = 0.3f; // the time interval after which fire will keep sliding down the slope if he is on it and on snow at the same time
-	float boySlopeFallAcceleration = 300.0f; // make fire accelerate down the slope when on snow and slope at the same time
-	float waitTime = 1; //wait time after death and before turning gameState to gameover
+	float boySlopeFallTime = 0.3f;					// the time interval after which fire will keep sliding down the slope if he is on it and on snow at the same time
+	float boySlopeFallAcceleration = 300.0f;		// make fire accelerate down the slope when on snow and slope at the same time
+	float waitTime = 1;								// wait time after death and before turning gameState to gameover
 
 	// runtime variables
 	Sprite hitbox;
@@ -101,8 +101,8 @@ struct Player
 		UpdateAnimation(deathsprite, death_smoke_texture);
 		SetSpriteOriginToCenter(deathsprite);
 
-		UpdatePlayerTexture(displayBodySprite, playertype, playerState, false);
-		UpdatePlayerTexture(displayHeadSprite, playertype, playerState, true);
+		UpdateTexturePlayer(displayBodySprite, playertype, playerState, false);
+		UpdateTexturePlayer(displayHeadSprite, playertype, playerState, true);
 
 
 		if (playertype == Fireboy)
@@ -182,8 +182,8 @@ struct Player
 
 		if (justUpdatedPlayerState)
 		{
-			UpdatePlayerTexture(displayBodySprite, playertype, playerState, false);
-			UpdatePlayerTexture(displayHeadSprite, playertype, playerState, true);
+			UpdateTexturePlayer(displayBodySprite, playertype, playerState, false);
+			UpdateTexturePlayer(displayHeadSprite, playertype, playerState, true);
 		}
 
 		UpdateAnimationPlayer(displayBodySprite, playertype, playerState, false);
@@ -841,7 +841,7 @@ struct FinalDoor
 		}
 		else justEntered = false;
 
-		DoorUpdateAnimation(*this);
+		UpdateAnimationDoor(*this);
 	}
 };
 

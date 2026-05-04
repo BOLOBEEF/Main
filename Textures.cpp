@@ -305,15 +305,6 @@ void SetSpriteSize(Sprite& sprite, Vector2f size, bool rotate = false) {
 	sprite.setScale((rotate ? -scale.x : scale.x), scale.y);
 }
 
-// set sprite bounds start from point to point
-void StrechSprite(Sprite& sprite, Vector2f startPoint, Vector2f endPoint, bool rotate = false) {
-	Vector2f origin = sprite.getOrigin();
-	sprite.setOrigin(Vector2f(0, 0));
-	sprite.setPosition(startPoint);
-	SetSpriteSize(sprite, Vector2f(abs(endPoint.x - startPoint.x), abs(endPoint.y - startPoint.y)), rotate);
-	sprite.setOrigin(origin);
-}
-
 void DrawSpriteWithOffset(Sprite sprite, Vector2f offset, RenderTarget& renderTarget, RenderStates renderStates = RenderStates::Default) {
 	sprite.move(offset);
 	renderTarget.draw(sprite, renderStates);

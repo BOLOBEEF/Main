@@ -1024,6 +1024,10 @@ void HandleMenuInput(Event event)
 		}
 		MouseInput_mnu(event, SettingButton_Pausemnu, SettingsButton0_texture, SettingsButton0_texture, No_Sound_Buttons, SETTINGS, false);
 		changeCursorColor(event, true);
+
+		if (event.type == Event::KeyPressed && event.key.code == Keyboard::Escape)
+			UpdateGameState(GAME);
+
 		break;
 	case WIN_MENU:
 		if (MouseInput_mnu(event, ContinueButton_Winmnu, stone_button_0_texture, stone_button_1_texture, ButtonClick, LEVEL_MENU, true, Continue_Wintxt))
@@ -1066,10 +1070,14 @@ void HandleMenuInput(Event event)
 	case GAME:
 		// code for handling game UI input
 		MouseInput_mnu(event, PauseIcon_mnu, pause_icon_texture, pause_icon_texture, No_Sound_Buttons, PAUSE_MENU, false);
+		
 		if (currentLevel.currentLevelIndex < 3)
 			changeCursorColor(event, true);
 		else
 			changeCursorColor(event, false);
+
+		if (event.type == Event::KeyPressed && event.key.code == Keyboard::Escape)
+			UpdateGameState(PAUSE_MENU);
 		break;
 	case CREDITS:
 		MouseInput_mnu(event, BackButtonCredits_mnu, BackButtonFull0_texture, BackButtonFull0_texture, ButtonClick, MAIN_MENU, false);

@@ -11,14 +11,14 @@
 
 // Runtime variables
 // Ex: clocks and timers for animations
+Clock playOnceClock;
 
 
 
 // Functions
-Clock animClock1;
 void InitializeOneTimeAnimations()
 {
-	animClock1.restart(); // so that the animation will start from the beginning when we open the win menu, and not from the middle if we win multiple times in a row without closing the game
+	playOnceClock.restart(); // so that the animation will start from the beginning when we open the win menu, and not from the middle if we win multiple times in a row without closing the game
 }
 
 void InitializeAnimations()
@@ -29,27 +29,7 @@ void InitializeAnimations()
 }
 
 
-void HandleAnimationsInput(Event event)
-{
-	// if ever needed you can check for input events here
-
-	switch (gameState)
-	{
-	case MAIN_MENU:
-		// code for handling main menu input
-		break;
-	case SETTINGS:
-		// code for handling settings menu input
-		break;
-	case GAME:
-		// code for handling game UI input
-		break;
-	default:
-		break;
-	}
-}
-
-void DoorUpdateAnimation(FinalDoor& door) {
+void UpdateAnimationDoor(FinalDoor& door) {
 		float speed = 20.0f;
 	
 		int frameCount = 22;
@@ -110,7 +90,7 @@ void UpdateAnimation(Sprite& sprite, LoadTexture texture) {
 
 		float speed = 25.0f;
 
-		float time = animClock1.getElapsedTime().asSeconds();
+		float time = playOnceClock.getElapsedTime().asSeconds();
 		int index = (int)(time * speed);
 
 		if (index >= frameCount) {
@@ -244,7 +224,7 @@ void UpdateAnimation(Sprite& sprite, LoadTexture texture) {
 		int index;
 		
 		
-		index = (int)(animClock1.getElapsedTime().asSeconds() * speed);
+		index = (int)(playOnceClock.getElapsedTime().asSeconds() * speed);
 		if (index >= frameCount)
 			index = frameCount - 1;
 
@@ -537,7 +517,7 @@ void UpdateAnimation(Sprite& sprite, LoadTexture texture) {
 		
 		float speed = 30.f;
 
-		int index = (int)(animClock1.getElapsedTime().asSeconds() * speed);
+		int index = (int)(playOnceClock.getElapsedTime().asSeconds() * speed);
 
 		if (index >= frameCount) {
 			index = frameCount - 1;
@@ -555,7 +535,7 @@ void UpdateAnimation(Sprite& sprite, LoadTexture texture) {
 		
 		float speed = 30.f;
 
-		int index = (int)(animClock1.getElapsedTime().asSeconds() * speed);
+		int index = (int)(playOnceClock.getElapsedTime().asSeconds() * speed);
 
 		if (index >= frameCount) {
 			index = frameCount - 1;
@@ -573,7 +553,7 @@ void UpdateAnimation(Sprite& sprite, LoadTexture texture) {
 	    
 		float speed = 30.f;
 
-		int index = (int)(animClock1.getElapsedTime().asSeconds() * speed) ;
+		int index = (int)(playOnceClock.getElapsedTime().asSeconds() * speed) ;
 
 		if (index >= frameCount) {
 			index = frameCount - 1;
@@ -589,7 +569,7 @@ void UpdateAnimation(Sprite& sprite, LoadTexture texture) {
 	}
 }
 
-void UpdatePlayerTexture(Sprite& sprite, PlayerType type, PlayerState newState, bool Head = false) {
+void UpdateTexturePlayer(Sprite& sprite, PlayerType type, PlayerState newState, bool Head = false) {
 
 	if (!Head)
 	switch (type)
