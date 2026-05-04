@@ -92,6 +92,7 @@ Sprite OkButton_MainToSetting;
 Sprite SettingsMenuBox_MainToSetting;
 bool isSoundButtonClicked_MainToSetting = false;
 bool isMusicButtonClicked_MainToSetting = false;
+bool noChangeInGameState = true;
 
 //settings from pause
 Sprite SoundButton_PauseToSetting;
@@ -155,39 +156,39 @@ int finalScore = 0;
 void initializeTutorialText_level1()
 {
 	temporary_txt.text.setString("\nUSE THE ARROW KEYS\n    TO MOVE FIREBOY\n");
-	temporary_txt.text.setPosition(430, 900);
+	temporary_txt.text.setPosition(470, 920);
 	gameTutorials.Add(temporary_txt);
 
 	temporary_txt.text.setString("\nUSE A.W.D\nTO MOVE WATERGIRL\n");
-	temporary_txt.text.setPosition(430, 750);
+	temporary_txt.text.setPosition(470, 770);
 	gameTutorials.Add(temporary_txt);
 
 	temporary_txt.text.setString("\n\t\t\t\t  NEVER MIX FIRE & WATER!  \t\t\t\t\n         \n");
-	temporary_txt.text.setPosition(1146, 870);
+	temporary_txt.text.setPosition(1146, 890);
 	gameTutorials.Add(temporary_txt);
 
 	temporary_txt.text.setString("\nGREEN GOO\n    \tHURTS THEM BOTH\t\t\t\t\t\n\n");
-	temporary_txt.text.setPosition(1200, 650);
+	temporary_txt.text.setPosition(1200, 670);
 	gameTutorials.Add(temporary_txt);
 
 	temporary_txt.text.setString("PRESS SPACE TO OPEN THE LEVER\n\t\t   LEVERS REMAIN AS\n\t\t    YOU LEAVE THEM\n");
-	temporary_txt.text.setPosition(500, 610);
+	temporary_txt.text.setPosition(560, 640);
 	gameTutorials.Add(temporary_txt);
 
 	temporary_txt.text.setString("\nBUTTONS HOWEVER\n\t\t\t     MUST BE HELD\n");
-	temporary_txt.text.setPosition(670, 430);
+	temporary_txt.text.setPosition(670, 450);
 	gameTutorials.Add(temporary_txt);
 
 	temporary_txt.text.setString("\nTHEY CAN PUSH\n\t\t      BOXES AROUND\n");
-	temporary_txt.text.setPosition(1465, 250);
+	temporary_txt.text.setPosition(1350, 270);
 	gameTutorials.Add(temporary_txt);
 
 	temporary_txt.text.setString("\nDONT'T FORGET TO\nGRAB SOME\nDIAMONDS!\n\n");
-	temporary_txt.text.setPosition(350, 100);
+	temporary_txt.text.setPosition(470, 140);
 	gameTutorials.Add(temporary_txt);
 
 	temporary_txt.text.setString("\nOPEN THE FINISH DOORS\nBY STANDING IN FRONT OF THEM.\n");
-	temporary_txt.text.setPosition(windowSize.x / 2 + 70, 95);
+	temporary_txt.text.setPosition(windowSize.x / 2 + 70, 100);
 	gameTutorials.Add(temporary_txt);
 
 	for (int i = 0; i < gameTutorials.count; i++)
@@ -669,7 +670,7 @@ void InitializeMenu()
 			LevelEntry_mnu[i][j].setScale(0.8, 0.8);
 		}
 	}
-
+	BackButtonFull0.setSmooth(true);
 	ApplyTexture(BackButtonLevel_mnu, LoadTexture::BackButtonFull0_texture, Vector2f(259, 98));
 	BackButtonLevel_mnu.setScale(1.1, 1.1);
 	BackButtonLevel_mnu.setPosition(165, 525);
@@ -969,17 +970,26 @@ void HandleMenuInput(Event event)
 	{
 	case MAIN_MENU:
 		// code for handling main menu input
-		MouseInput_mnu(event, SettingsButton_Mainmnu, SettingsButton0_texture, SettingsButton0_texture, ButtonClick, SETTINGS, false);
-		MouseInput_mnu(event, PlayButton_mnu, PlayButton_texture, PlayButton_texture, ButtonClick, LEVEL_MENU, true);
-		MouseInput_mnu(event, CreditsButton_mnu, CreditsButton_Texture, CreditsButton_Texture, ButtonClick, CREDITS, false);
-		if (event.type == Event::MouseButtonPressed && event.mouseButton.button == Mouse::Left)
+		if (FadingUp || DimmingUp)
 		{
-			if (ExitButton_mnu.getGlobalBounds().contains(mousePosition))
+			MouseInput_mnu(event, SettingsButton_Mainmnu, SettingsButton0_texture, SettingsButton0_texture, ButtonClick, SETTINGS, false);
+			if (MouseInput_mnu(event, PlayButton_mnu, PlayButton_texture, PlayButton_texture, ButtonClick, LEVEL_MENU, true))
 			{
-				window.close();
+				noChangeInGameState = false;
 			}
+			if (noChangeInGameState)
+			{
+				MouseInput_mnu(event, CreditsButton_mnu, CreditsButton_Texture, CreditsButton_Texture, ButtonClick, CREDITS, false);
+			}
+			if (event.type == Event::MouseButtonPressed && event.mouseButton.button == Mouse::Left)
+			{
+				if (ExitButton_mnu.getGlobalBounds().contains(mousePosition))
+				{
+					window.close();
+				}
+			}
+			changeCursorColor(event, true);
 		}
-		changeCursorColor(event, true);
 		break;
 	case LEVEL_MENU:
 		MouseInput_mnu(event, BackButtonLevel_mnu, BackButtonFull0_texture, BackButtonFull0_texture, ButtonClick, MAIN_MENU, true);
