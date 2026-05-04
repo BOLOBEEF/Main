@@ -83,7 +83,6 @@ enum LoadTexture
 	water_pond_right_texture,
 	water_pond_texture,
 	water_pond_left_texture,
-	temporaryPlatform_texture,
 	slider_dot_texture,
     lever_light_texture,
 	DOOR_WATER,
@@ -339,10 +338,12 @@ void ApplyTexture(Sprite& sprite, LoadTexture texture, Vector2f size = Vector2f(
 
 		// this is new!!
 		/*--------------------------------------------*/
-		case TEMPORARY_GROUND:
-			temporaryPlatform.setSmooth(false);
-			sprite.setTexture(temporaryPlatform);
-			break;
+	case TEMPORARY_GROUND: {
+		temporaryPlatform.setSmooth(false);
+		sprite.setTexture(temporaryPlatform);
+	
+		break;
+	}
 			/*--------------------------------------------*/
 
 	case death_smoke_texture:
@@ -966,7 +967,7 @@ void InitializeTextures()
 	lever_stick.loadFromFile("Main/Assets/Animations/map objects assets/lever stick.png");
 	lever_base.loadFromFile("Main/Assets/Animations/map objects assets/lever base.png");
 	pusher_block_light.loadFromFile("Main/Assets/Animations/map objects assets/pusher_block_light.png");
-	temporaryPlatform.loadFromFile("Main/Assets/Animations/map objects assets/pulley_platform.png");
+	temporaryPlatform.loadFromFile("Main/Assets/Animations/map objects assets/pulley_platform_animation.png");
 	moving_platform.loadFromFile("Main/Assets/Animations/map objects assets/moving platform.png");
 	decor_1.loadFromFile("Main/Assets/Animations/map objects assets/decor_1.png");
 	decor_2.loadFromFile("Main/Assets/Animations/map objects assets/decor_2.png");

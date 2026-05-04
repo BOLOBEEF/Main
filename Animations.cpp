@@ -27,8 +27,27 @@ void InitializeAnimations()
 	// code for initializing menu variables and objects
 	// for example initialize timers or counters
 }
+void UpdateAnimationplatform(TemporaryPlatform& temporaryplatform) {
+      
+	float time_temp = 1.5f;
+	int index=0;
+	int frameCount = 9;
+	int width = 5508, height = 132;
+	if (temporaryplatform.collided) {
+
+		temporaryplatform.currentframe += (frameCount * dt)/ time_temp;
+	}
+	else {
+
+		temporaryplatform.currentframe -= (frameCount * dt)/ time_temp;
+	}
+	temporaryplatform.currentframe = Clamp(temporaryplatform.currentframe, 0.0f, frameCount - 1);
+	int displayframe = (temporaryplatform.currentframe);
+	temporaryplatform.displaySprite.setTextureRect(IntRect(displayframe * (width / frameCount), 0, (width / frameCount), height));
+	
 
 
+}
 void UpdateAnimationDoor(FinalDoor& door) {
 		float speed = 20.0f;
 	
@@ -43,7 +62,7 @@ void UpdateAnimationDoor(FinalDoor& door) {
 		{
 			door.currentFrame -= speed * dt;
 		}
-
+		
 		door.currentFrame = Clamp(door.currentFrame, 0.0f, frameCount - 1); // clamp the current frame to valid range
 		int displayFrame = (int)(door.currentFrame);
 
@@ -81,7 +100,7 @@ void UpdateAnimation(Sprite& sprite, LoadTexture texture) {
 		break;
 	}
 
-	// char animations
+	// charachters animations
 	case death_smoke_texture: {
 
 		int frameCount = 45;
@@ -234,6 +253,19 @@ void UpdateAnimation(Sprite& sprite, LoadTexture texture) {
 
 	// map objects animations
 
+	case TEMPORARY_GROUND:
+	{
+		float speed_temp = 4.0f;
+
+		int frameCount = 9;
+		int width = 5508, height = 132;
+	      
+		int index = (int)(globalClock.getElapsedTime().asSeconds() * speed_temp)%frameCount;
+		sprite.setTextureRect(IntRect(index* (width / frameCount), 0, (width / frameCount), height));
+		break;
+
+
+	}
 	case pusher_block_texture:
 	{
 		sprite.setTextureRect(IntRect(0, 0, 110, 86));
@@ -650,7 +682,6 @@ void UpdateTexturePlayer(Sprite& sprite, PlayerType type, PlayerState newState, 
 		}
 
 }
-
 void UpdateAnimationPlayer(Sprite& sprite, PlayerType type,PlayerState state, bool Head = false)
 {
 	float speed = 25.0f;

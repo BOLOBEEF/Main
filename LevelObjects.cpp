@@ -28,8 +28,9 @@ void InitializeOneTimeAnimations();
 
 struct FinalDoor;
 void UpdateAnimationDoor(FinalDoor&);
-
-
+ 
+struct TemporaryPlatform;
+void UpdateAnimationplatform(TemporaryPlatform&);
 
 struct Player
 {
@@ -1482,18 +1483,18 @@ struct Box {
 	}
 };
 
-
 struct TemporaryPlatform
 {
+	float currentframe=9;
 	Collider collider;
 	Sprite displaySprite;
-	float displayScale = 1.2f;
+	float displayScale = 0.2f;
 	Vector2f startPosition;
 	Vector2f startScale;
 	bool collided = false;
 	bool isVisible = true;
 	float timer = 0.0f;
-
+	
 	TemporaryPlatform() {}
 	TemporaryPlatform(Vector2f position) {
 		startPosition = position;
@@ -1504,6 +1505,8 @@ struct TemporaryPlatform
 		collider = Collider(Collider::ColliderType::Rectangle, startPosition, Vector2f(32 * 2, 32));
 		ApplyTexture(collider.sprite, LoadTexture::RECTANGLE, Vector2f(32 * 2, 10), Vector2f(1, 1));
 		ApplyTexture(displaySprite, LoadTexture::TEMPORARY_GROUND, Vector2f(1, 1), Vector2f(1, 1), true, false);
+		UpdateAnimationplatform(*this);
+		SetSpriteOriginToCenter(displaySprite, true);
 		displaySprite.scale(displayScale, displayScale);
 		startScale = collider.sprite.getScale();
 		collider.sprite.setPosition(startPosition);
@@ -1521,6 +1524,7 @@ struct TemporaryPlatform
 
 
 	void Update(Player& player) {
+		UpdateAnimationplatform(*this);
 		Collider::CollisionData collisionData;
 		if (isVisible) {
 			player.isOnGround |= collider.CheckCollision(player, collisionData);
@@ -1554,6 +1558,7 @@ struct TemporaryPlatform
 			if (timer >= 5.0f) {
 				collider.sprite.setScale(startScale);
 				isVisible = true;
+				currentframe = 9;
 				ResetTimer();
 				SetSpriteSize(collider.sprite, Vector2f(displaySprite.getGlobalBounds().width - 15, displaySprite.getGlobalBounds().height - 15));
 			}
