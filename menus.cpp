@@ -92,7 +92,7 @@ Sprite OkButton_MainToSetting;
 Sprite SettingsMenuBox_MainToSetting;
 bool isSoundButtonClicked_MainToSetting = false;
 bool isMusicButtonClicked_MainToSetting = false;
-bool noChangeInGameState = true;
+bool noChangeInGameState = false;
 
 //settings from pause
 Sprite SoundButton_PauseToSetting;
@@ -975,9 +975,9 @@ void HandleMenuInput(Event event)
 			MouseInput_mnu(event, SettingsButton_Mainmnu, SettingsButton0_texture, SettingsButton0_texture, ButtonClick, SETTINGS, false);
 			if (MouseInput_mnu(event, PlayButton_mnu, PlayButton_texture, PlayButton_texture, ButtonClick, LEVEL_MENU, true))
 			{
-				noChangeInGameState = false;
+				noChangeInGameState = true;
 			}
-			if (noChangeInGameState)
+			if (!noChangeInGameState)
 			{
 				MouseInput_mnu(event, CreditsButton_mnu, CreditsButton_Texture, CreditsButton_Texture, ButtonClick, CREDITS, false);
 			}
@@ -992,6 +992,7 @@ void HandleMenuInput(Event event)
 		}
 		break;
 	case LEVEL_MENU:
+		noChangeInGameState = false;
 		MouseInput_mnu(event, BackButtonLevel_mnu, BackButtonFull0_texture, BackButtonFull0_texture, ButtonClick, MAIN_MENU, true);
 
 		arrowIcon_Winmnu.setTexture(arrow_icon0);
