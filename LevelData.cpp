@@ -19,7 +19,6 @@ Sprite resultSprite;
 
 
 // LEVEL EDITING TOOLS
-const bool enableEditMode = developerMode;	// if true, you can place down objects by clicking, and remove them by right clicking, change object type by pressing 0 or 1 or....
 Vector2f editScale = Vector2f(1, 1);
 int editPondWidth = 5;
 int editPondWidthMinimum = 4;
@@ -1548,9 +1547,9 @@ struct Level
 		for (int i = 0; i < objects.count; i++)
 			objects.elements[i].CheckInput(fireBoy, waterGirl, event);
 
-		// in debug mode, when you press
-		if (!enableEditMode) return;
-		EditMode(event);
+		// in developer mode, you can edit the level
+		if (developerMode)
+			EditMode(event);
 	}
 
 	void Update() {

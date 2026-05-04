@@ -13,6 +13,17 @@ void InitializeGame()
 
 void HandleGameInput(Event event)
 {
+	if (event.type == Event::KeyPressed && event.key.code == Keyboard::F2)
+	{
+		developerMode = !developerMode;
+
+		if (developerMode)
+			cout << "Entered developer mode" << endl;
+		else
+			cout << "Exited developer mode" << endl;
+	}
+
+	if (developerMode)
 	if (event.type == Event::KeyPressed && event.key.code == Keyboard::F10)
 	{
 		ClearPlayerProgress();
