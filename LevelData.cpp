@@ -1369,7 +1369,56 @@ struct Level
 				ResetLevel(true);
 				cout << "set level offset to " << offset.x << ", " << offset.y << endl;
 			}
-			
+			if (event.key.code == Keyboard::X) {
+				Sprite plant;
+				ApplyTexture(plant, LoadTexture::decor_2_texture, Vector2f(58,58));
+				plant.setPosition(cameraMousePosition);
+				plants.Add(plant);
+			}
+
+			if (event.key.code == Keyboard::Z) {
+				Sprite plant;
+				ApplyTexture(plant, LoadTexture::decor_4_texture, Vector2f(50, 106));
+				plant.setPosition(cameraMousePosition);
+				plants.Add(plant);
+			}
+			if (event.key.code == Keyboard::F) {
+				Sprite plant;
+				ApplyTexture(plant, LoadTexture::decor_6_texture, Vector2f(60, 60));
+				plant.setPosition(cameraMousePosition);
+				plants.Add(plant);
+			}
+			if (event.key.code == Keyboard::Y) {
+				Sprite plant;
+				ApplyTexture(plant, LoadTexture::decor_1_texture, Vector2f(60, 60));
+				plant.setPosition(cameraMousePosition);
+				plants.Add(plant);
+			}
+			if (event.key.code == Keyboard::T) {
+				Sprite plant;
+				ApplyTexture(plant, LoadTexture::decor_3_texture, Vector2f(60, 60));
+				plant.setPosition(cameraMousePosition);
+				plants.Add(plant);
+			}
+			if (event.key.code == Keyboard::E) {
+				Sprite plant;
+				ApplyTexture(plant, LoadTexture::decor_8_texture, Vector2f(60, 60));
+				plant.setPosition(cameraMousePosition);
+				plants.Add(plant);
+			}
+			if (event.key.code == Keyboard::R) {
+				Sprite plant;
+				ApplyTexture(plant, LoadTexture::decor_5_texture, Vector2f(60, 60));
+				plant.setPosition(cameraMousePosition);
+				plants.Add(plant);
+			}
+			if (event.key.code == Keyboard::Q) {
+				Sprite plant;
+				ApplyTexture(plant, LoadTexture::decor_7_texture, Vector2f(60, 60));
+				plant.setPosition(cameraMousePosition);
+				plants.Add(plant);
+			}
+		
 			if (event.key.code == Keyboard::J) {
 				offset.x += 32;
 				ResetLevel(true);
