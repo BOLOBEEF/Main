@@ -14,7 +14,6 @@ void InitializeTest() {
 void HandleTestInput(Event event)
 {
 
-
 }
 
 void OnUpdatedGameStateTest() {

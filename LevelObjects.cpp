@@ -60,12 +60,10 @@ struct Player
 	Sprite displayHeadSprite;
 	Sprite deathsprite;
 	Sprite playerEnterDoorSprite;
-	float headRotation = 0.0f;
 	Vector2f velocity = { 0,0 };
 	PlayerType playertype;
 	PlayerState playerState = Idle, lastState = Idle;
 	bool justUpdatedPlayerState = false;
-	bool lastFacingRight = false;
 	float currentSpeed = speed;
 	float currentAccelration = accelration;
 	float currentDeccelration = deccelration;
@@ -267,9 +265,8 @@ struct Player
 			displayHeadSprite.setScale(scale);
 
 			float targetRotation = atan2(velocity.y, velocity.x) * 180.f / 3.14159f;
-			headRotation = targetRotation;
 
-			displayHeadSprite.setRotation(headRotation);
+			displayHeadSprite.setRotation(targetRotation);
 		}
 		else
 		{
@@ -1491,6 +1488,7 @@ struct TemporaryPlatform
 	float displayScale = 0.2f;
 	Vector2f startPosition;
 	Vector2f startScale;
+	Vector2f displayStartScale;
 	bool collided = false;
 	bool isVisible = true;
 	float timer = 0.0f;
@@ -1508,6 +1506,7 @@ struct TemporaryPlatform
 		UpdateAnimationplatform(*this);
 		SetSpriteOriginToCenter(displaySprite, true);
 		displaySprite.scale(displayScale, displayScale);
+		displayStartScale = displaySprite.getScale();
 		startScale = collider.sprite.getScale();
 		collider.sprite.setPosition(startPosition);
 		Allign(collider.sprite);
@@ -1548,6 +1547,7 @@ struct TemporaryPlatform
 			{
 				collider.sprite.setScale(0, 0);
 				isVisible = false;
+				displaySprite.setScale(0, 0);
 				collided = false;
 				ResetTimer();
 			}
@@ -1557,6 +1557,7 @@ struct TemporaryPlatform
 			ContinueTimer();
 			if (timer >= 5.0f) {
 				collider.sprite.setScale(startScale);
+				displaySprite.setScale(displayStartScale);
 				isVisible = true;
 				currentframe = 9;
 				ResetTimer();
@@ -1990,7 +1991,7 @@ struct TutorialTxt
 		else
 			currentAlpha = currentAlpha - 255 * fadeTime * dt;
 
-		currentAlpha = Clamp(currentAlpha, 0, 255);
+		currentAlpha = Clamp(currentAlpha, 0.0f, 255.0f);
 
 		text.setFillColor(SetColorAlpha(text.getFillColor(), currentAlpha));
 		text.setOutlineColor(SetColorAlpha(text.getOutlineColor(), currentAlpha));
@@ -2061,25 +2062,76 @@ struct TutorialTxtList {
 	}
 } gameTutorials;
 
-struct SpriteList {
-	int count = 0;
-	Sprite* elements;
 
-	void Add(Sprite element) {
+struct Plant {
+	Sprite sprite;
+	float scale = 1.0f;
+	int plantIndex;
+
+	Plant(){}
+	Plant(Vector2f startPosition, int textureIndex) {
+		switch (textureIndex)
+		{
+		case 0:
+			ApplyTexture(sprite, LoadTexture::decor_1_texture, Vector2f(1, 1), Vector2f(1, 1), true, false);
+			break;
+		case 1:
+			ApplyTexture(sprite, LoadTexture::decor_2_texture, Vector2f(1, 1), Vector2f(1, 1), true, false);
+			break;
+		case 2:
+			ApplyTexture(sprite, LoadTexture::decor_3_texture, Vector2f(1, 1), Vector2f(1, 1), true, false);
+			break;
+		case 3:
+			ApplyTexture(sprite, LoadTexture::decor_4_texture, Vector2f(1, 1), Vector2f(1, 1), true, false);
+			break;
+		case 4:
+			ApplyTexture(sprite, LoadTexture::decor_5_texture, Vector2f(1, 1), Vector2f(1, 1), true, false);
+			break;
+		case 5:
+			ApplyTexture(sprite, LoadTexture::decor_6_texture, Vector2f(1, 1), Vector2f(1, 1), true, false);
+			break;
+		case 6:
+			ApplyTexture(sprite, LoadTexture::decor_7_texture, Vector2f(1, 1), Vector2f(1, 1), true, false);
+			break;
+		case 7:
+			ApplyTexture(sprite, LoadTexture::decor_8_texture, Vector2f(1, 1), Vector2f(1, 1), true, false);
+			break;
+		}
+
+		plantIndex = textureIndex;
+		sprite.setScale(Vector2f(scale, scale));
+		sprite.setPosition(startPosition);
+	}
+
+	void Draw() {
+		window.draw(sprite);
+	}
+
+	bool Contains(Vector2f position) {
+		return sprite.getGlobalBounds().contains(position);
+	}
+};
+
+
+struct PlantList {
+	int count = 0;
+	Plant* elements;
+
+	void Add(Plant element) {
 
 		if (count == 0)
 		{
 			count++;
-			elements = new Sprite[count];
+			elements = new Plant[count];
 			elements[0] = element;
 			return;
 		}
 
-		Sprite* temp = elements;
+		Plant* temp = elements;
 
 		count++;
 
-		elements = new Sprite[count];
+		elements = new Plant[count];
 
 		for (int i = 0; i < count - 1; i++)
 			elements[i] = temp[i];
@@ -2092,11 +2144,11 @@ struct SpriteList {
 	void RemoveAt(int index) {
 		if (count <= 0 || index < 0 || index >= count) return;
 
-		Sprite* temp = elements;
+		Plant* temp = elements;
 
 		count--;
 
-		elements = new Sprite[count];
+		elements = new Plant[count];
 
 		for (int i = 0; i < count; i++)
 			if (i < index)
@@ -2107,16 +2159,16 @@ struct SpriteList {
 		delete[] temp;
 	}
 
-	Sprite& GetLastElement() {
+	Plant& GetLastElement() {
 		if (count == 0) {
-			cout << "SpriteList is empty" << endl;
+			cout << "PlantList is empty" << endl;
 			exit(-2);
 		}
 
 		return elements[count - 1];
 	}
 
-	~SpriteList() {
+	~PlantList() {
 		delete[] elements;
 	}
 };

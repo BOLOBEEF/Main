@@ -42,11 +42,9 @@ void UpdateAnimationplatform(TemporaryPlatform& temporaryplatform) {
 		temporaryplatform.currentframe -= (frameCount * dt)/ time_temp;
 	}
 	temporaryplatform.currentframe = Clamp(temporaryplatform.currentframe, 0.0f, frameCount - 1);
-	int displayframe = (temporaryplatform.currentframe);
+	int displayframe = round(temporaryplatform.currentframe);
+
 	temporaryplatform.displaySprite.setTextureRect(IntRect(displayframe * (width / frameCount), 0, (width / frameCount), height));
-	
-
-
 }
 void UpdateAnimationDoor(FinalDoor& door) {
 		float speed = 20.0f;

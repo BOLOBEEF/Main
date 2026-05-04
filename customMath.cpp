@@ -84,7 +84,7 @@ float Damp(float current, float target, float speed, float dt)
 {
 	if (speed <= 0) return current;
 
-	return target + (current - target) * Clamp(pow(1 / speed, dt), 0, 1);
+	return target + (current - target) * Clamp(pow(1 / speed, dt), 0.0f, 1.0f);
 }
 
 Vector2f Damp(Vector2f current, Vector2f target, float speed, float dt)

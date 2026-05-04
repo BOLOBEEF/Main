@@ -22,11 +22,14 @@ Sprite resultSprite;
 Vector2f editScale = Vector2f(1, 1);
 int editPondWidth = 5;
 int editPondWidthMinimum = 4;
+int currentPlantIndex = 0;
+int plantsCount = 8;
 
 enum EditMode
 {
 	collider_mode,
-	object_mode
+	object_mode,
+	plant_mode
 } editMode;
 
 enum EditObjectMode
@@ -161,7 +164,7 @@ struct Level
 
 	ColliderList colliders;
 	ObjectList objects;
-	SpriteList plants;
+	PlantList plants;
 
 	bool isSnowLevel = false;
 	Clock timeSinceLevelLoad;	// used to delay the start of updating the gameCamera
@@ -299,8 +302,8 @@ struct Level
 	{
 		currentTimeRequirement = 70.0f;
 		isSnowLevel = false;
-		fireBoy = Player(Fireboy, offset + Vector2f(407, 972));
-		waterGirl = Player(Watergirl, offset + Vector2f(405, 849));
+		fireBoy = Player(Fireboy, offset + Vector2f(362, 984));
+		waterGirl = Player(Watergirl, offset + Vector2f(357, 848));
 		water_door = FinalDoor(FinalDoor::WATER_DOOR, offset + Vector2f(1547, 122));
 		fire_door = FinalDoor(FinalDoor::FIRE_DOOR, offset + Vector2f(1433, 134));
 		colliders.Add(Collider(Collider::ColliderType::Rectangle, center + offset + Vector2f(192, 468), Vector2f(4, 1)));
@@ -362,13 +365,29 @@ struct Level
 		objects.GetLastElement().data.door.button1 = Click(offset + Vector2f(635, 519), true);
 		objects.GetLastElement().data.door.button2 = Click(offset + Vector2f(1426, 360), true);
 		objects.Add(Object(Object::BoxObject));
-		objects.GetLastElement().InitializeBoxObject(offset + Vector2f(1124, 275));
+		objects.GetLastElement().InitializeBoxObject(offset + Vector2f(1125, 275));
 		objects.Add(Object(Object::GemObject));
 		objects.GetLastElement().InitializeGemObject(Gem::waterGem, offset + Vector2f(1232, 144));
 		objects.Add(Object(Object::GemObject));
 		objects.GetLastElement().InitializeGemObject(Gem::waterGem, offset + Vector2f(336, 176));
 		objects.Add(Object(Object::GemObject));
 		objects.GetLastElement().InitializeGemObject(Gem::fireGem, offset + Vector2f(1552, 304));
+		plants.Add(Plant(Vector2f(613, 983), 0));
+		plants.Add(Plant(Vector2f(1096, 980), 1));
+		plants.Add(Plant(Vector2f(1505, 628), 2));
+		plants.Add(Plant(Vector2f(1463, 1003), 3));
+		plants.Add(Plant(Vector2f(1260, 813), 4));
+		plants.Add(Plant(Vector2f(794, 719), 5));
+		plants.Add(Plant(Vector2f(403, 270), 5));
+		plants.Add(Plant(Vector2f(1586, 689), 5));
+		plants.Add(Plant(Vector2f(917, 568), 6));
+		plants.Add(Plant(Vector2f(1456, 381), 7));
+		plants.Add(Plant(Vector2f(1201, 327), 4));
+		plants.Add(Plant(Vector2f(818, 395), 3));
+		plants.Add(Plant(Vector2f(518, 364), 1));
+		plants.Add(Plant(Vector2f(1069, 175), 0));
+		plants.Add(Plant(Vector2f(1350, 424), 2));
+		plants.Add(Plant(Vector2f(778, 208), 7));
 	}
 
 	void Level2()
@@ -979,9 +998,10 @@ struct Level
 		// reset all arrays to be empty
 		colliders = ColliderList();
 		objects = ObjectList();
-		plants = SpriteList();
+		plants = PlantList();
 		progress = LevelProgress();
 		gemsCounter = 0;
+		offset = Vector2f(0, 0);
 		currentGemsCount = 0;
 		forceRestart = false;
 		timeSinceLevelLoad.restart();
@@ -1097,6 +1117,14 @@ struct Level
 				cout << "objects.GetLastElement().InitializeSnowObject(Snow::" << snowType << ", offset + Vector2f(" << (int)objects.elements[i].data.snow.sprite.getPosition().x - (objects.elements[i].data.snow.type == Snow::LeftDown ? 0 : 32) << ", " << (int)objects.elements[i].data.snow.sprite.getPosition().y << "));" << endl;
 				break;
 			}
+		}
+
+		for (int i = 0; i < plants.count; i++)
+		{
+			Vector2f position = plants.elements[i].sprite.getPosition();
+			int index = plants.elements[i].plantIndex;
+
+			cout << "plants.Add(Plant(Vector2f(" << (int)position.x << ", " << (int)position.y << "), " << index << "));" << endl;
 		}
 	}
 	void PrintLevelCode() {
@@ -1306,6 +1334,21 @@ struct Level
 						}
 					}
 			}
+			else if (editMode == plant_mode) {
+				if (event.mouseButton.button == Mouse::Left)
+				{
+					plants.Add(Plant(cameraMousePosition, currentPlantIndex));
+				}
+
+				if (event.mouseButton.button == Mouse::Right)
+				{
+					for (int i = 0; i < plants.count; i++)
+					{
+						if (plants.elements[i].Contains(cameraMousePosition))
+							plants.RemoveAt(i);
+					}
+				}
+			}
 		}
 
 		if (event.type == Event::KeyPressed) {
@@ -1314,6 +1357,8 @@ struct Level
 				if (editMode == EditMode::collider_mode)
 					editMode = EditMode::object_mode;
 				else if (editMode == EditMode::object_mode)
+					editMode = EditMode::plant_mode;
+				else if (editMode == EditMode::plant_mode)
 					editMode = EditMode::collider_mode;
 			}
 
@@ -1369,55 +1414,17 @@ struct Level
 				ResetLevel(true);
 				cout << "set level offset to " << offset.x << ", " << offset.y << endl;
 			}
-			if (event.key.code == Keyboard::X) {
-				Sprite plant;
-				ApplyTexture(plant, LoadTexture::decor_2_texture, Vector2f(58,58));
-				plant.setPosition(cameraMousePosition);
-				plants.Add(plant);
+
+			if (event.key.code == Keyboard::Multiply) {
+				currentPlantIndex++;
+				currentPlantIndex = Clamp(currentPlantIndex, 0, plantsCount - 1);
 			}
 
-			if (event.key.code == Keyboard::Z) {
-				Sprite plant;
-				ApplyTexture(plant, LoadTexture::decor_4_texture, Vector2f(50, 106));
-				plant.setPosition(cameraMousePosition);
-				plants.Add(plant);
+			if (event.key.code == Keyboard::Divide) {
+				currentPlantIndex--;
+				currentPlantIndex = Clamp(currentPlantIndex, 0, plantsCount - 1);
 			}
-			if (event.key.code == Keyboard::F) {
-				Sprite plant;
-				ApplyTexture(plant, LoadTexture::decor_6_texture, Vector2f(60, 60));
-				plant.setPosition(cameraMousePosition);
-				plants.Add(plant);
-			}
-			if (event.key.code == Keyboard::Y) {
-				Sprite plant;
-				ApplyTexture(plant, LoadTexture::decor_1_texture, Vector2f(60, 60));
-				plant.setPosition(cameraMousePosition);
-				plants.Add(plant);
-			}
-			if (event.key.code == Keyboard::T) {
-				Sprite plant;
-				ApplyTexture(plant, LoadTexture::decor_3_texture, Vector2f(60, 60));
-				plant.setPosition(cameraMousePosition);
-				plants.Add(plant);
-			}
-			if (event.key.code == Keyboard::E) {
-				Sprite plant;
-				ApplyTexture(plant, LoadTexture::decor_8_texture, Vector2f(60, 60));
-				plant.setPosition(cameraMousePosition);
-				plants.Add(plant);
-			}
-			if (event.key.code == Keyboard::R) {
-				Sprite plant;
-				ApplyTexture(plant, LoadTexture::decor_5_texture, Vector2f(60, 60));
-				plant.setPosition(cameraMousePosition);
-				plants.Add(plant);
-			}
-			if (event.key.code == Keyboard::Q) {
-				Sprite plant;
-				ApplyTexture(plant, LoadTexture::decor_7_texture, Vector2f(60, 60));
-				plant.setPosition(cameraMousePosition);
-				plants.Add(plant);
-			}
+
 		
 			if (event.key.code == Keyboard::J) {
 				offset.x += 32;
@@ -1550,6 +1557,12 @@ struct Level
 						editObjectMode = EditObjectMode::Lever_mode;
 					if (event.key.code == Keyboard::Num3)
 						editObjectMode = EditObjectMode::Door_Target_mode;
+				}
+			}
+			else if (editMode == EditMode::plant_mode) {
+				if (event.key.code == Keyboard::O) {
+					// undo last object placement
+					plants.RemoveAt(plants.count - 1);
 				}
 			}
 		}
@@ -1721,7 +1734,7 @@ struct Level
 		waterGirl.Draw();
 
 		for (int i = 0; i < plants.count; i++)
-			window.draw(plants.elements[i]);
+			plants.elements[i].Draw();
 
 		for (int i = 0; i < objects.count; i++)
 			objects.elements[i].PostDraw();
