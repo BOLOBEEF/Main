@@ -139,10 +139,15 @@ void UpdatePlayerProgress(int levelIndex, LevelProgress progress) {
 	SavePlayerProgress(); // save progress after updating
 }
 
-void ClearData() {
+void ClearPlayerProgress() {
 	ofstream savefile("saveData.txt");
 	if (savefile.is_open())
 		savefile.close();
+
+	for (int i = 0; i < MAX_LEVELS; i++)
+		levelProgress[i] = LevelProgress();
+
+	cout << "Cleared Player progress" << endl;
 }
 
 

@@ -13,10 +13,18 @@ void InitializeGame()
 
 void HandleGameInput(Event event)
 {
+	if (event.type == Event::KeyPressed && event.key.code == Keyboard::F10)
+	{
+		ClearPlayerProgress();
+		if (gameState == LEVEL_MENU)
+			UpdateGameState(LEVEL_MENU, true);
+	}
+
 	if (gameState != GAME) return;
 
 	// code for handling game input that is related to game logic
 	currentLevel.CheckInput(event);
+
 }
 
 

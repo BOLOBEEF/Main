@@ -239,11 +239,34 @@ void UpdateTimeCounters() {
 		}
 	}
 }
+void UpdateGemIcons() {
+	for (int i = 0; i < 2; i++)
+	{
+		for (int j = 0; j < 3; j++)
+		{
+			if (levelProgress[j + i * 3].isCompleted && levelProgress[j + i * 3].collectedGems && levelProgress[j + i * 3].finishedOnTime)
+			{
+				ApplyTexture(DiamondLevel_mnu[i][j], LoadTexture::Diamond3_texture, Vector2f(69, 80));
+			}
+			else if (levelProgress[j + i * 3].isCompleted && (levelProgress[j + i * 3].collectedGems || levelProgress[j + i * 3].finishedOnTime))
+			{
+				ApplyTexture(DiamondLevel_mnu[i][j], LoadTexture::Diamond2_texture, Vector2f(69, 80));
+			}
+			else if (levelProgress[j + i * 3].isCompleted)
+			{
+				ApplyTexture(DiamondLevel_mnu[i][j], LoadTexture::Diamond1_texture, Vector2f(69, 80));
+			}
+			else
+				ApplyTexture(DiamondLevel_mnu[i][j], LoadTexture::Diamond0_texture, Vector2f(69, 80));
+		}
+	}
+}
 void changeCursorColor(Event event, bool inForestTemple)
 {
+	ApplyTexture(cursorAndpointerSprite, LoadTexture::cursor_texture, Vector2f(25, 30));
+
 	if (inForestTemple)
 	{
-		ApplyTexture(cursorAndpointerSprite, LoadTexture::cursor_texture, Vector2f(25, 30));
 		UpdateAnimation(cursorAndpointerSprite, cursor_texture);
 		if (event.type == Event::MouseButtonPressed && event.mouseButton.button == Mouse::Left)
 		{
@@ -256,7 +279,6 @@ void changeCursorColor(Event event, bool inForestTemple)
 	}
 	else
 	{
-		ApplyTexture(cursorAndpointerSprite, LoadTexture::pointer_texture, Vector2f(25, 30));
 		UpdateAnimation(cursorAndpointerSprite, pointer_texture);
 		if (event.type == Event::MouseButtonPressed && event.mouseButton.button == Mouse::Left)
 		{
@@ -1069,6 +1091,7 @@ void OnUpdatedGameStateMenu() {
 		break;
 	case LEVEL_MENU:
 		UpdateTimeCounters();
+		UpdateGemIcons();
 		PlayMusic(MainMenu);
 		break;
 	case PAUSE_MENU:
@@ -1093,10 +1116,12 @@ void OnUpdatedGameStateMenu() {
 		if (currentLevel.currentLevelIndex == 0)
 		{
 			initializeTutorialText_level1();
+			PlayMusic(Game_Slow);
 		}
 		else if (currentLevel.currentLevelIndex == 1)
 		{
 			initializeTutorialText_level2();
+			PlayMusic(Game_Slow);
 		}
 		else if (currentLevel.currentLevelIndex == 2)
 		{
@@ -1105,6 +1130,7 @@ void OnUpdatedGameStateMenu() {
 		else if (currentLevel.currentLevelIndex == 3)
 		{
 			initializeTutorialText_level4();
+			PlayMusic(Game_Slow);
 		}
 		else
 		{
@@ -1173,24 +1199,6 @@ void UpdateUI()
 			WinMenu_Movement(Target_Down_mnu);
 		}
 
-		for (int i = 0; i < 2; i++)
-		{
-			for (int j = 0; j < 3; j++)
-			{
-				if (levelProgress[j + i * 3].isCompleted && levelProgress[j + i * 3].collectedGems && levelProgress[j + i * 3].finishedOnTime)
-				{
-					ApplyTexture(DiamondLevel_mnu[i][j], LoadTexture::Diamond3_texture, Vector2f(69, 80));
-				}
-				else if (levelProgress[j + i * 3].isCompleted && (levelProgress[j + i * 3].collectedGems || levelProgress[j + i * 3].finishedOnTime))
-				{
-					ApplyTexture(DiamondLevel_mnu[i][j], LoadTexture::Diamond2_texture, Vector2f(69, 80));
-				}
-				else if (levelProgress[j + i * 3].isCompleted)
-				{
-					ApplyTexture(DiamondLevel_mnu[i][j], LoadTexture::Diamond1_texture, Vector2f(69, 80));
-				}
-			}
-		}
 		break;
 	case PAUSE_MENU:
 		clockTikingSpeed = 0;

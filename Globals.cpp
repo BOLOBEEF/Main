@@ -105,13 +105,13 @@ void UpdateGameState(GameState newState, bool ForceUpdate);
 void Initialize()
 {
 	InitializeWindow();
+	LoadPlayerProgress();
 	InitializeTextures();
 	InitializeAnimations();
 	InitializeAudio();
 	InitializeMenu();
 	InitializeGame();
 	InitializeTest();
-	LoadPlayerProgress();
 	UpdateGameState(gameState, true);
 }
 
