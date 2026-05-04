@@ -590,7 +590,7 @@ void InitializeMenu()
 	GameName_mnu.setPosition(windowSize.x / 2, windowSize.y / 2 - 200);
 
 	PlayButton.setSmooth(true);
-	ApplyTexture(PlayButton_mnu, LoadTexture::PlayButton_texture, Vector2f(240, 160));
+	ApplyTexture(PlayButton_mnu, LoadTexture::PlayButton_texture, Vector2f(170, 88));
 	PlayButton_mnu.setPosition(windowSize.x / 2, windowSize.y / 2 + 40);
 	
 	//dust.setSmooth(true);
@@ -598,11 +598,11 @@ void InitializeMenu()
 	//dustAnimation.setPosition(windowSize.x / 2 + 10, windowSize.y / 2 + 40);
 
 	CreditsButton.setSmooth(true);
-	ApplyTexture(CreditsButton_mnu, LoadTexture::CreditsButton_Texture, Vector2f(260, 173));
+	ApplyTexture(CreditsButton_mnu, LoadTexture::CreditsButton_Texture, Vector2f(213, 56));
 	CreditsButton_mnu.setPosition(windowSize.x / 2 + 350, windowSize.y / 2 + 150);
 
 	ExitButton.setSmooth(true);
-	ApplyTexture(ExitButton_mnu, LoadTexture::ExitButton_texture, Vector2f(240, 160));
+	ApplyTexture(ExitButton_mnu, LoadTexture::ExitButton_texture, Vector2f(147, 65));
 	ExitButton_mnu.setPosition(windowSize.x / 2 - 350, windowSize.y / 2 + 150);
 
 	ApplyTexture(IdleFbBodymnu, LoadTexture::fire_idle_body_texture, Vector2f(130, 172));
