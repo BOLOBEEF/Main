@@ -2055,3 +2055,63 @@ struct TutorialTxtList {
 		delete[] elements;
 	}
 } gameTutorials;
+
+struct SpriteList {
+	int count = 0;
+	Sprite* elements;
+
+	void Add(Sprite element) {
+
+		if (count == 0)
+		{
+			count++;
+			elements = new Sprite[count];
+			elements[0] = element;
+			return;
+		}
+
+		Sprite* temp = elements;
+
+		count++;
+
+		elements = new Sprite[count];
+
+		for (int i = 0; i < count - 1; i++)
+			elements[i] = temp[i];
+
+		delete[] temp;
+
+		elements[count - 1] = element;
+	}
+
+	void RemoveAt(int index) {
+		if (count <= 0 || index < 0 || index >= count) return;
+
+		Sprite* temp = elements;
+
+		count--;
+
+		elements = new Sprite[count];
+
+		for (int i = 0; i < count; i++)
+			if (i < index)
+				elements[i] = temp[i];
+			else
+				elements[i] = temp[i + 1];
+
+		delete[] temp;
+	}
+
+	Sprite& GetLastElement() {
+		if (count == 0) {
+			cout << "SpriteList is empty" << endl;
+			exit(-2);
+		}
+
+		return elements[count - 1];
+	}
+
+	~SpriteList() {
+		delete[] elements;
+	}
+};

@@ -161,6 +161,8 @@ struct Level
 
 	ColliderList colliders;
 	ObjectList objects;
+	SpriteList plants;
+
 	bool isSnowLevel = false;
 	Clock timeSinceLevelLoad;	// used to delay the start of updating the gameCamera
 	LevelProgress progress;
@@ -977,6 +979,7 @@ struct Level
 		// reset all arrays to be empty
 		colliders = ColliderList();
 		objects = ObjectList();
+		plants = SpriteList();
 		progress = LevelProgress();
 		gemsCounter = 0;
 		currentGemsCount = 0;
@@ -1668,6 +1671,8 @@ struct Level
 		fireBoy.Draw();
 		waterGirl.Draw();
 
+		for (int i = 0; i < plants.count; i++)
+			window.draw(plants.elements[i]);
 
 		for (int i = 0; i < objects.count; i++)
 			objects.elements[i].PostDraw();
