@@ -395,7 +395,7 @@ struct Level
 		currentTimeRequirement = 60.0f;
 		isSnowLevel = false;
 		fireBoy = Player(Fireboy, offset + Vector2f(336, 943));
-		waterGirl = Player(Watergirl, offset + Vector2f(408, 944));
+		waterGirl = Player(Watergirl, offset + Vector2f(401, 917));
 		water_door = FinalDoor(FinalDoor::WATER_DOOR, offset + Vector2f(470, 164));
 		fire_door = FinalDoor(FinalDoor::FIRE_DOOR, offset + Vector2f(336, 166));
 		colliders.Add(Collider(Collider::ColliderType::Rectangle, center + offset + Vector2f(0, -460), Vector2f(44, 1)));
@@ -483,6 +483,20 @@ struct Level
 		objects.GetLastElement().InitializeDoorObject(offset + Vector2f(910, 640), offset + Vector2f(912, 512), true);
 		objects.GetLastElement().data.door.button1 = Click(offset + Vector2f(459, 681), true);
 		objects.GetLastElement().data.door.button2 = Click(offset + Vector2f(1385, 668), true);
+		plants.Add(Plant(Vector2f(753, 863), 0));
+		plants.Add(Plant(Vector2f(1044, 854), 1));
+		plants.Add(Plant(Vector2f(1585, 901), 2));
+		plants.Add(Plant(Vector2f(1609, 412), 2));
+		plants.Add(Plant(Vector2f(1355, 971), 3));
+		plants.Add(Plant(Vector2f(960, 717), 4));
+		plants.Add(Plant(Vector2f(1620, 558), 5));
+		plants.Add(Plant(Vector2f(566, 523), 5));
+		plants.Add(Plant(Vector2f(1335, 236), 5));
+		plants.Add(Plant(Vector2f(1391, 522), 3));
+		plants.Add(Plant(Vector2f(1256, 251), 2));
+		plants.Add(Plant(Vector2f(369, 591), 6));
+		plants.Add(Plant(Vector2f(1372, 244), 6));
+		plants.Add(Plant(Vector2f(383, 700), 7));
 	}
 
 	void Level3() {
@@ -497,7 +511,6 @@ struct Level
 		colliders.Add(Collider(Collider::ColliderType::Rectangle, center + offset + Vector2f(688, -332), Vector2f(1, 7)));
 		colliders.Add(Collider(Collider::ColliderType::Rectangle, center + offset + Vector2f(-688, 308), Vector2f(1, 7)));
 		colliders.Add(Collider(Collider::ColliderType::Rectangle, center + offset + Vector2f(-688, -380), Vector2f(1, 4)));
-		colliders.Add(Collider(Collider::ColliderType::Rectangle, center + offset + Vector2f(816, -460), Vector2f(1, 1)));
 		colliders.Add(Collider(Collider::ColliderType::Rectangle, center + offset + Vector2f(688, 356), Vector2f(1, 4)));
 		colliders.Add(Collider(Collider::ColliderType::Rectangle, center + offset + Vector2f(-688, 116), Vector2f(1, 5)));
 		colliders.Add(Collider(Collider::ColliderType::Rectangle, center + offset + Vector2f(-576, 244), Vector2f(6, 1)));
@@ -589,6 +602,24 @@ struct Level
 		objects.GetLastElement().InitializeGemObject(Gem::waterGem, offset + Vector2f(1584, 304));
 		objects.Add(Object(Object::GemObject));
 		objects.GetLastElement().InitializeGemObject(Gem::waterGem, offset + Vector2f(1584, 208));
+		plants.Add(Plant(Vector2f(874, 947), 2));
+		plants.Add(Plant(Vector2f(1073, 875), 6));
+		plants.Add(Plant(Vector2f(1488, 589), 6));
+		plants.Add(Plant(Vector2f(337, 723), 5));
+		plants.Add(Plant(Vector2f(1365, 237), 5));
+		plants.Add(Plant(Vector2f(1194, 589), 3));
+		plants.Add(Plant(Vector2f(1081, 370), 6));
+		plants.Add(Plant(Vector2f(282, 760), 2));
+		plants.Add(Plant(Vector2f(1378, 954), 1));
+		plants.Add(Plant(Vector2f(538, 963), 0));
+		plants.Add(Plant(Vector2f(433, 965), 7));
+		plants.Add(Plant(Vector2f(682, 572), 1));
+		plants.Add(Plant(Vector2f(560, 425), 6));
+		plants.Add(Plant(Vector2f(888, 401), 5));
+		plants.Add(Plant(Vector2f(558, 203), 4));
+		plants.Add(Plant(Vector2f(749, 208), 3));
+		plants.Add(Plant(Vector2f(1167, 195), 7));
+		plants.Add(Plant(Vector2f(1471, 202), 7));
 	}
 
 	void Level4()
@@ -1733,11 +1764,11 @@ struct Level
 		window.draw(fire_door.sprite);
 		window.draw(water_door.sprite);
 
-		fireBoy.Draw();
-		waterGirl.Draw();
-
 		for (int i = 0; i < plants.count; i++)
 			plants.elements[i].Draw();
+
+		fireBoy.Draw();
+		waterGirl.Draw();
 
 		for (int i = 0; i < objects.count; i++)
 			objects.elements[i].PostDraw();
