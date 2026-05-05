@@ -1,4 +1,3 @@
-
 // Animations
 
 
@@ -27,44 +26,60 @@ void InitializeAnimations()
 	// code for initializing menu variables and objects
 	// for example initialize timers or counters
 }
+
+void SetAnimationFrame(Sprite& sprite, int currentFrame, int totalWidth, int height, int frameCount, int yOffset = 0) {
+	int frameWidth = totalWidth / frameCount;
+	sprite.setTextureRect(IntRect(currentFrame * frameWidth, yOffset, frameWidth, height));
+}
+
+void UpdateLoopingAnimation(Sprite& sprite, int totalWidth, int height, int frameCount, float speed, int yOffset = 0) {
+	int index = (int)(globalClock.getElapsedTime().asSeconds() * speed) % frameCount;
+	SetAnimationFrame(sprite, index, totalWidth, height, frameCount, yOffset);
+}
+
+void UpdatePlayOnceAnimation(Sprite& sprite, int totalWidth, int height, int frameCount, float speed, int yOffset = 0) {
+	int index = (int)(playOnceClock.getElapsedTime().asSeconds() * speed);
+	if (index >= frameCount) {
+		index = frameCount - 1;
+	}
+	SetAnimationFrame(sprite, index, totalWidth, height, frameCount, yOffset);
+}
+
 void UpdateAnimationplatform(TemporaryPlatform& temporaryplatform) {
-      
 	float time_temp = 1.5f;
-	int index=0;
 	int frameCount = 9;
 	int width = 5508, height = 132;
-	if (temporaryplatform.collided) {
 
-		temporaryplatform.currentframe += (frameCount * dt)/ time_temp;
+	if (temporaryplatform.collided) {
+		temporaryplatform.currentframe += (frameCount * dt) / time_temp;
 	}
 	else {
-
-		temporaryplatform.currentframe -= (frameCount * dt)/ time_temp;
+		temporaryplatform.currentframe -= (frameCount * dt) / time_temp;
 	}
 	temporaryplatform.currentframe = Clamp(temporaryplatform.currentframe, 0.0f, frameCount - 1);
 	int displayframe = round(temporaryplatform.currentframe);
 
-	temporaryplatform.displaySprite.setTextureRect(IntRect(displayframe * (width / frameCount), 0, (width / frameCount), height));
+	SetAnimationFrame(temporaryplatform.displaySprite, displayframe, width, height, frameCount);
 }
-void UpdateAnimationDoor(FinalDoor& door) {
-		float speed = 20.0f;
-	
-		int frameCount = 22;
-		int width = 3586, height = 138;
-		
-		if (door.player_on_door)
-		{
-			door.currentFrame += speed * dt;
-		}
-		else
-		{
-			door.currentFrame -= speed * dt;
-		}
-		
-		door.currentFrame = Clamp(door.currentFrame, 0.0f, frameCount - 1); // clamp the current frame to valid range
-		int displayFrame = (int)(door.currentFrame);
 
-		door.sprite.setTextureRect(IntRect(displayFrame * (width / frameCount), 0, (width / frameCount), height));
+void UpdateAnimationDoor(FinalDoor& door) {
+	float speed = 20.0f;
+	int frameCount = 22;
+	int width = 3586, height = 138;
+
+	if (door.player_on_door)
+	{
+		door.currentFrame += speed * dt;
+	}
+	else
+	{
+		door.currentFrame -= speed * dt;
+	}
+
+	door.currentFrame = Clamp(door.currentFrame, 0.0f, frameCount - 1); // clamp the current frame to valid range
+	int displayFrame = (int)(door.currentFrame);
+
+	SetAnimationFrame(door.sprite, displayFrame, width, height, frameCount);
 }
 
 void UpdateAnimation(Sprite& sprite, LoadTexture texture) {
@@ -73,17 +88,11 @@ void UpdateAnimation(Sprite& sprite, LoadTexture texture) {
 	switch (texture)
 	{
 	case PLAYER_FIRE:
-		break;
 	case TRIANGLE:
-		break;
 	case TRIANGLE_ROTATED:
-		break;
 	case FLAME_POND:
-		break;
 	case WATER_POND:
-		break;
 	case TOXIC_POND:
-		break;
 	case RECTANGLE:
 		break;
 	case GROUND:
@@ -91,161 +100,95 @@ void UpdateAnimation(Sprite& sprite, LoadTexture texture) {
 		break;
 	case diamonds_texture:
 	{
-		int frameCount = 4;// 1 fire , 2 hald fire half water, 3 white , 4 water
-		int width =468, height = 117;
-		int index = (int)(globalClock.getElapsedTime().asSeconds() * speed) % frameCount;
-		sprite.setTextureRect(IntRect(index * (width / frameCount), 0, (width / frameCount), height));
+		// 1 fire , 2 hald fire half water, 3 white , 4 water
+		UpdateLoopingAnimation(sprite, 468, 117, 4, speed);
 		break;
 	}
 
 	// charachters animations
-	case death_smoke_texture: {
-
-		int frameCount = 45;
-		int width = 4590, height = 107;
-		int frameWidth = width / frameCount;
-
-		float speed = 25.0f;
-
-		float time = playOnceClock.getElapsedTime().asSeconds();
-		int index = (int)(time * speed);
-
-		if (index >= frameCount) {
-			index = frameCount ;
-
-		}
-
-		sprite.setTextureRect(sf::IntRect(index * frameWidth, 0, frameWidth, height));
+	case death_smoke_texture:
+	{
+		UpdatePlayOnceAnimation(sprite, 4590, 107, 45, 25.0f);
 		break;
 	}
 
 	case fire_glow_texture:
-		break;
 	case water_glow_texture:
 		break;
 
 	case fire_head_jumping_texture:
 	{
-		int frameCount = 11;
-		int width = 1716, height = 130;
-		int index = (int)(globalClock.getElapsedTime().asSeconds() * speed) % frameCount;
-		sprite.setTextureRect(IntRect(index * (width / frameCount), 0, (width / frameCount), height));
+		UpdateLoopingAnimation(sprite, 1716, 130, 11, speed);
 		break;
 	}
 	case fire_head_rising_texture:
 	{
-		int frameCount = 5;
-		int width = 530, height = 130;
-		int index = (int)(globalClock.getElapsedTime().asSeconds() * speed) % frameCount;
-		sprite.setTextureRect(IntRect(index * (width/frameCount), 0, (width / frameCount), height));
+		UpdateLoopingAnimation(sprite, 530, 130, 5, speed);
 		break;
 	}
 	case fire_head_falling_texture:
 	{
-		int frameCount = 5;
-		int width =650, height = 162;
-		int index = (int)(globalClock.getElapsedTime().asSeconds() * speed) % frameCount;
-		sprite.setTextureRect(IntRect(index * (width / frameCount), 0, (width / frameCount), height));
+		UpdateLoopingAnimation(sprite, 650, 162, 5, speed);
 		break;
 	}
 
 	case water_head_jump_texture:
 	{
-		int frameCount = 11;
-		int width = 1914, height =142 ;
-		int index = (int)(globalClock.getElapsedTime().asSeconds() * speed) % frameCount;
-		sprite.setTextureRect(IntRect(index * (width / frameCount), 0, (width / frameCount), height));
+		UpdateLoopingAnimation(sprite, 1914, 142, 11, speed);
 		break;
 	}
 	case water_head_rising_texture:
 	{
-		int frameCount = 11;
-		int width =1452, height = 143;
-		int index = (int)(globalClock.getElapsedTime().asSeconds() * speed) % frameCount;
-		sprite.setTextureRect(IntRect(index * (width / frameCount), 0, (width / frameCount), height));
+		UpdateLoopingAnimation(sprite, 1452, 143, 11, speed);
 		break;
 	}
 	case water_head_falling_texture:
 	{
-		int frameCount = 11;
-		int width = 1430, height = 204;
-		int index = (int)(globalClock.getElapsedTime().asSeconds() * speed) % frameCount;
-		sprite.setTextureRect(IntRect(index * (width / frameCount), 0, (width / frameCount), height));
+		UpdateLoopingAnimation(sprite, 1430, 204, 11, speed);
 		break;
 	}
 
-
-
-
 	case fire_ice_steps_texture:
-		{
-		int frameCount = 3;
-		int width = 216, height = 88;
-		int index = (int)(globalClock.getElapsedTime().asSeconds() * speed) % frameCount;
-		sprite.setTextureRect(IntRect(index * (width / frameCount), 0, (width / frameCount), height));
+	{
+		UpdateLoopingAnimation(sprite, 216, 88, 3, speed);
 		break;
 	}
 	case water_ice_steps_texture:
 	{
-		int frameCount = 3;
-		int width =198, height = 110;
-		int index = (int)(globalClock.getElapsedTime().asSeconds() * speed) % frameCount;
-		sprite.setTextureRect(IntRect(index * (width / frameCount), 0, (width / frameCount), height));
+		UpdateLoopingAnimation(sprite, 198, 110, 3, speed);
 		break;
 	}
 
-
 	case fire_idle_body_texture:
-		break;
 	case water_body_idle_texture:
 		break;
 
 	case fire_idle_head_texture:
 	{
-		int frameCount = 19;
-		int width = 2470, height = 162;
-		int index = (int)(globalClock.getElapsedTime().asSeconds() * speed) % frameCount;
-		sprite.setTextureRect(IntRect(index * (width / frameCount), 0, (width / frameCount), height));
+		UpdateLoopingAnimation(sprite, 2470, 162, 19, speed);
 		break;
 	}
 	case water_head_idle_texture:
 	{
-		int frameCount = 30;
-		int width = 3900, height = 162;
-		int index = (int)(globalClock.getElapsedTime().asSeconds() * speed) % frameCount;
-		sprite.setTextureRect(IntRect(index * (width / frameCount), 0, (width / frameCount), height));
+		UpdateLoopingAnimation(sprite, 3900, 162, 30, speed);
 		break;
 	}
 
-
-	case fire_running_texture: {
-		int frameCount = 8;
-		int index = (int)(globalClock.getElapsedTime().asSeconds() * speed) % frameCount;
-		sprite.setTextureRect(IntRect(index * 130, 0, 130, 172));
+	case fire_running_texture:
+	{
+		UpdateLoopingAnimation(sprite, 1040, 172, 8, speed);
 		break;
 	}
 	case water_running_texture:
 	{
-		int frameCount = 8;
-		int width =1040, height = 172;
-		int index = (int)(globalClock.getElapsedTime().asSeconds() * speed) % frameCount;
-		sprite.setTextureRect(IntRect(index * (width / frameCount), 0, (width / frameCount), height));
+		UpdateLoopingAnimation(sprite, 1040, 172, 8, speed);
 		break;
 	}
 
 	case fire_stairs_texture:
 	case water_stairs_texture:
 	{
-		int frameCount = 30;
-		int width = 2130, height = 103;
-		int index;
-		
-		
-		index = (int)(playOnceClock.getElapsedTime().asSeconds() * speed);
-		if (index >= frameCount)
-			index = frameCount - 1;
-
-		sprite.setTextureRect(IntRect(index * (width / frameCount), 20, (width / frameCount), height));
+		UpdatePlayOnceAnimation(sprite, 2130, 103, 30, speed, 20);
 		break;
 	}
 
@@ -254,15 +197,8 @@ void UpdateAnimation(Sprite& sprite, LoadTexture texture) {
 	case TEMPORARY_GROUND:
 	{
 		float speed_temp = 4.0f;
-
-		int frameCount = 9;
-		int width = 5508, height = 132;
-	      
-		int index = (int)(globalClock.getElapsedTime().asSeconds() * speed_temp)%frameCount;
-		sprite.setTextureRect(IntRect(index* (width / frameCount), 0, (width / frameCount), height));
+		UpdateLoopingAnimation(sprite, 5508, 132, 9, speed_temp);
 		break;
-
-
 	}
 	case pusher_block_texture:
 	{
@@ -280,10 +216,6 @@ void UpdateAnimation(Sprite& sprite, LoadTexture texture) {
 		break;
 	}
 	case snow_slope_left_side_down_texture:
-	{
-		sprite.setTextureRect(IntRect(0, 0, 50, 51));
-		break;
-	}
 	case snow_slope_right_side_down_texture:
 	{
 		sprite.setTextureRect(IntRect(0, 0, 50, 51));
@@ -291,132 +223,69 @@ void UpdateAnimation(Sprite& sprite, LoadTexture texture) {
 	}
 	case wind_base_texture:
 	{
-		int frameCount = 4;
-		int width = 472, height = 80;
-		int index = (int)(globalClock.getElapsedTime().asSeconds() * speed) % frameCount;
-		sprite.setTextureRect(IntRect(index* (width / frameCount), 0, (width / frameCount), height));
+		UpdateLoopingAnimation(sprite, 472, 80, 4, speed);
 		break;
 	}
 	case wind_effect_texture:
 	{
-		int frameCount = 30;
-		int width = 3840, height = 241;
-		int index = (int)(globalClock.getElapsedTime().asSeconds() * speed) % frameCount;
-		sprite.setTextureRect(IntRect(index * (width / frameCount), 0, (width / frameCount), height));
+		UpdateLoopingAnimation(sprite, 3840, 241, 30, speed);
 		break;
 	}
 	case fire_door_open_texture:
-	{
-		int frameCount = 22;
-		int width =3586, height = 138;
-		int index = (int)(globalClock.getElapsedTime().asSeconds() * speed) % frameCount;
-		sprite.setTextureRect(IntRect(index * (width / frameCount), 0, (width / frameCount), height));
-		break;
-	}
 	case water_door_open_texture:
-	{
-		int frameCount = 22;
-		int width =3586, height = 138;
-		int index = (int)(globalClock.getElapsedTime().asSeconds() * speed) % frameCount;
-		sprite.setTextureRect(IntRect(index * (width / frameCount), 0, (width / frameCount), height));
-		break;
-	}
 	case fire_door_open_ice_texture:
-	{
-		int frameCount = 22;
-		int width = 3586, height = 138;
-		int index = (int)(globalClock.getElapsedTime().asSeconds() * speed) % frameCount;
-		sprite.setTextureRect(IntRect(index * (width / frameCount), 0, (width / frameCount), height));
-		break;
-	}
 	case water_door_open_ice_texture:
 	{
-		int frameCount = 22;
-		int width = 3586, height = 138;
-		int index = (int)(globalClock.getElapsedTime().asSeconds() * speed) % frameCount;
-		sprite.setTextureRect(IntRect(index * (width / frameCount), 0, (width / frameCount), height));
+		UpdateLoopingAnimation(sprite, 3586, 138, 22, speed);
 		break;
 	}
-	case fire_pond_texture: {
-		int frameCount = 15;
-		int index = (int)(globalClock.getElapsedTime().asSeconds() * speed) % frameCount;
-		sprite.setTextureRect(IntRect(index * 50, 0, 50, 50));
+	case fire_pond_texture:
+	{
+		UpdateLoopingAnimation(sprite, 750, 50, 15, speed);
+		break;
 	}
-	case fire_pond_right_texture: {
-		int frameCount = 15;
-		int index = (int)(globalClock.getElapsedTime().asSeconds() * speed) % frameCount;
-		sprite.setTextureRect(IntRect(index * 50, 0, 50, 44));
+	case fire_pond_right_texture:
+	{
+		UpdateLoopingAnimation(sprite, 750, 44, 15, speed);
 		break;
 	}
 	case fire_pond_left_texture:
 	{
-		int frameCount = 15;
-		int index = (int)(globalClock.getElapsedTime().asSeconds() * speed) % frameCount;
-		sprite.setTextureRect(IntRect(index * 50, 0, 50, 42));
+		UpdateLoopingAnimation(sprite, 750, 42, 15, speed);
 		break;
 	}
 
 	case water_pond_texture:
-	{
-		int frameCount = 15;
-		int index = (int)(globalClock.getElapsedTime().asSeconds() * speed) % frameCount;
-		sprite.setTextureRect(IntRect(index * 46, 0, 46, 47));
-		break;
-	}
 	case water_pond_right_texture:
-	{
-		int frameCount = 15;
-		int index = (int)(globalClock.getElapsedTime().asSeconds() * speed) % frameCount;
-		sprite.setTextureRect(IntRect(index * 46, 0, 46, 47));
-		break;
-	}
 	case water_pond_left_texture:
 	{
-		int frameCount = 15;
-		int index = (int)(globalClock.getElapsedTime().asSeconds() * speed) % frameCount;
-		sprite.setTextureRect(IntRect(index * 46, 0, 46, 47));
+		UpdateLoopingAnimation(sprite, 690, 47, 15, speed);
 		break;
 	}
 
 	case green_pond_texture:
 	{
-		
-			int frameCount = 15;
-			int width =750, height =50 ;
-			int index = (int)(globalClock.getElapsedTime().asSeconds() * speed) % frameCount;
-			sprite.setTextureRect(IntRect(index * (width / frameCount), 0, (width / frameCount), height));
-			break;
-		
+		UpdateLoopingAnimation(sprite, 750, 50, 15, speed);
+		break;
 	}
 	case green_pond_right_texture:
 	{
-
-		int frameCount = 15;
-		int width = 750, height = 43;
-		int index = (int)(globalClock.getElapsedTime().asSeconds() * speed) % frameCount;
-		sprite.setTextureRect(IntRect(index * (width / frameCount), 0, (width / frameCount), height));
+		UpdateLoopingAnimation(sprite, 750, 43, 15, speed);
 		break;
-
 	}
 	case green_pond_left_texture:
 	{
-
-		int frameCount = 15;
-		int width = 750, height = 42;
-		int index = (int)(globalClock.getElapsedTime().asSeconds() * speed) % frameCount;
-		sprite.setTextureRect(IntRect(index * (width / frameCount), 0, (width / frameCount), height));
+		UpdateLoopingAnimation(sprite, 750, 42, 15, speed);
 		break;
-
 	}
-	
+
 	case lever_stick_texture:
 		break;
 	case moving_platform_texture:
 		sprite.setTextureRect(IntRect(0, 0, 1032, 234));
 		break;
-	
+
 	case ramp_1_texture:
-		break;
 	case slider_dot_texture:
 		break;
 	case lever_light_texture:
@@ -429,56 +298,32 @@ void UpdateAnimation(Sprite& sprite, LoadTexture texture) {
 		sprite.setTextureRect(IntRect(0, 0, 209, 89));
 		break;
 	case Diamond0_texture:
-		break;
 	case Diamond1_texture:
-		break;
 	case Diamond2_texture:
-		break;
 	case Diamond3_texture:
-		break;	
 	case DiamondDark0_texture:
-		break;
 	case DiamondDark1_texture:
-		break;
 	case DiamondDark2_texture:
-		break;
 	case DiamondDark3_texture:
-		break;
 	case DiamondPuzzle0_texture:
-		break;
 	case DiamondPuzzle1_texture:
-		break;
 	case DiamondPuzzle2_texture:
-		break;
 	case DiamondPuzzle3_texture:
-		break;
 	case DiamondSpeed0_texture:
-		break;
 	case DiamondSpeed1_texture:
-		break;
 	case DiamondSpeed2_texture:
-		break;
 	case DiamondSpeed3_texture:
 		break;
 	case FxButton0_texture:
-		sprite.setTextureRect(IntRect(0, 0, 98, 82));
-		break;
 	case FxButton1_texture:
 		sprite.setTextureRect(IntRect(0, 0, 98, 82));
 		break;
 	case GoldLock0_texture:
-		break;
 	case Lock0_texture:
 		break;
 	case MusicButton0_texture:
-		sprite.setTextureRect(IntRect(0, 0, 113, 109));
-		break;
 	case MusicButton1_texture:
-		sprite.setTextureRect(IntRect(0, 0, 113, 109));
-		break;
 	case MuteButton0_texture:
-		sprite.setTextureRect(IntRect(0, 0, 113, 109));
-		break;
 	case MuteButton1_texture:
 		sprite.setTextureRect(IntRect(0, 0, 113, 109));
 		break;
@@ -507,7 +352,7 @@ void UpdateAnimation(Sprite& sprite, LoadTexture texture) {
 		sprite.setTextureRect(IntRect(300, 0, 300, 416));
 		break;
 	case main_menu_background_texture:
-		sprite.setTextureRect(IntRect(0, 0,1536, 1024));
+		sprite.setTextureRect(IntRect(0, 0, 1536, 1024));
 		break;
 	case game_name_texture:
 		sprite.setTextureRect(IntRect(0, 0, 860, 270));
@@ -522,78 +367,23 @@ void UpdateAnimation(Sprite& sprite, LoadTexture texture) {
 		sprite.setTextureRect(IntRect(0, 0, 93, 73));
 		break;
 	case diamonds_green_idle_texture:
-		sprite.setTextureRect(IntRect(0, 0, 128, 128));
-		break;
 	case diamonds_orange_idle_texture:
-		sprite.setTextureRect(IntRect(0, 0, 128, 128));
-		break;
 	case diamonds_purple_idle_texture:
 		sprite.setTextureRect(IntRect(0, 0, 128, 128));
 		break;
 	case dust_texture:
 	{
-		int speed = 15.f;
-		int frameCount = 60;
-		int width = 3240, height = 53;
-		int index = (int)(globalClock.getElapsedTime().asSeconds() * speed) % frameCount;
-		sprite.setTextureRect(IntRect(index * (width / frameCount), 0, (width / frameCount), height));
-		break;
-
-	}
-	case diamonds_green_texture: {
-		int frameCount = 8;
-		int width = 1024, height = 128;
-		int frameWidth = width / frameCount;
-		
-		float speed = 30.f;
-
-		int index = (int)(playOnceClock.getElapsedTime().asSeconds() * speed);
-
-		if (index >= frameCount) {
-			index = frameCount - 1;
-		
-		}
-
-		sprite.setTextureRect(sf::IntRect(index * frameWidth, 0, frameWidth, height));
+		UpdateLoopingAnimation(sprite, 3240, 53, 60, 15.f);
 		break;
 	}
-	case diamonds_orange_texture: {
-		int frameCount = 8;
-		int width = 1024, height = 128;
-		int frameWidth = width / frameCount;
-
-		
-		float speed = 30.f;
-
-		int index = (int)(playOnceClock.getElapsedTime().asSeconds() * speed);
-
-		if (index >= frameCount) {
-			index = frameCount - 1;
-
-		}
-
-		sprite.setTextureRect(sf::IntRect(index * frameWidth, 0, frameWidth, height));
+	case diamonds_green_texture:
+	case diamonds_orange_texture:
+	case diamonds_purple_texture:
+	{
+		UpdatePlayOnceAnimation(sprite, 1024, 128, 8, 30.f);
 		break;
 	}
-	case diamonds_purple_texture: {
-		int frameCount = 8;
-		int width = 1024, height = 128;
-		int frameWidth = width / frameCount;
 
-	    
-		float speed = 30.f;
-
-		int index = (int)(playOnceClock.getElapsedTime().asSeconds() * speed) ;
-
-		if (index >= frameCount) {
-			index = frameCount - 1;
-
-		}
-
-		sprite.setTextureRect(sf::IntRect(index * frameWidth, 0, frameWidth, height));
-		break;
-	}
-	
 	default:
 		break;
 	}
@@ -602,9 +392,9 @@ void UpdateAnimation(Sprite& sprite, LoadTexture texture) {
 void UpdateTexturePlayer(Sprite& sprite, PlayerType type, PlayerState newState, bool Head = false) {
 
 	if (!Head)
-	switch (type)
-	{
-	case Fireboy:
+		switch (type)
+		{
+		case Fireboy:
 			switch (newState)
 			{
 			case Walk:
@@ -616,7 +406,7 @@ void UpdateTexturePlayer(Sprite& sprite, PlayerType type, PlayerState newState, 
 			default:
 				break;
 			}
-		break;
+			break;
 		case Watergirl:
 			switch (newState)
 			{
@@ -630,9 +420,9 @@ void UpdateTexturePlayer(Sprite& sprite, PlayerType type, PlayerState newState, 
 				break;
 			}
 			break;
-	default:
-		break;
-	}
+		default:
+			break;
+		}
 
 	else
 		switch (type)
@@ -680,26 +470,17 @@ void UpdateTexturePlayer(Sprite& sprite, PlayerType type, PlayerState newState, 
 		}
 
 }
-void UpdateAnimationPlayer(Sprite& sprite, PlayerType type,PlayerState state, bool Head = false)
+
+void UpdateAnimationPlayer(Sprite& sprite, PlayerType type, PlayerState state, bool Head = false)
 {
 	float speed = 25.0f;
-	float width = 10, height = 0;
 
 	if (!Head) {
-		
-		
-		
 		if (state == Walk) {
-			int frameCount = 8;
-			int index = (int)(globalClock.getElapsedTime().asSeconds() * speed) % frameCount;
-			float width = 1040, height = 170;
-		      
-			sprite.setTextureRect(IntRect(index * (width / frameCount), 0, (width/frameCount), height));
+			UpdateLoopingAnimation(sprite, 1040, 170, 8, speed);
 		}
 		else {
-			int framecount = 8;
-			float width = 1040, height = 170;
-			sprite.setTextureRect(IntRect(0, 0, (width/framecount), height));
+			SetAnimationFrame(sprite, 0, 1040, 170, 8);
 		}
 	}
 	else {
@@ -708,37 +489,21 @@ void UpdateAnimationPlayer(Sprite& sprite, PlayerType type,PlayerState state, bo
 			switch (state)
 			{
 			case Walk: {
-				int frameCount = 11;
-				int index = (int)(globalClock.getElapsedTime().asSeconds() * speed) % frameCount;
-				float width = 1716, height = 130;
-
-				sprite.setTextureRect(IntRect(index * (width / frameCount), 0, (width / frameCount), height));
+				UpdateLoopingAnimation(sprite, 1716, 130, 11, speed);
 				break;
 			}
-			case Jump_Rise:{
-				int frameCount = 5;
-				int index = (int)(globalClock.getElapsedTime().asSeconds() * speed) % frameCount;
-				float width = 530, height = 130;
-
-				sprite.setTextureRect(IntRect(index * (width / frameCount), 0, (width / frameCount), height));
+			case Jump_Rise: {
+				UpdateLoopingAnimation(sprite, 530, 130, 5, speed);
 				break;
 			}
 			case Fall:
 			{
-				int frameCount = 5;
-				int index = (int)(globalClock.getElapsedTime().asSeconds() * speed) % frameCount;
-				float width = 650, height = 162;
-
-				sprite.setTextureRect(IntRect(index * (width / frameCount), 0, (width / frameCount), height));
+				UpdateLoopingAnimation(sprite, 650, 162, 5, speed);
 				break;
 			}
 			case Idle:
 			{
-				int frameCount = 19;
-				int index = (int)(globalClock.getElapsedTime().asSeconds() * speed) % frameCount;
-				float width = 2470, height = 162;
-
-				sprite.setTextureRect(IntRect(index * (width / frameCount), 0, (width / frameCount), height));
+				UpdateLoopingAnimation(sprite, 2470, 162, 19, speed);
 				break;
 			}
 			default:
@@ -749,42 +514,23 @@ void UpdateAnimationPlayer(Sprite& sprite, PlayerType type,PlayerState state, bo
 			switch (state)
 			{
 			case Walk: {
-				int frameCount = 11;
-				int index = (int)(globalClock.getElapsedTime().asSeconds() * speed) % frameCount;
-				float width = 1914, height = 142;
-
-				sprite.setTextureRect(IntRect(index * (width / frameCount), 0, (width / frameCount), height));
+				UpdateLoopingAnimation(sprite, 1914, 142, 11, speed);
 				break;
 			}
 			case Jump_Rise: {
-				int frameCount = 11;
-				int index = (int)(globalClock.getElapsedTime().asSeconds() * speed) % frameCount;
-				float width = 1452, height = 143;
-
-				sprite.setTextureRect(IntRect(index * (width / frameCount), 0, (width / frameCount), height));
+				UpdateLoopingAnimation(sprite, 1452, 143, 11, speed);
 				break;
 			}
 			case Fall:
 			{
-				int frameCount = 11;
-				int index = (int)(globalClock.getElapsedTime().asSeconds() * speed) % frameCount;
-				float width = 1430, height = 204;
-
-				sprite.setTextureRect(IntRect(index * (width / frameCount), 0, (width / frameCount), height));
+				UpdateLoopingAnimation(sprite, 1430, 204, 11, speed);
 				break;
 			}
 			case Idle:
 			{
-				int frameCount = 30;
-				int index = (int)(globalClock.getElapsedTime().asSeconds() * speed) % frameCount;
-				float width = 3900, height = 162;
-
-				sprite.setTextureRect(IntRect(index * (width / frameCount), 0, (width / frameCount), height));
+				UpdateLoopingAnimation(sprite, 3900, 162, 30, speed);
 				break;
-			
-	
 			}
-			
 			default:
 				break;
 			}
