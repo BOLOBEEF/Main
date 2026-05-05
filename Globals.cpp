@@ -8,7 +8,7 @@ Vector2u windowSize = window.getSize();
 View gameCamera = window.getDefaultView();
 Vector2f center = Vector2f(windowSize.x / 2.0f, windowSize.y / 2.0f);
 bool isFullscreen = true;
-bool developerMode = true;
+bool developerMode = false;
 
 
 void InitializeWindow() {
