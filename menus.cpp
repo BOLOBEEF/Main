@@ -24,17 +24,17 @@ enum DimState
 };
 DimState currentDimState = NoDimming;
 
-enum settingDimState
+enum MainMenuDimState
 {
-	NoSettingsDimming,
+	NoMainMenuDimming,
 
 	PauseToSettingsDimmingUp,
-	MainTo_SettingsOtCredits_DimmingUp,
+	MainTo_SettingsOrCreditsOrMode_DimmingUp,
 
 	PauseToSettingsDimmingDown,
-	MainTo_SettingsOrCredits_DimmingDown
+	MainTo_SettingsOrCreditsOrMode_DimmingDown
 };
-settingDimState currentSettingsDimState = NoSettingsDimming;
+MainMenuDimState currentMainMenuDimState = NoMainMenuDimming;
 
 // Runtime variables
 float dimingSpeed, dimPercentage = 0;
@@ -61,7 +61,7 @@ RectangleShape FadingTransitionBackground;
 Vector2f Target_up_mnu = Vector2f(windowSize.x / 2, windowSize.y / 2);
 Vector2f Target_Down_mnu = Vector2f(windowSize.x / 2, windowSize.y / 2 + 1000);
 Vector2f Current_position_mnu = Target_Down_mnu;
-Vector2f Current_position_SettingsOrCredits_mnu = Target_Down_mnu;
+Vector2f Current_position_SettingsOrCreditsOrMode_mnu = Target_Down_mnu;
 Vector2f Current_Target;
 
 Sprite Stone_mnu;
@@ -113,6 +113,10 @@ Text LevelNumber_mnu[2][3];
 Text LevelTimeRate1[2][3];
 Text LevelTimeRate2[2][3];
 
+//Mode Mennu
+Sprite ModeMenuBox_mnu;
+Sprite levelEditorButton_mnu, campaignButton_mnu, BackButton_Modemnu;
+
 //gameover
 Sprite GameOverbuttons_mnu[3];
 
@@ -148,6 +152,7 @@ Text OkButtontxt_MainToSetting;
 Text OkButtontxt_PauseToSetting;
 Text stopwatch_txt;
 Text MenusandSoundsCredits_txt[2], GamelogicCredits_txt[4], AnimationandTexturesCredits_txt[2];
+Text levelEditor_txt, campaign_txt, UserInterest_txt, back_Modetxt;
 
 Sprite cursorAndpointerSprite;
 
@@ -216,6 +221,7 @@ void initializeTutorialText_level4()
 		gameTutorials.elements[i].Initialize(font);
 	}
 }
+
 void UpdateTimeCounters() {
 	for (int i = 0; i < 2; i++)
 	{
@@ -240,6 +246,7 @@ void UpdateTimeCounters() {
 		}
 	}
 }
+
 void UpdateGemIcons() {
 	for (int i = 0; i < 2; i++)
 	{
@@ -262,6 +269,7 @@ void UpdateGemIcons() {
 		}
 	}
 }
+
 void changeCursorColor(Event event, bool inForestTemple)
 {
 	ApplyTexture(cursorAndpointerSprite, LoadTexture::cursor_texture, Vector2f(25, 30));
@@ -291,6 +299,7 @@ void changeCursorColor(Event event, bool inForestTemple)
 		}
 	}
 }
+
 void RatingCheck(bool maleAndFemale_case = false, bool DiamondCollection_case = false, bool BeforeTimeOut_case = false)
 {
 	int numberOfChecks = 0;
@@ -378,6 +387,7 @@ bool MouseInput_mnu(Event event, Sprite& ButtonClicked, LoadTexture Currnet_text
 
 	return false;
 }
+
 bool MuteSound(Event event, Sprite& ButtonClicked, Sprite& SameButton, LoadTexture Unmuted ,LoadTexture Muted, MenuSoundEffect Sound_Played_mnu, bool SoundOn)
 {
 	
@@ -512,39 +522,52 @@ void GameoverMenu_Movement(Vector2f Desired_Target)
 void SettingMenu_Movement(Vector2f Desired_Target, bool fromMain)
 {
 	Current_Target = Desired_Target;
-	Current_position_SettingsOrCredits_mnu = Damp(Current_position_SettingsOrCredits_mnu, Current_Target, 25, dt);
+	Current_position_SettingsOrCreditsOrMode_mnu = Damp(Current_position_SettingsOrCreditsOrMode_mnu, Current_Target, 25, dt);
 	if (fromMain)
 	{
-		SettingsMenuBox_MainToSetting.setPosition(Current_position_SettingsOrCredits_mnu);
-		SoundButton_MainToSetting.setPosition(Vector2f(700, 530) + Current_position_SettingsOrCredits_mnu - center);
-		MusicButton_MainToSetting.setPosition(Vector2f(1200, 530) + Current_position_SettingsOrCredits_mnu - center);
-		OkButton_MainToSetting.setPosition(Vector2f(1155, 750) + Current_position_SettingsOrCredits_mnu - center);
-		OkButtontxt_MainToSetting.setPosition(Vector2f(903, 710) + Current_position_SettingsOrCredits_mnu - center);
+		SettingsMenuBox_MainToSetting.setPosition(Current_position_SettingsOrCreditsOrMode_mnu);
+		SoundButton_MainToSetting.setPosition(Vector2f(700, 530) + Current_position_SettingsOrCreditsOrMode_mnu - center);
+		MusicButton_MainToSetting.setPosition(Vector2f(1200, 530) + Current_position_SettingsOrCreditsOrMode_mnu - center);
+		OkButton_MainToSetting.setPosition(Vector2f(1155, 750) + Current_position_SettingsOrCreditsOrMode_mnu - center);
+		OkButtontxt_MainToSetting.setPosition(Vector2f(903, 710) + Current_position_SettingsOrCreditsOrMode_mnu - center);
 	}
 	else
 	{
-		SettingsMenuBox_PauseToSetting.setPosition(Current_position_SettingsOrCredits_mnu);
-		SoundButton_PauseToSetting.setPosition(Vector2f(700, 530) + Current_position_SettingsOrCredits_mnu - center);
-		MusicButton_PauseToSetting.setPosition(Vector2f(1200, 530) + Current_position_SettingsOrCredits_mnu - center);
-		OkButton_PauseToSetting.setPosition(Vector2f(1155, 750) + Current_position_SettingsOrCredits_mnu - center);
-		OkButtontxt_PauseToSetting.setPosition(Vector2f(903, 710) + Current_position_SettingsOrCredits_mnu - center);
+		SettingsMenuBox_PauseToSetting.setPosition(Current_position_SettingsOrCreditsOrMode_mnu);
+		SoundButton_PauseToSetting.setPosition(Vector2f(700, 530) + Current_position_SettingsOrCreditsOrMode_mnu - center);
+		MusicButton_PauseToSetting.setPosition(Vector2f(1200, 530) + Current_position_SettingsOrCreditsOrMode_mnu - center);
+		OkButton_PauseToSetting.setPosition(Vector2f(1155, 750) + Current_position_SettingsOrCreditsOrMode_mnu - center);
+		OkButtontxt_PauseToSetting.setPosition(Vector2f(903, 710) + Current_position_SettingsOrCreditsOrMode_mnu - center);
 	}
 	// I Will Handle this After You finish Settings Menu
 }
 void CreditsMenu_Movement(Vector2f Desired_Target)
 {
 	Current_Target = Desired_Target;
-	Current_position_SettingsOrCredits_mnu = Damp(Current_position_SettingsOrCredits_mnu, Current_Target, 25, dt);
-	CreditsMenuBox_mnu.setPosition(Current_position_SettingsOrCredits_mnu);
-	BackButtonCredits_mnu.setPosition(Vector2f(534, 790) + Current_position_SettingsOrCredits_mnu - center);
-	MenusandSoundsCredits_txt[0].setPosition(Vector2f(520, 250) + Current_position_SettingsOrCredits_mnu - center);
-	MenusandSoundsCredits_txt[1].setPosition(Vector2f(430, 320) + Current_position_SettingsOrCredits_mnu - center);
-	AnimationandTexturesCredits_txt[0].setPosition(Vector2f(975, 700) + Current_position_SettingsOrCredits_mnu - center);
-	AnimationandTexturesCredits_txt[1].setPosition(Vector2f(920, 770) + Current_position_SettingsOrCredits_mnu - center);
-	GamelogicCredits_txt[0].setPosition(Vector2f(830, 420) + Current_position_SettingsOrCredits_mnu - center);
-	GamelogicCredits_txt[1].setPosition(Vector2f(815, 490) + Current_position_SettingsOrCredits_mnu - center);
-	GamelogicCredits_txt[2].setPosition(Vector2f(765, 540) + Current_position_SettingsOrCredits_mnu - center);
-	GamelogicCredits_txt[3].setPosition(Vector2f(730, 590) + Current_position_SettingsOrCredits_mnu - center);
+	Current_position_SettingsOrCreditsOrMode_mnu = Damp(Current_position_SettingsOrCreditsOrMode_mnu, Current_Target, 25, dt);
+	CreditsMenuBox_mnu.setPosition(Current_position_SettingsOrCreditsOrMode_mnu);
+	BackButtonCredits_mnu.setPosition(Vector2f(534, 790) + Current_position_SettingsOrCreditsOrMode_mnu - center);
+	MenusandSoundsCredits_txt[0].setPosition(Vector2f(520, 250) + Current_position_SettingsOrCreditsOrMode_mnu - center);
+	MenusandSoundsCredits_txt[1].setPosition(Vector2f(430, 320) + Current_position_SettingsOrCreditsOrMode_mnu - center);
+	AnimationandTexturesCredits_txt[0].setPosition(Vector2f(975, 700) + Current_position_SettingsOrCreditsOrMode_mnu - center);
+	AnimationandTexturesCredits_txt[1].setPosition(Vector2f(920, 770) + Current_position_SettingsOrCreditsOrMode_mnu - center);
+	GamelogicCredits_txt[0].setPosition(Vector2f(830, 420) + Current_position_SettingsOrCreditsOrMode_mnu - center);
+	GamelogicCredits_txt[1].setPosition(Vector2f(815, 490) + Current_position_SettingsOrCreditsOrMode_mnu - center);
+	GamelogicCredits_txt[2].setPosition(Vector2f(765, 540) + Current_position_SettingsOrCreditsOrMode_mnu - center);
+	GamelogicCredits_txt[3].setPosition(Vector2f(730, 590) + Current_position_SettingsOrCreditsOrMode_mnu - center);
+}
+void ModeMenu_Movement(Vector2f Desired_Target)
+{
+	Current_Target = Desired_Target;
+	Current_position_SettingsOrCreditsOrMode_mnu = Damp(Current_position_SettingsOrCreditsOrMode_mnu, Current_Target, 25, dt);
+	ModeMenuBox_mnu.setPosition(Current_position_SettingsOrCreditsOrMode_mnu);
+	levelEditorButton_mnu.setPosition(Vector2f((windowSize.x / 2) + 40, (windowSize.y / 2) + 70) + Current_position_SettingsOrCreditsOrMode_mnu - center);
+	campaignButton_mnu.setPosition(Vector2f((windowSize.x / 2) + 510, (windowSize.y / 2) + 70) + Current_position_SettingsOrCreditsOrMode_mnu - center);
+	BackButton_Modemnu.setPosition(Vector2f((windowSize.x / 2 + 205), (windowSize.y / 2) + 220) + Current_position_SettingsOrCreditsOrMode_mnu - center);
+	UserInterest_txt.setPosition(Vector2f(windowSize.x / 2, windowSize.y / 2 - 160) + Current_position_SettingsOrCreditsOrMode_mnu - center);
+	levelEditor_txt.setPosition(levelEditorButton_mnu.getGlobalBounds().left + levelEditorButton_mnu.getGlobalBounds().width / 2, (levelEditorButton_mnu.getGlobalBounds().top + levelEditorButton_mnu.getGlobalBounds().height / 2) - 20);
+	campaign_txt.setPosition(campaignButton_mnu.getGlobalBounds().left + campaignButton_mnu.getGlobalBounds().width / 2, (campaignButton_mnu.getGlobalBounds().top + campaignButton_mnu.getGlobalBounds().height / 2) - 20);
+	back_Modetxt.setPosition(BackButton_Modemnu.getGlobalBounds().left + BackButton_Modemnu.getGlobalBounds().width / 2, (BackButton_Modemnu.getGlobalBounds().top + BackButton_Modemnu.getGlobalBounds().height / 2) - 20);
 }
 
 void InitializeMenu()
@@ -756,6 +779,22 @@ void InitializeMenu()
 	ApplyTexture(SettingButton_Pausemnu, LoadTexture::SettingsButton0_texture, Vector2f(105, 105));
 	SettingButton_Pausemnu.setPosition((Stone_mnu.getGlobalBounds().left + Stone_mnu.getGlobalBounds().width / 2) + 485, Stone_mnu.getGlobalBounds().top + 170);
 
+	//Mode Menu
+	ApplyTexture(ModeMenuBox_mnu, LoadTexture::menu_box_texture, Vector2f(windowSize.x - 600, windowSize.y - 250));
+	ModeMenuBox_mnu.setPosition(windowSize.x / 2, windowSize.y / 2);
+
+	ApplyTexture(levelEditorButton_mnu, LoadTexture::stone_button_0_texture, Vector2f(950, 170));
+	UpdateAnimation(levelEditorButton_mnu, stone_button_0_texture);
+	levelEditorButton_mnu.setPosition((windowSize.x / 2) - 35, (windowSize.y / 2) + 70);
+
+	ApplyTexture(campaignButton_mnu, LoadTexture::stone_button_0_texture, Vector2f(950, 170));
+	UpdateAnimation(campaignButton_mnu, stone_button_0_texture);
+	campaignButton_mnu.setPosition((windowSize.x / 2) + 435, (windowSize.y / 2) + 70);
+
+	ApplyTexture(BackButton_Modemnu, LoadTexture::stone_button_0_texture, Vector2f(700, 170));
+	UpdateAnimation(BackButton_Modemnu, stone_button_0_texture);
+	BackButton_Modemnu.setPosition((windowSize.x / 2 + 205), (windowSize.y / 2) + 220);
+
 	//Game Over menu
 
 	// stone background has been already set
@@ -819,7 +858,43 @@ void InitializeMenu()
 	stopwatch_txt.setOutlineColor(Color::Black);
 	stopwatch_txt.setOutlineThickness(5);
 
-	//Tutorial Text
+	//ModeMenu Text
+	levelEditor_txt.setFont(font);
+	levelEditor_txt.setCharacterSize(43);
+	levelEditor_txt.setFillColor(Color(230, 194, 0));
+	levelEditor_txt.setString("LEVEL EDITOR");
+	levelEditor_txt.setPosition(levelEditorButton_mnu.getGlobalBounds().left + levelEditorButton_mnu.getGlobalBounds().width / 2, levelEditorButton_mnu.getGlobalBounds().top + levelEditorButton_mnu.getGlobalBounds().height / 2);
+	levelEditor_txt.setOrigin(levelEditor_txt.getLocalBounds().width / 2, levelEditor_txt.getLocalBounds().height / 2);
+	levelEditor_txt.setOutlineColor(Color::Black);
+	levelEditor_txt.setOutlineThickness(5);
+
+	campaign_txt.setFont(font);
+	campaign_txt.setCharacterSize(50);
+	campaign_txt.setFillColor(Color(230, 194, 0));
+	campaign_txt.setString("CAMPAIGN");
+	campaign_txt.setPosition(campaignButton_mnu.getGlobalBounds().left + campaignButton_mnu.getGlobalBounds().width / 2, campaignButton_mnu.getGlobalBounds().top + campaignButton_mnu.getGlobalBounds().height / 2);
+	campaign_txt.setOrigin(campaign_txt.getLocalBounds().width / 2, campaign_txt.getLocalBounds().height / 2);
+	campaign_txt.setOutlineColor(Color::Black);
+	campaign_txt.setOutlineThickness(5);
+
+	back_Modetxt.setFont(font);
+	back_Modetxt.setCharacterSize(50);
+	back_Modetxt.setFillColor(Color(230, 194, 0));
+	back_Modetxt.setString("BACK");
+	back_Modetxt.setPosition(BackButton_Modemnu.getGlobalBounds().left + BackButton_Modemnu.getGlobalBounds().width / 2, (BackButton_Modemnu.getGlobalBounds().top + BackButton_Modemnu.getGlobalBounds().height / 2) - 20);
+	back_Modetxt.setOrigin(back_Modetxt.getLocalBounds().width / 2, back_Modetxt.getLocalBounds().height / 2);
+	back_Modetxt.setOutlineColor(Color::Black);
+	back_Modetxt.setOutlineThickness(5);
+
+	UserInterest_txt.setFont(font);
+	UserInterest_txt.setCharacterSize(65);
+	UserInterest_txt.setFillColor(Color(230, 194, 0));
+	UserInterest_txt.setString("YOUR INTEREST ?");
+	UserInterest_txt.setPosition(windowSize.x / 2, windowSize.y / 2 - 50);
+	UserInterest_txt.setOrigin(UserInterest_txt.getLocalBounds().width / 2, UserInterest_txt.getLocalBounds().height / 2);
+	UserInterest_txt.setOutlineColor(Color::Black);
+	UserInterest_txt.setOutlineThickness(5);
+	
 
 	//Pause menu text
 	End_Pausetxt.setFont(font);
@@ -955,6 +1030,7 @@ void InitializeMenu()
 	PauseMenu_Movement(Target_Down_mnu);
 	WinMenu_Movement(Target_Down_mnu);
 	GameoverMenu_Movement(Target_Down_mnu);
+	ModeMenu_Movement(Target_Down_mnu);
 
 	ApplyTexture(levelDiamond_Winmnu, LoadTexture::diamonds_purple_texture, Vector2f(150, 150));
 	UpdateAnimation(levelDiamond_Winmnu, diamonds_purple_texture);
@@ -970,26 +1046,23 @@ void HandleMenuInput(Event event)
 	{
 	case MAIN_MENU:
 		// code for handling main menu input
-		if (FadingUp || DimmingUp)
+		MouseInput_mnu(event, SettingsButton_Mainmnu, SettingsButton0_texture, SettingsButton0_texture, ButtonClick, SETTINGS, false);
+		if (MouseInput_mnu(event, PlayButton_mnu, PlayButton_texture, PlayButton_texture, ButtonClick, CustomLevelsMenu, false))
 		{
-			MouseInput_mnu(event, SettingsButton_Mainmnu, SettingsButton0_texture, SettingsButton0_texture, ButtonClick, SETTINGS, false);
-			if (MouseInput_mnu(event, PlayButton_mnu, PlayButton_texture, PlayButton_texture, ButtonClick, LEVEL_MENU, true))
-			{
-				noChangeInGameState = true;
-			}
-			if (!noChangeInGameState)
-			{
-				MouseInput_mnu(event, CreditsButton_mnu, CreditsButton_Texture, CreditsButton_Texture, ButtonClick, CREDITS, false);
-			}
-			if (event.type == Event::MouseButtonPressed && event.mouseButton.button == Mouse::Left)
-			{
-				if (ExitButton_mnu.getGlobalBounds().contains(mousePosition))
-				{
-					window.close();
-				}
-			}
-			changeCursorColor(event, true);
+			noChangeInGameState = true;
 		}
+		if (!noChangeInGameState)
+		{
+			MouseInput_mnu(event, CreditsButton_mnu, CreditsButton_Texture, CreditsButton_Texture, ButtonClick, CREDITS, false);
+		}
+		if (event.type == Event::MouseButtonPressed && event.mouseButton.button == Mouse::Left)
+		{
+			if (ExitButton_mnu.getGlobalBounds().contains(mousePosition))
+			{
+				window.close();
+			}
+		}
+		changeCursorColor(event, true);
 		break;
 	case LEVEL_MENU:
 		noChangeInGameState = false;
@@ -1094,6 +1167,14 @@ void HandleMenuInput(Event event)
 		MouseInput_mnu(event, BackButtonCredits_mnu, BackButtonFull0_texture, BackButtonFull0_texture, ButtonClick, MAIN_MENU, false);
 		changeCursorColor(event, true);
 		break;
+	case CustomLevelsMenu:
+		MouseInput_mnu(event, campaignButton_mnu, stone_button_0_texture, stone_button_1_texture, ButtonClick, LEVEL_MENU, true, campaign_txt);
+		MouseInput_mnu(event, levelEditorButton_mnu, stone_button_0_texture, stone_button_1_texture, ButtonClick, LevelEditor, true, levelEditor_txt);
+		if (MouseInput_mnu(event, BackButton_Modemnu, stone_button_0_texture, stone_button_1_texture, ButtonClick, MAIN_MENU, false, back_Modetxt))
+		{
+			noChangeInGameState = false;
+		}
+		break;
 	default:
 		break;
 	}
@@ -1156,6 +1237,9 @@ void OnUpdatedGameStateMenu() {
 			PlayMusic(Game_Slow);
 		}
 		break;
+	case CustomLevelsMenu:
+		PauseMusic();
+		break;
 	default:
 		break;
 	}
@@ -1189,7 +1273,7 @@ void UpdateUI()
 		if (LastWasSettings)
 		{
 			SettingMenu_Movement(Target_Down_mnu, true);
-			currentSettingsDimState = MainTo_SettingsOrCredits_DimmingDown;
+			currentMainMenuDimState = MainTo_SettingsOrCreditsOrMode_DimmingDown;
 		}
 		else if (lastGameState == GAMEOVER)
 		{
@@ -1199,7 +1283,12 @@ void UpdateUI()
 		else if (lastGameState == CREDITS)
 		{
 			CreditsMenu_Movement(Target_Down_mnu);
-			currentSettingsDimState = MainTo_SettingsOrCredits_DimmingDown;
+			currentMainMenuDimState = MainTo_SettingsOrCreditsOrMode_DimmingDown;
+		}
+		else if (lastGameState == CustomLevelsMenu)
+		{
+			ModeMenu_Movement(Target_Down_mnu);
+			currentMainMenuDimState = MainTo_SettingsOrCreditsOrMode_DimmingDown;
 		}
 		Settings_from_MainMenu = true;
 		break;
@@ -1217,6 +1306,11 @@ void UpdateUI()
 		{
 			WinMenu_Movement(Target_Down_mnu);
 		}
+		else if (lastGameState == CustomLevelsMenu)
+		{
+			ModeMenu_Movement(Target_Down_mnu);
+			currentMainMenuDimState = MainTo_SettingsOrCreditsOrMode_DimmingDown;
+		}
 
 		break;
 	case PAUSE_MENU:
@@ -1227,7 +1321,7 @@ void UpdateUI()
 		if (LastWasSettings)
 		{
 			SettingMenu_Movement(Target_Down_mnu, false);
-			currentSettingsDimState = PauseToSettingsDimmingDown;
+			currentMainMenuDimState = PauseToSettingsDimmingDown;
 		}
 		currentDimState = DimmingUp;
 		Settings_from_MainMenu = false;
@@ -1290,12 +1384,12 @@ void UpdateUI()
 		if (MainMenuSettings)
 		{
 			SettingMenu_Movement(Target_up_mnu, true);
-			currentSettingsDimState = MainTo_SettingsOtCredits_DimmingUp;
+			currentMainMenuDimState = MainTo_SettingsOrCreditsOrMode_DimmingUp;
 		}
 		else
 		{
 			SettingMenu_Movement(Target_up_mnu, false);
-			currentSettingsDimState = PauseToSettingsDimmingUp;
+			currentMainMenuDimState = PauseToSettingsDimmingUp;
 		}
 		LastWasSettings = true;
 		
@@ -1340,7 +1434,14 @@ void UpdateUI()
 		lastGameState = CREDITS;
 		clockTikingSpeed = 0;
 		CreditsMenu_Movement(Target_up_mnu);
-		currentSettingsDimState = MainTo_SettingsOtCredits_DimmingUp;
+		currentMainMenuDimState = MainTo_SettingsOrCreditsOrMode_DimmingUp;
+		LastWasSettings = false;
+		break;
+	case CustomLevelsMenu:
+		lastGameState = CustomLevelsMenu;
+		clockTikingSpeed = 0;
+		ModeMenu_Movement(Target_up_mnu);
+		currentMainMenuDimState = MainTo_SettingsOrCreditsOrMode_DimmingUp;
 		LastWasSettings = false;
 		break;
 	default:
@@ -1394,44 +1495,44 @@ void UpdateUI()
 		}
 	}
 
-	if (currentSettingsDimState == PauseToSettingsDimmingUp)
+	if (currentMainMenuDimState == PauseToSettingsDimmingUp)
 	{
 		settingAndCredits_DimmingSpeed = 35.0f;
 		settingsAndCreditsDimPercentage += settingAndCredits_DimmingSpeed * dt;
 		if (settingsAndCreditsDimPercentage >= 60)
 		{
 			settingsAndCreditsDimPercentage = 60;
-			currentSettingsDimState = NoSettingsDimming;
+			currentMainMenuDimState = NoMainMenuDimming;
 		}
 	}
-	else if (currentSettingsDimState == PauseToSettingsDimmingDown)
+	else if (currentMainMenuDimState == PauseToSettingsDimmingDown)
 	{
 		settingAndCredits_DimmingSpeed = 55.0f;
 		settingsAndCreditsDimPercentage -= settingAndCredits_DimmingSpeed * dt;
 		if (settingsAndCreditsDimPercentage <= 0)
 		{
 			settingsAndCreditsDimPercentage = 0;
-			currentSettingsDimState = NoSettingsDimming;
+			currentMainMenuDimState = NoMainMenuDimming;
 		}
 	}
-	else if (currentSettingsDimState == MainTo_SettingsOtCredits_DimmingUp)
+	else if (currentMainMenuDimState == MainTo_SettingsOrCreditsOrMode_DimmingUp)
 	{
 		settingAndCredits_DimmingSpeed = 155.0f;
 		settingsAndCreditsDimPercentage += settingAndCredits_DimmingSpeed * dt;
 		if (settingsAndCreditsDimPercentage >= 150)
 		{
 			settingsAndCreditsDimPercentage = 150;
-			currentSettingsDimState = NoSettingsDimming;
+			currentMainMenuDimState = NoMainMenuDimming;
 		}
 	}
-	else if (currentSettingsDimState == MainTo_SettingsOrCredits_DimmingDown)
+	else if (currentMainMenuDimState == MainTo_SettingsOrCreditsOrMode_DimmingDown)
 	{
 		settingAndCredits_DimmingSpeed = 190.0f;
 		settingsAndCreditsDimPercentage -= settingAndCredits_DimmingSpeed * dt;
 		if (settingsAndCreditsDimPercentage <= 0)
 		{
 			settingsAndCreditsDimPercentage = 0;
-			currentSettingsDimState = NoSettingsDimming;
+			currentMainMenuDimState = NoMainMenuDimming;
 		}
 	}
 
@@ -1461,7 +1562,7 @@ void DrawUI()
 
 		window.draw(settingsAndCredits_Dimmed_Background);
 		
-		if (Current_position_SettingsOrCredits_mnu != Target_Down_mnu)
+		if (Current_position_SettingsOrCreditsOrMode_mnu != Target_Down_mnu)
 		{
 			if (LastWasSettings)
 			{
@@ -1487,6 +1588,17 @@ void DrawUI()
 				{
 					window.draw(AnimationandTexturesCredits_txt[i]);
 				}
+			}
+			else if (lastGameState == CustomLevelsMenu)
+			{
+				window.draw(ModeMenuBox_mnu);
+				window.draw(campaignButton_mnu);
+				window.draw(levelEditorButton_mnu);
+				window.draw(BackButton_Modemnu);
+				window.draw(campaign_txt);
+				window.draw(levelEditor_txt);
+				window.draw(back_Modetxt);
+				window.draw(UserInterest_txt);
 			}
 		}
 		
@@ -1576,7 +1688,7 @@ void DrawUI()
 		window.draw(Retry_Pausetxt);
 		window.draw(Resume_Pausetxt);
 		window.draw(Pause_txt);
-		if (Current_position_SettingsOrCredits_mnu != Target_Down_mnu)
+		if (Current_position_SettingsOrCreditsOrMode_mnu != Target_Down_mnu)
 		{
 			if (LastWasSettings)
 			{
@@ -1742,18 +1854,41 @@ void DrawUI()
 		
 		window.draw(CreditsMenuBox_mnu);
 		window.draw(BackButtonCredits_mnu);
-			for (int i = 0; i < 2; i++)
-			{
-				window.draw(MenusandSoundsCredits_txt[i]);
-			}
-			for (int i = 0; i < 4; i++)
-			{
-				window.draw(GamelogicCredits_txt[i]);
-			}
-			for (int i = 0; i < 2; i++)
-			{
-				window.draw(AnimationandTexturesCredits_txt[i]);
-			}
+		for (int i = 0; i < 2; i++)
+		{
+			window.draw(MenusandSoundsCredits_txt[i]);
+		}
+		for (int i = 0; i < 4; i++)
+		{
+			window.draw(GamelogicCredits_txt[i]);
+		}
+		for (int i = 0; i < 2; i++)
+		{
+			window.draw(AnimationandTexturesCredits_txt[i]);
+		}
+		break;
+	case CustomLevelsMenu:
+		window.draw(MainMenuBackground_mnu);
+		window.draw(GameName_mnu);
+		window.draw(PlayButton_mnu);
+		window.draw(CreditsButton_mnu);
+		window.draw(ExitButton_mnu);
+		window.draw(SettingsButton_Mainmnu);
+		window.draw(IdleFbBodymnu);
+		window.draw(IdleFbHeadmnu);
+		window.draw(IdleWgBodymnu);
+		window.draw(IdleWgHeadmnu);
+
+		window.draw(settingsAndCredits_Dimmed_Background);
+
+		window.draw(ModeMenuBox_mnu);
+		window.draw(campaignButton_mnu);
+		window.draw(levelEditorButton_mnu);
+		window.draw(BackButton_Modemnu);
+		window.draw(campaign_txt);
+		window.draw(levelEditor_txt);
+		window.draw(back_Modetxt);
+		window.draw(UserInterest_txt);
 		break;
 	default:
 		break;
