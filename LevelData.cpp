@@ -24,6 +24,7 @@ int editPondWidth = 5;
 int editPondWidthMinimum = 4;
 int currentPlantIndex = 0;
 int plantsCount = 8;
+bool isDeleting = false;
 
 enum EditMode
 {
@@ -161,11 +162,17 @@ struct Level
 	int currentLevelIndex = 0;
 	int customLevelIndex = 0;
 	bool forceRestart = false;
+	bool enableCamera = true;
 
 
 	ColliderList colliders;
 	ObjectList objects;
 	PlantList plants;
+
+	Sprite displayCollider;
+	Vector2f lastDisplayColliderPosition;
+	Object displayObject;
+	Plant displayPlant;
 
 	bool isSnowLevel = false;
 	Clock timeSinceLevelLoad;	// used to delay the start of updating the gameCamera
@@ -1124,6 +1131,9 @@ struct Level
 
 		timeSinceLevelLoad.restart();
 		gameCamera.setCenter(center);
+
+		ApplyTexture(displayCollider, RECTANGLE, Vector2f(32, 32));
+		displayObject = Object(Object::GemObject);
 	}
 
 	void EraseData()
@@ -1190,6 +1200,11 @@ struct Level
 		{
 			LoadCustomLevel();
 		}
+
+		if (gameState == GAME)
+			enableCamera = true;
+		else
+			enableCamera = false;
 	}
 
 	// printing
@@ -1289,6 +1304,48 @@ struct Level
 		cout << message << endl;
 	}
 
+	void UpdateDisplayColliderColor(bool forceDisable = false) {
+		bool canPlaceCollider = true;
+
+		if (forceDisable) {
+			canPlaceCollider = false;
+			displayCollider.setColor(SetColorAlpha(Color::Red, 100));
+			return;
+		}
+
+		for (int i = 0; i < colliders.count; i++)
+		{
+			float reduction = 2.0f;
+			FloatRect bounds = colliders.elements[i].sprite.getGlobalBounds();
+			bounds = FloatRect(bounds.left + reduction, bounds.top + reduction, bounds.width - 2 * reduction, bounds.height - 2 * reduction);
+			if (bounds.intersects(displayCollider.getGlobalBounds())) {
+				canPlaceCollider = false;
+				break;
+			}
+		}
+
+		if (canPlaceCollider)
+			displayCollider.setColor(SetColorAlpha(Color::White, 100));
+		else
+			displayCollider.setColor(SetColorAlpha(Color::Red, 100));
+	}
+	void UpdateDisplayColliderTexture() {
+		Color startColor = displayCollider.getColor();
+		switch (editColliderMode)
+		{
+		case Rectangle: ApplyTexture(displayCollider, RECTANGLE, Vector2f(), Vector2f(), true, false);
+			break;
+		case Triangle: ApplyTexture(displayCollider, TRIANGLE, Vector2f(), Vector2f(), true, false);
+			break;
+		case Triangle_Rotated: ApplyTexture(displayCollider, TRIANGLE_ROTATED, Vector2f(), Vector2f(), true, false);
+			break;
+		default:
+			break;
+		}
+		displayCollider.setColor(startColor);
+
+		//UpdateDisplayColliderTexture();
+	}
 	void EditMode(Event event) {
 		// EDITING MANUAL:
 		// left click to add object, right click to remove object
@@ -1302,7 +1359,7 @@ struct Level
 		if (event.type == Event::MouseButtonPressed) {
 			if (editMode == EditMode::collider_mode)
 			{
-				if (event.mouseButton.button == Mouse::Left) {
+				if (event.mouseButton.button == Mouse::Left && !isDeleting) {
 					// add object
 					if (editScale.x <= 0) editScale.x = 1;
 					if (editScale.y <= 0) editScale.y = 1;
@@ -1344,11 +1401,12 @@ struct Level
 					if (!isColliding) {
 						colliders.Add(collider);
 						UpdateGroundTexture();
+						UpdateDisplayColliderColor(true);
 					}
 				}
 
 
-				else if (event.mouseButton.button == Mouse::Right) {
+				else if (event.mouseButton.button == Mouse::Left && isDeleting) {
 					// remove object
 					for (int i = 0; i < colliders.count; i++) {
 						if (colliders.elements[i].sprite.getGlobalBounds().contains(cameraMousePosition) && colliders.elements[i].editable) {
@@ -1360,7 +1418,7 @@ struct Level
 			}
 			else if (editMode == EditMode::object_mode)
 			{
-				if (event.mouseButton.button == Mouse::Left)
+				if (event.mouseButton.button == Mouse::Left && !isDeleting)
 					switch (editObjectMode)
 					{
 					case FireGem_mode:
@@ -1427,16 +1485,7 @@ struct Level
 					case Button_mode:
 						if (isEditingDoor)
 							if (objects.elements[doorIndex].type == Object::DoorObject)
-								if (objects.elements[doorIndex].data.door.lastButtonAdded)
-								{
-									objects.elements[doorIndex].data.door.button1 = Click(cameraMousePosition, true);
-									objects.elements[doorIndex].data.door.lastButtonAdded = false;
-								}
-								else
-								{
-									objects.elements[doorIndex].data.door.button2 = Click(cameraMousePosition, true);
-									objects.elements[doorIndex].data.door.lastButtonAdded = true;
-								}
+								objects.elements[doorIndex].data.door.AddButton(cameraMousePosition);
 							else
 							{
 								isEditingDoor = false; // break out of door edit mode since the door has been removed
@@ -1453,7 +1502,7 @@ struct Level
 				// check collision with other objects	
 				// Object.CheckCollisionWithObjects(objects);
 
-				else if (event.mouseButton.button == Mouse::Right)
+				else if (event.mouseButton.button == Mouse::Left && isDeleting)
 					// remove object
 					for (int i = 0; i < objects.count; i++)
 					{
@@ -1488,12 +1537,12 @@ struct Level
 					}
 			}
 			else if (editMode == plant_mode) {
-				if (event.mouseButton.button == Mouse::Left)
+				if (event.mouseButton.button == Mouse::Left && !isDeleting)
 				{
 					plants.Add(Plant(cameraMousePosition, currentPlantIndex));
 				}
 
-				if (event.mouseButton.button == Mouse::Right)
+				if (event.mouseButton.button == Mouse::Left && isDeleting)
 				{
 					for (int i = 0; i < plants.count; i++)
 					{
@@ -1513,6 +1562,10 @@ struct Level
 					editMode = EditMode::plant_mode;
 				else if (editMode == EditMode::plant_mode)
 					editMode = EditMode::collider_mode;
+			}
+
+			if (event.key.code == Keyboard::U) {
+				isDeleting = !isDeleting;
 			}
 
 			if (event.key.code == Keyboard::P) {
@@ -1609,23 +1662,48 @@ struct Level
 				}
 
 				if (event.key.code == Keyboard::Numpad4)
+				{
 					editScale.x--;
+					if (editScale.x <= 0) editScale.x = 1;
+					if (editScale.y <= 0) editScale.y = 1;
+				}
 				if (event.key.code == Keyboard::Numpad6)
+				{
 					editScale.x++;
+					if (editScale.x <= 0) editScale.x = 1;
+					if (editScale.y <= 0) editScale.y = 1;
+				}
 				if (event.key.code == Keyboard::Numpad2)
+				{
 					editScale.y--;
+					if (editScale.x <= 0) editScale.x = 1;
+					if (editScale.y <= 0) editScale.y = 1;
+				}
 				if (event.key.code == Keyboard::Numpad8)
+				{
 					editScale.y++;
+					if (editScale.x <= 0) editScale.x = 1;
+					if (editScale.y <= 0) editScale.y = 1;
+				}
 
 
 				if (event.key.code == Keyboard::Num1)
+				{
 					editColliderMode = EditColliderMode::Rectangle;
+					UpdateDisplayColliderTexture();
+				}
 
 				if (event.key.code == Keyboard::Num2)
+				{
 					editColliderMode = EditColliderMode::Triangle;
+					UpdateDisplayColliderTexture();
+				}
 
 				if (event.key.code == Keyboard::Num3)
+				{
 					editColliderMode = EditColliderMode::Triangle_Rotated;
+					UpdateDisplayColliderTexture();
+				}
 			}
 			else if (editMode == EditMode::object_mode)
 			{
@@ -1646,7 +1724,7 @@ struct Level
 					editPondWidth++;
 				}
 
-				if (event.key.code == Keyboard::U) {
+				if (event.key.code == Keyboard::Y) {
 					// add button or lever to door
 					for (int i = 0; i < objects.count; i++)
 						if (objects.elements[i].data.CheckContainsPoint(cameraMousePosition) && objects.elements[i].type == Object::DoorObject)
@@ -1722,6 +1800,224 @@ struct Level
 
 	}
 
+	void SetSpriteOverBounds(Sprite& sprite, FloatRect otherBounds) {
+		sprite.setPosition(Vector2f(otherBounds.left, otherBounds.top));
+		SetSpriteSize(sprite, Vector2f(otherBounds.width, otherBounds.height));
+	}
+	void SetRectangleOverBounds(RectangleShape& shape, FloatRect otherBounds) {
+		shape.setPosition(Vector2f(otherBounds.left, otherBounds.top));
+		shape.setSize(Vector2f(otherBounds.width, otherBounds.height));
+	}
+	void VisualizeLevelEditor() {
+		// level editor visualization
+		if (!isDeleting)
+			switch (editMode)
+			{
+			case collider_mode:
+				displayCollider.setPosition(cameraMousePosition);
+				Allign(displayCollider);
+				SetSpriteSize(displayCollider, Vector2f(editScale.x * 32, editScale.y * 32));
+			
+				if (editColliderMode == Triangle_Rotated)
+					displayCollider.scale(-1, 1);
+
+
+			
+				if (lastDisplayColliderPosition != displayCollider.getPosition())
+					UpdateDisplayColliderColor();
+
+				lastDisplayColliderPosition = displayCollider.getPosition();
+
+				window.draw(displayCollider);
+				break;
+			case object_mode:
+
+				switch (editObjectMode)
+				{
+				case FireGem_mode:
+					displayObject = Object(Object::GemObject);
+					displayObject.InitializeGemObject(Gem::fireGem, cameraMousePosition);
+					break;
+				case WaterGem_mode:
+					displayObject = Object(Object::GemObject);
+					displayObject.InitializeGemObject(Gem::waterGem, cameraMousePosition);
+					break;
+				case Door_mode:
+					displayObject = Object(Object::DoorObject);
+					displayObject.InitializeDoorObject(cameraMousePosition, cameraMousePosition + Vector2f(0, -100), false);
+					break;
+				case Door_Rotated_mode:
+					displayObject = Object(Object::DoorObject);
+					displayObject.InitializeDoorObject(cameraMousePosition, cameraMousePosition + Vector2f(0, -100), true);
+					break;
+				case FirePond_mode:
+					displayObject = Object(Object::PondObject);
+					displayObject.InitializePondObject(Pond::FIRE_POND, cameraMousePosition, editPondWidth);
+					UpdateGroundTexture(); // update ground texture to add the pond mask
+					break;
+				case WaterPond_mode:
+					displayObject = Object(Object::PondObject);
+					displayObject.InitializePondObject(Pond::WATER_POND, cameraMousePosition, editPondWidth);
+					UpdateGroundTexture(); // update ground texture to add the pond mask
+					break;
+				case PoisonPond_mode:
+					displayObject = Object(Object::PondObject);
+					displayObject.InitializePondObject(Pond::POISON_POND, cameraMousePosition, editPondWidth);
+					UpdateGroundTexture(); // update ground texture to add the pond mask
+					break;
+				case Box_mode:
+					displayObject = Object(Object::BoxObject);
+					displayObject.InitializeBoxObject(cameraMousePosition);
+					break;
+				case TemporaryGround_mode:
+					displayObject = Object(Object::TemporaryGroundObject);
+					displayObject.InitializeTemporaryGroundObject(cameraMousePosition);
+					break;
+				case FanObject_mode:
+					displayObject = Object(Object::FanObject);
+					displayObject.InitializeFanObject(cameraMousePosition);
+					break;
+				case SnowObject_LeftDown_mode:
+					displayObject = Object(Object::SnowObject);
+					displayObject.InitializeSnowObject(Snow::LeftDown, cameraMousePosition);
+					break;
+				case SnowObject_Normal_mode:
+					displayObject = Object(Object::SnowObject);
+					displayObject.InitializeSnowObject(Snow::Normal, cameraMousePosition);
+					break;
+				case SnowObject_RightDown_mode:
+					displayObject = Object(Object::SnowObject);
+					displayObject.InitializeSnowObject(Snow::RightDown, cameraMousePosition);
+					break;
+				case Button_mode:
+					if (isEditingDoor)
+					{
+						Click button = Click(cameraMousePosition, true);
+						button.draw_click();
+					}
+					break;
+				case Lever_mode:
+					if (isEditingDoor)
+					{
+						Lever lever = Lever(cameraMousePosition, true);
+						lever.leverDraw();
+					}
+					break;
+				}
+
+
+				if (!isEditingDoor)
+				{
+					displayObject.PreDraw();
+					displayObject.MidDraw();
+					displayObject.PostDraw();
+				}
+
+				for (int i = 0; i < objects.count; i++)
+					if (objects.elements[i].type == Object::DoorObject) {
+						CircleShape targetPoint = CircleShape(5.0f);
+						targetPoint.setOrigin(targetPoint.getLocalBounds().width / 2.0f, targetPoint.getLocalBounds().height / 2.0f);
+						targetPoint.setPosition(objects.elements[i].data.door.endPosition);
+						targetPoint.setFillColor(SetColorAlpha(Color::Red, 180));
+						targetPoint.setOutlineColor(Color::Black);
+						targetPoint.setOutlineThickness(2.0f);
+						window.draw(targetPoint);
+					}
+
+				break;
+			case plant_mode:
+			{
+				Plant plant = Plant(cameraMousePosition, currentPlantIndex);
+				plant.Draw();
+			}
+				break;
+			default:
+				break;
+			}
+		else
+		{
+			Sprite deleteIndicator;
+
+			switch (editMode)
+			{
+			case collider_mode:
+			{
+				for (int i = 0; i < colliders.count; i++) {
+					FloatRect bounds = colliders.elements[i].sprite.getGlobalBounds();
+					if (bounds.contains(cameraMousePosition) && colliders.elements[i].editable) {
+						deleteIndicator.setPosition(Vector2f(bounds.left, bounds.top));
+
+						if (colliders.elements[i].type == Collider::Rectangle)
+							ApplyTexture(deleteIndicator, RECTANGLE, Vector2f(bounds.width, bounds.height), Vector2f(1, 1), false);
+						else if (colliders.elements[i].type == Collider::Triangle)
+							ApplyTexture(deleteIndicator, TRIANGLE, Vector2f(bounds.width, bounds.height), Vector2f(1, 1), false);
+						else if (colliders.elements[i].type == Collider::Triangle_Rotated)
+						{
+							ApplyTexture(deleteIndicator, LoadTexture::TRIANGLE_ROTATED, Vector2f(bounds.width, bounds.height), Vector2f(1, 1), false);
+							deleteIndicator.move(bounds.width, 0);
+						}
+					}
+				}
+				deleteIndicator.setColor(SetColorAlpha(Color::Red, 150));
+				window.draw(deleteIndicator);
+			}
+				break;
+			case object_mode:
+			{
+				ApplyTexture(deleteIndicator, RECTANGLE, Vector2f(32, 32), Vector2f(1, 1), false);
+				for (int i = 0; i < objects.count; i++)
+				{
+					if (objects.elements[i].data.CheckContainsPoint(cameraMousePosition))
+					{
+						RectangleShape rectangle;
+						SetRectangleOverBounds(rectangle, objects.elements[i].data.GetBounds(objects.elements[i].type));
+						rectangle.setFillColor(SetColorAlpha(Color::Red, 100));
+						window.draw(rectangle);
+					}
+
+					if (objects.elements[i].type == Object::DoorObject) {
+						int containsIndex = objects.elements[i].data.door.CheckDoorObjects(cameraMousePosition);
+
+						if (containsIndex == 1) {
+							RectangleShape rectangle;
+							SetRectangleOverBounds(rectangle, objects.elements[i].data.door.button1.sprite.getGlobalBounds());
+							rectangle.setFillColor(SetColorAlpha(Color::Red, 100));
+							window.draw(rectangle);
+						}
+						else if (containsIndex == 2) {
+							RectangleShape rectangle;
+							SetRectangleOverBounds(rectangle, objects.elements[i].data.door.button2.sprite.getGlobalBounds());
+							rectangle.setFillColor(SetColorAlpha(Color::Red, 100));
+							window.draw(rectangle);
+						}
+						else if (containsIndex == 3) {
+							RectangleShape rectangle;
+							SetRectangleOverBounds(rectangle, objects.elements[i].data.door.lever.sprite.getGlobalBounds());
+							rectangle.setFillColor(SetColorAlpha(Color::Red, 100));
+							window.draw(rectangle);
+						}
+					}
+				}
+			}
+				break;
+			case plant_mode:
+				for (int i = 0; i < plants.count; i++)
+				{
+					if (plants.elements[i].Contains(cameraMousePosition))
+					{
+						RectangleShape rectangle;
+						SetRectangleOverBounds(rectangle, plants.elements[i].GetBounds());
+						rectangle.setFillColor(SetColorAlpha(Color::Red, 100));
+						window.draw(rectangle);
+					}
+				}
+				break;
+			default:
+				break;
+			}
+		}
+	}
+
 	LevelProgress GetBestProgress() {
 		return levelProgress[currentLevelIndex];
 	}
@@ -1763,7 +2059,7 @@ struct Level
 			objects.elements[i].CheckInput(fireBoy, waterGirl, event);
 
 		// in developer mode, you can edit the level
-		if (developerMode)
+		if (developerMode || gameState == LevelEditor)
 			EditMode(event);
 	}
 
@@ -1809,7 +2105,7 @@ struct Level
 		background.setTextureRect(IntRect(gameCamera.getCenter().x * backgroundMovementRatio, gameCamera.getCenter().y * backgroundMovementRatio, resultTexture.getSize().x, resultTexture.getSize().y));
 		
 		// CAMERA LOGIC
-		if (timeSinceLevelLoad.getElapsedTime().asSeconds() < cameraWaitTime) {
+		if (timeSinceLevelLoad.getElapsedTime().asSeconds() < cameraWaitTime || !enableCamera || developerMode) {
 
 			Vector2f startPosition = center + cameraStartOffset;
 
@@ -1894,6 +2190,10 @@ struct Level
 
 		// stop using the camera for drawing
 		window.setView(window.getDefaultView());
+
+
+		if (developerMode || gameState == LevelEditor)
+			VisualizeLevelEditor();
 	}
 };
 

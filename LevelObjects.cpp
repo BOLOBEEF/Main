@@ -1089,11 +1089,32 @@ struct Door
 		SetEndPosition(end, true);
 	}
 
+	void AddButton(Vector2f position) {
+		if (!button1.initialized) {
+			button1 = Click(cameraMousePosition, true);
+			lastButtonAdded = false;
+		}
+		else if (!button2.initialized) {
+			button2 = Click(cameraMousePosition, true);
+			lastButtonAdded = true;
+		}
+		else if (lastButtonAdded)
+		{
+			button1 = Click(cameraMousePosition, true);
+			lastButtonAdded = false;
+		}
+		else
+		{
+			button2 = Click(cameraMousePosition, true);
+			lastButtonAdded = true;
+		}
+	}
+
 	// check if position is inside the door objects (button or lever)
 	int CheckDoorObjects(Vector2f position) {
-		if (button1.sprite.getGlobalBounds().contains(position)) return 1;
-		if (button2.sprite.getGlobalBounds().contains(position)) return 2;
-		if (lever.sprite.getGlobalBounds().contains(position)) return 3;
+		if (button1.sprite.getGlobalBounds().contains(position) && button1.initialized) return 1;
+		if (button2.sprite.getGlobalBounds().contains(position) && button2.initialized) return 2;
+		if (lever.sprite.getGlobalBounds().contains(position) && lever.initialized) return 3;
 
 		return 0; // nothing collided
 	}
@@ -1713,6 +1734,35 @@ struct ObjectData {
 
 		return false;
 	}
+
+	FloatRect GetBounds(int type) {
+		switch (type)
+		{
+		case 0: // GemObject
+			return gem.sprite.getGlobalBounds();
+
+		case 1: // DoorObject
+			return door.displaySprite.getGlobalBounds();
+
+		case 2: // PondObject
+			return pond.collider.getGlobalBounds();
+
+		case 3: // BoxObject
+			return box.collider.sprite.getGlobalBounds();
+
+		case 4: // TemporaryGroundObject
+			return temporaryGround.collider.sprite.getGlobalBounds();
+
+		case 5: // FanObject
+			return fan.fan_sprite.getGlobalBounds();
+
+		case 6: // SnowObject
+			return snow.sprite.getGlobalBounds();
+
+		default:
+			return FloatRect();
+		}
+	}
 };
 
 struct Object {
@@ -2109,6 +2159,10 @@ struct Plant {
 
 	bool Contains(Vector2f position) {
 		return sprite.getGlobalBounds().contains(position);
+	}
+
+	FloatRect GetBounds() {
+		return sprite.getGlobalBounds();
 	}
 };
 
