@@ -30,8 +30,16 @@ void HandleGameInput(Event event)
 		if (gameState == LEVEL_MENU)
 			UpdateGameState(LEVEL_MENU, true);
 	}
+	
+	if (event.type == Event::KeyPressed && event.key.code == Keyboard::Z)
+	{
+		currentLevel.SetCustomLevel(0);
+		UpdateGameState(LevelEditor);
+	}
 
-	if (gameState != GAME) return;
+
+
+	if (gameState != GAME && gameState != LevelEditor) return;
 
 	// code for handling game input that is related to game logic
 	currentLevel.CheckInput(event);
@@ -49,7 +57,7 @@ void OnUpdatedGameStateGameLogic() {
 
 void UpdateGame()
 {
-	if (gameState != GAME) return;
+	if (gameState != GAME && gameState != LevelEditor) return;
 
 	if (levelLoadFailed) {
 		UpdateGameState(MAIN_MENU);
@@ -62,7 +70,7 @@ void UpdateGame()
 
 void DrawGame(bool forceDraw)
 {
-	if (!forceDraw && gameState != GAME) return;
+	if (!forceDraw && (gameState != GAME && gameState != LevelEditor)) return;
 	// no need for window.clear or window.display
 
 	if (!forceDraw && levelLoadFailed)

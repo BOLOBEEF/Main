@@ -88,7 +88,9 @@ enum GameState
 	SETTINGS,
 	GAMEOVER,
 	CREDITS,
-	GAME			// this is the in-game UI, not the game logic
+	GAME,			  // this is the in-game UI, not the game logic
+	CustomLevelsMenu, // where you select a custom level
+	LevelEditor,	  // actual editing or playing a custom level
 };
 
 
