@@ -1175,6 +1175,10 @@ void HandleMenuInput(Event event)
 			noChangeInGameState = false;
 		}
 		break;
+
+	case LevelEditor:
+
+		break;
 	default:
 		break;
 	}
@@ -1889,6 +1893,9 @@ void DrawUI()
 		window.draw(levelEditor_txt);
 		window.draw(back_Modetxt);
 		window.draw(UserInterest_txt);
+		break;
+	case LevelEditor:
+
 		break;
 	default:
 		break;

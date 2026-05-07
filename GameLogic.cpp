@@ -64,6 +64,7 @@ void UpdateGame()
 		return;
 	}
 
+	cameraMousePosition.x += 16;
 	currentLevel.Update();
 }
 

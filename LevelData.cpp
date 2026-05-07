@@ -8,6 +8,7 @@ FinalDoor fire_door = FinalDoor(FinalDoor::FIRE_DOOR, Vector2f());
 
 Sprite ground;
 Sprite background;
+float bonusSize = 1000.0f;
 
 
 RenderTexture maskTexture;
@@ -25,6 +26,7 @@ int editPondWidthMinimum = 4;
 int currentPlantIndex = 0;
 int plantsCount = 8;
 bool isDeleting = false;
+Vector2f editorCameraOffset = Vector2f(32 * 7, 0);
 
 enum EditMode
 {
@@ -154,6 +156,10 @@ void ClearPlayerProgress() {
 	cout << "Cleared Player progress" << endl;
 }
 
+void SaveCustomLevel() {
+	ofstream savefile("saveData.txt");
+}
+
 
 
 struct Level
@@ -224,9 +230,10 @@ struct Level
 		water_door.SetTheme(isSnowTheme);
 
 		ground.setTextureRect(IntRect(0, 0, resultTexture.getSize().x, resultTexture.getSize().y));
-		background.setTextureRect(IntRect(0, 0, resultTexture.getSize().x, resultTexture.getSize().y));
+		background.setTextureRect(IntRect(0, 0, resultTexture.getSize().x + bonusSize, resultTexture.getSize().y + bonusSize));
+		background.move(-bonusSize / 2.0f, -bonusSize / 2.0f);
 		SetSpriteSize(ground, Vector2f(resultTexture.getSize().x, resultTexture.getSize().y));
-		SetSpriteSize(background, Vector2f(resultTexture.getSize().x, resultTexture.getSize().y));
+		SetSpriteSize(background, Vector2f(resultTexture.getSize().x + bonusSize, resultTexture.getSize().y + bonusSize));
 	}
 	void UpdateOutlinesTexture() {
 		const float outlineThickness = 5.0f;
@@ -1317,7 +1324,7 @@ struct Level
 		{
 			float reduction = 2.0f;
 			FloatRect bounds = colliders.elements[i].sprite.getGlobalBounds();
-			bounds = FloatRect(bounds.left + reduction, bounds.top + reduction, bounds.width - 2 * reduction, bounds.height - 2 * reduction);
+			bounds = FloatRect(bounds.left + reduction + editorCameraOffset.x, bounds.top + reduction + editorCameraOffset.y, bounds.width - 2 * reduction, bounds.height - 2 * reduction);
 			if (bounds.intersects(displayCollider.getGlobalBounds())) {
 				canPlaceCollider = false;
 				break;
@@ -1801,11 +1808,11 @@ struct Level
 	}
 
 	void SetSpriteOverBounds(Sprite& sprite, FloatRect otherBounds) {
-		sprite.setPosition(Vector2f(otherBounds.left, otherBounds.top));
+		sprite.setPosition(Vector2f(otherBounds.left, otherBounds.top) + editorCameraOffset);
 		SetSpriteSize(sprite, Vector2f(otherBounds.width, otherBounds.height));
 	}
 	void SetRectangleOverBounds(RectangleShape& shape, FloatRect otherBounds) {
-		shape.setPosition(Vector2f(otherBounds.left, otherBounds.top));
+		shape.setPosition(Vector2f(otherBounds.left, otherBounds.top) + editorCameraOffset);
 		shape.setSize(Vector2f(otherBounds.width, otherBounds.height));
 	}
 	void VisualizeLevelEditor() {
@@ -1814,7 +1821,7 @@ struct Level
 			switch (editMode)
 			{
 			case collider_mode:
-				displayCollider.setPosition(cameraMousePosition);
+				displayCollider.setPosition(cameraMousePosition + editorCameraOffset);
 				Allign(displayCollider);
 				SetSpriteSize(displayCollider, Vector2f(editScale.x * 32, editScale.y * 32));
 			
@@ -1836,70 +1843,70 @@ struct Level
 				{
 				case FireGem_mode:
 					displayObject = Object(Object::GemObject);
-					displayObject.InitializeGemObject(Gem::fireGem, cameraMousePosition);
+					displayObject.InitializeGemObject(Gem::fireGem, cameraMousePosition + editorCameraOffset);
 					break;
 				case WaterGem_mode:
 					displayObject = Object(Object::GemObject);
-					displayObject.InitializeGemObject(Gem::waterGem, cameraMousePosition);
+					displayObject.InitializeGemObject(Gem::waterGem, cameraMousePosition + editorCameraOffset);
 					break;
 				case Door_mode:
 					displayObject = Object(Object::DoorObject);
-					displayObject.InitializeDoorObject(cameraMousePosition, cameraMousePosition + Vector2f(0, -100), false);
+					displayObject.InitializeDoorObject(cameraMousePosition + editorCameraOffset, cameraMousePosition + editorCameraOffset + Vector2f(0, -100), false);
 					break;
 				case Door_Rotated_mode:
 					displayObject = Object(Object::DoorObject);
-					displayObject.InitializeDoorObject(cameraMousePosition, cameraMousePosition + Vector2f(0, -100), true);
+					displayObject.InitializeDoorObject(cameraMousePosition + editorCameraOffset, cameraMousePosition + editorCameraOffset + Vector2f(0, -100), true);
 					break;
 				case FirePond_mode:
 					displayObject = Object(Object::PondObject);
-					displayObject.InitializePondObject(Pond::FIRE_POND, cameraMousePosition, editPondWidth);
+					displayObject.InitializePondObject(Pond::FIRE_POND, cameraMousePosition + editorCameraOffset, editPondWidth);
 					UpdateGroundTexture(); // update ground texture to add the pond mask
 					break;
 				case WaterPond_mode:
 					displayObject = Object(Object::PondObject);
-					displayObject.InitializePondObject(Pond::WATER_POND, cameraMousePosition, editPondWidth);
+					displayObject.InitializePondObject(Pond::WATER_POND, cameraMousePosition + editorCameraOffset, editPondWidth);
 					UpdateGroundTexture(); // update ground texture to add the pond mask
 					break;
 				case PoisonPond_mode:
 					displayObject = Object(Object::PondObject);
-					displayObject.InitializePondObject(Pond::POISON_POND, cameraMousePosition, editPondWidth);
+					displayObject.InitializePondObject(Pond::POISON_POND, cameraMousePosition + editorCameraOffset, editPondWidth);
 					UpdateGroundTexture(); // update ground texture to add the pond mask
 					break;
 				case Box_mode:
 					displayObject = Object(Object::BoxObject);
-					displayObject.InitializeBoxObject(cameraMousePosition);
+					displayObject.InitializeBoxObject(cameraMousePosition + editorCameraOffset);
 					break;
 				case TemporaryGround_mode:
 					displayObject = Object(Object::TemporaryGroundObject);
-					displayObject.InitializeTemporaryGroundObject(cameraMousePosition);
+					displayObject.InitializeTemporaryGroundObject(cameraMousePosition + editorCameraOffset);
 					break;
 				case FanObject_mode:
 					displayObject = Object(Object::FanObject);
-					displayObject.InitializeFanObject(cameraMousePosition);
+					displayObject.InitializeFanObject(cameraMousePosition + editorCameraOffset);
 					break;
 				case SnowObject_LeftDown_mode:
 					displayObject = Object(Object::SnowObject);
-					displayObject.InitializeSnowObject(Snow::LeftDown, cameraMousePosition);
+					displayObject.InitializeSnowObject(Snow::LeftDown, cameraMousePosition + editorCameraOffset);
 					break;
 				case SnowObject_Normal_mode:
 					displayObject = Object(Object::SnowObject);
-					displayObject.InitializeSnowObject(Snow::Normal, cameraMousePosition);
+					displayObject.InitializeSnowObject(Snow::Normal, cameraMousePosition + editorCameraOffset);
 					break;
 				case SnowObject_RightDown_mode:
 					displayObject = Object(Object::SnowObject);
-					displayObject.InitializeSnowObject(Snow::RightDown, cameraMousePosition);
+					displayObject.InitializeSnowObject(Snow::RightDown, cameraMousePosition + editorCameraOffset);
 					break;
 				case Button_mode:
 					if (isEditingDoor)
 					{
-						Click button = Click(cameraMousePosition, true);
+						Click button = Click(cameraMousePosition + editorCameraOffset, true);
 						button.draw_click();
 					}
 					break;
 				case Lever_mode:
 					if (isEditingDoor)
 					{
-						Lever lever = Lever(cameraMousePosition, true);
+						Lever lever = Lever(cameraMousePosition + editorCameraOffset, true);
 						lever.leverDraw();
 					}
 					break;
@@ -1917,7 +1924,7 @@ struct Level
 					if (objects.elements[i].type == Object::DoorObject) {
 						CircleShape targetPoint = CircleShape(5.0f);
 						targetPoint.setOrigin(targetPoint.getLocalBounds().width / 2.0f, targetPoint.getLocalBounds().height / 2.0f);
-						targetPoint.setPosition(objects.elements[i].data.door.endPosition);
+						targetPoint.setPosition(objects.elements[i].data.door.endPosition + editorCameraOffset);
 						targetPoint.setFillColor(SetColorAlpha(Color::Red, 180));
 						targetPoint.setOutlineColor(Color::Black);
 						targetPoint.setOutlineThickness(2.0f);
@@ -1927,7 +1934,7 @@ struct Level
 				break;
 			case plant_mode:
 			{
-				Plant plant = Plant(cameraMousePosition, currentPlantIndex);
+				Plant plant = Plant(cameraMousePosition + editorCameraOffset, currentPlantIndex);
 				plant.Draw();
 			}
 				break;
@@ -1959,6 +1966,7 @@ struct Level
 					}
 				}
 				deleteIndicator.setColor(SetColorAlpha(Color::Red, 150));
+				deleteIndicator.move(editorCameraOffset);
 				window.draw(deleteIndicator);
 			}
 				break;
@@ -2086,7 +2094,7 @@ struct Level
 
 		CheckWin();
 		ground.setTextureRect(IntRect(0, 0, 500, 500));
-		background.setTextureRect(IntRect(0, 0, resultTexture.getSize().x, resultTexture.getSize().y));
+		background.setTextureRect(IntRect(0, 0, resultTexture.getSize().x + bonusSize, resultTexture.getSize().y + bonusSize));
 	}
 
 
@@ -2102,7 +2110,7 @@ struct Level
 
 		// move background texture (depth effect)
 		float backgroundMovementRatio = -0.3f;
-		background.setTextureRect(IntRect(gameCamera.getCenter().x * backgroundMovementRatio, gameCamera.getCenter().y * backgroundMovementRatio, resultTexture.getSize().x, resultTexture.getSize().y));
+		background.setTextureRect(IntRect(gameCamera.getCenter().x * backgroundMovementRatio, gameCamera.getCenter().y * backgroundMovementRatio, resultTexture.getSize().x + bonusSize, resultTexture.getSize().y + bonusSize));
 		
 		// CAMERA LOGIC
 		if (timeSinceLevelLoad.getElapsedTime().asSeconds() < cameraWaitTime || !enableCamera || developerMode) {
@@ -2115,6 +2123,9 @@ struct Level
 			// clamp
 			startPosition.x = Clamp(startPosition.x, halfW, windowSize.x - halfW);
 			startPosition.y = Clamp(startPosition.y, halfH, windowSize.y - halfH);
+
+			if (gameState == LevelEditor || developerMode)
+				startPosition -= editorCameraOffset;
 
 			gameCamera.setCenter(startPosition);
 			gameCamera.setSize(window.getDefaultView().getSize() * maxZoom);
