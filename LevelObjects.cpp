@@ -2226,3 +2226,63 @@ struct PlantList {
 		delete[] elements;
 	}
 };
+
+struct StringList {
+	int count = 0;
+	string* elements;
+
+	void Add(string element) {
+
+		if (count == 0)
+		{
+			count++;
+			elements = new string[count];
+			elements[0] = element;
+			return;
+		}
+
+		string* temp = elements;
+
+		count++;
+
+		elements = new string[count];
+
+		for (int i = 0; i < count - 1; i++)
+			elements[i] = temp[i];
+
+		delete[] temp;
+
+		elements[count - 1] = element;
+	}
+
+	void RemoveAt(int index) {
+		if (count <= 0 || index < 0 || index >= count) return;
+
+		string* temp = elements;
+
+		count--;
+
+		elements = new string[count];
+
+		for (int i = 0; i < count; i++)
+			if (i < index)
+				elements[i] = temp[i];
+			else
+				elements[i] = temp[i + 1];
+
+		delete[] temp;
+	}
+
+	string& GetLastElement() {
+		if (count == 0) {
+			cout << "stringList is empty" << endl;
+			exit(-2);
+		}
+
+		return elements[count - 1];
+	}
+
+	~StringList() {
+		delete[] elements;
+	}
+};
