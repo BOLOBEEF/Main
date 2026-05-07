@@ -136,6 +136,7 @@ enum LoadTexture
 	sound_icon_texture,
 	loading_icon_texture,
 	menu_box_texture,
+    menu_box_editor_texture,
 	pause_icon_texture,
 	clock_timer_texture,
 	clock_timer_ice_texture,
@@ -236,6 +237,7 @@ Texture green_pond_left;
 Texture temporaryPlatform;
 //menu assets textures
 Texture PlayButton;
+Texture menu_box_editor;
 Texture CreditsButton;
 Texture ExitButton;
 Texture BackButton0;
@@ -574,7 +576,9 @@ void ApplyTexture(Sprite& sprite, LoadTexture texture, Vector2f size = Vector2f(
 	case PlayButton_texture:
 		sprite.setTexture(PlayButton);
 		break;
-
+	case menu_box_editor_texture:
+		sprite.setTexture(menu_box_editor);
+		break;
 	case CreditsButton_Texture:
 		sprite.setTexture(CreditsButton);
 		break;
@@ -897,7 +901,7 @@ void InitializeTextures()
 	wind_effect.setSmooth(true);
 	BackButton0.setSmooth(true);
 	BackButtonFull0.setSmooth(true);
-
+	menu_box_editor.setSmooth(true);
 	// load all texture here
 	// this functions maybe called again if reloading the textures is needed
 
@@ -989,6 +993,7 @@ void InitializeTextures()
 	loading_icon.loadFromFile("Main/Assets/Animations/menu assets/loading_icon.png");
 	pause_icon.loadFromFile("Main/Assets/Animations/menu assets/pause icon.png");
 	menu_box.loadFromFile("Main/Assets/Animations/menu assets/menu box.png");
+	menu_box_editor.loadFromFile("Main/Assets/Animations/menu assets/menu box editor.png");
 	CursorAndPointer.loadFromFile("Main/Assets/Animations/cursor assets/CursorAndPOinter.png");
 	clock_timer.loadFromFile("Main/Assets/Animations/menu assets/clock timer.png");
 	clock_timer_ice.loadFromFile("Main/Assets/Animations/menu assets/clock timer ice.png");

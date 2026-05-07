@@ -117,6 +117,9 @@ Text LevelTimeRate2[2][3];
 Sprite ModeMenuBox_mnu;
 Sprite levelEditorButton_mnu, campaignButton_mnu, BackButton_Modemnu;
 
+// level editor
+Sprite leveleditorMenuBox;
+Sprite ground_leveleditor, triangle_leveleditor;
 //gameover
 Sprite GameOverbuttons_mnu[3];
 
@@ -795,6 +798,11 @@ void InitializeMenu()
 	UpdateAnimation(BackButton_Modemnu, stone_button_0_texture);
 	BackButton_Modemnu.setPosition((windowSize.x / 2 + 205), (windowSize.y / 2) + 220);
 
+
+	//level editor
+	ApplyTexture(leveleditorMenuBox, LoadTexture::menu_box_editor_texture, Vector2f(525,950));
+	leveleditorMenuBox.setPosition((windowSize.x / 2) - 725, (windowSize.y/2));
+
 	//Game Over menu
 
 	// stone background has been already set
@@ -1177,6 +1185,8 @@ void HandleMenuInput(Event event)
 		break;
 
 	case LevelEditor:
+		if (event.type == Event::KeyPressed && event.key.code == Keyboard::Escape)
+			UpdateGameState(PAUSE_MENU);
 
 		break;
 	default:
@@ -1895,6 +1905,8 @@ void DrawUI()
 		window.draw(UserInterest_txt);
 		break;
 	case LevelEditor:
+    window.draw(leveleditorMenuBox);
+
 
 		break;
 	default:
