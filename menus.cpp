@@ -72,6 +72,12 @@ Sprite RetryButton_Pausemnu;
 Sprite ResumeButton_Pausemnu;
 Sprite PauseIcon_mnu;
 
+//LevelEdition Pause Menu
+Sprite ContinueButton_levelEditionmnu;
+Sprite deleteAllButton_levelEditionmnu;
+Sprite menusButton_levelEditionmnu;
+
+
 //main menu
 Sprite MainMenuBackground_mnu;
 Sprite GameName_mnu;
@@ -156,6 +162,7 @@ Text OkButtontxt_PauseToSetting;
 Text stopwatch_txt;
 Text MenusandSoundsCredits_txt[2], GamelogicCredits_txt[4], AnimationandTexturesCredits_txt[2];
 Text levelEditor_txt, campaign_txt, UserInterest_txt, back_Modetxt;
+Text menus_LEtxt, continue_LEtxt, deleteAll_LEtxt, LEpaused_txt;
 
 Sprite cursorAndpointerSprite;
 
@@ -572,6 +579,19 @@ void ModeMenu_Movement(Vector2f Desired_Target)
 	campaign_txt.setPosition(campaignButton_mnu.getGlobalBounds().left + campaignButton_mnu.getGlobalBounds().width / 2, (campaignButton_mnu.getGlobalBounds().top + campaignButton_mnu.getGlobalBounds().height / 2) - 20);
 	back_Modetxt.setPosition(BackButton_Modemnu.getGlobalBounds().left + BackButton_Modemnu.getGlobalBounds().width / 2, (BackButton_Modemnu.getGlobalBounds().top + BackButton_Modemnu.getGlobalBounds().height / 2) - 20);
 }
+void LevelEditionPause_movement(Vector2f Desired_Target)
+{
+	Current_Target = Desired_Target;
+	Current_position_mnu = Damp(Current_position_mnu, Current_Target, 25, dt);
+	Stone_mnu.setPosition(Current_position_mnu);
+	ContinueButton_levelEditionmnu.setPosition(Vector2f((windowSize.x / 2) - 35, (windowSize.y / 2) + 70) + Current_position_mnu - center);
+	deleteAllButton_levelEditionmnu.setPosition(Vector2f((windowSize.x / 2) + 435, (windowSize.y / 2) + 70) + Current_position_mnu - center);
+	menusButton_levelEditionmnu.setPosition(Vector2f((windowSize.x / 2 + 205), (windowSize.y / 2) + 220) + Current_position_mnu - center);
+	continue_LEtxt.setPosition(Vector2f(ContinueButton_levelEditionmnu.getGlobalBounds().left + ContinueButton_levelEditionmnu.getGlobalBounds().width / 2, (ContinueButton_levelEditionmnu.getGlobalBounds().top + ContinueButton_levelEditionmnu.getGlobalBounds().height / 2) - 20));
+	deleteAll_LEtxt.setPosition(Vector2f(deleteAllButton_levelEditionmnu.getGlobalBounds().left + deleteAllButton_levelEditionmnu.getGlobalBounds().width / 2, (deleteAllButton_levelEditionmnu.getGlobalBounds().top + deleteAllButton_levelEditionmnu.getGlobalBounds().height / 2) - 20));
+	menus_LEtxt.setPosition(Vector2f(menusButton_levelEditionmnu.getGlobalBounds().left + menusButton_levelEditionmnu.getGlobalBounds().width / 2, (menusButton_levelEditionmnu.getGlobalBounds().top + menusButton_levelEditionmnu.getGlobalBounds().height / 2) - 20));
+	LEpaused_txt.setPosition(Vector2f((menusButton_levelEditionmnu.getGlobalBounds().left + menusButton_levelEditionmnu.getGlobalBounds().width / 2), (menusButton_levelEditionmnu.getGlobalBounds().top + menusButton_levelEditionmnu.getGlobalBounds().height / 2) - 400));
+}
 
 void InitializeMenu()
 {
@@ -803,6 +823,20 @@ void InitializeMenu()
 	ApplyTexture(leveleditorMenuBox, LoadTexture::menu_box_editor_texture, Vector2f(525,950));
 	leveleditorMenuBox.setPosition((windowSize.x / 2) - 725, (windowSize.y/2));
 
+	//level Edition menu
+	ApplyTexture(ContinueButton_levelEditionmnu, LoadTexture::stone_button_0_texture, Vector2f(700, 170));
+	UpdateAnimation(ContinueButton_levelEditionmnu, stone_button_0_texture);
+	ContinueButton_levelEditionmnu.setPosition((windowSize.x / 2) - 35, (windowSize.y / 2) + 70);
+
+	ApplyTexture(deleteAllButton_levelEditionmnu, LoadTexture::stone_button_0_texture, Vector2f(700, 170));
+	UpdateAnimation(deleteAllButton_levelEditionmnu, stone_button_0_texture);
+	deleteAllButton_levelEditionmnu.setPosition((windowSize.x / 2) + 435, (windowSize.y / 2) + 70);
+
+	ApplyTexture(menusButton_levelEditionmnu, LoadTexture::stone_button_0_texture, Vector2f(700, 170));
+	UpdateAnimation(menusButton_levelEditionmnu, stone_button_0_texture);
+	menusButton_levelEditionmnu.setPosition((windowSize.x / 2 + 205), (windowSize.y / 2) + 220);
+
+
 	//Game Over menu
 
 	// stone background has been already set
@@ -902,6 +936,43 @@ void InitializeMenu()
 	UserInterest_txt.setOrigin(UserInterest_txt.getLocalBounds().width / 2, UserInterest_txt.getLocalBounds().height / 2);
 	UserInterest_txt.setOutlineColor(Color::Black);
 	UserInterest_txt.setOutlineThickness(5);
+
+	//level Edition text
+	continue_LEtxt.setFont(font);
+	continue_LEtxt.setCharacterSize(37);
+	continue_LEtxt.setFillColor(Color(230, 194, 0));
+	continue_LEtxt.setString("CONTINUE");
+	continue_LEtxt.setPosition(ContinueButton_levelEditionmnu.getGlobalBounds().left + ContinueButton_levelEditionmnu.getGlobalBounds().width / 2, (ContinueButton_levelEditionmnu.getGlobalBounds().top + ContinueButton_levelEditionmnu.getGlobalBounds().height / 2) - 20);
+	continue_LEtxt.setOrigin(continue_LEtxt.getLocalBounds().width / 2, continue_LEtxt.getLocalBounds().height / 2);
+	continue_LEtxt.setOutlineColor(Color::Black);
+	continue_LEtxt.setOutlineThickness(5);
+
+	deleteAll_LEtxt.setFont(font);
+	deleteAll_LEtxt.setCharacterSize(37);
+	deleteAll_LEtxt.setFillColor(Color(230, 194, 0));
+	deleteAll_LEtxt.setString("DELETE ALL");
+	deleteAll_LEtxt.setPosition(deleteAllButton_levelEditionmnu.getGlobalBounds().left + deleteAllButton_levelEditionmnu.getGlobalBounds().width / 2, (deleteAllButton_levelEditionmnu.getGlobalBounds().top + deleteAllButton_levelEditionmnu.getGlobalBounds().height / 2) - 20);
+	deleteAll_LEtxt.setOrigin(deleteAll_LEtxt.getLocalBounds().width / 2, deleteAll_LEtxt.getLocalBounds().height / 2);
+	deleteAll_LEtxt.setOutlineColor(Color::Black);
+	deleteAll_LEtxt.setOutlineThickness(5);
+
+	menus_LEtxt.setFont(font);
+	menus_LEtxt.setCharacterSize(50);
+	menus_LEtxt.setFillColor(Color(230, 194, 0));
+	menus_LEtxt.setString("MENUS");
+	menus_LEtxt.setPosition(menusButton_levelEditionmnu.getGlobalBounds().left + menusButton_levelEditionmnu.getGlobalBounds().width / 2, (menusButton_levelEditionmnu.getGlobalBounds().top + menusButton_levelEditionmnu.getGlobalBounds().height / 2) - 20);
+	menus_LEtxt.setOrigin(menus_LEtxt.getLocalBounds().width / 2, menus_LEtxt.getLocalBounds().height / 2);
+	menus_LEtxt.setOutlineColor(Color::Black);
+	menus_LEtxt.setOutlineThickness(5);
+
+	LEpaused_txt.setFont(font);
+	LEpaused_txt.setCharacterSize(47);
+	LEpaused_txt.setFillColor(Color(230, 194, 0));
+	LEpaused_txt.setString("LEVEL EDITION\n\t\tPAUSED");
+	LEpaused_txt.setPosition((menusButton_levelEditionmnu.getGlobalBounds().left + menusButton_levelEditionmnu.getGlobalBounds().width / 2), (menusButton_levelEditionmnu.getGlobalBounds().top + menusButton_levelEditionmnu.getGlobalBounds().height / 2) - 400);
+	LEpaused_txt.setOrigin(LEpaused_txt.getLocalBounds().width / 2, LEpaused_txt.getLocalBounds().height / 2);
+	LEpaused_txt.setOutlineColor(Color::Black);
+	LEpaused_txt.setOutlineThickness(5);
 	
 
 	//Pause menu text
@@ -1072,37 +1143,36 @@ void HandleMenuInput(Event event)
 		}
 		changeCursorColor(event, true);
 		break;
-	case LEVEL_MENU:
-		noChangeInGameState = false;
-		MouseInput_mnu(event, BackButtonLevel_mnu, BackButtonFull0_texture, BackButtonFull0_texture, ButtonClick, MAIN_MENU, true);
+		case LEVEL_MENU:
+			noChangeInGameState = false;
+			MouseInput_mnu(event, BackButtonLevel_mnu, BackButtonFull0_texture, BackButtonFull0_texture, ButtonClick, MAIN_MENU, true);
 
-		arrowIcon_Winmnu.setTexture(arrow_icon0);
-		levelDiamond_Winmnu.setTexture(diamonds_green);
-		levelDiamond_Winmnu.setTextureRect(IntRect(0, 0, 128, 128));
-		ratingOrder = 0;
-		MaleAndFemale_turn = false;
-		diamondRating_turn = false;
-		timerRating_turn = false;
-		levelAndArrowIcon_turn = false;
-		isMaleAndFemaleSoundPlayed = false;
-		isdiamondSoundPlayed = false;
-		istimerSoundPlayed = false;
-		islevelAndArrowSoundPlayed = false;
-		WinMenu_Movement(Target_Down_mnu);
+			arrowIcon_Winmnu.setTexture(arrow_icon0);
+			levelDiamond_Winmnu.setTexture(diamonds_green);
+			levelDiamond_Winmnu.setTextureRect(IntRect(0, 0, 128, 128));
+			ratingOrder = 0;
+			MaleAndFemale_turn = false;
+			diamondRating_turn = false;
+			timerRating_turn = false;
+			levelAndArrowIcon_turn = false;
+			isMaleAndFemaleSoundPlayed = false;
+			isdiamondSoundPlayed = false;
+			istimerSoundPlayed = false;
+			islevelAndArrowSoundPlayed = false;
+			WinMenu_Movement(Target_Down_mnu);
 
-		for (int i = 0; i < 2; i++)
-		{
-			for (int j = 0; j < 3; j++)
+			for (int i = 0; i < 2; i++)
 			{
-				if (MouseInput_mnu(event, LevelEntry_mnu[i][j], LevelEntry_texture, LevelEntry_texture, ButtonClick, GAME, true))
+				for (int j = 0; j < 3; j++)
 				{
-					currentLevel.SetLevel(j + i * 3);
+					if (MouseInput_mnu(event, LevelEntry_mnu[i][j], LevelEntry_texture, LevelEntry_texture, ButtonClick, GAME, true))
+					{
+						currentLevel.SetLevel(j + i * 3);
+					}
 				}
-
 			}
-		}
-		changeCursorColor(event, true);
-		break;
+			changeCursorColor(event, true);
+			break;
 	case PAUSE_MENU:
 		MouseInput_mnu(event, ResumeButton_Pausemnu, stone_button_0_texture, stone_button_1_texture, ButtonClick, GAME, false, Resume_Pausetxt);
 		if (MouseInput_mnu(event, RetryButton_Pausemnu, stone_button_0_texture, stone_button_1_texture, ButtonClick, GAME, true, Retry_Pausetxt))
@@ -1183,11 +1253,21 @@ void HandleMenuInput(Event event)
 			noChangeInGameState = false;
 		}
 		break;
-
 	case LevelEditor:
 		if (event.type == Event::KeyPressed && event.key.code == Keyboard::Escape)
-			UpdateGameState(PAUSE_MENU);
-
+		{
+			UpdateGameState(LevelEditorPause_Menu);
+		}
+		MouseInput_mnu(event, PauseIcon_mnu, pause_icon_texture, pause_icon_texture, No_Sound_Buttons, LevelEditorPause_Menu, false);
+		break;
+	case LevelEditorPause_Menu:
+		noChangeInGameState = false;
+		MouseInput_mnu(event, ContinueButton_levelEditionmnu, stone_button_0_texture, stone_button_1_texture, ButtonClick, LevelEditor, false, continue_LEtxt);
+		if (MouseInput_mnu(event, deleteAllButton_levelEditionmnu, stone_button_0_texture, stone_button_1_texture, ButtonClick, LevelEditor, false, deleteAll_LEtxt))
+		{
+			//delete all changes in the leveleditor
+		}
+		MouseInput_mnu(event, menusButton_levelEditionmnu, stone_button_0_texture, stone_button_1_texture, ButtonClick, MAIN_MENU, true, menus_LEtxt);
 		break;
 	default:
 		break;
@@ -1303,6 +1383,11 @@ void UpdateUI()
 		{
 			ModeMenu_Movement(Target_Down_mnu);
 			currentMainMenuDimState = MainTo_SettingsOrCreditsOrMode_DimmingDown;
+		}
+		else if (lastGameState == LevelEditorPause_Menu)
+		{
+			LevelEditionPause_movement(Target_Down_mnu);
+			currentDimState = DimmingDown;
 		}
 		Settings_from_MainMenu = true;
 		break;
@@ -1456,6 +1541,30 @@ void UpdateUI()
 		clockTikingSpeed = 0;
 		ModeMenu_Movement(Target_up_mnu);
 		currentMainMenuDimState = MainTo_SettingsOrCreditsOrMode_DimmingUp;
+		LastWasSettings = false;
+		if (lastGameState == LevelEditorPause_Menu)
+		{
+			LevelEditionPause_movement(Target_Down_mnu);
+			currentDimState = DimmingDown;
+		}
+		break;
+	case LevelEditor:
+		if (lastGameState == LevelEditorPause_Menu)
+		{
+			LevelEditionPause_movement(Target_Down_mnu);
+			currentDimState = DimmingDown;
+		}
+		else if (lastGameState == CustomLevelsMenu)
+		{
+			ModeMenu_Movement(Target_Down_mnu);
+			currentMainMenuDimState = MainTo_SettingsOrCreditsOrMode_DimmingDown;
+		}
+		break;
+	case LevelEditorPause_Menu:
+		lastGameState = LevelEditorPause_Menu;
+		clockTikingSpeed = 0;
+		LevelEditionPause_movement(Target_up_mnu);
+		currentDimState = DimmingUp;
 		LastWasSettings = false;
 		break;
 	default:
@@ -1905,9 +2014,34 @@ void DrawUI()
 		window.draw(UserInterest_txt);
 		break;
 	case LevelEditor:
-    window.draw(leveleditorMenuBox);
+		window.draw(leveleditorMenuBox);
+		window.draw(PauseIcon_mnu);
+		window.draw(Game_Dimmed_Background);
+		if (lastGameState == LevelEditorPause_Menu)
+		{
+			window.draw(Stone_mnu);
+			window.draw(ContinueButton_levelEditionmnu);
+			window.draw(deleteAllButton_levelEditionmnu);
+			window.draw(menusButton_levelEditionmnu);
+			window.draw(continue_LEtxt);
+			window.draw(deleteAll_LEtxt);
+			window.draw(menus_LEtxt);
+			window.draw(LEpaused_txt);
+		}
+		break;
+	case LevelEditorPause_Menu:
+		//draw background of LevelEditor
 
-
+		/* temporary -> */ DrawGame(true);
+		window.draw(Game_Dimmed_Background);
+		window.draw(Stone_mnu);
+		window.draw(ContinueButton_levelEditionmnu);
+		window.draw(deleteAllButton_levelEditionmnu);
+		window.draw(menusButton_levelEditionmnu);
+		window.draw(continue_LEtxt);
+		window.draw(deleteAll_LEtxt);
+		window.draw(menus_LEtxt);
+		window.draw(LEpaused_txt);
 		break;
 	default:
 		break;
