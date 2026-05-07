@@ -156,9 +156,363 @@ void ClearPlayerProgress() {
 	cout << "Cleared Player progress" << endl;
 }
 
-void SaveCustomLevel() {
-	ofstream savefile("saveData.txt");
+struct Level;
+void SaveCustomLevelData(bool& snowTheme, float& timeRequired, ColliderList& colliders, ObjectList& objects, PlantList& plants) {
+	ofstream savefile("LevelEditor/testLevel.txt");
+
+	if (savefile.is_open())
+	{
+		savefile << snowTheme << endl;
+		savefile << timeRequired << endl;
+
+		savefile << fireBoy.hitbox.getPosition().x << endl;
+		savefile << fireBoy.hitbox.getPosition().y << endl;
+		savefile << waterGirl.hitbox.getPosition().x << endl;
+		savefile << waterGirl.hitbox.getPosition().y << endl;
+
+		savefile << fire_door.startPosition.x << endl;
+		savefile << fire_door.startPosition.y << endl;
+		savefile << water_door.startPosition.x << endl;
+		savefile << water_door.startPosition.y << endl;
+
+
+		// first save colliders
+		savefile << colliders.count << endl;
+
+		for (int i = 0; i < colliders.count; i++)
+		{
+			Collider& collider = colliders.elements[i];
+			savefile << collider.type << endl;
+			savefile << collider.startPosition.x << endl;
+			savefile << collider.startPosition.y << endl;
+			savefile << collider.scale.x << endl;
+			savefile << collider.scale.y << endl;
+		}
+
+		// then save objects
+		savefile << objects.count << endl;
+		for (int i = 0; i < objects.count; i++)
+		{
+			Object& object = objects.elements[i];
+			savefile << object.type << endl;
+
+			switch (object.type)
+			{
+			case Object::GemObject:
+			{
+				Gem& gem = object.data.gem;
+				savefile << gem.type << endl;
+				savefile << gem.sprite.getPosition().x << endl;
+				savefile << gem.sprite.getPosition().y << endl;
+			}
+			break;
+			case Object::PondObject:
+			{
+				Pond& pond = object.data.pond;
+				savefile << pond.type << endl;
+				savefile << pond.collider.getPosition().x << endl;
+				savefile << pond.collider.getPosition().y << endl;
+				savefile << pond.width << endl;
+			}
+			break;
+			case Object::DoorObject:
+			{
+				// door
+				Door& door = object.data.door;
+				savefile << door.rotated << endl;
+				savefile << door.startPosition.x << endl;
+				savefile << door.startPosition.y << endl;
+				savefile << door.endPosition.x << endl;
+				savefile << door.endPosition.y << endl;
+				// buttons
+				savefile << door.button1.initialized << endl;
+				savefile << door.button1.initialPosition.x << endl;
+				savefile << door.button1.initialPosition.y << endl;
+				savefile << door.button2.initialized << endl;
+				savefile << door.button2.initialPosition.x << endl;
+				savefile << door.button2.initialPosition.y << endl;
+				// lever
+				savefile << door.lever.initialized << endl;
+				savefile << door.lever.initialPosition.x << endl;
+				savefile << door.lever.initialPosition.y << endl;
+			}
+				break;
+			case Object::BoxObject:
+			{
+				Vector2f startPosition = object.data.box.collider.sprite.getPosition();
+				savefile << startPosition.x << endl;
+				savefile << startPosition.y << endl;
+			}
+			break;
+			case Object::FanObject:
+			{
+				Vector2f startPosition = object.data.fan.startPosition;
+				savefile << startPosition.x << endl;
+				savefile << startPosition.y << endl;
+			}
+			break;
+			case Object::TemporaryGroundObject:
+			{
+				Vector2f startPosition = object.data.temporaryGround.startPosition;
+				savefile << startPosition.x << endl;
+				savefile << startPosition.y << endl;
+			}
+			break;
+			case Object::SnowObject:
+			{
+				Snow& snow = object.data.snow;
+				savefile << snow.type << endl;
+				savefile << snow.startPosition.x << endl;
+				savefile << snow.startPosition.y << endl;
+			}
+			break;
+			default:
+				break;
+			}
+		}
+
+		// then plants
+		savefile << plants.count << endl;
+		for (int i = 0; i < plants.count; i++) {
+			Plant& plant = plants.elements[i];
+			savefile << plant.plantIndex << endl;
+			savefile << plant.sprite.getPosition().x << endl;
+			savefile << plant.sprite.getPosition().y << endl;
+		}
+
+		savefile.close();
+	}
+
+
+	cout << "saved custom level" << endl;
 }
+
+void LoadCustomLevelData(bool& snowTheme, float& timeRequired, ColliderList& colliders, ObjectList& objects, PlantList& plants) {
+	ifstream savefile("LevelEditor/testLevel.txt");
+
+	if (savefile.is_open())
+	{
+		savefile >> snowTheme;
+		savefile >> timeRequired;
+
+		Vector2f fireBoyPos;
+		Vector2f waterGirlPos;
+		savefile >> fireBoyPos.x;
+		savefile >> fireBoyPos.y;
+		savefile >> waterGirlPos.x;
+		savefile >> waterGirlPos.y;
+
+		fireBoy = Player(PlayerType::Fireboy, fireBoyPos);
+		waterGirl = Player(PlayerType::Watergirl, waterGirlPos);
+
+		Vector2f fireDoorPos;
+		Vector2f waterDoorPos;
+
+		savefile >> fireDoorPos.x;
+		savefile >> fireDoorPos.y;
+		savefile >> waterDoorPos.x;
+		savefile >> waterDoorPos.y;
+
+		fire_door = FinalDoor(FinalDoor::FIRE_DOOR, fireDoorPos);
+		water_door = FinalDoor(FinalDoor::WATER_DOOR, waterDoorPos);
+
+
+		// first load colliders
+		int count;
+		savefile >> count;
+
+		for (int i = 0; i < count; i++)
+		{
+			int typeIndex;
+			Vector2f startPosition;
+			Vector2f scale;
+
+			savefile >> typeIndex;
+			savefile >> startPosition.x;
+			savefile >> startPosition.y;
+			savefile >> scale.x;
+			savefile >> scale.y;
+
+			colliders.Add(Collider((Collider::ColliderType)typeIndex, startPosition, scale));
+		}
+
+		// then load objects
+		savefile >> count;
+		for (int i = 0; i < count; i++)
+		{
+			int typeIndex;
+			savefile >> typeIndex;
+			objects.Add(Object((Object::ObjectType)typeIndex));
+			Object& object = objects.GetLastElement();
+
+			switch (object.type)
+			{
+			case Object::GemObject:
+			{
+				int index;
+				Vector2f position;
+				savefile >> index;
+				Gem::Gemtype type = (Gem::Gemtype)index;
+				savefile >> position.x;
+				savefile >> position.y;
+
+				object.InitializeGemObject(type, position);
+			}
+				break;
+			case Object::PondObject:
+			{
+				int pondTypeIndex;
+				Pond::ponds_type type;
+				Vector2f position;
+				int width;
+
+				savefile >> pondTypeIndex;
+				type = (Pond::ponds_type)pondTypeIndex;
+				savefile >> position.x;
+				savefile >> position.y;
+				savefile >> width;
+
+				object.InitializePondObject(type, position, width);
+			}
+			break;
+			case Object::DoorObject:
+			{
+				// door
+				bool rotated;
+				Vector2f startPosition;
+				Vector2f endPosition;
+
+				Click button1;
+				Click button2;
+				Lever lever;
+
+				savefile >> rotated;
+				savefile >> startPosition.x;
+				savefile >> startPosition.y;
+				savefile >> endPosition.x;
+				savefile >> endPosition.y;
+				// buttons
+				savefile >> button1.initialized;
+				savefile >> button1.initialPosition.x;
+				savefile >> button1.initialPosition.y;
+				savefile >> button2.initialized;
+				savefile >> button2.initialPosition.x;
+				savefile >> button2.initialPosition.y;
+				// lever
+				savefile >> lever.initialized;
+				savefile >> lever.initialPosition.x;
+				savefile >> lever.initialPosition.y;
+
+				object.InitializeDoorObject(startPosition, endPosition, rotated);
+				if (button1.initialized)
+					object.data.door.button1 = Click(button1.initialPosition, true);
+				if (button2.initialized)
+					object.data.door.button2 = Click(button2.initialPosition, true);
+				if (lever.initialized)
+					object.data.door.lever = Lever(lever.initialPosition, true);
+			}
+			break;
+			case Object::BoxObject:
+			{
+				Vector2f position;
+				savefile >> position.x;
+				savefile >> position.y;
+				object.InitializeBoxObject(position);
+			}
+			break;
+			case Object::FanObject:
+			{
+				Vector2f position;
+				savefile >> position.x;
+				savefile >> position.y;
+				object.InitializeFanObject(position);
+			}
+			break;
+			case Object::TemporaryGroundObject:
+			{
+				Vector2f position;
+				savefile >> position.x;
+				savefile >> position.y;
+				object.InitializeTemporaryGroundObject(position);
+			}
+			break;
+			case Object::SnowObject:
+			{
+				int index;
+				Snow::SnowState type;
+				Vector2f startPosition;
+
+				Snow& snow = object.data.snow;
+				savefile >> index;
+				type = (Snow::SnowState)index;
+				savefile >> startPosition.x;
+				savefile >> startPosition.y;
+
+				objects.GetLastElement().InitializeSnowObject(type, startPosition);
+			}
+			break;
+			default:
+				break;
+			}
+
+		}
+
+		// then plants
+		savefile >> count;
+		for (int i = 0; i < count; i++)
+		{
+			int plantTexture;
+			Vector2f position;
+			savefile >> plantTexture;
+			savefile >> position.x;
+			savefile >> position.y;
+
+			plants.Add(Plant(position, plantTexture));
+		}
+
+		savefile.close();
+	}
+
+	cout << "loaded custom level" << endl;
+}
+
+StringList customLevelsList;
+void LoadCustomLevelsList() {
+	// get file names inside the level editor file
+	ifstream savefile("LevelEditor/LevelsList.txt");
+
+	if (savefile.is_open()) {
+		
+		int count;
+		savefile >> count;
+
+		for (int i = 0; i < count; i++)
+		{
+			string levelName;
+			savefile >> levelName;
+			customLevelsList.Add(levelName);
+		}
+
+		savefile.close();
+	}
+}
+void SaveCustomLevelsList() {
+	// get file names inside the level editor file
+	ofstream savefile("LevelEditor/LevelsList.txt");
+
+	if (savefile.is_open()) {
+
+		savefile << customLevelsList.count;
+
+		for (int i = 0; i < customLevelsList.count; i++)
+		{
+			savefile << customLevelsList.elements[i] << endl;
+		}
+
+		savefile.close();
+	}
+}
+//colliders.Add(Collider(Collider::ColliderType::Triangle, center + offset + Vector2f(-112, 212), Vector2f(3, 3)));
 
 
 
@@ -1090,9 +1444,9 @@ struct Level
 		return true;
 	}
 
-	bool LoadCustomLevelData() {
+	bool LoadEditorLevelData() {
 		// based on the level index, fill the arrays with the actual data for each level
-		CustomLevel1();
+		LoadCustomLevelData(isSnowLevel, currentTimeRequirement, colliders, objects, plants);
 
 		return true;
 	}
@@ -1179,12 +1533,12 @@ struct Level
 			Initialize();
 	}
 
-	void LoadCustomLevel()
+	void LoadEditorLevel()
 	{
 		// reset the level to its initial state, for example when the player dies or restarts the level
 		EraseData();
 
-		levelLoadFailed = !LoadLevelData();
+		levelLoadFailed = !LoadEditorLevelData();
 
 		if (!levelLoadFailed)
 			Initialize();
@@ -1205,7 +1559,7 @@ struct Level
 		}
 		else if(gameState == LevelEditor && (lastGameState != PAUSE_MENU || forceRestart))
 		{
-			LoadCustomLevel();
+			LoadEditorLevel();
 		}
 
 		if (gameState == GAME)
@@ -2043,6 +2397,10 @@ struct Level
 		UpdatePlayerProgress(currentLevelIndex, progress);
 	}
 
+	void SaveCustomLevel() {
+		SaveCustomLevelData(isSnowLevel, currentTimeRequirement, colliders, objects, plants);
+	}
+
 	void CheckWin() {
 		if (water_door.currentFrame == 21 && fire_door.currentFrame == 21)
 		{
@@ -2170,8 +2528,6 @@ struct Level
 
 		// Draw the next stuff using the camera
 		window.setView(gameCamera);
-
-
 
 		window.draw(background);
 

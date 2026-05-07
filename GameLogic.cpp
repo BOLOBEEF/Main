@@ -37,6 +37,11 @@ void HandleGameInput(Event event)
 		UpdateGameState(LevelEditor);
 	}
 
+	if (event.type == Event::KeyPressed && event.key.code == Keyboard::Tab)
+	{
+		currentLevel.SaveCustomLevel();
+	}
+
 
 
 	if (gameState != GAME && gameState != LevelEditor) return;
