@@ -59,6 +59,7 @@ void DrawGame(bool forceDraw);
 
 // Progress loading
 void LoadPlayerProgress();
+void LoadCustomLevelsList();
 
 // Animations
 void InitializeAnimations();
@@ -108,6 +109,7 @@ void Initialize()
 {
 	InitializeWindow();
 	LoadPlayerProgress();
+	LoadCustomLevelsList();
 	InitializeTextures();
 	InitializeAnimations();
 	InitializeAudio();

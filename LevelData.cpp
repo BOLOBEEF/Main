@@ -26,7 +26,7 @@ int editPondWidthMinimum = 4;
 int currentPlantIndex = 0;
 int plantsCount = 8;
 bool isDeleting = false;
-Vector2f editorCameraOffset = Vector2f(32 * 7, 0);
+Vector2f editorCameraOffset = Vector2f(0, 0);//Vector2f(32 * 7, 0);
 
 enum EditMode
 {
@@ -481,6 +481,7 @@ void LoadCustomLevelsList() {
 	// get file names inside the level editor file
 	ifstream savefile("LevelEditor/LevelsList.txt");
 
+	cout << "Custom levels list :" << endl;
 	if (savefile.is_open()) {
 		
 		int count;
@@ -491,6 +492,7 @@ void LoadCustomLevelsList() {
 			string levelName;
 			savefile >> levelName;
 			customLevelsList.Add(levelName);
+			cout << levelName << endl;
 		}
 
 		savefile.close();
@@ -1562,7 +1564,7 @@ struct Level
 			LoadEditorLevel();
 		}
 
-		if (gameState == GAME)
+		if (gameState != LevelEditor)
 			enableCamera = true;
 		else
 			enableCamera = false;
@@ -2399,6 +2401,10 @@ struct Level
 
 	void SaveCustomLevel() {
 		SaveCustomLevelData(isSnowLevel, currentTimeRequirement, colliders, objects, plants);
+		customLevelsList.Add("test1");
+		customLevelsList.Add("test2");
+		customLevelsList.Add("shi");
+		SaveCustomLevelsList();
 	}
 
 	void CheckWin() {
