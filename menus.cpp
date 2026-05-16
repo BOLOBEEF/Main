@@ -144,7 +144,6 @@ float ratingOrder = 0, ratingOrder_Speed = 200;
 bool MaleAndFemale_turn = false, diamondRating_turn = false, timerRating_turn = false, levelAndArrowIcon_turn = false;
 bool isMaleAndFemaleSoundPlayed = false, isdiamondSoundPlayed = false, istimerSoundPlayed = false, islevelAndArrowSoundPlayed = false;
 bool MainMenuSettings = true, LastWasSettings = false;
-
 bool Settings_from_MainMenu = true;
 
 //because i want to play the sounds of each rating once in the game loop not to rerun it each iteration 
