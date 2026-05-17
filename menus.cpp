@@ -117,11 +117,15 @@ Text LevelTimeRate2[2][3];
 //Mode Mennu
 Sprite ModeMenuBox_mnu;
 Sprite levelEditorButton_mnu, campaignButton_mnu, BackButton_Modemnu;
+   
+
+
+
 
 // level editor
 Sprite leveleditorMenuBox;
 Sprite arrow_right_level_editor, arrow_left_level_editor;
-Sprite cube_level_editor, triangle_level_editor  , triangle_rotated_level_editor;
+Sprite cube_level_editor, triangle_level_editor  , triangle_rotated_level_editor,redgem_level_editor,bluegem_level_editor,green_pond_leveleditor;
 //gameover
 Sprite GameOverbuttons_mnu[3];
 
@@ -877,6 +881,22 @@ void InitializeMenu()
 	triangle_rotated_level_editor.setPosition(triangle_rotated_level_editor.getGlobalBounds().width / 2.0f + 330, (windowSize.y / 2) - 300);
 	triangle_rotated_level_editor.setScale(-1, 1);
 
+
+	ApplyTexture(redgem_level_editor, LoadTexture::diamond_fire_texture, Vector2f(125, 125));
+	redgem_level_editor.setPosition(redgem_level_editor.getGlobalBounds().width / 2.0f , (windowSize.y / 2) - 400 );
+
+
+	ApplyTexture(bluegem_level_editor, LoadTexture::diamond_water_texture, Vector2f(125, 125));
+	bluegem_level_editor.setPosition(bluegem_level_editor.getGlobalBounds().width / 2.0f + 100, (windowSize.y / 2) - 400);
+
+
+	ApplyTexture(green_pond_leveleditor, LoadTexture:: green_pond_texture, Vector2f(2000, 125));
+	
+	green_pond_leveleditor.setPosition(green_pond_leveleditor.getGlobalBounds().width / 2.0f + 300, (windowSize.y / 2) - 400);
+	
+
+
+
 	//Game Over menu
 
 	// stone background has been already set
@@ -1502,7 +1522,35 @@ void UpdateUI()
 	
 	default:
 		break;
+
 	}
+
+	if (developerMode) {
+	
+		switch (editMode)
+		{
+		case collider_mode:
+
+
+			break;
+		case object_mode:
+			UpdateAnimation(green_pond_leveleditor, green_pond_texture);
+
+			break;
+		case plant_mode:
+			
+
+			break;
+		default:
+			break;
+		}
+	}
+
+
+
+
+
+
 
 	if (currentFadeState == FadingUp)
 	{
@@ -1655,6 +1703,8 @@ void DrawLevelEditorUI() {
 	if (developerMode) {
 		window.draw(leveleditorMenuBox);
 		window.draw(Deletesprite);
+		window.draw(arrow_left_level_editor);
+		window.draw(arrow_right_level_editor);
 		switch (editMode)
 		{
 		case collider_mode:
@@ -1668,10 +1718,16 @@ void DrawLevelEditorUI() {
 			window.draw(triangle_level_editor);
 			window.draw(triangle_rotated_level_editor);
 			window.draw(cube_level_editor);
-			window.draw(arrow_left_level_editor);
-			window.draw(arrow_right_level_editor);
+			
 			break;
 		case object_mode:
+
+			window.draw(green_pond_leveleditor);
+			window.draw(redgem_level_editor);
+			window.draw(bluegem_level_editor);
+
+
+
 			for (int i = 0; i < 2; i++)
 			{
 				window.draw(increasingplusetxt[i]);
