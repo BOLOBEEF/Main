@@ -3,29 +3,37 @@
 
 // variables that are used across multiple files and functions
 
-RenderWindow window = { VideoMode::getDesktopMode(), "SFML", Style::Fullscreen};
+RenderWindow window = { VideoMode::getDesktopMode(), "SFML"};
 Vector2u windowSize = window.getSize();
 View gameCamera = window.getDefaultView();
 Vector2f center = Vector2f(windowSize.x / 2.0f, windowSize.y / 2.0f);
 bool isFullscreen = true;
 bool developerMode = false;
 
-
+void ToggleFullscreen(bool);
 void InitializeWindow() {
 	// input issues: key repeat is enabled by default, which causes problems with our input handling, so we disable it
 	window.setKeyRepeatEnabled(false);
 	window.setVerticalSyncEnabled(true); // makes the game feel more consistent, not needed as all our logic is framerate-independent
 	window.setMouseCursorVisible(false); // hides the original cursor
+	ToggleFullscreen(isFullscreen);
 }
-void ToggleFullscreen() {
+
+void ToggleFullscreen(bool forceFullscreen = false) {
 	isFullscreen = !isFullscreen;
+	if (forceFullscreen) isFullscreen = true;
 	if (isFullscreen)
-		window.create(VideoMode::getDesktopMode(), "SFML", Style::Fullscreen);
+	{
+		window.create(VideoMode::getDesktopMode(), "SFML");
+		window.setPosition(Vector2i(-10, -100));
+	}
 	else
 		window.create(VideoMode::getDesktopMode(), "SFML");
 
-	InitializeWindow();
+	if (!forceFullscreen)
+		InitializeWindow();
 }
+
 
 
 Clock globalClock;
