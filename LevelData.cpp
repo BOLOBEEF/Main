@@ -2410,6 +2410,13 @@ struct Level
 		for (int i = 0; i < objects.count; i++)
 			objects.elements[i].CheckInput(fireBoy, waterGirl, event);
 
+		if (event.type == Event::KeyPressed &&
+			(event.key.code == Keyboard::LShift ||
+				event.key.code == Keyboard::RShift))
+		{
+			// do something
+		}
+
 		// in developer mode, you can edit the level
 		if (developerMode)// || gameState == LevelEditor)
 			EditMode(event);
@@ -2488,7 +2495,7 @@ struct Level
 
 		float finalZoom;
 		
-		if (Keyboard::isKeyPressed(Keyboard::LAlt) || Keyboard::isKeyPressed(Keyboard::RAlt))
+		if (Keyboard::isKeyPressed(Keyboard::LAlt) || Keyboard::isKeyPressed(Keyboard::RAlt) || Keyboard::isKeyPressed(Keyboard::LShift) || Keyboard::isKeyPressed(Keyboard::RShift))
 			finalZoom = minZoomView;
 		else
 		{
@@ -2526,6 +2533,15 @@ struct Level
 		cameraTarget.y = Clamp(cameraTarget.y, halfH, windowSize.y - halfH);
 
 		// move smoothly
+		if (Keyboard::isKeyPressed(Keyboard::LShift))
+		{
+			gameCamera.setCenter(Vector2f(fire_door.sprite.getGlobalBounds().left, fire_door.sprite.getGlobalBounds().top) + Vector2f(fire_door.sprite.getGlobalBounds().width / 2.0f, fire_door.sprite.getGlobalBounds().height / 2.0f));
+		}
+		else if (Keyboard::isKeyPressed(Keyboard::RShift))
+		{
+			gameCamera.setCenter(Vector2f(water_door.sprite.getGlobalBounds().left, water_door.sprite.getGlobalBounds().top) + Vector2f(water_door.sprite.getGlobalBounds().width / 2.0f, water_door.sprite.getGlobalBounds().height / 2.0f));
+		}
+		else
 		gameCamera.setCenter(
 			Damp(gameCamera.getCenter(), cameraTarget, 10.0f, dt)
 		);

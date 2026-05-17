@@ -1047,7 +1047,7 @@ void InitializeMenu()
 	// code for initializing menu variables and objects
 	// for example load sprites, set up text objects, etc.
 }
-
+void CheckInputLevelEditorUI(Event);
 void HandleMenuInput(Event event)
 {
 
@@ -1170,6 +1170,8 @@ void HandleMenuInput(Event event)
 
 		if (event.type == Event::KeyPressed && event.key.code == Keyboard::Escape)
 			UpdateGameState(PAUSE_MENU);
+
+		CheckInputLevelEditorUI(event);
 		break;
 	case CREDITS:
 		MouseInput_mnu(event, BackButtonCredits_mnu, BackButtonFull0_texture, BackButtonFull0_texture, ButtonClick, MAIN_MENU, false);
@@ -1522,9 +1524,81 @@ void UpdateUI()
 	cursorAndpointerSprite.setPosition(mousePosition + Vector2f(21, 13));
 }
 
+void CheckInputLevelEditorUI(Event event) {
+	if (developerMode){
+
+		// To change menu
+		// editMode = collider_mode,
+		// or object_mode,
+		// or plant_mode
+
+
+		switch (editMode)
+		{
+		case collider_mode:
+			// EditColliderMode editColliderMode = Rectangle,
+			// Triangle,
+			// Triangle_Rotated,
+
+			break;
+		case object_mode:
+
+			/*
+			to switch current object
+			editObjectMode =
+			FireGem_mode,
+				WaterGem_mode,
+				Door_mode,
+				Door_Target_mode,
+				Door_Rotated_mode,
+				FirePond_mode,
+				WaterPond_mode,
+				PoisonPond_mode,
+				Box_mode,
+				Button_mode,
+				Lever_mode,
+				TemporaryGround_mode,
+				FanObject_mode,
+				SnowObject_Normal_mode,
+				SnowObject_LeftDown_mode,
+				SnowObject_RightDown_mode,
+		} editObjectMode;*/
+
+			break;
+		case plant_mode:
+			/*
+			to switch plant
+			currentPlantIndex++ or --;
+			then currentPlantIndex = Clamp(currentPlantIndex, 1, plantsCount);
+			*/
+
+			break;
+		default:
+			break;
+		}
+	}
+}
 void DrawLevelEditorUI() {
 	if (developerMode) {
 		window.draw(leveleditorMenuBox);
+
+		switch (editMode)
+		{
+		case collider_mode:
+
+
+			break;
+		case object_mode:
+
+
+			break;
+		case plant_mode:
+
+
+			break;
+		default:
+			break;
+		}
 	}
 }
 
