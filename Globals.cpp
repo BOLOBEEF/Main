@@ -11,27 +11,33 @@ bool isFullscreen = true;
 bool developerMode = false;
 
 void ToggleFullscreen(bool);
-void InitializeWindow() {
-	// input issues: key repeat is enabled by default, which causes problems with our input handling, so we disable it
+void ApplyWindowSettings()
+{
 	window.setKeyRepeatEnabled(false);
 	window.setVerticalSyncEnabled(true); // makes the game feel more consistent, not needed as all our logic is framerate-independent
 	window.setMouseCursorVisible(false); // hides the original cursor
-	ToggleFullscreen(isFullscreen);
 }
 
-void ToggleFullscreen(bool forceFullscreen = false) {
-	isFullscreen = !isFullscreen;
-	if (forceFullscreen) isFullscreen = true;
+void InitializeWindow() {
+	// input issues: key repeat is enabled by default, which causes problems with our input handling, so we disable it
+	ToggleFullscreen(isFullscreen);
+	ApplyWindowSettings();
+}
+
+void ToggleFullscreen(bool skipToggle = false) {
+	
+	if (!skipToggle)
+		isFullscreen = !isFullscreen;
+
 	if (isFullscreen)
 	{
 		window.create(VideoMode::getDesktopMode(), "SFML");
-		window.setPosition(Vector2i(-10, -100));
+		window.setPosition(Vector2i(-10, -40));
 	}
 	else
 		window.create(VideoMode::getDesktopMode(), "SFML");
 
-	if (!forceFullscreen)
-		InitializeWindow();
+	ApplyWindowSettings();
 }
 
 
