@@ -164,6 +164,7 @@ Text X_axis_txt, Y_axis_txt;
 Sprite Deletesprite;
 
 Sprite cursorAndpointerSprite;
+Sprite plants_leveleditor[8];
 
 int finalScore = 0;
 // Functions
@@ -599,6 +600,26 @@ void InitializeMenu()
 	ApplyTexture(Deletesprite, LoadTexture::x_icon_texture, Vector2f(50, 50));
 	Deletesprite.setPosition(70, 750);
 
+	
+	ApplyTexture(plants_leveleditor[0], LoadTexture::decor_1_texture, Vector2f(100, 100));
+	ApplyTexture(plants_leveleditor[1], LoadTexture::decor_2_texture, Vector2f(100, 100));
+	ApplyTexture(plants_leveleditor[2], LoadTexture::decor_3_texture, Vector2f(100, 100));
+	ApplyTexture(plants_leveleditor[3], LoadTexture::decor_4_texture, Vector2f(100, 100));
+	ApplyTexture(plants_leveleditor[4], LoadTexture::decor_5_texture, Vector2f(100, 100));
+	ApplyTexture(plants_leveleditor[5], LoadTexture::decor_6_texture, Vector2f(100, 100));
+	ApplyTexture(plants_leveleditor[6], LoadTexture::decor_7_texture, Vector2f(100, 100));
+	ApplyTexture(plants_leveleditor[7], LoadTexture::decor_8_texture, Vector2f(100, 100));
+	plants_leveleditor[4].setScale(1.25, 2);
+	plants_leveleditor[7].setScale(2, 1.25);
+
+	for (int i = 0; i < 4; i++)
+	{
+		plants_leveleditor[i].setPosition(70 + i * 100, 200 );
+	}
+	for (int i = 4; i < 8; i++)
+	{
+		plants_leveleditor[i].setPosition(70 + (i-4) * 100, 300 );
+	}
 	for (int i = 0; i < 2; i++)
 	{
 		increasingplusetxt[i].setFont(font);
@@ -1660,7 +1681,10 @@ void DrawLevelEditorUI() {
 			window.draw(Y_axis_txt);
 			break;
 		case plant_mode:
-
+			for (int i = 0; i < 8; i++)
+			{
+				window.draw(plants_leveleditor[i]);
+			}
 
 			break;
 		default:
