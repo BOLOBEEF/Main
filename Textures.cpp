@@ -27,6 +27,11 @@ enum LoadTexture
 	TRIANGLE_ROTATED,
 
 
+	TRIANGLE_leveleditor,
+	TRIANGLE_ROTATED_leveleditor,
+	CUBE_leveleditor,
+
+
 	FLAME_POND,
 	WATER_POND,
 	TOXIC_POND,
@@ -167,7 +172,7 @@ enum LoadTexture
 Texture menuBackground;
 Texture playerTexture;
 Texture triangleTexture;
-
+Texture cube_leveleditor, triangle_leveleditor, triangle_rotated_leveleditor;
 Texture firePondTexture, waterPondTexture, toxicPondTexture;
 Texture firedoor, waterdoor;
 Texture cubeTexture;
@@ -347,6 +352,16 @@ void ApplyTexture(Sprite& sprite, LoadTexture texture, Vector2f size = Vector2f(
 		break;
 	}
 			/*--------------------------------------------*/
+	case CUBE_leveleditor:
+		sprite.setTexture(cube_leveleditor);
+		break;
+
+	case TRIANGLE_leveleditor:
+		sprite.setTexture(triangle_leveleditor);
+		break;
+	case TRIANGLE_ROTATED_leveleditor:
+		sprite.setTexture(triangle_rotated_leveleditor);
+		break;
 
 	case death_smoke_texture:
 		sprite.setTexture(death_smoke);
@@ -869,6 +884,13 @@ void InitializeGameTextures() {
 	backgroundTexture_ice.loadFromFile("Main/Assets/Textures/backGround ice.png");
 	backgroundTexture_ice.setRepeated(true);
 	backgroundTexture_ice.setSmooth(true);
+
+	cube_leveleditor.loadFromFile("Main/Assets/Textures/EditorCube.png");
+
+	triangle_leveleditor.loadFromFile("Main/Assets/Textures/EditorSlope.png");
+
+
+	triangle_rotated_leveleditor.loadFromFile("Main/Assets/Textures/EditorSlope.png");
 }
 
 

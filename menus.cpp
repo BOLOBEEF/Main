@@ -120,7 +120,8 @@ Sprite levelEditorButton_mnu, campaignButton_mnu, BackButton_Modemnu;
 
 // level editor
 Sprite leveleditorMenuBox;
-Sprite ground_leveleditor, triangle_leveleditor;
+Sprite arrow_right_level_editor, arrow_left_level_editor;
+Sprite cube_level_editor, triangle_level_editor  , triangle_rotated_level_editor;
 //gameover
 Sprite GameOverbuttons_mnu[3];
 
@@ -833,6 +834,27 @@ void InitializeMenu()
 	//level editor
 	ApplyTexture(leveleditorMenuBox, LoadTexture::menu_box_editor_texture, Vector2f(525,1080));
 	leveleditorMenuBox.setPosition(leveleditorMenuBox.getGlobalBounds().width / 2.0f - 25, (windowSize.y / 2));
+
+
+	ApplyTexture(arrow_left_level_editor, LoadTexture::BackButton0_texture, Vector2f(100, 100));
+	arrow_left_level_editor.setPosition(arrow_left_level_editor.getGlobalBounds().width / 2.0f + 60, (windowSize.y / 2) + 370);
+	arrow_left_level_editor.setScale(1, 1);
+
+	ApplyTexture(arrow_right_level_editor, LoadTexture::BackButton0_texture, Vector2f(100, 100));
+	arrow_right_level_editor.setPosition(arrow_right_level_editor.getGlobalBounds().width / 2.0f + 340, (windowSize.y / 2) + 370);
+	arrow_right_level_editor.setScale(-1, 1);
+
+	ApplyTexture(cube_level_editor, LoadTexture::CUBE_leveleditor, Vector2f(125,125));
+	cube_level_editor.setPosition(cube_level_editor.getGlobalBounds().width / 2.0f + 180 , (windowSize.y / 2)- 300);
+
+
+	ApplyTexture(triangle_level_editor, LoadTexture::TRIANGLE_leveleditor, Vector2f(125, 125));
+	triangle_level_editor.setPosition(triangle_level_editor.getGlobalBounds().width / 2.0f + 30, (windowSize.y / 2) - 300);
+	triangle_level_editor.setScale(1, 1);
+
+	ApplyTexture(triangle_rotated_level_editor, LoadTexture::TRIANGLE_ROTATED_leveleditor, Vector2f(125, 125));
+	triangle_rotated_level_editor.setPosition(triangle_rotated_level_editor.getGlobalBounds().width / 2.0f + 330, (windowSize.y / 2) - 300);
+	triangle_rotated_level_editor.setScale(-1, 1);
 
 	//Game Over menu
 
@@ -1622,8 +1644,11 @@ void DrawLevelEditorUI() {
 		switch (editMode)
 		{
 		case collider_mode:
-
-
+			window.draw(triangle_level_editor);
+			window.draw(triangle_rotated_level_editor);
+			window.draw(cube_level_editor);
+			window.draw(arrow_left_level_editor);
+			window.draw(arrow_right_level_editor);
 			break;
 		case object_mode:
 
