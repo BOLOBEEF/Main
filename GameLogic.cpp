@@ -13,7 +13,7 @@ void InitializeGame()
 
 void HandleGameInput(Event event)
 {
-	if (event.type == Event::KeyPressed && event.key.code == Keyboard::F2)
+	if (event.type == Event::KeyPressed && event.key.code == Keyboard::F2 && (gameState == GAME || gameState == LEVEL_MENU))
 	{
 		developerMode = !developerMode;
 
@@ -61,6 +61,7 @@ void UpdateGame()
 	currentLevel.Update();
 }
 
+void DrawLevelEditorUI();
 
 void DrawGame(bool forceDraw)
 {
@@ -74,8 +75,8 @@ void DrawGame(bool forceDraw)
 		return;
 	}
 
-
 	currentLevel.Draw();
+	DrawLevelEditorUI();
 
 	//for (int i = 0; i < colliders.count; i++)
 		//window.draw(colliders.elements[i].sprite);

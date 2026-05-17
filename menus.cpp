@@ -1056,7 +1056,7 @@ void HandleMenuInput(Event event)
 	case MAIN_MENU:
 		// code for handling main menu input
 		MouseInput_mnu(event, SettingsButton_Mainmnu, SettingsButton0_texture, SettingsButton0_texture, ButtonClick, SETTINGS, false);
-		if (MouseInput_mnu(event, PlayButton_mnu, PlayButton_texture, PlayButton_texture, ButtonClick, GameState::LEVEL_MENU, false))
+		if (MouseInput_mnu(event, PlayButton_mnu, PlayButton_texture, PlayButton_texture, ButtonClick, GameState::LEVEL_MENU, true))
 		{
 			noChangeInGameState = true;
 		}
@@ -1522,6 +1522,12 @@ void UpdateUI()
 	cursorAndpointerSprite.setPosition(mousePosition + Vector2f(21, 13));
 }
 
+void DrawLevelEditorUI() {
+	if (developerMode) {
+		window.draw(leveleditorMenuBox);
+	}
+}
+
 void DrawUI()
 {
 	// draw only, no need for window.clear or window.display
@@ -1645,6 +1651,7 @@ void DrawUI()
 		break;
 
 	case PAUSE_MENU:
+		
 		DrawGame(true);
 		window.draw(clockTiking_game);
 		window.draw(stopwatch_txt);
@@ -1670,9 +1677,11 @@ void DrawUI()
 				window.draw(OkButtontxt_PauseToSetting);
 			}
 		}
+
 		break;
 
 	case WIN_MENU:
+		
 		DrawGame(true);
 		window.draw(clockTiking_game);
 		window.draw(stopwatch_txt);
@@ -1731,6 +1740,7 @@ void DrawUI()
 		}
 		else if (lastGameState == PAUSE_MENU)
 		{
+			
 			DrawGame(true);
 			window.draw(clockTiking_game);
 			window.draw(stopwatch_txt);
@@ -1755,6 +1765,7 @@ void DrawUI()
 		break;
 
 	case GAMEOVER:
+		
 		DrawGame(true);
 		window.draw(clockTiking_game);
 		window.draw(stopwatch_txt);
@@ -1771,6 +1782,7 @@ void DrawUI()
 		break;
 
 	case GAME:
+		
 		// code for drawing game UI
 		window.draw(PauseIcon_mnu);
 		window.draw(clockTiking_game);
@@ -1807,9 +1819,7 @@ void DrawUI()
 		}
 
 		// level editor ui
-		if (developerMode) {
-			window.draw(leveleditorMenuBox);
-		}
+		
 		break;
 
 	case CREDITS:
