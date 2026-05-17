@@ -2449,8 +2449,10 @@ struct Level
 		float distanceToZoom = 700.0f;		// when players distance between each other is less than 100 then start zooming the camera
 		float distanceToMaxZoom = 400.0f;	// distance at which camera can't zoom in anymore
 		float minZoom = 0.8f;				// default zoom
+		float minZoomView = 0.5f;			// zoom when pressing ALT
 		float maxZoom = 1.0f;				// max zoom
 		float zoomSpeed = 5.0f;
+		float ratioDistFromCenter = 0.4f;
 
 		// move background texture (depth effect)
 		float backgroundMovementRatio = -0.3f;
@@ -2477,17 +2479,25 @@ struct Level
 			return;
 		}
 
-		// Cam Movement
-		Vector2f PlayerAveragePos = Lerp(fireBoy.hitbox.getPosition(), waterGirl.hitbox.getPosition(), 0.5f);
-		Vector2f cameraTarget = Lerp(center, PlayerAveragePos, 0.4f);
+
 
 		// Cam zoom
 		float playersDistance = Distance(fireBoy.hitbox.getPosition(), waterGirl.hitbox.getPosition());
 		float zoomRatio = (playersDistance - distanceToMaxZoom) / (distanceToZoom - distanceToMaxZoom);
 		zoomRatio = Clamp(zoomRatio, 0.0f, 1.0f);
 
-		float finalZoom = Lerp(minZoom, maxZoom, zoomRatio);
-		finalZoom = Clamp(finalZoom, minZoom, maxZoom);
+		float finalZoom;
+		
+		if (Keyboard::isKeyPressed(Keyboard::LAlt) || Keyboard::isKeyPressed(Keyboard::RAlt))
+			finalZoom = minZoomView;
+		else
+		{
+			finalZoom = Lerp(minZoom, maxZoom, zoomRatio);
+			finalZoom = Clamp(finalZoom, minZoom, maxZoom);
+		}
+		
+		
+
 
 		float currentSize = gameCamera.getSize().x / window.getDefaultView().getSize().x;
 		gameCamera.setSize(window.getDefaultView().getSize() * Damp(currentSize, finalZoom, zoomSpeed, dt));
@@ -2497,6 +2507,19 @@ struct Level
 
 		float halfW = camSize.x / 2.0f;
 		float halfH = camSize.y / 2.0f;
+
+		// Cam Movement
+		Vector2f PlayerAveragePos = Lerp(fireBoy.hitbox.getPosition(), waterGirl.hitbox.getPosition(), 0.5f);
+		Vector2f cameraTarget;
+
+		if (Keyboard::isKeyPressed(Keyboard::LAlt) || Keyboard::isKeyPressed(Keyboard::RAlt))
+		{
+			cameraTarget = PlayerAveragePos;
+		}
+		else
+			cameraTarget = Lerp(center, PlayerAveragePos, ratioDistFromCenter);
+
+
 
 		// Clamp target
 		cameraTarget.x = Clamp(cameraTarget.x, halfW, windowSize.x - halfW);
