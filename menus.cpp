@@ -157,6 +157,10 @@ Text stopwatch_txt;
 Text MenusandSoundsCredits_txt[2], GamelogicCredits_txt[4], AnimationandTexturesCredits_txt[2];
 Text levelEditor_txt, campaign_txt, UserInterest_txt, back_Modetxt;
 Text menus_LEtxt, continue_LEtxt, deleteAll_LEtxt, LEpaused_txt;
+Text increasingplusetxt[2], decreasingminusetxt[2];
+Text X_axis_txt, Y_axis_txt;
+
+Sprite Deletesprite;
 
 Sprite cursorAndpointerSprite;
 
@@ -577,9 +581,35 @@ void ModeMenu_Movement(Vector2f Desired_Target)
 void InitializeMenu()
 {
 	font.loadFromFile("Main/Assets/Fonts/trajanpro-bold.otf");
+
 	fpsDisplay.setFont(font);
 	fpsDisplay.setCharacterSize(24);
 
+	X_axis_txt.setFont(font);
+	X_axis_txt.setString("X_size");
+	X_axis_txt.setPosition(70, 520);
+	X_axis_txt.setCharacterSize(30);
+
+	Y_axis_txt.setFont(font);
+	Y_axis_txt.setString("Y_size");
+	Y_axis_txt.setPosition(70, 620);
+	Y_axis_txt.setCharacterSize(30);
+	
+	ApplyTexture(Deletesprite, LoadTexture::x_icon_texture, Vector2f(50, 50));
+	Deletesprite.setPosition(70, 750);
+
+	for (int i = 0; i < 2; i++)
+	{
+		increasingplusetxt[i].setFont(font);
+		increasingplusetxt[i].setString("+");
+		increasingplusetxt[i].setPosition(250, 590-i*100);
+		increasingplusetxt[i].setCharacterSize(60);
+
+		decreasingminusetxt[i].setFont(font);
+		decreasingminusetxt[i].setString("-");
+		decreasingminusetxt[i].setPosition(350, 590-i*100);
+		decreasingminusetxt[i].setCharacterSize(60);
+	}
 	//Cursor 
 	CursorAndPointer.setSmooth(true);
 	ApplyTexture(cursorAndpointerSprite, LoadTexture::cursor_texture, Vector2f(45, 30));
@@ -1581,7 +1611,14 @@ void CheckInputLevelEditorUI(Event event) {
 void DrawLevelEditorUI() {
 	if (developerMode) {
 		window.draw(leveleditorMenuBox);
-
+		for (int i = 0; i < 2; i++)
+		{
+			window.draw(increasingplusetxt[i]);
+			window.draw(decreasingminusetxt[i]);
+		}
+		window.draw(X_axis_txt);
+		window.draw(Y_axis_txt);
+		window.draw(Deletesprite);
 		switch (editMode)
 		{
 		case collider_mode:
