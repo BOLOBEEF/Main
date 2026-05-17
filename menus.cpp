@@ -1633,17 +1633,17 @@ void CheckInputLevelEditorUI(Event event) {
 void DrawLevelEditorUI() {
 	if (developerMode) {
 		window.draw(leveleditorMenuBox);
-		for (int i = 0; i < 2; i++)
-		{
-			window.draw(increasingplusetxt[i]);
-			window.draw(decreasingminusetxt[i]);
-		}
-		window.draw(X_axis_txt);
-		window.draw(Y_axis_txt);
 		window.draw(Deletesprite);
 		switch (editMode)
 		{
 		case collider_mode:
+			for (int i = 0; i < 2; i++)
+			{
+				window.draw(increasingplusetxt[i]);
+				window.draw(decreasingminusetxt[i]);
+			}
+			window.draw(X_axis_txt);
+			window.draw(Y_axis_txt);
 			window.draw(triangle_level_editor);
 			window.draw(triangle_rotated_level_editor);
 			window.draw(cube_level_editor);
@@ -1651,8 +1651,13 @@ void DrawLevelEditorUI() {
 			window.draw(arrow_right_level_editor);
 			break;
 		case object_mode:
-
-
+			for (int i = 0; i < 2; i++)
+			{
+				window.draw(increasingplusetxt[i]);
+				window.draw(decreasingminusetxt[i]);
+			}
+			window.draw(X_axis_txt);
+			window.draw(Y_axis_txt);
 			break;
 		case plant_mode:
 
