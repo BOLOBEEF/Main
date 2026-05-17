@@ -26,7 +26,7 @@ int editPondWidthMinimum = 4;
 int currentPlantIndex = 0;
 int plantsCount = 8;
 bool isDeleting = false;
-Vector2f editorCameraOffset = Vector2f(0, 0);//Vector2f(32 * 7, 0);
+Vector2f editorCameraOffset = Vector2f(32 * 7, 0);
 
 enum EditMode
 {
@@ -286,7 +286,7 @@ void SaveCustomLevelData(bool& snowTheme, float& timeRequired, ColliderList& col
 
 	cout << "saved custom level" << endl;
 }
-
+/*
 void LoadCustomLevelData(bool& snowTheme, float& timeRequired, ColliderList& colliders, ObjectList& objects, PlantList& plants) {
 	ifstream savefile("LevelEditor/testLevel.txt");
 
@@ -515,7 +515,7 @@ void SaveCustomLevelsList() {
 	}
 }
 //colliders.Add(Collider(Collider::ColliderType::Triangle, center + offset + Vector2f(-112, 212), Vector2f(3, 3)));
-
+*/
 
 
 struct Level
@@ -1446,12 +1446,6 @@ struct Level
 		return true;
 	}
 
-	bool LoadEditorLevelData() {
-		// based on the level index, fill the arrays with the actual data for each level
-		LoadCustomLevelData(isSnowLevel, currentTimeRequirement, colliders, objects, plants);
-
-		return true;
-	}
 
 	void Initialize() {
 		// code for initializing game variables and objects
@@ -1535,16 +1529,6 @@ struct Level
 			Initialize();
 	}
 
-	void LoadEditorLevel()
-	{
-		// reset the level to its initial state, for example when the player dies or restarts the level
-		EraseData();
-
-		levelLoadFailed = !LoadEditorLevelData();
-
-		if (!levelLoadFailed)
-			Initialize();
-	}
 
 	// RESTART CURRENT LEVEL
 	void ResetLevel(bool resetNow = false)
@@ -1559,12 +1543,8 @@ struct Level
 		{
 			LoadNewLevel();
 		}
-		else if(gameState == LevelEditor && (lastGameState != PAUSE_MENU || forceRestart))
-		{
-			LoadEditorLevel();
-		}
 
-		if (gameState != LevelEditor)
+		if (!developerMode)
 			enableCamera = true;
 		else
 			enableCamera = false;
@@ -2399,13 +2379,13 @@ struct Level
 		UpdatePlayerProgress(currentLevelIndex, progress);
 	}
 
-	void SaveCustomLevel() {
-		SaveCustomLevelData(isSnowLevel, currentTimeRequirement, colliders, objects, plants);
+	//void SaveCustomLevel() {
+	/*	SaveCustomLevelData(isSnowLevel, currentTimeRequirement, colliders, objects, plants);
 		customLevelsList.Add("test1");
 		customLevelsList.Add("test2");
 		customLevelsList.Add("shi");
 		SaveCustomLevelsList();
-	}
+	}*/
 
 	void CheckWin() {
 		if (water_door.currentFrame == 21 && fire_door.currentFrame == 21)
@@ -2431,7 +2411,7 @@ struct Level
 			objects.elements[i].CheckInput(fireBoy, waterGirl, event);
 
 		// in developer mode, you can edit the level
-		if (developerMode || gameState == LevelEditor)
+		if (developerMode)// || gameState == LevelEditor)
 			EditMode(event);
 	}
 
@@ -2488,7 +2468,7 @@ struct Level
 			startPosition.x = Clamp(startPosition.x, halfW, windowSize.x - halfW);
 			startPosition.y = Clamp(startPosition.y, halfH, windowSize.y - halfH);
 
-			if (gameState == LevelEditor || developerMode)
+			if (developerMode) // || gameState == LevelEditor
 				startPosition -= editorCameraOffset;
 
 			gameCamera.setCenter(startPosition);
@@ -2565,7 +2545,7 @@ struct Level
 		window.setView(window.getDefaultView());
 
 
-		if (developerMode || gameState == LevelEditor)
+		if (developerMode)// || gameState == LevelEditor)
 			VisualizeLevelEditor();
 	}
 };

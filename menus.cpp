@@ -72,11 +72,6 @@ Sprite RetryButton_Pausemnu;
 Sprite ResumeButton_Pausemnu;
 Sprite PauseIcon_mnu;
 
-//LevelEdition Pause Menu
-Sprite ContinueButton_levelEditionmnu;
-Sprite deleteAllButton_levelEditionmnu;
-Sprite menusButton_levelEditionmnu;
-
 
 //main menu
 Sprite MainMenuBackground_mnu;
@@ -578,19 +573,6 @@ void ModeMenu_Movement(Vector2f Desired_Target)
 	campaign_txt.setPosition(campaignButton_mnu.getGlobalBounds().left + campaignButton_mnu.getGlobalBounds().width / 2, (campaignButton_mnu.getGlobalBounds().top + campaignButton_mnu.getGlobalBounds().height / 2) - 20);
 	back_Modetxt.setPosition(BackButton_Modemnu.getGlobalBounds().left + BackButton_Modemnu.getGlobalBounds().width / 2, (BackButton_Modemnu.getGlobalBounds().top + BackButton_Modemnu.getGlobalBounds().height / 2) - 20);
 }
-void LevelEditionPause_movement(Vector2f Desired_Target)
-{
-	Current_Target = Desired_Target;
-	Current_position_mnu = Damp(Current_position_mnu, Current_Target, 25, dt);
-	Stone_mnu.setPosition(Current_position_mnu);
-	ContinueButton_levelEditionmnu.setPosition(Vector2f((windowSize.x / 2) - 35, (windowSize.y / 2) + 70) + Current_position_mnu - center);
-	deleteAllButton_levelEditionmnu.setPosition(Vector2f((windowSize.x / 2) + 435, (windowSize.y / 2) + 70) + Current_position_mnu - center);
-	menusButton_levelEditionmnu.setPosition(Vector2f((windowSize.x / 2 + 205), (windowSize.y / 2) + 220) + Current_position_mnu - center);
-	continue_LEtxt.setPosition(Vector2f(ContinueButton_levelEditionmnu.getGlobalBounds().left + ContinueButton_levelEditionmnu.getGlobalBounds().width / 2, (ContinueButton_levelEditionmnu.getGlobalBounds().top + ContinueButton_levelEditionmnu.getGlobalBounds().height / 2) - 20));
-	deleteAll_LEtxt.setPosition(Vector2f(deleteAllButton_levelEditionmnu.getGlobalBounds().left + deleteAllButton_levelEditionmnu.getGlobalBounds().width / 2, (deleteAllButton_levelEditionmnu.getGlobalBounds().top + deleteAllButton_levelEditionmnu.getGlobalBounds().height / 2) - 20));
-	menus_LEtxt.setPosition(Vector2f(menusButton_levelEditionmnu.getGlobalBounds().left + menusButton_levelEditionmnu.getGlobalBounds().width / 2, (menusButton_levelEditionmnu.getGlobalBounds().top + menusButton_levelEditionmnu.getGlobalBounds().height / 2) - 20));
-	LEpaused_txt.setPosition(Vector2f((menusButton_levelEditionmnu.getGlobalBounds().left + menusButton_levelEditionmnu.getGlobalBounds().width / 2), (menusButton_levelEditionmnu.getGlobalBounds().top + menusButton_levelEditionmnu.getGlobalBounds().height / 2) - 400));
-}
 
 void InitializeMenu()
 {
@@ -819,22 +801,8 @@ void InitializeMenu()
 
 
 	//level editor
-	ApplyTexture(leveleditorMenuBox, LoadTexture::menu_box_editor_texture, Vector2f(525,950));
-	leveleditorMenuBox.setPosition((windowSize.x / 2) - 725, (windowSize.y/2));
-
-	//level Edition menu
-	ApplyTexture(ContinueButton_levelEditionmnu, LoadTexture::stone_button_0_texture, Vector2f(700, 170));
-	UpdateAnimation(ContinueButton_levelEditionmnu, stone_button_0_texture);
-	ContinueButton_levelEditionmnu.setPosition((windowSize.x / 2) - 35, (windowSize.y / 2) + 70);
-
-	ApplyTexture(deleteAllButton_levelEditionmnu, LoadTexture::stone_button_0_texture, Vector2f(700, 170));
-	UpdateAnimation(deleteAllButton_levelEditionmnu, stone_button_0_texture);
-	deleteAllButton_levelEditionmnu.setPosition((windowSize.x / 2) + 435, (windowSize.y / 2) + 70);
-
-	ApplyTexture(menusButton_levelEditionmnu, LoadTexture::stone_button_0_texture, Vector2f(700, 170));
-	UpdateAnimation(menusButton_levelEditionmnu, stone_button_0_texture);
-	menusButton_levelEditionmnu.setPosition((windowSize.x / 2 + 205), (windowSize.y / 2) + 220);
-
+	ApplyTexture(leveleditorMenuBox, LoadTexture::menu_box_editor_texture, Vector2f(525,1080));
+	leveleditorMenuBox.setPosition(leveleditorMenuBox.getGlobalBounds().width / 2.0f - 25, (windowSize.y / 2));
 
 	//Game Over menu
 
@@ -935,43 +903,6 @@ void InitializeMenu()
 	UserInterest_txt.setOrigin(UserInterest_txt.getLocalBounds().width / 2, UserInterest_txt.getLocalBounds().height / 2);
 	UserInterest_txt.setOutlineColor(Color::Black);
 	UserInterest_txt.setOutlineThickness(5);
-
-	//level Edition text
-	continue_LEtxt.setFont(font);
-	continue_LEtxt.setCharacterSize(37);
-	continue_LEtxt.setFillColor(Color(230, 194, 0));
-	continue_LEtxt.setString("CONTINUE");
-	continue_LEtxt.setPosition(ContinueButton_levelEditionmnu.getGlobalBounds().left + ContinueButton_levelEditionmnu.getGlobalBounds().width / 2, (ContinueButton_levelEditionmnu.getGlobalBounds().top + ContinueButton_levelEditionmnu.getGlobalBounds().height / 2) - 20);
-	continue_LEtxt.setOrigin(continue_LEtxt.getLocalBounds().width / 2, continue_LEtxt.getLocalBounds().height / 2);
-	continue_LEtxt.setOutlineColor(Color::Black);
-	continue_LEtxt.setOutlineThickness(5);
-
-	deleteAll_LEtxt.setFont(font);
-	deleteAll_LEtxt.setCharacterSize(37);
-	deleteAll_LEtxt.setFillColor(Color(230, 194, 0));
-	deleteAll_LEtxt.setString("DELETE ALL");
-	deleteAll_LEtxt.setPosition(deleteAllButton_levelEditionmnu.getGlobalBounds().left + deleteAllButton_levelEditionmnu.getGlobalBounds().width / 2, (deleteAllButton_levelEditionmnu.getGlobalBounds().top + deleteAllButton_levelEditionmnu.getGlobalBounds().height / 2) - 20);
-	deleteAll_LEtxt.setOrigin(deleteAll_LEtxt.getLocalBounds().width / 2, deleteAll_LEtxt.getLocalBounds().height / 2);
-	deleteAll_LEtxt.setOutlineColor(Color::Black);
-	deleteAll_LEtxt.setOutlineThickness(5);
-
-	menus_LEtxt.setFont(font);
-	menus_LEtxt.setCharacterSize(50);
-	menus_LEtxt.setFillColor(Color(230, 194, 0));
-	menus_LEtxt.setString("MENUS");
-	menus_LEtxt.setPosition(menusButton_levelEditionmnu.getGlobalBounds().left + menusButton_levelEditionmnu.getGlobalBounds().width / 2, (menusButton_levelEditionmnu.getGlobalBounds().top + menusButton_levelEditionmnu.getGlobalBounds().height / 2) - 20);
-	menus_LEtxt.setOrigin(menus_LEtxt.getLocalBounds().width / 2, menus_LEtxt.getLocalBounds().height / 2);
-	menus_LEtxt.setOutlineColor(Color::Black);
-	menus_LEtxt.setOutlineThickness(5);
-
-	LEpaused_txt.setFont(font);
-	LEpaused_txt.setCharacterSize(47);
-	LEpaused_txt.setFillColor(Color(230, 194, 0));
-	LEpaused_txt.setString("LEVEL EDITION\n\t\tPAUSED");
-	LEpaused_txt.setPosition((menusButton_levelEditionmnu.getGlobalBounds().left + menusButton_levelEditionmnu.getGlobalBounds().width / 2), (menusButton_levelEditionmnu.getGlobalBounds().top + menusButton_levelEditionmnu.getGlobalBounds().height / 2) - 400);
-	LEpaused_txt.setOrigin(LEpaused_txt.getLocalBounds().width / 2, LEpaused_txt.getLocalBounds().height / 2);
-	LEpaused_txt.setOutlineColor(Color::Black);
-	LEpaused_txt.setOutlineThickness(5);
 	
 
 	//Pause menu text
@@ -1125,7 +1056,7 @@ void HandleMenuInput(Event event)
 	case MAIN_MENU:
 		// code for handling main menu input
 		MouseInput_mnu(event, SettingsButton_Mainmnu, SettingsButton0_texture, SettingsButton0_texture, ButtonClick, SETTINGS, false);
-		if (MouseInput_mnu(event, PlayButton_mnu, PlayButton_texture, PlayButton_texture, ButtonClick, CustomLevelsMenu, false))
+		if (MouseInput_mnu(event, PlayButton_mnu, PlayButton_texture, PlayButton_texture, ButtonClick, GameState::LEVEL_MENU, false))
 		{
 			noChangeInGameState = true;
 		}
@@ -1244,30 +1175,6 @@ void HandleMenuInput(Event event)
 		MouseInput_mnu(event, BackButtonCredits_mnu, BackButtonFull0_texture, BackButtonFull0_texture, ButtonClick, MAIN_MENU, false);
 		changeCursorColor(event, true);
 		break;
-	case CustomLevelsMenu:
-		MouseInput_mnu(event, campaignButton_mnu, stone_button_0_texture, stone_button_1_texture, ButtonClick, LEVEL_MENU, true, campaign_txt);
-		MouseInput_mnu(event, levelEditorButton_mnu, stone_button_0_texture, stone_button_1_texture, ButtonClick, LevelEditor, true, levelEditor_txt);
-		if (MouseInput_mnu(event, BackButton_Modemnu, stone_button_0_texture, stone_button_1_texture, ButtonClick, MAIN_MENU, false, back_Modetxt))
-		{
-			noChangeInGameState = false;
-		}
-		break;
-	case LevelEditor:
-		if (event.type == Event::KeyPressed && event.key.code == Keyboard::Escape)
-		{
-			UpdateGameState(LevelEditorPause_Menu);
-		}
-		MouseInput_mnu(event, PauseIcon_mnu, pause_icon_texture, pause_icon_texture, No_Sound_Buttons, LevelEditorPause_Menu, false);
-		break;
-	case LevelEditorPause_Menu:
-		noChangeInGameState = false;
-		MouseInput_mnu(event, ContinueButton_levelEditionmnu, stone_button_0_texture, stone_button_1_texture, ButtonClick, LevelEditor, false, continue_LEtxt);
-		if (MouseInput_mnu(event, deleteAllButton_levelEditionmnu, stone_button_0_texture, stone_button_1_texture, ButtonClick, LevelEditor, false, deleteAll_LEtxt))
-		{
-			//delete all changes in the leveleditor
-		}
-		MouseInput_mnu(event, menusButton_levelEditionmnu, stone_button_0_texture, stone_button_1_texture, ButtonClick, MAIN_MENU, true, menus_LEtxt);
-		break;
 	default:
 		break;
 	}
@@ -1330,9 +1237,6 @@ void OnUpdatedGameStateMenu() {
 			PlayMusic(Game_Slow);
 		}
 		break;
-	case CustomLevelsMenu:
-		PauseMusic();
-		break;
 	default:
 		break;
 	}
@@ -1378,16 +1282,6 @@ void UpdateUI()
 			CreditsMenu_Movement(Target_Down_mnu);
 			currentMainMenuDimState = MainTo_SettingsOrCreditsOrMode_DimmingDown;
 		}
-		else if (lastGameState == CustomLevelsMenu)
-		{
-			ModeMenu_Movement(Target_Down_mnu);
-			currentMainMenuDimState = MainTo_SettingsOrCreditsOrMode_DimmingDown;
-		}
-		else if (lastGameState == LevelEditorPause_Menu)
-		{
-			LevelEditionPause_movement(Target_Down_mnu);
-			currentDimState = DimmingDown;
-		}
 		Settings_from_MainMenu = true;
 		break;
 	case LEVEL_MENU:
@@ -1403,11 +1297,6 @@ void UpdateUI()
 		else if (lastGameState == WIN_MENU)
 		{
 			WinMenu_Movement(Target_Down_mnu);
-		}
-		else if (lastGameState == CustomLevelsMenu)
-		{
-			ModeMenu_Movement(Target_Down_mnu);
-			currentMainMenuDimState = MainTo_SettingsOrCreditsOrMode_DimmingDown;
 		}
 
 		break;
@@ -1535,37 +1424,7 @@ void UpdateUI()
 		currentMainMenuDimState = MainTo_SettingsOrCreditsOrMode_DimmingUp;
 		LastWasSettings = false;
 		break;
-	case CustomLevelsMenu:
-		lastGameState = CustomLevelsMenu;
-		clockTikingSpeed = 0;
-		ModeMenu_Movement(Target_up_mnu);
-		currentMainMenuDimState = MainTo_SettingsOrCreditsOrMode_DimmingUp;
-		LastWasSettings = false;
-		if (lastGameState == LevelEditorPause_Menu)
-		{
-			LevelEditionPause_movement(Target_Down_mnu);
-			currentDimState = DimmingDown;
-		}
-		break;
-	case LevelEditor:
-		if (lastGameState == LevelEditorPause_Menu)
-		{
-			LevelEditionPause_movement(Target_Down_mnu);
-			currentDimState = DimmingDown;
-		}
-		else if (lastGameState == CustomLevelsMenu)
-		{
-			ModeMenu_Movement(Target_Down_mnu);
-			currentMainMenuDimState = MainTo_SettingsOrCreditsOrMode_DimmingDown;
-		}
-		break;
-	case LevelEditorPause_Menu:
-		lastGameState = LevelEditorPause_Menu;
-		clockTikingSpeed = 0;
-		LevelEditionPause_movement(Target_up_mnu);
-		currentDimState = DimmingUp;
-		LastWasSettings = false;
-		break;
+	
 	default:
 		break;
 	}
@@ -1710,17 +1569,6 @@ void DrawUI()
 				{
 					window.draw(AnimationandTexturesCredits_txt[i]);
 				}
-			}
-			else if (lastGameState == CustomLevelsMenu)
-			{
-				window.draw(ModeMenuBox_mnu);
-				window.draw(campaignButton_mnu);
-				window.draw(levelEditorButton_mnu);
-				window.draw(BackButton_Modemnu);
-				window.draw(campaign_txt);
-				window.draw(levelEditor_txt);
-				window.draw(back_Modetxt);
-				window.draw(UserInterest_txt);
 			}
 		}
 		
@@ -1957,6 +1805,11 @@ void DrawUI()
 				window.draw(Pause_txt);
 			}
 		}
+
+		// level editor ui
+		if (developerMode) {
+			window.draw(leveleditorMenuBox);
+		}
 		break;
 
 	case CREDITS:
@@ -1989,59 +1842,7 @@ void DrawUI()
 			window.draw(AnimationandTexturesCredits_txt[i]);
 		}
 		break;
-	case CustomLevelsMenu:
-		window.draw(MainMenuBackground_mnu);
-		window.draw(GameName_mnu);
-		window.draw(PlayButton_mnu);
-		window.draw(CreditsButton_mnu);
-		window.draw(ExitButton_mnu);
-		window.draw(SettingsButton_Mainmnu);
-		window.draw(IdleFbBodymnu);
-		window.draw(IdleFbHeadmnu);
-		window.draw(IdleWgBodymnu);
-		window.draw(IdleWgHeadmnu);
-
-		window.draw(settingsAndCredits_Dimmed_Background);
-
-		window.draw(ModeMenuBox_mnu);
-		window.draw(campaignButton_mnu);
-		window.draw(levelEditorButton_mnu);
-		window.draw(BackButton_Modemnu);
-		window.draw(campaign_txt);
-		window.draw(levelEditor_txt);
-		window.draw(back_Modetxt);
-		window.draw(UserInterest_txt);
-		break;
-	case LevelEditor:
-		window.draw(leveleditorMenuBox);
-		window.draw(PauseIcon_mnu);
-		window.draw(Game_Dimmed_Background);
-		if (lastGameState == LevelEditorPause_Menu)
-		{
-			window.draw(Stone_mnu);
-			window.draw(ContinueButton_levelEditionmnu);
-			window.draw(deleteAllButton_levelEditionmnu);
-			window.draw(menusButton_levelEditionmnu);
-			window.draw(continue_LEtxt);
-			window.draw(deleteAll_LEtxt);
-			window.draw(menus_LEtxt);
-			window.draw(LEpaused_txt);
-		}
-		break;
-	case LevelEditorPause_Menu:
-		//draw background of LevelEditor
-
-		/* temporary -> */ DrawGame(true);
-		window.draw(Game_Dimmed_Background);
-		window.draw(Stone_mnu);
-		window.draw(ContinueButton_levelEditionmnu);
-		window.draw(deleteAllButton_levelEditionmnu);
-		window.draw(menusButton_levelEditionmnu);
-		window.draw(continue_LEtxt);
-		window.draw(deleteAll_LEtxt);
-		window.draw(menus_LEtxt);
-		window.draw(LEpaused_txt);
-		break;
+	
 	default:
 		break;
 	}

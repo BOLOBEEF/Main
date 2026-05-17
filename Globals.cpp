@@ -73,7 +73,6 @@ void DrawGame(bool forceDraw);
 
 // Progress loading
 void LoadPlayerProgress();
-void LoadCustomLevelsList();
 
 // Animations
 void InitializeAnimations();
@@ -104,9 +103,6 @@ enum GameState
 	GAMEOVER,
 	CREDITS,
 	GAME,			  // this is the in-game UI, not the game logic
-	CustomLevelsMenu, // where you select a custom level
-	LevelEditor,// actual editing or playing a custom level
-	LevelEditorPause_Menu
 };
 
 
@@ -123,7 +119,6 @@ void Initialize()
 {
 	InitializeWindow();
 	LoadPlayerProgress();
-	LoadCustomLevelsList();
 	InitializeTextures();
 	InitializeAnimations();
 	InitializeAudio();
