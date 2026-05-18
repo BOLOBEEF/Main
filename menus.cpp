@@ -857,8 +857,13 @@ void InitializeMenu()
 
 
 	//level editor
-	ApplyTexture(leveleditorMenuBox, LoadTexture::menu_box_editor_texture, Vector2f(525,1080));
-	leveleditorMenuBox.setPosition(leveleditorMenuBox.getGlobalBounds().width / 2.0f - 25, (windowSize.y / 2));
+	
+	//ApplyTexture(leveleditorMenuBox, LoadTexture::menu_box_editor_texture, Vector2f(525,1080));
+	//leveleditorMenuBox.setPosition(leveleditorMenuBox.getGlobalBounds().width / 2.0f - 25, (windowSize.y / 2));
+
+	ApplyTexture(leveleditorMenuBox, LoadTexture::ForestLevelEditorMenu_texture, Vector2f(980, 460));
+	leveleditorMenuBox.setPosition((windowSize.x / 2) - 720, (windowSize.y / 2) - 30);
+	leveleditorMenuBox.setRotation(90);
 
 
 	ApplyTexture(arrow_left_level_editor, LoadTexture::BackButton0_texture, Vector2f(100, 100));
@@ -1273,6 +1278,7 @@ void HandleMenuInput(Event event)
 	default:
 		break;
 	}
+
 	//changeCursorColor(event, true);
 }
 
@@ -1352,6 +1358,14 @@ void UpdateUI()
 	tenth_min = Minutes_clock / 10;
 
 	stopwatch_txt.setString(to_string(tenth_min) + to_string(unit_min) + ':' + to_string(tenth_sec) + to_string(unit_sec));
+	if (leveleditorMenuBox.getGlobalBounds().contains(mousePosition + Vector2f(15, 0))) 
+	{
+		mouseOnLevelEditorMenu = true;
+	}
+	else
+	{
+		mouseOnLevelEditorMenu = false;
+	}
 
 	switch (gameState)
 	{
@@ -1526,7 +1540,6 @@ void UpdateUI()
 	}
 
 	if (developerMode) {
-	
 		switch (editMode)
 		{
 		case collider_mode:
@@ -1546,10 +1559,14 @@ void UpdateUI()
 		}
 	}
 
-
-
-
-
+	if (currentLevel.currentLevelIndex >= 3)
+	{
+		ApplyTexture(leveleditorMenuBox, LoadTexture::SnowLevelEditorMenu_texture, Vector2f(1030, 460));
+	}
+	else
+	{
+		ApplyTexture(leveleditorMenuBox, LoadTexture::ForestLevelEditorMenu_texture, Vector2f(1030, 460));
+	}
 
 
 	if (currentFadeState == FadingUp)

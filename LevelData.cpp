@@ -1699,7 +1699,7 @@ struct Level
 		// Can't place objects on top of each other
 
 
-		if (event.type == Event::MouseButtonPressed) {
+		if (event.type == Event::MouseButtonPressed && !mouseOnLevelEditorMenu) {
 			if (editMode == EditMode::collider_mode)
 			{
 				if (event.mouseButton.button == Mouse::Left && !isDeleting) {

@@ -165,6 +165,8 @@ enum LoadTexture
 	diamonds_green_idle_texture,
 	diamonds_purple_idle_texture,
 	diamonds_orange_idle_texture,
+	SnowLevelEditorMenu_texture,
+	ForestLevelEditorMenu_texture,
 };
 
 
@@ -298,6 +300,8 @@ Texture diamonds_orange;
 Texture rating_timer;
 //cursor texture
 Texture CursorAndPointer;
+Texture SnowLevelEditorMenu;
+Texture ForestLevelEditorMenu;
 
 // Functions
 
@@ -789,6 +793,13 @@ void ApplyTexture(Sprite& sprite, LoadTexture texture, Vector2f size = Vector2f(
 	case cursor_texture:
 		sprite.setTexture(CursorAndPointer);
 		break;
+	case SnowLevelEditorMenu_texture:
+		sprite.setTexture(SnowLevelEditorMenu);
+		break;
+
+	case ForestLevelEditorMenu_texture:
+		sprite.setTexture(ForestLevelEditorMenu);
+		break;
 
 		// temporary assets
 	case TRIANGLE:
@@ -1037,6 +1048,11 @@ void InitializeTextures()
 	ExitButton.loadFromFile("Main/Assets/Animations/menu assets/ExitButton.png");
 	dust.loadFromFile("Main/Assets/Animations/menu assets/dust.png");
 	LevelMenuBackground.loadFromFile("Main/Assets/Animations/menu assets/LevelMenuBackground.png");
+	//SnowLevelEditorMenu.loadFromFile("Main/Assets/Animations/menu assets/LevelEditorMenu_snowyEdition.png");
+	SnowLevelEditorMenu.loadFromFile("Main/Assets/Animations/menu assets/LevelEditorMenu_snowyEdition_1920x1081.png");
+
+	ForestLevelEditorMenu.loadFromFile("Main/Assets/Animations/menu assets/LevelMenuBackground.png");
+
 	LevelMenuBox.loadFromFile("Main/Assets/Animations/menu assets/LevelMenuBox.png");
 	SliderLightOn.loadFromFile("Main/Assets/Animations/map objects assets/slider_light_on.png");
 	LevelEntry.loadFromFile("Main/Assets/Animations/menu assets/LevelEntry.png");

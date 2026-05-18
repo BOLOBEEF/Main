@@ -383,6 +383,7 @@ void UpdateAnimation(Sprite& sprite, LoadTexture texture) {
 		UpdatePlayOnceAnimation(sprite, 1024, 128, 8, 30.f);
 		break;
 	}
+	
 
 	default:
 		break;
