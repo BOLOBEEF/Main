@@ -1645,6 +1645,31 @@ void UpdateUI()
 	cursorAndpointerSprite.setPosition(mousePosition + Vector2f(21, 13));
 }
 
+bool isOnBounds(Sprite sprite) {
+	return sprite.getGlobalBounds().contains(mousePosition);
+}
+
+bool isOnBounds(Text sprite) {
+	return sprite.getGlobalBounds().contains(mousePosition);
+}
+
+bool isOnBounds(Sprite sprite, float customSize) {
+	SetSpriteOriginToCenter(sprite, true);
+	Vector2f center = sprite.getPosition();
+	FloatRect bounds = FloatRect(center.x - customSize / 2.0f, center.y - customSize / 2.0f, customSize, customSize);
+
+
+	return bounds.contains(mousePosition);
+}
+
+bool isOnBounds(Text sprite, float customSize) {
+	Vector2f center = sprite.getPosition();
+	FloatRect bounds = FloatRect(center.x - customSize / 2.0f, center.y - customSize / 2.0f, customSize, customSize);
+
+
+	return bounds.contains(mousePosition);
+}
+
 void CheckInputLevelEditorUI(Event event) {
 	if (developerMode){
 
@@ -1653,50 +1678,121 @@ void CheckInputLevelEditorUI(Event event) {
 		// or object_mode,
 		// or plant_mode
 
+		if (!(event.type == Event::MouseButtonPressed && event.mouseButton.button == Mouse::Left)) return;
+
+		if (isOnBounds(arrow_right_level_editor))
+		{
+			isDeleting = false;
+			if (editMode == EditMode::collider_mode)
+				editMode = EditMode::object_mode;
+			else if (editMode == EditMode::object_mode)
+				editMode = EditMode::plant_mode;
+			else if (editMode == EditMode::plant_mode)
+				editMode = EditMode::collider_mode;
+		}
+		else if (isOnBounds(arrow_left_level_editor))
+		{
+			isDeleting = false;
+			if (editMode == EditMode::collider_mode)
+				editMode = EditMode::plant_mode;
+			else if (editMode == EditMode::object_mode)
+				editMode = EditMode::collider_mode;
+			else if (editMode == EditMode::plant_mode)
+				editMode = EditMode::object_mode;
+		}
 
 		switch (editMode)
-		{
-		case collider_mode:
-			// EditColliderMode editColliderMode = Rectangle,
-			// Triangle,
-			// Triangle_Rotated,
+			{
+			case collider_mode:
+				if (isOnBounds(cube_level_editor))
+				{
+					editColliderMode = EditColliderMode::Rectangle;
+					currentLevel.UpdateDisplayColliderTexture();
+					isDeleting = false;
+				} else if (isOnBounds(triangle_level_editor))
+				{
+					editColliderMode = EditColliderMode::Triangle;
+					currentLevel.UpdateDisplayColliderTexture();
+					isDeleting = false;
+				} else if (isOnBounds(triangle_rotated_level_editor))
+				{
+					editColliderMode = EditColliderMode::Triangle_Rotated;
+					currentLevel.UpdateDisplayColliderTexture();
+					isDeleting = false;
+				}
 
-			break;
-		case object_mode:
+				if (isOnBounds(Deletesprite))
+					isDeleting = !isDeleting;
 
-			/*
-			to switch current object
-			editObjectMode =
-			FireGem_mode,
-				WaterGem_mode,
-				Door_mode,
-				Door_Target_mode,
-				Door_Rotated_mode,
-				FirePond_mode,
-				WaterPond_mode,
-				PoisonPond_mode,
-				Box_mode,
-				Button_mode,
-				Lever_mode,
-				TemporaryGround_mode,
-				FanObject_mode,
-				SnowObject_Normal_mode,
-				SnowObject_LeftDown_mode,
-				SnowObject_RightDown_mode,
-		} editObjectMode;*/
+				if (isOnBounds(increasingplusetxt[0], 100))
+				{
+					editScale.y++;
+					if (editScale.x <= 0) editScale.x = 1;
+					if (editScale.y <= 0) editScale.y = 1;
+				} else if (isOnBounds(increasingplusetxt[1], 100))
+				{
+					editScale.x++;
+					if (editScale.x <= 0) editScale.x = 1;
+					if (editScale.y <= 0) editScale.y = 1;
+				} else if (isOnBounds(decreasingminusetxt[0], 100))
+				{
+					editScale.y--;
+					if (editScale.x <= 0) editScale.x = 1;
+					if (editScale.y <= 0) editScale.y = 1;
+				}
+				else if (isOnBounds(decreasingminusetxt[1], 100))
+				{
+					editScale.x--;
+					if (editScale.x <= 0) editScale.x = 1;
+					if (editScale.y <= 0) editScale.y = 1;
+				}
 
-			break;
-		case plant_mode:
-			/*
-			to switch plant
-			currentPlantIndex++ or --;
-			then currentPlantIndex = Clamp(currentPlantIndex, 1, plantsCount);
-			*/
+				//editColliderMode = EditColliderMode::Rectangle;
+				//UpdateDisplayColliderTexture();
+				/*if (leveleditorMenuBox.getGlobalBounds().contains(mousePosition))
+				{
+					editColliderMode = EditColliderMode::Triangle;
+				}*/
+				// EditColliderMode editColliderMode = Rectangle,
+				// Triangle,
+				// Triangle_Rotated,
 
-			break;
-		default:
-			break;
-		}
+				break;
+			case object_mode:
+
+				/*
+				to switch current object
+				editObjectMode =
+				FireGem_mode,
+					WaterGem_mode,
+					Door_mode,
+					Door_Target_mode,
+					Door_Rotated_mode,
+					FirePond_mode,
+					WaterPond_mode,
+					PoisonPond_mode,
+					Box_mode,
+					Button_mode,
+					Lever_mode,
+					TemporaryGround_mode,
+					FanObject_mode,
+					SnowObject_Normal_mode,
+					SnowObject_LeftDown_mode,
+					SnowObject_RightDown_mode,
+			} editObjectMode;*/
+
+				break;
+			case plant_mode:
+				/*
+				to switch plant
+				currentPlantIndex++ or --;
+				then currentPlantIndex = Clamp(currentPlantIndex, 1, plantsCount);
+				*/
+
+				break;
+			default:
+				break;
+			}
 	}
 }
 void DrawLevelEditorUI() {

@@ -2414,7 +2414,7 @@ struct Level
 			(event.key.code == Keyboard::LShift ||
 				event.key.code == Keyboard::RShift))
 		{
-			// do something
+			gameCamera.setSize(window.getDefaultView().getSize());
 		}
 
 		// in developer mode, you can edit the level
