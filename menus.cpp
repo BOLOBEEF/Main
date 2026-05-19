@@ -594,24 +594,38 @@ void InitializeMenu()
 	X_axis_txt.setFont(font);
 	X_axis_txt.setString("X_size");
 	X_axis_txt.setPosition(70, 520);
-	X_axis_txt.setCharacterSize(30);
+	X_axis_txt.setCharacterSize(40);
+	X_axis_txt.setFillColor(Color(230, 194, 0));
+	X_axis_txt.setOutlineThickness(5);
+	X_axis_txt.setOutlineColor(Color::Black);
 
 	Y_axis_txt.setFont(font);
 	Y_axis_txt.setString("Y_size");
 	Y_axis_txt.setPosition(70, 620);
-	Y_axis_txt.setCharacterSize(30);
+	Y_axis_txt.setCharacterSize(40);
+	Y_axis_txt.setFillColor(Color(230, 194, 0));
+	Y_axis_txt.setOutlineThickness(5);
+	Y_axis_txt.setOutlineColor(Color::Black);
 	
-	ApplyTexture(Deletesprite, LoadTexture::x_icon_texture, Vector2f(50, 50));
-	Deletesprite.setPosition(70, 750);
+	ApplyTexture(Deletesprite, LoadTexture::x_icon_texture, Vector2f(90, 90));
+	Deletesprite.setPosition(253, 790);
 
-	
-	ApplyTexture(plants_leveleditor[0], LoadTexture::decor_1_texture, Vector2f(100, 100));
+	decor_1.setSmooth(true);
+	decor_2.setSmooth(true);
+	decor_3.setSmooth(true);
+	decor_4.setSmooth(true);
+	decor_5.setSmooth(true);
+	decor_6.setSmooth(true);
+	decor_7.setSmooth(true);
+	decor_8.setSmooth(true);
+
+	ApplyTexture(plants_leveleditor[0], LoadTexture::decor_1_texture, Vector2f(80, 80));
 	ApplyTexture(plants_leveleditor[1], LoadTexture::decor_2_texture, Vector2f(100, 100));
 	ApplyTexture(plants_leveleditor[2], LoadTexture::decor_3_texture, Vector2f(100, 100));
-	ApplyTexture(plants_leveleditor[3], LoadTexture::decor_4_texture, Vector2f(100, 100));
-	ApplyTexture(plants_leveleditor[4], LoadTexture::decor_5_texture, Vector2f(100, 100));
+	ApplyTexture(plants_leveleditor[3], LoadTexture::decor_4_texture, Vector2f(70, 152));
+	ApplyTexture(plants_leveleditor[4], LoadTexture::decor_5_texture, Vector2f(80, 80));
 	ApplyTexture(plants_leveleditor[5], LoadTexture::decor_6_texture, Vector2f(100, 100));
-	ApplyTexture(plants_leveleditor[6], LoadTexture::decor_7_texture, Vector2f(100, 100));
+	ApplyTexture(plants_leveleditor[6], LoadTexture::decor_7_texture, Vector2f(120, 120));
 	ApplyTexture(plants_leveleditor[7], LoadTexture::decor_8_texture, Vector2f(100, 100));
 	plants_leveleditor[4].setScale(1.25, 2);
 	plants_leveleditor[7].setScale(2, 1.25);
@@ -628,13 +642,19 @@ void InitializeMenu()
 	{
 		increasingplusetxt[i].setFont(font);
 		increasingplusetxt[i].setString("+");
-		increasingplusetxt[i].setPosition(250, 590-i*100);
+		increasingplusetxt[i].setPosition(250, 600-i*100);
 		increasingplusetxt[i].setCharacterSize(60);
+		increasingplusetxt[i].setFillColor(Color(230, 194, 0));
+		increasingplusetxt[i].setOutlineThickness(5);
+		increasingplusetxt[i].setOutlineColor(Color::Black);
 
 		decreasingminusetxt[i].setFont(font);
 		decreasingminusetxt[i].setString("-");
-		decreasingminusetxt[i].setPosition(350, 590-i*100);
+		decreasingminusetxt[i].setPosition(350, 600-i*100);
 		decreasingminusetxt[i].setCharacterSize(60);
+		decreasingminusetxt[i].setFillColor(Color(230, 194, 0));
+		decreasingminusetxt[i].setOutlineThickness(5);
+		decreasingminusetxt[i].setOutlineColor(Color::Black);
 	}
 	//Cursor 
 	CursorAndPointer.setSmooth(true);
@@ -2119,8 +2139,15 @@ void DrawUI()
 		
 		// code for drawing game UI
 		window.draw(PauseIcon_mnu);
-		window.draw(clockTiking_game);
-		window.draw(stopwatch_txt);
+		if (!developerMode)
+		{
+			window.draw(clockTiking_game);
+			window.draw(stopwatch_txt);
+		}
+		else
+		{
+			clockTikingSpeed = 0;
+		}
 		// gameTutorials is drawn in the actual DrawGame function
 		window.draw(Game_Dimmed_Background);
 		if (Current_position_mnu != Target_Down_mnu)
