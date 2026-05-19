@@ -167,6 +167,8 @@ enum LoadTexture
 	diamonds_orange_idle_texture,
 	SnowLevelEditorMenu_texture,
 	ForestLevelEditorMenu_texture,
+	CUBE_leveleditor_Ice_texture,
+	Triangle_leveleditor_Ice_texture
 };
 
 
@@ -302,6 +304,9 @@ Texture rating_timer;
 Texture CursorAndPointer;
 Texture SnowLevelEditorMenu;
 Texture ForestLevelEditorMenu;
+Texture CUBE_leveleditor_Ice;
+Texture Triangle_leveleditor_Ice;
+
 
 // Functions
 
@@ -797,8 +802,16 @@ void ApplyTexture(Sprite& sprite, LoadTexture texture, Vector2f size = Vector2f(
 		sprite.setTexture(SnowLevelEditorMenu);
 		break;
 
+	case CUBE_leveleditor_Ice_texture:
+		sprite.setTexture(CUBE_leveleditor_Ice);
+		break;
+
 	case ForestLevelEditorMenu_texture:
 		sprite.setTexture(ForestLevelEditorMenu);
+		break;
+
+	case Triangle_leveleditor_Ice_texture:
+		sprite.setTexture(Triangle_leveleditor_Ice);
 		break;
 
 		// temporary assets
@@ -1050,6 +1063,8 @@ void InitializeTextures()
 	LevelMenuBackground.loadFromFile("Main/Assets/Animations/menu assets/LevelMenuBackground.png");
 	//SnowLevelEditorMenu.loadFromFile("Main/Assets/Animations/menu assets/LevelEditorMenu_snowyEdition.png");
 	SnowLevelEditorMenu.loadFromFile("Main/Assets/Animations/menu assets/LevelEditorMenu_snowyEdition_1920x1081.png");
+	CUBE_leveleditor_Ice.loadFromFile("Main/Assets/Textures/EditorCube_snowy_transparent_125x111.png");
+	Triangle_leveleditor_Ice.loadFromFile("Main/Assets/Textures/EditorSlope_ice_transparent_125x111.png");
 
 	ForestLevelEditorMenu.loadFromFile("Main/Assets/Animations/menu assets/LevelMenuBackground.png");
 

@@ -1662,10 +1662,18 @@ void UpdateUI()
 	if (currentLevel.currentLevelIndex >= 3)
 	{
 		ApplyTexture(leveleditorMenuBox, LoadTexture::SnowLevelEditorMenu_texture, Vector2f(1030, 460));
+		ApplyTexture(cube_level_editor, LoadTexture::CUBE_leveleditor_Ice_texture, Vector2f(125, 125));
+		ApplyTexture(triangle_level_editor, LoadTexture::Triangle_leveleditor_Ice_texture, Vector2f(125, 125));
+		ApplyTexture(triangle_rotated_level_editor, LoadTexture::Triangle_leveleditor_Ice_texture, Vector2f(125, 125));
+		triangle_rotated_level_editor.setScale(-1, 1);
 	}
 	else
 	{
 		ApplyTexture(leveleditorMenuBox, LoadTexture::ForestLevelEditorMenu_texture, Vector2f(1030, 460));
+		ApplyTexture(cube_level_editor, LoadTexture::CUBE_leveleditor, Vector2f(125, 125));
+		ApplyTexture(triangle_level_editor, LoadTexture::TRIANGLE_leveleditor, Vector2f(125, 125));
+		ApplyTexture(triangle_rotated_level_editor, LoadTexture::TRIANGLE_ROTATED_leveleditor, Vector2f(125, 125));
+		triangle_rotated_level_editor.setScale(-1, 1);
 	}
 
 
