@@ -1591,7 +1591,7 @@ void UpdateUI()
 		{
 			gameTutorials.elements[i].Update(fireBoy, waterGirl);
 		}
-		if (currentLevel.currentLevelIndex >= 3)
+		if (currentLevel.isSnowLevel)
 		{
 			ApplyTexture(clockTiking_game, LoadTexture::clock_timer_ice_texture, Vector2f(310, 112));
 		}
@@ -1659,7 +1659,7 @@ void UpdateUI()
 		}
 	}
 
-	if (currentLevel.currentLevelIndex >= 3)
+	if (currentLevel.isSnowLevel)
 	{
 		ApplyTexture(leveleditorMenuBox, LoadTexture::SnowLevelEditorMenu_texture, Vector2f(1030, 460));
 		ApplyTexture(cube_level_editor, LoadTexture::CUBE_leveleditor_Ice_texture, Vector2f(125, 125));
