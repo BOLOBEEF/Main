@@ -125,7 +125,11 @@ Sprite levelEditorButton_mnu, campaignButton_mnu, BackButton_Modemnu;
 // level editor
 Sprite leveleditorMenuBox;
 Sprite arrow_right_level_editor, arrow_left_level_editor;
-Sprite cube_level_editor, triangle_level_editor  , triangle_rotated_level_editor,redgem_level_editor,bluegem_level_editor,green_pond_leveleditor;
+Sprite temporary_platform_level_editor;
+Sprite movingbox_level_editor;
+Sprite windbase_level_editor;
+Sprite movingplatform_level_editor , movingplatform_rotated_level_editor;
+Sprite cube_level_editor, triangle_level_editor  , triangle_rotated_level_editor,redgem_level_editor,bluegem_level_editor,green_pond_leveleditor, green_pond_right_leveleditor, green_pond_left_leveleditor, red_pond_leveleditor, red_pond_right_leveleditor, red_pond_left_leveleditor  ,blue_pond_leveleditor, blue_pond_right_leveleditor, blue_pond_left_leveleditor;
 //gameover
 Sprite GameOverbuttons_mnu[3];
 
@@ -915,12 +919,76 @@ void InitializeMenu()
 	bluegem_level_editor.setPosition(bluegem_level_editor.getGlobalBounds().width / 2.0f + 100, (windowSize.y / 2) - 400);
 
 
-	ApplyTexture(green_pond_leveleditor, LoadTexture:: green_pond_texture, Vector2f(2000, 125));
+	ApplyTexture(green_pond_leveleditor, LoadTexture:: green_pond_texture, Vector2f(1800, 80));
 	
-	green_pond_leveleditor.setPosition(green_pond_leveleditor.getGlobalBounds().width / 2.0f + 300, (windowSize.y / 2) - 400);
+	green_pond_leveleditor.setPosition(green_pond_leveleditor.getGlobalBounds().width / 2.0f + 258, (windowSize.y / 2) - 385);
 	
 
+	ApplyTexture(green_pond_right_leveleditor, LoadTexture::green_pond_right_texture, Vector2f(1300, 80));
 
+	green_pond_right_leveleditor.setPosition(green_pond_right_leveleditor.getGlobalBounds().width / 2.0f + 340, (windowSize.y / 2) - 385);
+
+	ApplyTexture(green_pond_left_leveleditor, LoadTexture::green_pond_left_texture, Vector2f(1300, 80));
+
+	green_pond_left_leveleditor.setPosition(green_pond_left_leveleditor.getGlobalBounds().width / 2.0f + 210, (windowSize.y / 2) - 383);
+
+
+
+
+
+	ApplyTexture(red_pond_leveleditor, LoadTexture::fire_pond_texture, Vector2f(1800, 80));
+
+	red_pond_leveleditor.setPosition(red_pond_leveleditor.getGlobalBounds().width / 2.0f + 70, (windowSize.y / 2) - 280);
+
+
+	ApplyTexture(red_pond_right_leveleditor, LoadTexture::fire_pond_right_texture, Vector2f(1300, 80));
+
+	red_pond_right_leveleditor.setPosition(red_pond_right_leveleditor.getGlobalBounds().width / 2.0f + 152, (windowSize.y / 2) - 280);
+
+	ApplyTexture(red_pond_left_leveleditor, LoadTexture::fire_pond_left_texture, Vector2f(1300, 80));
+
+	red_pond_left_leveleditor.setPosition(red_pond_left_leveleditor.getGlobalBounds().width / 2.0f + 22, (windowSize.y / 2) - 278);
+
+
+
+
+	ApplyTexture(blue_pond_leveleditor, LoadTexture::water_pond_texture, Vector2f(1800, 80));
+
+	blue_pond_leveleditor.setPosition(blue_pond_leveleditor.getGlobalBounds().width / 2.0f + 270, (windowSize.y / 2) - 280);
+
+
+	ApplyTexture(blue_pond_right_leveleditor, LoadTexture::water_pond_right_texture, Vector2f(1300, 80));
+
+	blue_pond_right_leveleditor.setPosition(blue_pond_right_leveleditor.getGlobalBounds().width / 2.0f + 352, (windowSize.y / 2) - 280);
+
+	ApplyTexture(blue_pond_left_leveleditor, LoadTexture::water_pond_left_texture, Vector2f(1300, 80));
+
+	blue_pond_left_leveleditor.setPosition(blue_pond_left_leveleditor.getGlobalBounds().width / 2.0f + 218, (windowSize.y / 2) - 278);
+
+
+
+	ApplyTexture(movingplatform_level_editor, LoadTexture::moving_platform_texture, Vector2f(150, 35));
+
+	movingplatform_level_editor.setPosition(movingplatform_level_editor.getGlobalBounds().width / 2.0f + 50, (windowSize.y / 2) - 220);
+
+	ApplyTexture(movingplatform_rotated_level_editor, LoadTexture::moving_platform_texture, Vector2f(120, 35));
+
+	movingplatform_rotated_level_editor.setPosition(movingplatform_rotated_level_editor.getGlobalBounds().width / 2.0f + 350, (windowSize.y / 2) - 200);
+	movingplatform_rotated_level_editor.setRotation(90);
+
+	ApplyTexture(movingbox_level_editor, LoadTexture::movingbox_texture, Vector2f(74, 76));
+
+	movingbox_level_editor.setPosition(movingbox_level_editor.getGlobalBounds().width / 2.0f + 50, (windowSize.y / 2) - 100);
+
+
+	ApplyTexture(temporary_platform_level_editor, LoadTexture::TEMPORARY_GROUND, Vector2f(1200, 30));
+
+	temporary_platform_level_editor.setPosition(temporary_platform_level_editor.getGlobalBounds().width / 2.0f + 250, (windowSize.y / 2) - 210);
+	
+
+	ApplyTexture(windbase_level_editor, LoadTexture::wind_base_texture, Vector2f(300*1.5, 50*1.5));
+	
+	windbase_level_editor.setPosition(windbase_level_editor.getGlobalBounds().width / 2.0f + 250, (windowSize.y / 2) - 100);
 
 	//Game Over menu
 
@@ -1559,6 +1627,8 @@ void UpdateUI()
 
 	}
 
+
+
 	if (developerMode) {
 		switch (editMode)
 		{
@@ -1568,6 +1638,16 @@ void UpdateUI()
 			break;
 		case object_mode:
 			UpdateAnimation(green_pond_leveleditor, green_pond_texture);
+			UpdateAnimation(green_pond_left_leveleditor, green_pond_left_texture);
+			UpdateAnimation(green_pond_right_leveleditor, green_pond_right_texture);
+			UpdateAnimation(red_pond_leveleditor, fire_pond_texture);
+			UpdateAnimation(red_pond_left_leveleditor, fire_pond_left_texture);
+			UpdateAnimation(red_pond_right_leveleditor, fire_pond_right_texture);
+			UpdateAnimation(blue_pond_leveleditor, water_pond_texture);
+			UpdateAnimation(blue_pond_left_leveleditor, water_pond_left_texture);
+			UpdateAnimation(blue_pond_right_leveleditor, water_pond_right_texture);
+			UpdateAnimation(temporary_platform_level_editor, TEMPORARY_GROUND);
+			UpdateAnimation(windbase_level_editor, wind_base_texture);
 
 			break;
 		case plant_mode:
@@ -1854,12 +1934,22 @@ void DrawLevelEditorUI() {
 			
 			break;
 		case object_mode:
-
+			window.draw(temporary_platform_level_editor);
+			window.draw(green_pond_left_leveleditor);
+			window.draw(green_pond_right_leveleditor);
 			window.draw(green_pond_leveleditor);
 			window.draw(redgem_level_editor);
 			window.draw(bluegem_level_editor);
-
-
+			window.draw(movingplatform_level_editor);
+			window.draw(red_pond_left_leveleditor);
+			window.draw(red_pond_right_leveleditor);
+			window.draw(red_pond_leveleditor);
+			window.draw(movingplatform_rotated_level_editor);
+			window.draw(blue_pond_left_leveleditor);
+			window.draw(blue_pond_right_leveleditor);
+			window.draw(blue_pond_leveleditor);
+			window.draw(movingbox_level_editor);
+			window.draw(windbase_level_editor);
 
 			for (int i = 0; i < 2; i++)
 			{
