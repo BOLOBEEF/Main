@@ -168,7 +168,7 @@ Text levelEditor_txt, campaign_txt, UserInterest_txt, back_Modetxt;
 Text menus_LEtxt, continue_LEtxt, deleteAll_LEtxt, LEpaused_txt;
 Text increasingplusetxt[2], decreasingminusetxt[2];
 Text X_axis_txt, Y_axis_txt;
-
+Text ID,ID1;
 Sprite Deletesprite;
 
 Sprite cursorAndpointerSprite;
@@ -567,12 +567,15 @@ void CreditsMenu_Movement(Vector2f Desired_Target)
 	BackButtonCredits_mnu.setPosition(Vector2f(534, 790) + Current_position_SettingsOrCreditsOrMode_mnu - center);
 	MenusandSoundsCredits_txt[0].setPosition(Vector2f(520, 250) + Current_position_SettingsOrCreditsOrMode_mnu - center);
 	MenusandSoundsCredits_txt[1].setPosition(Vector2f(430, 320) + Current_position_SettingsOrCreditsOrMode_mnu - center);
-	AnimationandTexturesCredits_txt[0].setPosition(Vector2f(975, 700) + Current_position_SettingsOrCreditsOrMode_mnu - center);
-	AnimationandTexturesCredits_txt[1].setPosition(Vector2f(920, 770) + Current_position_SettingsOrCreditsOrMode_mnu - center);
-	GamelogicCredits_txt[0].setPosition(Vector2f(830, 420) + Current_position_SettingsOrCreditsOrMode_mnu - center);
-	GamelogicCredits_txt[1].setPosition(Vector2f(815, 490) + Current_position_SettingsOrCreditsOrMode_mnu - center);
-	GamelogicCredits_txt[2].setPosition(Vector2f(765, 540) + Current_position_SettingsOrCreditsOrMode_mnu - center);
-	GamelogicCredits_txt[3].setPosition(Vector2f(730, 590) + Current_position_SettingsOrCreditsOrMode_mnu - center);
+	ID1.setPosition(MenusandSoundsCredits_txt[1].getGlobalBounds().left, MenusandSoundsCredits_txt[1].getGlobalBounds().top + MenusandSoundsCredits_txt[1].getGlobalBounds().height + 5);
+	AnimationandTexturesCredits_txt[0].setPosition(Vector2f(975, 690) + Current_position_SettingsOrCreditsOrMode_mnu - center);
+	AnimationandTexturesCredits_txt[1].setPosition(Vector2f(920, 760) + Current_position_SettingsOrCreditsOrMode_mnu - center);
+	GamelogicCredits_txt[0].setPosition(Vector2f(820, 430) + Current_position_SettingsOrCreditsOrMode_mnu - center);
+	GamelogicCredits_txt[1].setPosition(Vector2f(665, 500) + Current_position_SettingsOrCreditsOrMode_mnu - center);
+	GamelogicCredits_txt[2].setPosition(Vector2f(615, 550) + Current_position_SettingsOrCreditsOrMode_mnu - center);
+	GamelogicCredits_txt[3].setPosition(Vector2f(580, 600) + Current_position_SettingsOrCreditsOrMode_mnu - center);
+	ID.setPosition(AnimationandTexturesCredits_txt[1].getGlobalBounds().left , AnimationandTexturesCredits_txt[1].getGlobalBounds().top + AnimationandTexturesCredits_txt[1].getGlobalBounds().height + 5);
+
 }
 void ModeMenu_Movement(Vector2f Desired_Target)
 {
@@ -1179,6 +1182,12 @@ void InitializeMenu()
 	//Credits Menu Text
 	MenusandSoundsCredits_txt[0].setString("Menus & Sounds");
 	MenusandSoundsCredits_txt[1].setString("Ali Elsha3r - Omar Ayman");
+	ID1.setString(" 20251700486 - 20251700512");
+	ID1.setFont(font);
+	ID1.setCharacterSize(35);
+	ID1.setFillColor(Color(230, 194, 0));
+	ID1.setOutlineColor(Color::Black);
+	ID1.setOutlineThickness(5);
 	for (int i = 0; i < 2; i++)
 	{
 		MenusandSoundsCredits_txt[i].setFont(font);
@@ -1187,11 +1196,10 @@ void InitializeMenu()
 		MenusandSoundsCredits_txt[i].setOutlineColor(Color::Black);
 		MenusandSoundsCredits_txt[i].setOutlineThickness(5);
 	}
-
 	GamelogicCredits_txt[0].setString("Game Logic");
-	GamelogicCredits_txt[1].setString("Omar Ahmed");
-	GamelogicCredits_txt[2].setString("Stephano Ashraf");
-	GamelogicCredits_txt[3].setString("Osama Abdelmomen");
+	GamelogicCredits_txt[1].setString("Omar Ahmed 20251700505");
+	GamelogicCredits_txt[2].setString("Stephano Ashraf 20251700088");
+	GamelogicCredits_txt[3].setString("Osama Abdelmomen 20251700086");
 	for (int i = 0; i < 4; i++)
 	{
 		GamelogicCredits_txt[i].setFont(font);
@@ -1203,6 +1211,12 @@ void InitializeMenu()
 	
 	AnimationandTexturesCredits_txt[0].setString("Animation & Textures");
 	AnimationandTexturesCredits_txt[1].setString("Ahmed Manie3 - Ali Shokry");
+	ID.setFont(font);
+	ID.setString("   20251700061 - 20251700470");
+	ID.setCharacterSize(35);
+	ID.setFillColor(Color(230, 194, 0));
+	ID.setOutlineColor(Color::Black);
+	ID.setOutlineThickness(5);
 	for (int i = 0; i < 2; i++)
 	{
 		AnimationandTexturesCredits_txt[i].setFont(font);
@@ -2302,6 +2316,7 @@ void DrawUI()
 		{
 			window.draw(MenusandSoundsCredits_txt[i]);
 		}
+		window.draw(ID1);
 		for (int i = 0; i < 4; i++)
 		{
 			window.draw(GamelogicCredits_txt[i]);
@@ -2310,6 +2325,7 @@ void DrawUI()
 		{
 			window.draw(AnimationandTexturesCredits_txt[i]);
 		}
+			window.draw(ID);
 		break;
 	
 	default:
